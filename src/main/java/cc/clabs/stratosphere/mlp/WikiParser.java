@@ -40,7 +40,7 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
         
         MapContract map = MapContract
                 .builder( SentenceEmitter.class )
-                .name( "Map" )
+                .name( "Sentence Emitter" )
                 .input( source )
                 .build();
         
@@ -48,8 +48,7 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
         RecordOutputFormat.configureRecordFormat( out )
                 .recordDelimiter( '\n' )
                 .fieldDelimiter( '\t' )
-                .field(PactString.class, 0)
-                .field(PactString.class, 1);
+                .field(PactString.class, 0);
                 
         Plan plan = new Plan( out, "Fancy Plan!" );
         plan.setDefaultParallelism( 1 );

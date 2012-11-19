@@ -42,12 +42,13 @@ public class XMLChunkParser extends TextInputFormat  {
     public boolean readRecord(PactRecord target, byte[] bytes, int offset, int numBytes) {
         super.readRecord( target, bytes, offset, numBytes );
         String content = target.getField( 0, PactString.class ).getValue();
-        Pattern p = Pattern.compile( "<title>(.*?)</title>" );
+        Pattern p = Pattern.compile( "<(text).*?>(.*?)</\\1>", Pattern.DOTALL );
         Matcher m = p.matcher( content );
-        if ( m.find() && m.group( 1 ) != null )
-            target.setField( 0, new PactString(  m.group( 1 ) ) );
-        target.setField( 1, new PactString( this.filePath.toString() ));
-        return true;
+        if ( m.find() && m.group( 2 ) != null ) {
+            target.setField( 0, new PactString(  m.group( 2 ) ) );
+            return true;
+        }
+        return false;
     }
 
 }
