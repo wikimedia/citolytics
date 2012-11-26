@@ -35,6 +35,7 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
         // parse job parameters
         String dataset = args[0];
         String output = args[1];
+        String model = args[2];
         
         FileDataSource source = new FileDataSource( XMLChunkParser.class, dataset, "Input" );
         
@@ -43,6 +44,7 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
                 .name( "Sentence Emitter" )
                 .input( source )
                 .build();
+        map.setParameter( "MODEL", model );
         
         FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, map, "Output" );
         RecordOutputFormat.configureRecordFormat( out )

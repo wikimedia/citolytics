@@ -22,10 +22,18 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation.ConstantFields;
 import eu.stratosphere.pact.common.stubs.StubAnnotation.OutCardBounds;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactString;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import edu.stanford.nlp.ling.Sentence;
+import edu.stanford.nlp.ling.TaggedWord;
+import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import eu.stratosphere.nephele.configuration.Configuration;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -35,25 +43,31 @@ import org.apache.commons.logging.LogFactory;
 @OutCardBounds(lowerBound=0, upperBound=OutCardBounds.UNBOUNDED)
 public class SentenceEmitter extends MapStub {
     
+    MaxentTagger tagger = null;
+    
     private static final Log LOG = LogFactory.getLog( SentenceEmitter.class );
     
     // initialize reusable mutable objects
     private final PactRecord output = new PactRecord();
-    private final PactString sentence = new PactString();
+    private final PactString string = new PactString();
 
+    @Override
+    public void open(Configuration parameter) throws Exception {
+      super.open( parameter );
+      tagger = new MaxentTagger( parameter.getString( "MODEL", "models/wsj-0-18-left3words-distsim.tagger") );
+    }
+    
     @Override
     public void map( PactRecord record, Collector<PactRecord> collector ) {
         String corpus = ((PactString) record.getField( 0, PactString.class ) ).getValue();
         
         corpus = stripMarkup( corpus );
         
-        // based on http://stackoverflow.com/questions/5553410/regular-expression-match-a-sentence
-        Pattern p = Pattern.compile( "[^.!?\\s][^.!?]*(?:[.!?](?!['\"]?\\s|$)[^.!?]*)*[.!?]?['\"]?(?=\\s|$)", Pattern.MULTILINE );
-        Matcher m = p.matcher( corpus );
-        
-        while ( m.find() ) {
-            sentence.setValue( m.group() );
-            output.setField( 0, sentence );
+        List<List<HasWord>> sentences = MaxentTagger.tokenizeText( new StringReader( corpus ) );
+        for (List<HasWord> sentence : sentences) {
+            ArrayList<TaggedWord> tSentence = tagger.tagSentence(sentence);
+            string.setValue( Sentence.listToString(tSentence, false) );
+            output.setField( 0, string );
             collector.collect( output );
         }
     }
