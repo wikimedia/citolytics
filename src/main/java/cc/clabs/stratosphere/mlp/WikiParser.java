@@ -16,7 +16,7 @@
  */
 package cc.clabs.stratosphere.mlp;
 
-import cc.clabs.stratosphere.mlp.io.XMLChunkParser;
+import cc.clabs.stratosphere.mlp.io.WikiChunkParser;
 import cc.clabs.stratosphere.mlp.contracts.SentenceEmitter;
 
 import eu.stratosphere.pact.common.contract.*;
@@ -37,7 +37,7 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
         String output = args[1];
         String model = args[2];
         
-        FileDataSource source = new FileDataSource( XMLChunkParser.class, dataset, "Input" );
+        FileDataSource source = new FileDataSource( WikiChunkParser.class, dataset, "Input" );
         
         MapContract map = MapContract
                 .builder( SentenceEmitter.class )
@@ -53,7 +53,6 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactString.class, 0);
                 
         Plan plan = new Plan( out, "Fancy Plan!" );
-        plan.setDefaultParallelism( 1 );
         
         return plan;
     }

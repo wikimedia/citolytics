@@ -16,6 +16,8 @@
  */
 package cc.clabs.stratosphere.mlp.io;
 
+import cc.clabs.stratosphere.mlp.types.WikiPage;
+import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.io.TextInputFormat;
 import eu.stratosphere.pact.common.type.PactRecord;
@@ -27,7 +29,7 @@ import java.util.regex.Pattern;
  *
  * @author rob
  */
-public class XMLChunkParser extends TextInputFormat  {
+public class WikiChunkParser extends TextInputFormat  {
 
     @Override
     public void configure (Configuration parameter) {
@@ -40,15 +42,26 @@ public class XMLChunkParser extends TextInputFormat  {
      */
     @Override
     public boolean readRecord(PactRecord target, byte[] bytes, int offset, int numBytes) {
+     
         super.readRecord( target, bytes, offset, numBytes );
         String content = target.getField( 0, PactString.class ).getValue();
-        Pattern p = Pattern.compile( "<(text).*?>(.*?)</\\1>", Pattern.DOTALL );
-        Matcher m = p.matcher( content );
-        if ( m.find() && m.group( 2 ) != null ) {
-            target.setField( 0, new PactString(  m.group( 2 ) ) );
-            return true;
-        }
-        return false;
+        
+        Pattern pageRegex = Pattern.compile( "(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL );
+        
+        Matcher m = pageRegex.matcher( content );
+        
+        if ( !m.find() ) return false;
+                
+        WikiPage page = new WikiPage();
+        
+        page.id = Integer.parseInt( m.group( 3 ) );
+        page.title = m.group( 1 );
+        page.ns = Integer.parseInt( m.group( 2 ) );
+        page.text = StringUtils.unescapeEntities( m.group( 4 ) );
+        
+        target.clear();
+        target.setField( 0, page );
+        return true;
     }
 
 }
