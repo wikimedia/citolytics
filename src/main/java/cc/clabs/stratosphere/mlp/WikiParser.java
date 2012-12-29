@@ -16,14 +16,15 @@
  */
 package cc.clabs.stratosphere.mlp;
 
-import cc.clabs.stratosphere.mlp.io.WikiChunkParser;
-import cc.clabs.stratosphere.mlp.contracts.SentenceEmitter;
+import cc.clabs.stratosphere.mlp.contracts.DocumentAnalyser;
+import cc.clabs.stratosphere.mlp.io.WikiDumpParser;
 
 import eu.stratosphere.pact.common.contract.*;
 import eu.stratosphere.pact.common.io.RecordOutputFormat;
 import eu.stratosphere.pact.common.plan.Plan;
 import eu.stratosphere.pact.common.plan.PlanAssembler;
 import eu.stratosphere.pact.common.plan.PlanAssemblerDescription;
+import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 
 public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
@@ -37,22 +38,23 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
         String output = args[1];
         String model = args[2];
         
-        FileDataSource source = new FileDataSource( WikiChunkParser.class, dataset, "Input" );
+        FileDataSource source = new FileDataSource( WikiDumpParser.class, dataset, "Input" );
         
         MapContract map = MapContract
-                .builder( SentenceEmitter.class )
-                .name( "Sentence Emitter" )
+                .builder( DocumentAnalyser.class )
+                .name( "Document Analyzer" )
                 .input( source )
                 .build();
-        map.setParameter( "MODEL", model );
+        map.setParameter( "POS-MODEL", model );
         
         FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, map, "Output" );
         RecordOutputFormat.configureRecordFormat( out )
                 .recordDelimiter( '\n' )
                 .fieldDelimiter( '\t' )
-                .field(PactString.class, 0);
+                .field(PactInteger.class, 0)
+                .field(PactString.class, 1);
                 
-        Plan plan = new Plan( out, "Fancy Plan!" );
+        Plan plan = new Plan( out, "DocumentAnalyser" );
         
         return plan;
     }

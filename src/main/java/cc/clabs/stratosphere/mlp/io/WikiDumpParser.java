@@ -16,7 +16,7 @@
  */
 package cc.clabs.stratosphere.mlp.io;
 
-import cc.clabs.stratosphere.mlp.types.WikiPage;
+import cc.clabs.stratosphere.mlp.types.WikiDocument;
 import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.io.TextInputFormat;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  *
  * @author rob
  */
-public class WikiChunkParser extends TextInputFormat  {
+public class WikiDumpParser extends TextInputFormat  {
 
     @Override
     public void configure (Configuration parameter) {
@@ -52,12 +52,12 @@ public class WikiChunkParser extends TextInputFormat  {
         
         if ( !m.find() ) return false;
                 
-        WikiPage page = new WikiPage();
+        WikiDocument page = new WikiDocument();
         
-        page.id = Integer.parseInt( m.group( 3 ) );
-        page.title = m.group( 1 );
-        page.ns = Integer.parseInt( m.group( 2 ) );
-        page.text = StringUtils.unescapeEntities( m.group( 4 ) );
+        page.setId( Integer.parseInt( m.group( 3 ) ) );
+        page.setTitle( m.group( 1 ) );
+        page.setNS( Integer.parseInt( m.group( 2 ) ) );
+        page.setText( StringUtils.unescapeEntities( m.group( 4 ) ) );
         
         target.clear();
         target.setField( 0, page );
