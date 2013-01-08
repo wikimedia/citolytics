@@ -38,7 +38,10 @@ public class TexIdentifierExtractor {
         "sin", "cos", "min", "max", "inf", "lim", "log", "exp",
         "sup", "lim sup", "lim inf", "arg", "dim", "cosh",
         "⋯", ":", "'", "′", "…", "∞", "Λ", "⋮", " ", " ", "~",
-        ";", "#"
+        ";", "#", "π", "e", "ln", "rank",
+        
+        // ignore identifier that are also english (stop-)words
+        "a", "A", "i", "I"
     );
     
     /**
@@ -59,7 +62,7 @@ public class TexIdentifierExtractor {
             return getIdentifiersFrom( xml );
         }
         catch ( Exception e ) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
     
@@ -73,7 +76,7 @@ public class TexIdentifierExtractor {
      *         found, an empty list will be returned.
      */
     private static ArrayList<String> getIdentifiersFrom( String mathml ) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         Pattern p = Pattern.compile( "<([mc]i)>(.*?)</\\1>", Pattern.DOTALL );
         Matcher m = p.matcher( mathml );
         while ( m.find() ) {
@@ -93,7 +96,15 @@ public class TexIdentifierExtractor {
      */
     private static String cleanupTexString( String tex ) {
         // strip text blocks
-        tex = tex.replaceAll( "\\\\text\\{.*?\\}", "" );
+        tex = tex.replaceAll( "\\\\(text|math(:?bb|bf|cal|frak|it|sf|tt))\\{.*?\\}", "" );
+        // strip arbitrary operators
+        tex = tex.replaceAll( "\\\\operatorname\\{.*?\\}", "" );
+        // strip dim/log
+        tex = tex.replaceAll( "\\\\(dim|log)_(\\w+)", "$1" );
+        // strip "is element of" definitions
+        tex = tex.replaceAll( "^(.*?)\\\\in", "$1" );
+        // strip indices
+        tex = tex.replaceAll( "^([^\\s\\\\\\{\\}])_[^\\s\\\\\\{\\}]$", "$1" );
         return tex;
     } 
     

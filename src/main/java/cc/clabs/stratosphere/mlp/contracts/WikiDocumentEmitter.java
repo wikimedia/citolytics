@@ -16,48 +16,47 @@
  */
 package cc.clabs.stratosphere.mlp.contracts;
 
+import cc.clabs.stratosphere.mlp.types.PactIdentifiers;
 import cc.clabs.stratosphere.mlp.types.WikiDocument;
 import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MapStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation.ConstantFields;
-import eu.stratosphere.pact.common.stubs.StubAnnotation.OutCardBounds;
 import eu.stratosphere.pact.common.type.PactRecord;
+import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import eu.stratosphere.pact.common.type.base.PactInteger;
 
 /**
  *
  * @author rob
  */
-@ConstantFields(fields={})
-@OutCardBounds(lowerBound=0, upperBound=OutCardBounds.UNBOUNDED)
-public class DocumentAnalyser extends MapStub {
+public class WikiDocumentEmitter extends MapStub {
         
-    private static final Log LOG = LogFactory.getLog( DocumentAnalyser.class );
-    
-    // initialize reusable mutable objects
-    private final PactRecord output = new PactRecord();
-    private final PactString line = new PactString();
-    private final PactInteger number = new PactInteger();
-    private WikiDocument doc = null;
+    private static final Log LOG = LogFactory.getLog( WikiDocumentEmitter.class );
    
     @Override
     public void map( PactRecord record, Collector<PactRecord> collector ) {
-        doc = (WikiDocument) record.getField( 0, WikiDocument.class );
+        
+        WikiDocument doc = (WikiDocument) record.getField( 0, WikiDocument.class );
         // skip pages from namespaces other than
         if ( doc.getNS() != 0 ) return;
         
         LOG.info( "Analysing Page '"+ doc.getTitle() +"' (id: "+ doc.getId() +")" );
-        LOG.info( "Found Identifiers: "+ doc.getKnownIdentifiers() );
+                
+        // populate the list of known identifiers
+        PactIdentifiers list = new PactIdentifiers();
+        for ( String var : doc.getKnownIdentifiers() )
+            list.add( new PactString( var ) );
         
-        line.setValue( doc.getPlainText() );
-        number.setValue( doc.getId() );
+        LOG.info( "Found Identifiers: "+ list );
         
-        output.setField( 0, number );
-        output.setField( 1, line );
+        
+        // finally emit all parts
+        PactRecord output = new PactRecord();
+        output.setField( 0, new PactInteger( doc.getId() ) );
+        output.setField( 1, new PactString( doc.getPlainText() ) );
+        output.setField( 2, list );
+        
         collector.collect( output );   
     }
 }

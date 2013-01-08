@@ -17,6 +17,7 @@
 package cc.clabs.stratosphere.mlp.types;
 
 import cc.clabs.stratosphere.mlp.utils.PlaintextDocumentBuilder;
+import cc.clabs.stratosphere.mlp.utils.SerializationUtils;
 import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import cc.clabs.stratosphere.mlp.utils.TexIdentifierExtractor;
 
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.mylyn.wikitext.core.parser.MarkupParser;
 import org.eclipse.mylyn.wikitext.core.parser.markup.MarkupLanguage;
@@ -41,10 +44,18 @@ import org.eclipse.mylyn.wikitext.mediawiki.core.MediaWikiLanguage;
  */
 public class WikiDocument implements Value {
     
+    private static final Log LOG = LogFactory.getLog( WikiDocument.class );
+
+    
     /*
      * Raw text of the document
      */
     private String text = null;
+    
+    /*
+     * Plaintext version of the document
+     */
+    private String plaintext = null;
     
     /*
      * Title of the document
@@ -90,12 +101,12 @@ public class WikiDocument implements Value {
      * the HashMap is the replacement string in the document and
      * the value contains the TeX String
      */
-    private HashMap<String,String> formulas = new HashMap<String,String>();
+    private HashMap<String,String> formulas = new HashMap<>();
     
     /*
      * Stores all unique identifiers found in this document
      */
-    private ArrayList<String> knownIdentifiers = new ArrayList<String>();
+    private ArrayList<String> knownIdentifiers = new ArrayList<>();
     
     /**
      * Returns a plaintext version of this document.
@@ -109,24 +120,25 @@ public class WikiDocument implements Value {
         parser.setMarkupLanguage( wiki );
         parser.setBuilder( new PlaintextDocumentBuilder( writer ) );
         parser.parse( text );
-        String body = writer.toString();
-        return body;
+        plaintext = writer.toString();
+        return plaintext;
     }
 
     @Override
     public void write( DataOutput out ) throws IOException {
         out.writeInt( id );
         out.writeInt( ns );
-        this.writeString( out, title );
-        this.writeString( out, text );
+        SerializationUtils.writeString( out, title );
+        SerializationUtils.writeString( out, text );
+        SerializationUtils.writeString( out, plaintext );
         out.writeInt( formulas.size() );
         for ( Entry<String,String> entry : formulas.entrySet() ) {
-            this.writeString( out, entry.getKey() );
-            this.writeString( out, entry.getValue() );
+            SerializationUtils.writeString( out, entry.getKey() );
+            SerializationUtils.writeString( out, entry.getValue() );
         }
         out.write( knownIdentifiers.size() );
         for ( String identifier : knownIdentifiers ) {
-            this.writeString( out, identifier );
+            SerializationUtils.writeString( out, identifier );
         }
     }
 
@@ -134,45 +146,19 @@ public class WikiDocument implements Value {
     public void read( DataInput in ) throws IOException {
         id = in.readInt();
         ns = in.readInt();
-        title = readNextString( in );
-        text = readNextString( in );
+        title = SerializationUtils.readNextString( in );
+        text = SerializationUtils.readNextString( in );
+        plaintext = SerializationUtils.readNextString( in );
         // math tags
         for ( int i = in.readInt(); i > 0 ; i-- ) {
-            String key = readNextString( in );
-            String value = readNextString( in );
+            String key = SerializationUtils.readNextString( in );
+            String value = SerializationUtils.readNextString( in );
             formulas.put( key, value );
         }
         // identifiers
         for ( int i = in.readInt(); i > 0 ; i-- ) {
-            knownIdentifiers.add( this.readNextString( in ) );
+            knownIdentifiers.add( SerializationUtils.readNextString( in ) );
         }
-    }
-    
-    /**
-     * Helper function to read the next string from a stream.
-     * 
-     * @param in the input stream
-     * @return the extracted string
-     * @throws IOException 
-     */
-    private String readNextString( DataInput in ) throws IOException {
-        int len = in.readInt();
-        byte[] buffer = new byte[ len ];
-        in.readFully( buffer );
-        return buffer.toString();
-    }
-    
-    
-    /**
-     * Helper function to write a string into a given stream
-     * 
-     * @param out the output stream
-     * @param string the string to be written
-     * @throws IOException 
-     */
-    private void writeString( DataOutput out, String string ) throws IOException {
-        out.writeInt( string.length() );
-        out.writeUTF( string );
     }
     
     /**
