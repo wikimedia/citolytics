@@ -17,7 +17,7 @@
 package cc.clabs.stratosphere.mlp.types;
 
 import edu.stanford.nlp.ling.TaggedWord;
-import eu.stratosphere.pact.common.type.Value;
+import eu.stratosphere.pact.common.type.Key;
 import eu.stratosphere.pact.common.type.base.PactString;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * @author rob
  */
-public class PactWord implements Value {
+public class PactWord implements Key {
     
     
     /*
@@ -131,6 +131,15 @@ public class PactWord implements Value {
     public void read( final DataInput in ) throws IOException {
         word.read( in );
         tag.read( in );
+    }
+
+    @Override
+    public int compareTo( Key o ) {
+        PactWord other = (PactWord) o;
+        if (  this.word.equals( other.word ) &&  this.tag.equals( other.tag ) )
+            return 0;
+        else
+            return this.word.compareTo( other.word );
     }
 
 }

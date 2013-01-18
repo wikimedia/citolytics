@@ -18,6 +18,7 @@ package cc.clabs.stratosphere.mlp.contracts;
 
 import cc.clabs.stratosphere.mlp.types.PactSentence;
 import cc.clabs.stratosphere.mlp.types.PactWord;
+import cc.clabs.stratosphere.mlp.utils.SentenceUtils;
 import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.type.PactRecord;
@@ -30,6 +31,7 @@ import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,6 +64,7 @@ public class SentenceEmitter extends MapStub {
             // populate a wordlist
             for ( TaggedWord word : tagger.tagSentence( tokens ) )
                 sentence.add( new PactWord( word ) );
+            sentence = SentenceUtils.joinByTagPattern( sentence, "\" * \"", "ENTITY" );
             // emit the sentence
             output.setField( 1, sentence );
             collector.collect( output );

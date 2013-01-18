@@ -44,8 +44,8 @@ public class PlaintextDocumentBuilder extends DocumentBuilder {
      * These lists store all blocks within a block/span that will
      * not be rendered.
      */
-    private LinkedList<BlockType> skipBlocks = new LinkedList<BlockType>();
-    private LinkedList<SpanType> skipSpans = new LinkedList<SpanType>();
+    private LinkedList<BlockType> skipBlocks = new LinkedList<>();
+    private LinkedList<SpanType> skipSpans = new LinkedList<>();
    
     
     public PlaintextDocumentBuilder( StringWriter stream ) {
