@@ -31,27 +31,21 @@ public class SentenceUtils {
     public final static String WILDCARD = "*";
         
     public static PactSentence replaceAllByPattern( PactSentence sentence, String regex, String withTag ) {
-        PactSentence result = new PactSentence();
-        for ( PactWord word: sentence ) {
+        for ( PactWord word: sentence )
             if ( word.getWord().matches( regex ) )
                 word.setTag( withTag );
-            result.add( word );
-        }
-        return result;
+        return sentence;
     }
     
     public static PactSentence replaceAllByTag( PactSentence sentence, String tag, String regex, String replacement ) {
-        PactSentence result = new PactSentence();
-        for ( PactWord word : sentence ) {
+        for ( PactWord word : sentence )
             // skip other words than those with a specific tag
             if ( word.getTag().equals( tag ) ) {
                 String text = word.getWord();
                 text = text.replaceAll( regex, replacement );
                 word.setWord( text );
             }
-            result.add( word );
-        }
-        return result;
+        return sentence;
     }
 
     /**
