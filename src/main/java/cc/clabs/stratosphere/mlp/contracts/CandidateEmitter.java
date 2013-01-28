@@ -31,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author rob
  */
-public class SentenceTagger extends CoGroupStub {
+public class CandidateEmitter extends CoGroupStub {
         
-    private static final Log LOG = LogFactory.getLog( SentenceTagger.class );
+    private static final Log LOG = LogFactory.getLog( CandidateEmitter.class );
     
     @Override
     public void coGroup( Iterator<PactRecord> left, Iterator<PactRecord> right, Collector<PactRecord> collector ) {
@@ -50,8 +50,8 @@ public class SentenceTagger extends CoGroupStub {
         // populating sentences list
         ArrayList<PactSentence> sentences =  new ArrayList<>();
         while ( right.hasNext() )
+            // we need to clone the sentence objects, because of reused objects
             sentences.add( (PactSentence) right.next().getField( 1, PactSentence.class ).clone() );
-
 
         PactRecord output = new PactRecord();
         
@@ -60,7 +60,7 @@ public class SentenceTagger extends CoGroupStub {
                 if ( sentence.containsWord( identifier ) ) {
                     //output the sentence
                     output.setField( 0, identifier );
-                    output.setField( 1, new PactString( sentence.toString() ) );
+                    output.setField( 1, sentence );
                     collector.collect( output );
                 }
             }

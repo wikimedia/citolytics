@@ -68,9 +68,11 @@ public class PactWord implements Key {
         String t = word.tag();
         if ( v.equals( "-LRB-" ) ) v = "(";
         if ( v.equals( "-RRB-" ) ) v = ")";
-        if ( v.equals( "``" ) ) v = "\"";
-        if ( v.equals( "''" ) ) v = "\"";
-        if (  v.equals( "--" ) ) v = "-";
+        if ( t.equals( "``" ) )    t = "\"";
+        if ( t.equals( "''" ) )    t = "\"";
+        if ( v.equals( "``" ) )    v = "\"";
+        if ( v.equals( "''" ) )    v = "\"";
+        if ( v.equals( "--" ) )    v = "-";
         this.setWord( v );
         this.setTag( t );
     }
@@ -140,6 +142,11 @@ public class PactWord implements Key {
             return 0;
         else
             return this.word.compareTo( other.word );
+    }
+    
+    @Override
+    public String toString() {
+        return this.getWord();
     }
 
 }

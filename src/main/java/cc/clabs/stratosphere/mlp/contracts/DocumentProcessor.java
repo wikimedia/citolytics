@@ -30,9 +30,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author rob
  */
-public class WikiDocumentEmitter extends MapStub {
+public class DocumentProcessor extends MapStub {
         
-    private static final Log LOG = LogFactory.getLog( WikiDocumentEmitter.class );
+    private static final Log LOG = LogFactory.getLog( DocumentProcessor.class );
    
     @Override
     public void map( PactRecord record, Collector<PactRecord> collector ) {

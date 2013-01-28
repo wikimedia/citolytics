@@ -12,7 +12,7 @@
   |_|               -->
   <groupId>cc.clabs.stratosphere</groupId>
   <artifactId>mlp</artifactId>
-  <version>0.1.7</version>
+  <version>0.2.1</version>
   <packaging>jar</packaging>
   <name>DBPRO: Mathematical Language Processing</name>
   
@@ -81,7 +81,7 @@
             </descriptorRefs>
             <archive>
               <manifestEntries>
-                <Pact-Assembler-Class>cc.clabs.stratosphere.mlp.WikiParser</Pact-Assembler-Class>
+                <Pact-Assembler-Class>cc.clabs.stratosphere.mlp.RelationFinder</Pact-Assembler-Class>
               </manifestEntries>
             </archive>
           </configuration>

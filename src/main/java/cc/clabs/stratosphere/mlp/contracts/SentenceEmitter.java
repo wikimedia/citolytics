@@ -42,7 +42,7 @@ public class SentenceEmitter extends MapStub {
     
     MaxentTagger tagger = null;
         
-    private final PactRecord output = new PactRecord();
+    //private final PactRecord output = new PactRecord();
 
     @Override
     public void open(Configuration parameter) throws Exception {
@@ -53,6 +53,7 @@ public class SentenceEmitter extends MapStub {
     
     @Override
     public void map( PactRecord record, Collector<PactRecord> collector ) {
+        PactRecord output = new PactRecord();
         // field 0 remains the same (id of the document)
         output.setField( 0, record.getField( 0, PactInteger.class ) );       
         String plaintext = record.getField( 1, PactString.class ).getValue();        
@@ -61,11 +62,15 @@ public class SentenceEmitter extends MapStub {
         for ( List<HasWord> tokens : MaxentTagger.tokenizeText( new StringReader( plaintext ) ) ) {
             // for each detected sentence
             PactSentence sentence = new PactSentence();
-            // populate a wordlist
+            // populate a wordlist/sentence
             for ( TaggedWord word : tagger.tagSentence( tokens ) )
                 sentence.add( new PactWord( word ) );
+            // postprocess the sentence
             sentence = SentenceUtils.joinByTagPattern( sentence, "\" * \"", "ENTITY" );
-            // emit the sentence
+            sentence = SentenceUtils.replaceAllByTag( sentence, "ENTITY", "[\"]", "" );
+            sentence = SentenceUtils.replaceAllByTag( sentence, "ENTITY", "^ | $", "" );
+            sentence = SentenceUtils.replaceAllByPattern( sentence, "MATH[0-9A-F]+", "FORMULA" );
+            // emit the final sentence
             output.setField( 1, sentence );
             collector.collect( output );
         }

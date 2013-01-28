@@ -18,6 +18,7 @@ package cc.clabs.stratosphere.mlp.types;
 
 import eu.stratosphere.pact.common.type.base.PactList;
 import eu.stratosphere.pact.common.type.base.PactString;
+import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,18 +33,31 @@ public class PactSentence extends PactList<PactWord> implements Cloneable {
     
     /**
      * 
+     * @param word
+     * @return 
+     */
+    public ArrayList<Integer> getWordPosition( String word ) {
+        ArrayList<Integer> positions = new ArrayList<>();
+        String token;
+        Integer position = -1;
+        Iterator<PactWord> it = this.iterator();
+        while ( it.hasNext() ) {
+            position += 1;
+            token = it.next().getWord();
+            if ( token.equals( word ) )
+                positions.add( position );
+        }
+        return positions;        
+    }
+    
+    
+    /**
+     * 
      * @param value
      * @return 
      */
-    public boolean containsWord( String value ) {
-        boolean found = false;
-        String word;
-        Iterator<PactWord> it = this.iterator();
-        while ( it.hasNext() ) {
-            word = it.next().getWord();
-            found = found || word.equals( value );
-        }
-        return found;
+    public boolean containsWord( String word ) {
+        return !getWordPosition( word ).isEmpty();
     }
 
     /**

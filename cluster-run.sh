@@ -28,6 +28,11 @@ CLIENT=$STRATOSPHERE/bin/pact-client.sh
 LOGFILE=$STRATOSPHERE/log/nephele-rob-jobmanager-<your machine name>.log
 
 
+ALPHA="1"
+BETA="1"
+GAMMA="1"
+THRESHOLD="0.5"
+
 
 # ----------------------------------------
 #  *** This is where the magic happens ***
@@ -89,4 +94,4 @@ colorcodes
 drawlogo
 
 log INFO "sending mlp job to stratosphere"
-($CLIENT run -j $MLP -a file://$DATASET file://$OUTPUT $MODEL & tail -f -n 0 $LOGFILE) || die
+($CLIENT run -j $MLP -a file://$DATASET file://$OUTPUT $MODEL $ALPHA $BETA $GAMMA $THRESHOLD & tail -f -n 0 $LOGFILE) || die

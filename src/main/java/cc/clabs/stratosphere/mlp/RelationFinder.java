@@ -18,6 +18,7 @@ package cc.clabs.stratosphere.mlp;
 
 import cc.clabs.stratosphere.mlp.contracts.*;
 import cc.clabs.stratosphere.mlp.io.*;
+import cc.clabs.stratosphere.mlp.types.*;
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.nephele.configuration.GlobalConfiguration;
 
@@ -26,10 +27,11 @@ import eu.stratosphere.pact.common.io.RecordOutputFormat;
 import eu.stratosphere.pact.common.plan.Plan;
 import eu.stratosphere.pact.common.plan.PlanAssembler;
 import eu.stratosphere.pact.common.plan.PlanAssemblerDescription;
+import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 
-public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
+public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
 
     /**
     * {@inheritDoc}
@@ -41,16 +43,21 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
         String output = args[1];
         String model = args[2];
         
+        String alpha = args[3];
+        String beta  = args[4];
+        String gamma = args[5];
+        String threshold = args[6];
+        
         Configuration conf = GlobalConfiguration.getConfiguration();
         conf.setInteger( "pact.parallelization.degree", -1 );
         conf.setInteger( "pact.parallelization.max-intra-node-degree", -1 );
         conf.setBoolean( "jobmanager.profiling.enable", true );
         
-        FileDataSource source = new FileDataSource( WikiDumpParser.class, dataset, "Dumps" );
+        FileDataSource source = new FileDataSource( WikiDocumentEmitter.class, dataset, "Dumps" );
         
         MapContract doc = MapContract
-                .builder( WikiDocumentEmitter.class )
-                .name( "WikiDocuments" )
+                .builder( DocumentProcessor.class )
+                .name( "Processing Documents" )
                 .input( source )
                 .build();
         
@@ -61,21 +68,35 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
                 .build();
         sentences.setParameter( "POS-MODEL", model );
         
-        CoGroupContract tagger = CoGroupContract
-                .builder( SentenceTagger.class, PactInteger.class, 0, 0 )
-                .name( "Tagger" )
+        CoGroupContract candidates = CoGroupContract
+                .builder( CandidateEmitter.class, PactInteger.class, 0, 0 )
+                .name( "Candidates" )
                 .input1( doc )
                 .input2( sentences )
                 .build();
         
-        FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, tagger, "Output" );
+        ReduceContract kernel = ReduceContract
+                .builder( Analyzer.class, PactString.class, 0 )
+                .name( "Kernel" )
+                .input( candidates )
+                .build();
+        
+        kernel.setParameter( "α", alpha );
+        kernel.setParameter( "β", beta );
+        kernel.setParameter( "γ", gamma );
+        kernel.setParameter( "THRESHOLD", threshold );
+        
+        FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, kernel, "Output" );
         RecordOutputFormat.configureRecordFormat( out )
                 .recordDelimiter( '\n' )
                 .fieldDelimiter( '\t' )
-                .field(PactString.class, 0)
-                .field(PactString.class, 1);
+                .field( PactString.class, 0 )
+                .field( PactDouble.class, 1 )
+                .field( PactInteger.class, 2 )
+                .field( PactWord.class, 3 )
+                .field( PactSentence.class, 4 );
                 
-        Plan plan = new Plan( out, "WikiParser" );
+        Plan plan = new Plan( out, "Relation Finder" );
         
         return plan;
     }
@@ -85,7 +106,7 @@ public class WikiParser implements PlanAssembler, PlanAssemblerDescription {
     */
     @Override
     public String getDescription() {
-        return "Parameters: [input] [output]";
+        return "Parameters: [DATASET] [OUTPUT] [MODEL] [ALPHA] [BETA] [GAMMA] [THRESHOLD]";
     }
     
 }

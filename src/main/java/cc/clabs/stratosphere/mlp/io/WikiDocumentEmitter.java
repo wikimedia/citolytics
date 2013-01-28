@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  *
  * @author rob
  */
-public class WikiDumpParser extends TextInputFormat  {
+public class WikiDocumentEmitter extends TextInputFormat  {
 
     @Override
     public void configure (Configuration parameter) {
