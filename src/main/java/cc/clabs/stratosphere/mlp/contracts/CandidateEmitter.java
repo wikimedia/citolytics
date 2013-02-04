@@ -49,7 +49,7 @@ public class CandidateEmitter extends CoGroupStub {
     
     private final static List<String> blacklist = Arrays.asList(
         "function", "functions",
-        "behavior", "infinity", "sum", "other", "=",
+        "behavior", "infinity", "sum", "other", "=", "|",
         "equation", "equations",
         "value", "values",
         "solution", "solutions",
@@ -195,14 +195,14 @@ public class CandidateEmitter extends CoGroupStub {
     
     /**
      * 
-     * @param distance
+     * @param Δ
      * @param ω
      * @param Ω
      * @param x
      * @return 
      */
-    private Double getScore( Integer distance, Integer ω, Integer Ω, Integer x ) {        
-        Double dist = gaussian( (double) distance, 3d );
+    private Double getScore( Integer Δ, Integer ω, Integer Ω, Integer x ) {        
+        Double dist = gaussian( (double) Δ, 3d );
         Double freq = (double) ω / (double) Ω;
         Double seq = gaussian( (double) x, 2d );
         return ( α * dist + β * freq + γ * seq ) / ( α + β + γ );
@@ -220,7 +220,7 @@ public class CandidateEmitter extends CoGroupStub {
      * @return 
      */
     private Double gaussian( Double x, Double C ) {
-        return Math.pow( Math.E, - Math.pow( x / ( 2 * C ) , 2d ) );
+        return Math.pow( Math.E, - Math.pow( x / ( 2d * C ) , 2d ) );
     }
 
      
