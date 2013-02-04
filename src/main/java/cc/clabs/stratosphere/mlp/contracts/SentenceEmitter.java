@@ -28,10 +28,10 @@ import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import eu.stratosphere.nephele.configuration.Configuration;
+import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +39,7 @@ import java.util.List;
  * @author rob
  */
 public class SentenceEmitter extends MapStub {
-    
+        
     MaxentTagger tagger = null;
         
     //private final PactRecord output = new PactRecord();
@@ -57,9 +57,11 @@ public class SentenceEmitter extends MapStub {
         // field 0 remains the same (id of the document)
         output.setField( 0, record.getField( 0, PactInteger.class ) );       
         String plaintext = record.getField( 1, PactString.class ).getValue();        
-                        
         // tokenize the plaintext
-        for ( List<HasWord> tokens : MaxentTagger.tokenizeText( new StringReader( plaintext ) ) ) {
+        List<List<HasWord>> tokenized = MaxentTagger.tokenizeText( new StringReader( plaintext ) );
+        Integer position = -1;    
+        for ( List<HasWord> tokens :  tokenized ) {
+            position += 1;
             // for each detected sentence
             PactSentence sentence = new PactSentence();
             // populate a wordlist/sentence
@@ -72,6 +74,7 @@ public class SentenceEmitter extends MapStub {
             sentence = SentenceUtils.replaceAllByPattern( sentence, "MATH[0-9A-F]+", "FORMULA" );
             // emit the final sentence
             output.setField( 1, sentence );
+            output.setField( 2, new PactDouble( (double) position / (double) tokenized.size() ) );
             collector.collect( output );
         }
     }

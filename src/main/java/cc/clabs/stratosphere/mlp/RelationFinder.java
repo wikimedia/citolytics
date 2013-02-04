@@ -74,27 +74,31 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
                 .input1( doc )
                 .input2( sentences )
                 .build();
+        // order sentences by their position within the document
+        candidates.setGroupOrderForInputTwo( new Ordering( 2, PactDouble.class, Order.ASCENDING ) );
+        // set the weighting factors
+        candidates.setParameter( "α", alpha );
+        candidates.setParameter( "β", beta );
+        candidates.setParameter( "γ", gamma );
+
         
-        ReduceContract kernel = ReduceContract
-                .builder( Analyzer.class, PactString.class, 0 )
-                .name( "Kernel" )
+        ReduceContract filter = ReduceContract
+                .builder( FilterCandidates.class, PactInteger.class, 0 )
+                .name( "Filter" )
                 .input( candidates )
                 .build();
+        // order candidates by the identifier
+        filter.setGroupOrder( new Ordering( 1, PactString.class, Order.ASCENDING ) );
+        // sets the minimum threshold for a candidate's score
+        filter.setParameter( "THRESHOLD", threshold );
+
         
-        kernel.setParameter( "α", alpha );
-        kernel.setParameter( "β", beta );
-        kernel.setParameter( "γ", gamma );
-        kernel.setParameter( "THRESHOLD", threshold );
         
-        FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, kernel, "Output" );
+        FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, filter, "Output" );
         RecordOutputFormat.configureRecordFormat( out )
                 .recordDelimiter( '\n' )
                 .fieldDelimiter( '\t' )
-                .field( PactString.class, 0 )
-                .field( PactDouble.class, 1 )
-                .field( PactInteger.class, 2 )
-                .field( PactWord.class, 3 )
-                .field( PactSentence.class, 4 );
+                .field( PactRelation.class, 0 );
                 
         Plan plan = new Plan( out, "Relation Finder" );
         
