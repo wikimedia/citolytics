@@ -33,30 +33,46 @@ import org.apache.commons.logging.LogFactory;
 public class DocumentProcessor extends MapStub {
         
     private static final Log LOG = LogFactory.getLog( DocumentProcessor.class );
+    
+    private final PactString plaintext = new PactString();
+    private final PactIdentifiers list = new PactIdentifiers();
+    private final PactInteger id = new PactInteger();
+    private final PactRecord target = new PactRecord();
    
     @Override
     public void map( PactRecord record, Collector<PactRecord> collector ) {
         
         WikiDocument doc = (WikiDocument) record.getField( 0, WikiDocument.class );
+        
         // skip pages from namespaces other than
         if ( doc.getNS() != 0 ) return;
         
         LOG.info( "Analysing Page '"+ doc.getTitle() +"' (id: "+ doc.getId() +")" );
                 
         // populate the list of known identifiers
-        PactIdentifiers list = new PactIdentifiers();
+        list.clear();
         for ( String var : doc.getKnownIdentifiers() )
             list.add( new PactString( var ) );
+
+        // generate a plaintext version of the document
+        plaintext.setValue( doc.getPlainText() );
         
-        LOG.info( "Found Identifiers: "+ list );
-        
-        
+        // set the id
+        id.setValue( doc.getId() );
+                
         // finally emit all parts
-        PactRecord output = new PactRecord();
-        output.setField( 0, new PactInteger( doc.getId() ) );
-        output.setField( 1, new PactString( doc.getPlainText() ) );
-        output.setField( 2, list );
-        
-        collector.collect( output );   
+        target.clear();
+        target.setField( 0, id );
+        target.setField( 1, plaintext );
+        target.setField( 2, list );
+        collector.collect( target );   
     }
 }
+
+
+
+
+
+
+
+

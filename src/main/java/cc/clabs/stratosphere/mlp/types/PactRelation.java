@@ -23,7 +23,6 @@ import eu.stratosphere.pact.common.type.base.PactString;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Formatter;
 
 /**
  *

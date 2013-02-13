@@ -17,12 +17,10 @@
 package cc.clabs.stratosphere.mlp.contracts;
 
 import cc.clabs.stratosphere.mlp.types.PactRelation;
-import cc.clabs.stratosphere.mlp.types.PactSentence;
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.ReduceStub;
 import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactDouble;
 
 import java.util.Iterator;
 
@@ -37,15 +35,24 @@ public class FilterCandidates extends ReduceStub {
         
     private static final Log LOG = LogFactory.getLog( FilterCandidates.class );
     
+    /**
+     * 
+     */
     private Double threshold;
     
-    private PactRecord output = new PactRecord();
+    /**
+     * 
+     */
+    private final PactRecord target = new PactRecord();
 
+    
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open( parameter );
         threshold = Double.parseDouble( parameter.getString( "THRESHOLD", "0.8" ) );
     }
+    
+    
     @Override
     public void reduce( Iterator<PactRecord> iterator, Collector<PactRecord> collector ) throws Exception {
         PactRelation relation;
@@ -60,8 +67,8 @@ public class FilterCandidates extends ReduceStub {
             if ( relation.getScore().getValue() < threshold ) continue;
             
             // emit
-            output.setField( 0, relation );
-            collector.collect( output );
+            target.setField( 0, relation );
+            collector.collect( target );
         }
     }
 

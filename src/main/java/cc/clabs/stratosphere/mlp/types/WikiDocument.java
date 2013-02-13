@@ -22,6 +22,8 @@ import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import cc.clabs.stratosphere.mlp.utils.TexIdentifierExtractor;
 
 import eu.stratosphere.pact.common.type.Value;
+import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.stratosphere.pact.common.type.base.PactString;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -48,24 +50,24 @@ public class WikiDocument implements Value {
 
     
     /*
-     * Raw text of the document
+     * Raw raw of the document
      */
-    private String text = null;
+    private PactString raw = new PactString();
     
     /*
      * Plaintext version of the document
      */
-    private String plaintext = null;
+    private PactString plaintext = new PactString();
     
     /*
      * Title of the document
      */
-    private String title = null;
+    private PactString title = new PactString();
     
     /*
      * Wikipedia id of the document
      */
-    private Integer id = null;
+    private PactInteger id = new PactInteger();
     
     /**
      * Wikipedia pages belong to different namespaces. Below
@@ -94,7 +96,7 @@ public class WikiDocument implements Value {
      *  108	Book
      *  109	Book talk
      */
-    private Integer ns = null;
+    private PactInteger ns = new PactInteger();
     
     /*
      * Holds all formulas found within the document. The key of
@@ -119,18 +121,18 @@ public class WikiDocument implements Value {
         MarkupLanguage wiki = new MediaWikiLanguage();
         parser.setMarkupLanguage( wiki );
         parser.setBuilder( new PlaintextDocumentBuilder( writer ) );
-        parser.parse( text );
-        plaintext = writer.toString();
-        return plaintext;
+        parser.parse( raw.getValue() );
+        plaintext.setValue( writer.toString() );
+        return plaintext.getValue();
     }
 
     @Override
     public void write( DataOutput out ) throws IOException {
-        out.writeInt( id );
-        out.writeInt( ns );
-        SerializationUtils.writeString( out, title );
-        SerializationUtils.writeString( out, text );
-        SerializationUtils.writeString( out, plaintext );
+        id.write( out );
+        ns.write( out );
+        title.write( out );
+        raw.write( out );
+        plaintext.write( out );
         out.writeInt( formulas.size() );
         for ( Entry<String,String> entry : formulas.entrySet() ) {
             SerializationUtils.writeString( out, entry.getKey() );
@@ -144,11 +146,11 @@ public class WikiDocument implements Value {
 
     @Override
     public void read( DataInput in ) throws IOException {
-        id = in.readInt();
-        ns = in.readInt();
-        title = SerializationUtils.readNextString( in );
-        text = SerializationUtils.readNextString( in );
-        plaintext = SerializationUtils.readNextString( in );
+        id.read( in );
+        ns.read( in );
+        title.read( in );
+        raw.read( in );
+        plaintext.read( in );
         // math tags
         for ( int i = in.readInt(); i > 0 ; i-- ) {
             String key = SerializationUtils.readNextString( in );
@@ -167,7 +169,7 @@ public class WikiDocument implements Value {
      * @return id of the document
      */
     public int getId() {
-        return id;
+        return id.getValue();
     }
     
     /**
@@ -176,7 +178,7 @@ public class WikiDocument implements Value {
      * @return title of the document
      */
     public String getTitle() {
-        return title;
+        return title.getValue();
     }
     
     
@@ -184,8 +186,8 @@ public class WikiDocument implements Value {
      * Sets the id of the document
      * @param id
      */
-    public void setId( int id ) {
-        this.id = id;
+    public void setId( Integer id ) {
+        this.id.setValue( id );
     }
 
     /**
@@ -193,7 +195,7 @@ public class WikiDocument implements Value {
      * @param title 
      */
     public void setTitle( String title ) {
-        this.title = title;
+        this.title.setValue( title );
     }
 
     /**
@@ -202,7 +204,7 @@ public class WikiDocument implements Value {
      * @return namespace id
      */
     public int getNS() {
-        return ns;
+        return ns.getValue();
     }
 
     /**
@@ -211,25 +213,25 @@ public class WikiDocument implements Value {
      * @param ns 
      */
     public void setNS( int ns ) {
-        this.ns = ns;
+        this.ns.setValue( ns );
     }
 
     /**
-     * Returns the raw text body of the document.
+     * Returns the raw raw body of the document.
      * 
-     * @return the text body
+     * @return the raw body
      */
     public String getText() {
-        return text;
+        return raw.getValue();
     }
     
     /**
-     * Sets the text body of the document.
+     * Sets the raw body of the document.
      * 
-     * @param text 
+     * @param raw 
      */
     public void setText( String text ) {
-        this.text = StringUtils.unescapeEntities( text );
+        this.raw.setValue( StringUtils.unescapeEntities( text ) );
         this.replaceMathTags();
     }
     
@@ -242,7 +244,8 @@ public class WikiDocument implements Value {
     private void replaceMathTags() {
         Pattern p = Pattern.compile( "<math>(.*?)</math>", Pattern.DOTALL );
         Matcher m;
-        String key, formula;
+        String key, formula, text = raw.getValue();
+        
         while ( (m = p.matcher( text )).find() ) {
             
             key = " MATH" + Long.toHexString( (long) (Math.random() * 0x3b9aca00) ).toUpperCase() + " ";
@@ -269,6 +272,7 @@ public class WikiDocument implements Value {
             }            
             
         }
+        raw.setValue( text );
     }
     
     /**

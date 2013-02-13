@@ -27,6 +27,7 @@ import eu.stratosphere.pact.common.type.base.PactString;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.tagger.maxent.TaggerConfig;
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
@@ -39,23 +40,34 @@ import java.util.List;
  * @author rob
  */
 public class SentenceEmitter extends MapStub {
+    
+    /**
+     * 
+     */
+    private MaxentTagger tagger = null;
         
-    MaxentTagger tagger = null;
-        
-    //private final PactRecord output = new PactRecord();
+    /**
+     * 
+     */
+    private final PactRecord target = new PactRecord();
 
+    
     @Override
     public void open(Configuration parameter) throws Exception {
       super.open( parameter );
-      String model = parameter.getString( "POS-MODEL", "models/wsj-0-18-left3words-distsim.tagger" );
+      String model = parameter.getString( "POS-MODEL", "models/wsj-0-18-left3words-distsim.tagger" );     
+      // tokenizerOptions -> untokenizable=noneDelete
+      // should be used to avoid tokenizing f(x) to f(xx  etc.
+      // http://nlp.stanford.edu/nlp/javadoc/javanlp/edu/stanford/nlp/process/PTBTokenizer.html
       tagger = new MaxentTagger( model );
     }
     
+    
     @Override
     public void map( PactRecord record, Collector<PactRecord> collector ) {
-        PactRecord output = new PactRecord();
+        target.clear();
         // field 0 remains the same (id of the document)
-        output.setField( 0, record.getField( 0, PactInteger.class ) );       
+        target.setField( 0, record.getField( 0, PactInteger.class ) );       
         String plaintext = record.getField( 1, PactString.class ).getValue();        
         // tokenize the plaintext
         List<List<HasWord>> tokenized = MaxentTagger.tokenizeText( new StringReader( plaintext ) );
@@ -73,9 +85,9 @@ public class SentenceEmitter extends MapStub {
             sentence = SentenceUtils.replaceAllByTag( sentence, "ENTITY", "^ | $", "" );
             sentence = SentenceUtils.replaceAllByPattern( sentence, "MATH[0-9A-F]+", "FORMULA" );
             // emit the final sentence
-            output.setField( 1, sentence );
-            output.setField( 2, new PactDouble( (double) position / (double) tokenized.size() ) );
-            collector.collect( output );
+            target.setField( 1, sentence );
+            target.setField( 2, new PactDouble( (double) position / (double) tokenized.size() ) );
+            collector.collect( target );
         }
     }
 }
