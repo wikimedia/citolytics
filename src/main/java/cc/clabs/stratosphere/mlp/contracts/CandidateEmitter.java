@@ -205,7 +205,7 @@ public class CandidateEmitter extends CoGroupStub {
         Double dist = gaussian( (double) Δ, 3d );
         Double freq = (double) ω / (double) Ω;
         Double seq = gaussian( (double) x, 2d );
-        return ( α * dist + β * freq + γ * seq ) / ( α + β + γ );
+        return ( α * dist + β * seq + γ * freq ) / ( α + β + γ );
     }
     
     
