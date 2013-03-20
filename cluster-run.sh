@@ -30,8 +30,8 @@ LOGFILE=$STRATOSPHERE/log/nephele-rob-jobmanager-<your machine name>.log
 
 ALPHA="1"
 BETA="1"
-GAMMA="1"
-THRESHOLD="0.5"
+GAMMA="0.5"
+THRESHOLD="0.8"
 
 
 # ----------------------------------------
