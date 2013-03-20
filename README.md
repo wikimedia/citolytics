@@ -3,8 +3,8 @@ Mathematical Language Processing
 
 # Run
 * compile the maven project
-* adapt the paths to your environment in the file `cluster-run.sh`
-* setup the right values for the ranking algorithms paramters also in `cluster-run.sh`
+* adapt the paths to your stratosphere environment in the file `cluster-run.sh`
+* setup the right values for the parameters of the ranking algorithm also in `cluster-run.sh`
 * execute the script
 
 
