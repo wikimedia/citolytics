@@ -41,7 +41,10 @@ public class TexIdentifierExtractor {
         ";", "#", "π", "e", "ln", "rank",
         
         // ignore identifier that are also english (stop-)words
-        "a", "A", "i", "I"
+        "a", "A", "i", "I",
+        
+        // ignore special chars
+        "$", "\\"
     );
     
     /**
