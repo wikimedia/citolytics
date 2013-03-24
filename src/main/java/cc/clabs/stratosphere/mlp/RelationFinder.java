@@ -49,9 +49,11 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
         String threshold = args[6];
         
         Configuration conf = GlobalConfiguration.getConfiguration();
-        conf.setInteger( "pact.parallelization.degree", -1 );
-        conf.setInteger( "pact.parallelization.max-intra-node-degree", -1 );
-        conf.setBoolean( "jobmanager.profiling.enable", true );
+        // equals number of cores per node
+        conf.setInteger( "pact.parallelization.max-intra-node-degree", 2 );
+        //conf.setBoolean( "jobmanager.profiling.enable", true );
+        //conf.setInteger( "pact.parallelization.degree", -1 );
+
         
         FileDataSource source = new FileDataSource( WikiDocumentEmitter.class, dataset, "Dumps" );
         
