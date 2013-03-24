@@ -202,9 +202,9 @@ public class CandidateEmitter extends CoGroupStub {
      * @return 
      */
     private Double getScore( Integer Δ, Integer ω, Integer Ω, Integer x ) {        
-        Double dist = gaussian( (double) Δ, 3d );
+        Double dist = gaussian( (double) Δ, 5d / Math.sqrt( 2 * Math.log( 2 ) ) );
+        Double seq = gaussian( (double) x, 3d / Math.sqrt( 2 * Math.log( 2 ) ) );
         Double freq = (double) ω / (double) Ω;
-        Double seq = gaussian( (double) x, 2d );
         return ( α * dist + β * seq + γ * freq ) / ( α + β + γ );
     }
     
@@ -220,7 +220,8 @@ public class CandidateEmitter extends CoGroupStub {
      * @return 
      */
     private Double gaussian( Double x, Double C ) {
-        return Math.pow( Math.E, - Math.pow( x / ( 2d * C ) , 2d ) );
+        return Math.exp( - Math.pow( x, 2d ) /
+               ( 2d * Math.pow( 2d * C, 2d ) ) );
     }
 
      
