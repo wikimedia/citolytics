@@ -27,7 +27,6 @@ import eu.stratosphere.pact.common.type.base.PactString;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.tagger.maxent.TaggerConfig;
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;

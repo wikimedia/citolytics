@@ -50,7 +50,7 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
         
         Configuration conf = GlobalConfiguration.getConfiguration();
         // equals number of cores per node
-        conf.setInteger( "pact.parallelization.max-intra-node-degree", 2 );
+        //conf.setInteger( "pact.parallelization.max-intra-node-degree", 2 );
         //conf.setBoolean( "jobmanager.profiling.enable", true );
         //conf.setInteger( "pact.parallelization.degree", -1 );
 
@@ -90,7 +90,7 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
                 .input( candidates )
                 .build();
         // order candidates by the identifier
-        filter.setGroupOrder( new Ordering( 1, PactString.class, Order.ASCENDING ) );
+        filter.setGroupOrder( new Ordering( 1, PactRelation.class, Order.ASCENDING ) );
         // sets the minimum threshold for a candidate's score
         filter.setParameter( "THRESHOLD", threshold );
 
@@ -103,7 +103,6 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
                 .field( PactRelation.class, 0 );
                 
         Plan plan = new Plan( out, "Relation Finder" );
-        
         return plan;
     }
 

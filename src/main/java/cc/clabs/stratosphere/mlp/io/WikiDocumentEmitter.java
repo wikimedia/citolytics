@@ -46,21 +46,23 @@ public class WikiDocumentEmitter extends TextInputFormat  {
         super.readRecord( target, bytes, offset, numBytes );
         String content = target.getField( 0, PactString.class ).getValue();
         
+        // search for a page-xml entity
         Pattern pageRegex = Pattern.compile( "(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL );
-        
         Matcher m = pageRegex.matcher( content );
-        
+        // if the record does not contain parsable page-xml
         if ( !m.find() ) return false;
-                
-        WikiDocument page = new WikiDocument();
         
-        page.setId( Integer.parseInt( m.group( 3 ) ) );
-        page.setTitle( m.group( 1 ) );
-        page.setNS( Integer.parseInt( m.group( 2 ) ) );
-        page.setText( StringUtils.unescapeEntities( m.group( 4 ) ) );
+        // otherwise create a WikiDocument object from the xml
+        WikiDocument doc = new WikiDocument();
+        doc.setId( Integer.parseInt( m.group( 3 ) ) );
+        doc.setTitle( m.group( 1 ) );
+        doc.setNS( Integer.parseInt( m.group( 2 ) ) );
+        doc.setText( StringUtils.unescapeEntities( m.group( 4 ) ) );
         
-        target.clear();
-        target.setField( 0, page );
+        // skip docs from namespaces other than
+        if ( doc.getNS() != 0 ) return false;
+        
+        target.setField( 0, doc );
         return true;
     }
 

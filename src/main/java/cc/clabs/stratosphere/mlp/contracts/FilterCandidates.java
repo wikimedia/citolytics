@@ -67,6 +67,7 @@ public class FilterCandidates extends ReduceStub {
             if ( relation.getScore().getValue() < threshold ) continue;
             
             // emit
+            target.clear();
             target.setField( 0, relation );
             collector.collect( target );
         }

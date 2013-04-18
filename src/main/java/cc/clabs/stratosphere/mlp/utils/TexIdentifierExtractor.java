@@ -35,10 +35,12 @@ public class TexIdentifierExtractor {
      * list of false positive identifiers
      */
     private final static List<String> blacklist = Arrays.asList(
-        "sin", "cos", "min", "max", "inf", "lim", "log", "exp",
+        "sin", "cos", "tan", "min", "max", "inf", "lim", "log", "exp",
         "sup", "lim sup", "lim inf", "arg", "dim", "cosh",
+        "arccos", "arcsin", "arctan", "rank", "ln", "det", "ker",
+        "sec", "cot", "csc", "tanh", "sinh", "coth", "cot",
         "⋯", ":", "'", "′", "…", "∞", "Λ", "⋮", " ", " ", "~",
-        ";", "#", "π", "e", "ln", "rank",
+        ";", "#", "π", "e", "⋱", "{", "}", "%", "?",
         
         // ignore identifier that are also english (stop-)words
         "a", "A", "i", "I",

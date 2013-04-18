@@ -44,18 +44,15 @@ public class DocumentProcessor extends MapStub {
         
         WikiDocument doc = (WikiDocument) record.getField( 0, WikiDocument.class );
         
-        // skip pages from namespaces other than
-        if ( doc.getNS() != 0 ) return;
-        
-        LOG.info( "Analysing Page '"+ doc.getTitle() +"' (id: "+ doc.getId() +")" );
-                
         // populate the list of known identifiers
         list.clear();
-        for ( String var : doc.getKnownIdentifiers() )
-            list.add( new PactString( var ) );
+        for ( PactString var : doc.getKnownIdentifiers() )
+            list.add( var );
 
         // generate a plaintext version of the document
         plaintext.setValue( doc.getPlainText() );
+        
+        LOG.info( "Analyzed Page '"+ doc.getTitle() +"' (id: "+ doc.getId() +"), found identifiers: " + list.toString() );
         
         // set the id
         id.setValue( doc.getId() );

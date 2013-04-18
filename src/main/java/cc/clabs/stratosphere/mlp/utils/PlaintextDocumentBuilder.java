@@ -90,6 +90,7 @@ public class PlaintextDocumentBuilder extends DocumentBuilder {
         doc = Pattern.compile( "([\\w])[ ]+([:;,\\.\\)])", Pattern.DOTALL ).matcher( doc ).replaceAll( "$1$1" );
         // and strip parentheses from the plaintext
         //doc = Pattern.compile( "\\([^\\)]*\\)" ).matcher( doc ).replaceAll( "" );
+        
         // good hackers trim!
         doc = doc.trim();
         

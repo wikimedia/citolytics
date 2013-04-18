@@ -68,6 +68,8 @@ public class PactWord implements Key {
         String t = word.tag();
         if ( v.equals( "-LRB-" ) ) v = "(";
         if ( v.equals( "-RRB-" ) ) v = ")";
+        if ( v.equals( "-LCB-" ) ) v = "{";
+        if ( v.equals( "-RCB-" ) ) v = "}";
         if ( t.equals( "``" ) )    t = "\"";
         if ( t.equals( "''" ) )    t = "\"";
         if ( v.equals( "``" ) )    v = "\"";

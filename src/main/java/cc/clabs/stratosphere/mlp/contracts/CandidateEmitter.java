@@ -24,7 +24,6 @@ import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.stubs.CoGroupStub;
 import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import java.util.ArrayList;
@@ -42,14 +41,16 @@ import org.apache.commons.logging.LogFactory;
 public class CandidateEmitter extends CoGroupStub {
         
     private static final Log LOG = LogFactory.getLog( CandidateEmitter.class );
+        
+    private PactInteger id = null;
     
-    private ArrayList<String> identifiers = new ArrayList<>();
-    
-    private PactInteger document = null;
+    private PactIdentifiers identifiers = null;
     
     private final static List<String> blacklist = Arrays.asList(
+        "behavior", "infinity", "sum", "other",
+        "=", "|", "·", "≥", "≤", "≠", "lim", "ƒ",
+        "×", "/", "\\", "-",
         "function", "functions",
-        "behavior", "infinity", "sum", "other", "=", "|",
         "equation", "equations",
         "value", "values",
         "solution", "solutions",
@@ -73,34 +74,34 @@ public class CandidateEmitter extends CoGroupStub {
     public void coGroup( Iterator<PactRecord> left, Iterator<PactRecord> right, Collector<PactRecord> collector ) {
         
         // populating identifier list
-        // we'l allways get one record from the left,
+        // we'll allways get one record from the left,
         // therefore, we don't need to iterate through
         // left
-        Iterator<PactString> it = left.next().getField( 2, PactIdentifiers.class ).iterator();
-        while ( it.hasNext() ) identifiers.add( it.next().getValue() );
+        identifiers = left.next().getField( 2, PactIdentifiers.class );
         
 
         // populating sentences list
         ArrayList<PactSentence> sentences =  new ArrayList<>();
         while ( right.hasNext() ) {
             PactRecord next = right.next();
-            // document should always be the same
-            document = next.getField( 0, PactInteger.class );
+            // id should always be the same
+            id = next.getField( 0, PactInteger.class );
             // we need to clone the sentence objects, because of reused objects
             sentences.add( (PactSentence) next.getField( 1, PactSentence.class ).clone() );
         }
-        
-        PactRecord output = new PactRecord();
-        
-        for ( String identifier : identifiers ) {
+                
+        for ( PactString identifier : identifiers ) {
             ArrayList<PactSentence> list = new ArrayList<>();
             // populate the list
             for ( PactSentence sentence : sentences )
                 if ( sentence.containsWord( identifier ) )
                     list.add( sentence );
             // emit the generated candidate sentences
-            for ( PactRecord candidate : generateCandidates( list, identifier ) )
+            for ( PactRecord candidate : generateCandidates( list, identifier.getValue() ) ) {
                 collector.collect( candidate );
+                LOG.info( "candidate collected: " + candidate.toString() );
+            }
+                
         }
         
     }
@@ -170,7 +171,7 @@ public class CandidateEmitter extends CoGroupStub {
                 
                 // emit the relation            
                 PactRecord record = new PactRecord();
-                record.setField( 0, document );
+                record.setField( 0, id );
                 record.setField( 1, relation );
                 candidates.add( record );
             }
@@ -233,7 +234,7 @@ public class CandidateEmitter extends CoGroupStub {
      */
     private boolean filterWord( PactWord word ) {
                // skip the identifier words
-        return identifiers.contains( word.getWord() ) ||
+        return identifiers.containsIdentifier( word.getWord() ) ||
                // skip blacklisted words
                blacklist.contains( word.getWord() ) ||
                // we're only interested in nouns, adjectives and entities

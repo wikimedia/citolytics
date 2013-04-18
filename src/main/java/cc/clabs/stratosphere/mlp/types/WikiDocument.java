@@ -17,7 +17,6 @@
 package cc.clabs.stratosphere.mlp.types;
 
 import cc.clabs.stratosphere.mlp.utils.PlaintextDocumentBuilder;
-import cc.clabs.stratosphere.mlp.utils.SerializationUtils;
 import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import cc.clabs.stratosphere.mlp.utils.TexIdentifierExtractor;
 
@@ -30,8 +29,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
@@ -103,12 +100,12 @@ public class WikiDocument implements Value {
      * the HashMap is the replacement string in the document and
      * the value contains the TeX String
      */
-    private HashMap<String,String> formulas = new HashMap<>();
+    private PactFormulaList formulas = new PactFormulaList();
     
     /*
      * Stores all unique identifiers found in this document
      */
-    private ArrayList<String> knownIdentifiers = new ArrayList<>();
+    private PactIdentifiers knownIdentifiers = new PactIdentifiers();
     
     /**
      * Returns a plaintext version of this document.
@@ -133,15 +130,8 @@ public class WikiDocument implements Value {
         title.write( out );
         raw.write( out );
         plaintext.write( out );
-        out.writeInt( formulas.size() );
-        for ( Entry<String,String> entry : formulas.entrySet() ) {
-            SerializationUtils.writeString( out, entry.getKey() );
-            SerializationUtils.writeString( out, entry.getValue() );
-        }
-        out.write( knownIdentifiers.size() );
-        for ( String identifier : knownIdentifiers ) {
-            SerializationUtils.writeString( out, identifier );
-        }
+        formulas.write( out );
+        knownIdentifiers.write( out );
     }
 
     @Override
@@ -151,16 +141,8 @@ public class WikiDocument implements Value {
         title.read( in );
         raw.read( in );
         plaintext.read( in );
-        // math tags
-        for ( int i = in.readInt(); i > 0 ; i-- ) {
-            String key = SerializationUtils.readNextString( in );
-            String value = SerializationUtils.readNextString( in );
-            formulas.put( key, value );
-        }
-        // identifiers
-        for ( int i = in.readInt(); i > 0 ; i-- ) {
-            knownIdentifiers.add( SerializationUtils.readNextString( in ) );
-        }
+        formulas.read( in );
+        knownIdentifiers.read( in );
     }
     
     /**
@@ -239,7 +221,7 @@ public class WikiDocument implements Value {
     /**
      * Helper that replaces all math tags from the document
      * and stores them in a list. Math tags that contain exactly
-     * on identifier will be replaced inline with the identifier.
+     * on identifier will be replaced in line with the identifier.
      */
     private void replaceMathTags() {
         Pattern p = Pattern.compile( "<math>(.*?)</math>", Pattern.DOTALL );
@@ -260,15 +242,15 @@ public class WikiDocument implements Value {
                 text = m.replaceFirst( identifiers.get( 0 ) );
             }
             else {
-                formulas.put( key, formula );
+                formulas.add( new PactFormula( key, formula ) );
                 text = m.replaceFirst( key );
             }
-                
+            
             
             // add found identifers to the page wide list
             for ( String identifier : identifiers ) {
-                if ( knownIdentifiers.contains( identifier ) ) continue;
-                knownIdentifiers.add( identifier );
+                if ( knownIdentifiers.containsIdentifier( identifier ) ) continue;
+                knownIdentifiers.add( new PactString( identifier ) );
             }            
             
         }
@@ -276,11 +258,11 @@ public class WikiDocument implements Value {
     }
     
     /**
-     * Returns the hashmap of all found and replaced formulas.
+     * Returns the formula list of all found and replaced formulas.
      * 
-     * @return a hashmap of all formulars
+     * @return a list of all formulas
      */
-    public HashMap<String,String> getFormulas() {
+    public PactFormulaList getFormulas() {
         return formulas;
     }
 
@@ -290,7 +272,7 @@ public class WikiDocument implements Value {
      * 
      * @return a list of unique identifiers
      */
-    public ArrayList<String> getKnownIdentifiers() {
+    public PactIdentifiers getKnownIdentifiers() {
         return knownIdentifiers;
     }
     
