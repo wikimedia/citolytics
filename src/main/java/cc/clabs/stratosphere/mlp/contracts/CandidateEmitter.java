@@ -168,6 +168,7 @@ public class CandidateEmitter extends CoGroupStub {
                 relation.setWordPosition( position );
                 relation.setIdentifierPosition( position + Δ );
                 relation.setSentence( sentence );
+                relation.setId( id );
                 
                 // emit the relation            
                 PactRecord record = new PactRecord();

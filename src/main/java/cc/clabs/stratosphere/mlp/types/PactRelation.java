@@ -35,6 +35,7 @@ public final class PactRelation implements Key {
     private PactInteger wposition = new PactInteger();
     private PactString identifier = new PactString();
     private PactSentence sentence = new PactSentence();
+    private PactInteger id = new PactInteger();
     
     /**
      * 
@@ -160,6 +161,18 @@ public final class PactRelation implements Key {
         this.sentence = sentence;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    public PactInteger getId () {
+        return this.id;
+    }
+    
+    public void setId( PactInteger id ) {
+        this.id = id;
+    }
+    
     @Override
     public void write( DataOutput out ) throws IOException {
         iposition.write( out );
@@ -167,6 +180,7 @@ public final class PactRelation implements Key {
         wposition.write( out );
         sentence.write( out );
         score.write( out );
+        id.write( out );
     }
 
     @Override
@@ -176,6 +190,7 @@ public final class PactRelation implements Key {
         wposition.read( in );
         sentence.read( in );
         score.read( in );
+        id.read( in );
     }
 
     @Override
@@ -195,7 +210,8 @@ public final class PactRelation implements Key {
     @Override
     public String toString() {
         String word = ((PactWord) sentence.get( wposition.getValue() )).getWord();
-        return String.format( "%-2.2s | %-5f | %-18.18s | %s",
+        return String.format( "%d | %-2.2s | %-5f | %-18.18s | %s",
+            id.getValue(),
             identifier.getValue(),
             score.getValue(),
             word,
