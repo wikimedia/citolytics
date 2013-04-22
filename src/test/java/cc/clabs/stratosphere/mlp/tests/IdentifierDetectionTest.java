@@ -33,13 +33,12 @@ public class IdentifierDetectionTest {
         
         String x = "x";
         detected = TexIdentifierExtractor.getAll( x );
-        assertEquals( "Number of found identifiers mismatch (should be 1)", 1, detected.size() );
+        assertEquals( "Number of identifiers mismatch (should be 1)", 1, detected.size() );
         assertEquals( "Extracted identifier did not match", x, detected.get( 0 ) );
         
         String xx = "x + x^{2}";
         detected = TexIdentifierExtractor.getAll( xx );
-        assertEquals( "Number of found identifiers mismatch (should be 1)", 1, detected.size() );
+        assertEquals( "Number of identifiers mismatch (should be 1)", 1, detected.size() );
         assertEquals( "Extracted identifier did not match", x, detected.get( 0 ) );
-        
     }
 }
