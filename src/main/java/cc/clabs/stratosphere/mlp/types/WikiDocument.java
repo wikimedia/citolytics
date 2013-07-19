@@ -224,17 +224,17 @@ public class WikiDocument implements Value {
      * on identifier will be replaced in line with the identifier.
      */
     private void replaceMathTags() {
-        Pattern p = Pattern.compile( "<math>(.*?)</math>", Pattern.DOTALL );
+        Pattern p = Pattern.compile( "<math(.*?)>(.*?)</math>", Pattern.DOTALL );
         Matcher m;
         String key, formula, text = raw.getValue();
         
         while ( (m = p.matcher( text )).find() ) {
             
             key = " MATH" + Long.toHexString( (long) (Math.random() * 0x3b9aca00) ).toUpperCase() + " ";
-            formula = m.group( 1 ).trim();
-            
-            
-            ArrayList<String> identifiers = TexIdentifierExtractor.getAll( formula );
+            formula = m.group( 2 ).trim();
+            boolean augmention = !  m.group(1).isEmpty();
+            //augmention = false;
+            ArrayList<String> identifiers = TexIdentifierExtractor.getAll( formula,augmention );
             if ( identifiers.isEmpty() ) {
                 text = m.replaceFirst( "" );
             }
