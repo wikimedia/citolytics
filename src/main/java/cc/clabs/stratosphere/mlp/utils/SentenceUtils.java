@@ -72,7 +72,7 @@ public class SentenceUtils {
         if ( tags.length > sentence.size() ) return sentence;        
         
         
-        int pos = 0, spos = 0;
+        int pos = 0;
         String curTag = "", nexTag = "";
         ArrayList<PactWord> candidates = new ArrayList<>();
         

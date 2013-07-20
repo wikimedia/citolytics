@@ -24,16 +24,12 @@ import eu.stratosphere.pact.common.type.PactRecord;
 
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  *
  * @author rob
  */
 public class FilterCandidates extends ReduceStub {
         
-    private static final Log LOG = LogFactory.getLog( FilterCandidates.class );
     
     /**
      * 

@@ -85,7 +85,7 @@ public class TexIdentifierExtractor {
 	 */
 	private static ArrayList<String> getIdentifiersFrom(String mathml) {
 		ArrayList<String> list = new ArrayList<>();
-		Pattern p = Pattern.compile("<([mc]i)(.*?)>(.*?)</\\1>", Pattern.DOTALL);
+		Pattern p = Pattern.compile("<(mi)(.*?)>(.{3,10})</mi>", Pattern.DOTALL);
 		Matcher m = p.matcher(mathml);
 		while (m.find()) {
 			String identifier = m.group(3);

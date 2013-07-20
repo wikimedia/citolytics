@@ -33,6 +33,7 @@ public class WikiDocumentEmitter extends TextInputFormat  {
 
     @Override
     public void configure (Configuration parameter) {
+    	parameter.setString(DEFAULT_CHARSET_NAME, "UTF-8");
         super.configure( parameter );
         this.delimiter =  "</page>".getBytes();
     }

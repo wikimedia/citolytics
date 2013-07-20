@@ -19,9 +19,6 @@ package cc.clabs.stratosphere.mlp.utils;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.eclipse.mylyn.wikitext.core.parser.Attributes;
 import org.eclipse.mylyn.wikitext.core.parser.DocumentBuilder;
 
@@ -34,8 +31,6 @@ import org.eclipse.mylyn.wikitext.core.parser.DocumentBuilder;
  * @author rob
  */
 public class PlaintextDocumentBuilder extends DocumentBuilder {
-    
-    private static final Log LOG = LogFactory.getLog( PlaintextDocumentBuilder.class );
     
     private StringWriter writer = new StringWriter();
     private StringWriter stream = null;

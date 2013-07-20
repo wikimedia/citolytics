@@ -19,9 +19,6 @@ package cc.clabs.stratosphere.mlp;
 import cc.clabs.stratosphere.mlp.contracts.*;
 import cc.clabs.stratosphere.mlp.io.*;
 import cc.clabs.stratosphere.mlp.types.*;
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.nephele.configuration.GlobalConfiguration;
-
 import eu.stratosphere.pact.common.contract.*;
 import eu.stratosphere.pact.common.io.RecordOutputFormat;
 import eu.stratosphere.pact.common.plan.Plan;
@@ -29,7 +26,6 @@ import eu.stratosphere.pact.common.plan.PlanAssembler;
 import eu.stratosphere.pact.common.plan.PlanAssemblerDescription;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactString;
 
 public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
 
@@ -48,7 +44,7 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
         String gamma = args[5];
         String threshold = args[6];
         
-        Configuration conf = GlobalConfiguration.getConfiguration();
+        //Configuration conf = GlobalConfiguration.getConfiguration();
         // equals number of cores per node
         //conf.setInteger( "pact.parallelization.max-intra-node-degree", 2 );
         //conf.setBoolean( "jobmanager.profiling.enable", true );

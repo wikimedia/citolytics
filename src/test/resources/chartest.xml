@@ -1,0 +1,1000 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.8/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.8/ http://www.mediawiki.org/xml/export-0.8.xsd" version="0.8" xml:lang="en">
+  <siteinfo>
+    <sitename>testwiki</sitename>
+    <base>http://math-test2.pmtpa.wmflabs/wiki/Main_Page</base>
+    <generator>MediaWiki 1.22alpha</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Testwiki</namespace>
+      <namespace key="5" case="first-letter">Testwiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <ns>0</ns>
+    <id>1</id>
+    <revision>
+      <id>27683</id>
+      <parentid>27682</parentid>
+      <timestamp>2013-05-06T04:10:34Z</timestamp>
+      <contributor>
+        <ip>10.4.1.15</ip>
+      </contributor>
+      <comment>+</comment>
+      <text xml:space="preserve" bytes="1247">'''MediaWiki has been successfully installed.'''
+
+Consult the [//meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
+Malayalam: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\frac{ക}{ച}&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mfrac&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ക&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ച&lt;/mi&gt;
+    &lt;/mfrac&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;apply&gt;
+        &lt;divide/&gt;
+        &lt;ci&gt;normal-ക&lt;/ci&gt;
+        &lt;ci&gt;normal-ച&lt;/ci&gt;
+      &lt;/apply&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;\frac{ക}{ച}&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;&lt;br&gt;
+Complex Malayalam Eq: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\underline{ച_{1}}എന്നചാപത്തിന്റെജ്യാവു്\underline{(ബ)}={ച_{1}}-\frac{ച_{1}^{3}%&amp;#10;}{6വ്യ^{2}}+\frac{ച_{1}^{5}}{120വ്യ^{4}}_{.}.....&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mrow&gt;
+      &lt;munder accent=&quot;true&quot;&gt;
+        &lt;msub&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ച&lt;/mi&gt;
+          &lt;mn&gt;1&lt;/mn&gt;
+        &lt;/msub&gt;
+        &lt;mo&gt;¯&lt;/mo&gt;
+      &lt;/munder&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;എ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ന&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ന&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ച&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ാ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;പ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ത&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ത&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ി&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ന&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;റ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;െ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ജ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;യ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ാ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;വ&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ു&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+      &lt;munder accent=&quot;true&quot;&gt;
+        &lt;mrow&gt;
+          &lt;mo&gt;(&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ബ&lt;/mi&gt;
+          &lt;mo&gt;)&lt;/mo&gt;
+        &lt;/mrow&gt;
+        &lt;mo&gt;¯&lt;/mo&gt;
+      &lt;/munder&gt;
+      &lt;mo&gt;=&lt;/mo&gt;
+      &lt;msub&gt;
+        &lt;mi mathvariant=&quot;normal&quot;&gt;ച&lt;/mi&gt;
+        &lt;mn&gt;1&lt;/mn&gt;
+      &lt;/msub&gt;
+      &lt;mo&gt;-&lt;/mo&gt;
+      &lt;mfrac&gt;
+        &lt;msubsup&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ച&lt;/mi&gt;
+          &lt;mn&gt;1&lt;/mn&gt;
+          &lt;mn&gt;3&lt;/mn&gt;
+        &lt;/msubsup&gt;
+        &lt;mrow&gt;
+          &lt;mn&gt;6&lt;/mn&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;വ&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;msup&gt;
+            &lt;mi mathvariant=&quot;normal&quot;&gt;യ&lt;/mi&gt;
+            &lt;mn&gt;2&lt;/mn&gt;
+          &lt;/msup&gt;
+        &lt;/mrow&gt;
+      &lt;/mfrac&gt;
+      &lt;mo&gt;+&lt;/mo&gt;
+      &lt;msub&gt;
+        &lt;mfrac&gt;
+          &lt;msubsup&gt;
+            &lt;mi mathvariant=&quot;normal&quot;&gt;ച&lt;/mi&gt;
+            &lt;mn&gt;1&lt;/mn&gt;
+            &lt;mn&gt;5&lt;/mn&gt;
+          &lt;/msubsup&gt;
+          &lt;mrow&gt;
+            &lt;mn&gt;120&lt;/mn&gt;
+            &lt;mo&gt;⁢&lt;/mo&gt;
+            &lt;mi mathvariant=&quot;normal&quot;&gt;വ&lt;/mi&gt;
+            &lt;mo&gt;⁢&lt;/mo&gt;
+            &lt;mi mathvariant=&quot;normal&quot;&gt;്&lt;/mi&gt;
+            &lt;mo&gt;⁢&lt;/mo&gt;
+            &lt;msup&gt;
+              &lt;mi mathvariant=&quot;normal&quot;&gt;യ&lt;/mi&gt;
+              &lt;mn&gt;4&lt;/mn&gt;
+            &lt;/msup&gt;
+          &lt;/mrow&gt;
+        &lt;/mfrac&gt;
+        &lt;mo&gt;.&lt;/mo&gt;
+      &lt;/msub&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;…&lt;/mi&gt;
+      &lt;mo&gt;.&lt;/mo&gt;
+      &lt;mo&gt;.&lt;/mo&gt;
+    &lt;/mrow&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;cerror&gt;
+        &lt;csymbol cd=&quot;ambiguous&quot;&gt;fragments&lt;/csymbol&gt;
+        &lt;apply&gt;
+          &lt;ci&gt;normal-¯&lt;/ci&gt;
+          &lt;apply&gt;
+            &lt;csymbol cd=&quot;ambiguous&quot;&gt;subscript&lt;/csymbol&gt;
+            &lt;ci&gt;normal-ച&lt;/ci&gt;
+            &lt;cn type=&quot;integer&quot;&gt;1&lt;/cn&gt;
+          &lt;/apply&gt;
+        &lt;/apply&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;എ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ന&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;്&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ന&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ച&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ാ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;പ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ത&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;്&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ത&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ി&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ന&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;്&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;റ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;െ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ജ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;്&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;യ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ാ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;വ&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;ു&lt;/csymbol&gt;
+        &lt;csymbol cd=&quot;unknown&quot;&gt;്&lt;/csymbol&gt;
+        &lt;apply&gt;
+          &lt;ci&gt;normal-¯&lt;/ci&gt;
+          &lt;ci&gt;normal-ബ&lt;/ci&gt;
+        &lt;/apply&gt;
+        &lt;eq/&gt;
+        &lt;apply&gt;
+          &lt;csymbol cd=&quot;ambiguous&quot;&gt;subscript&lt;/csymbol&gt;
+          &lt;ci&gt;normal-ച&lt;/ci&gt;
+          &lt;cn type=&quot;integer&quot;&gt;1&lt;/cn&gt;
+        &lt;/apply&gt;
+        &lt;minus/&gt;
+        &lt;apply&gt;
+          &lt;divide/&gt;
+          &lt;apply&gt;
+            &lt;csymbol cd=&quot;ambiguous&quot;&gt;superscript&lt;/csymbol&gt;
+            &lt;apply&gt;
+              &lt;csymbol cd=&quot;ambiguous&quot;&gt;subscript&lt;/csymbol&gt;
+              &lt;ci&gt;normal-ച&lt;/ci&gt;
+              &lt;cn type=&quot;integer&quot;&gt;1&lt;/cn&gt;
+            &lt;/apply&gt;
+            &lt;cn type=&quot;integer&quot;&gt;3&lt;/cn&gt;
+          &lt;/apply&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;cn type=&quot;integer&quot;&gt;6&lt;/cn&gt;
+            &lt;ci&gt;normal-വ&lt;/ci&gt;
+            &lt;ci&gt;normal-്&lt;/ci&gt;
+            &lt;apply&gt;
+              &lt;csymbol cd=&quot;ambiguous&quot;&gt;superscript&lt;/csymbol&gt;
+              &lt;ci&gt;normal-യ&lt;/ci&gt;
+              &lt;cn type=&quot;integer&quot;&gt;2&lt;/cn&gt;
+            &lt;/apply&gt;
+          &lt;/apply&gt;
+        &lt;/apply&gt;
+        &lt;plus/&gt;
+        &lt;apply&gt;
+          &lt;csymbol cd=&quot;ambiguous&quot;&gt;subscript&lt;/csymbol&gt;
+          &lt;apply&gt;
+            &lt;divide/&gt;
+            &lt;apply&gt;
+              &lt;csymbol cd=&quot;ambiguous&quot;&gt;superscript&lt;/csymbol&gt;
+              &lt;apply&gt;
+                &lt;csymbol cd=&quot;ambiguous&quot;&gt;subscript&lt;/csymbol&gt;
+                &lt;ci&gt;normal-ച&lt;/ci&gt;
+                &lt;cn type=&quot;integer&quot;&gt;1&lt;/cn&gt;
+              &lt;/apply&gt;
+              &lt;cn type=&quot;integer&quot;&gt;5&lt;/cn&gt;
+            &lt;/apply&gt;
+            &lt;apply&gt;
+              &lt;times/&gt;
+              &lt;cn type=&quot;integer&quot;&gt;120&lt;/cn&gt;
+              &lt;ci&gt;normal-വ&lt;/ci&gt;
+              &lt;ci&gt;normal-്&lt;/ci&gt;
+              &lt;apply&gt;
+                &lt;csymbol cd=&quot;ambiguous&quot;&gt;superscript&lt;/csymbol&gt;
+                &lt;ci&gt;normal-യ&lt;/ci&gt;
+                &lt;cn type=&quot;integer&quot;&gt;4&lt;/cn&gt;
+              &lt;/apply&gt;
+            &lt;/apply&gt;
+          &lt;/apply&gt;
+          &lt;ci&gt;normal-.&lt;/ci&gt;
+        &lt;/apply&gt;
+        &lt;ci&gt;normal-…&lt;/ci&gt;
+        &lt;ci&gt;normal-.&lt;/ci&gt;
+        &lt;ci&gt;normal-.&lt;/ci&gt;
+      &lt;/cerror&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;\underline{ച_{1}}എന്നചാപത്തിന്റെജ്യാവു്\underline{(ബ)}={ച_{1}}-\frac{ച_{1}^{3}%
+}{6വ്യ^{2}}+\frac{ച_{1}^{5}}{120വ്യ^{4}}_{.}.....&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;&lt;br&gt;
+Tamil: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\frac{க}{த}&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mfrac&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;க&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;த&lt;/mi&gt;
+    &lt;/mfrac&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;apply&gt;
+        &lt;divide/&gt;
+        &lt;ci&gt;normal-க&lt;/ci&gt;
+        &lt;ci&gt;normal-த&lt;/ci&gt;
+      &lt;/apply&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;\frac{க}{த}&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;&lt;br&gt;
+Hindi: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\frac{क}{च}&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mfrac&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;क&lt;/mi&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;च&lt;/mi&gt;
+    &lt;/mfrac&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;apply&gt;
+        &lt;divide/&gt;
+        &lt;ci&gt;normal-क&lt;/ci&gt;
+        &lt;ci&gt;normal-च&lt;/ci&gt;
+      &lt;/apply&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;\frac{क}{च}&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;
+
+Simple forms like &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;ക&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mi mathvariant=&quot;normal&quot;&gt;ക&lt;/mi&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;ci&gt;normal-ക&lt;/ci&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;ക&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt; also fails!
+Test Hindi: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\underline{उपयोग}\frac{परिवर्तन}{पुनर्वितरण}केलिएस्वतन्त्र&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mrow&gt;
+      &lt;munder accent=&quot;true&quot;&gt;
+        &lt;mrow&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;उ&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;प&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;य&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ो&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ग&lt;/mi&gt;
+        &lt;/mrow&gt;
+        &lt;mo&gt;¯&lt;/mo&gt;
+      &lt;/munder&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mfrac&gt;
+        &lt;mrow&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;प&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;र&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ि&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;व&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;र&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;्&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;त&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;न&lt;/mi&gt;
+        &lt;/mrow&gt;
+        &lt;mrow&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;प&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ु&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;न&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;र&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;्&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;व&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ि&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;त&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;र&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ण&lt;/mi&gt;
+        &lt;/mrow&gt;
+      &lt;/mfrac&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;क&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;े&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ल&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ि&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ए&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;स&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;्&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;व&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;त&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;न&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;्&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;त&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;्&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;र&lt;/mi&gt;
+    &lt;/mrow&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;apply&gt;
+        &lt;times/&gt;
+        &lt;apply&gt;
+          &lt;ci&gt;normal-¯&lt;/ci&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;ci&gt;normal-उ&lt;/ci&gt;
+            &lt;ci&gt;normal-प&lt;/ci&gt;
+            &lt;ci&gt;normal-य&lt;/ci&gt;
+            &lt;ci&gt;normal-ो&lt;/ci&gt;
+            &lt;ci&gt;normal-ग&lt;/ci&gt;
+          &lt;/apply&gt;
+        &lt;/apply&gt;
+        &lt;apply&gt;
+          &lt;divide/&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;ci&gt;normal-प&lt;/ci&gt;
+            &lt;ci&gt;normal-र&lt;/ci&gt;
+            &lt;ci&gt;normal-ि&lt;/ci&gt;
+            &lt;ci&gt;normal-व&lt;/ci&gt;
+            &lt;ci&gt;normal-र&lt;/ci&gt;
+            &lt;ci&gt;normal-्&lt;/ci&gt;
+            &lt;ci&gt;normal-त&lt;/ci&gt;
+            &lt;ci&gt;normal-न&lt;/ci&gt;
+          &lt;/apply&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;ci&gt;normal-प&lt;/ci&gt;
+            &lt;ci&gt;normal-ु&lt;/ci&gt;
+            &lt;ci&gt;normal-न&lt;/ci&gt;
+            &lt;ci&gt;normal-र&lt;/ci&gt;
+            &lt;ci&gt;normal-्&lt;/ci&gt;
+            &lt;ci&gt;normal-व&lt;/ci&gt;
+            &lt;ci&gt;normal-ि&lt;/ci&gt;
+            &lt;ci&gt;normal-त&lt;/ci&gt;
+            &lt;ci&gt;normal-र&lt;/ci&gt;
+            &lt;ci&gt;normal-ण&lt;/ci&gt;
+          &lt;/apply&gt;
+        &lt;/apply&gt;
+        &lt;ci&gt;normal-क&lt;/ci&gt;
+        &lt;ci&gt;normal-े&lt;/ci&gt;
+        &lt;ci&gt;normal-ल&lt;/ci&gt;
+        &lt;ci&gt;normal-ि&lt;/ci&gt;
+        &lt;ci&gt;normal-ए&lt;/ci&gt;
+        &lt;ci&gt;normal-स&lt;/ci&gt;
+        &lt;ci&gt;normal-्&lt;/ci&gt;
+        &lt;ci&gt;normal-व&lt;/ci&gt;
+        &lt;ci&gt;normal-त&lt;/ci&gt;
+        &lt;ci&gt;normal-न&lt;/ci&gt;
+        &lt;ci&gt;normal-्&lt;/ci&gt;
+        &lt;ci&gt;normal-त&lt;/ci&gt;
+        &lt;ci&gt;normal-्&lt;/ci&gt;
+        &lt;ci&gt;normal-र&lt;/ci&gt;
+      &lt;/apply&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;\underline{उपयोग}\frac{परिवर्तन}{पुनर्वितरण}केलिएस्वतन्त्र&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;
+
+&lt;br/&gt;
+
+Test Arabic: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\underline{تبلغ}\frac{تتداخل}{بالإضافة}حيثتطل&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mrow&gt;
+      &lt;munder accent=&quot;true&quot;&gt;
+        &lt;mrow&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ت&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ب&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ل&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;غ&lt;/mi&gt;
+        &lt;/mrow&gt;
+        &lt;mo&gt;¯&lt;/mo&gt;
+      &lt;/munder&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mfrac&gt;
+        &lt;mrow&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ت&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ت&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;د&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ا&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;خ&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ل&lt;/mi&gt;
+        &lt;/mrow&gt;
+        &lt;mrow&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ب&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ا&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ل&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;إ&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ض&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ا&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ف&lt;/mi&gt;
+          &lt;mo&gt;⁢&lt;/mo&gt;
+          &lt;mi mathvariant=&quot;normal&quot;&gt;ة&lt;/mi&gt;
+        &lt;/mrow&gt;
+      &lt;/mfrac&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ح&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ي&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ث&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ت&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ط&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ل&lt;/mi&gt;
+    &lt;/mrow&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;apply&gt;
+        &lt;times/&gt;
+        &lt;apply&gt;
+          &lt;ci&gt;normal-¯&lt;/ci&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;ci&gt;normal-ت&lt;/ci&gt;
+            &lt;ci&gt;normal-ب&lt;/ci&gt;
+            &lt;ci&gt;normal-ل&lt;/ci&gt;
+            &lt;ci&gt;normal-غ&lt;/ci&gt;
+          &lt;/apply&gt;
+        &lt;/apply&gt;
+        &lt;apply&gt;
+          &lt;divide/&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;ci&gt;normal-ت&lt;/ci&gt;
+            &lt;ci&gt;normal-ت&lt;/ci&gt;
+            &lt;ci&gt;normal-د&lt;/ci&gt;
+            &lt;ci&gt;normal-ا&lt;/ci&gt;
+            &lt;ci&gt;normal-خ&lt;/ci&gt;
+            &lt;ci&gt;normal-ل&lt;/ci&gt;
+          &lt;/apply&gt;
+          &lt;apply&gt;
+            &lt;times/&gt;
+            &lt;ci&gt;normal-ب&lt;/ci&gt;
+            &lt;ci&gt;normal-ا&lt;/ci&gt;
+            &lt;ci&gt;normal-ل&lt;/ci&gt;
+            &lt;ci&gt;normal-إ&lt;/ci&gt;
+            &lt;ci&gt;normal-ض&lt;/ci&gt;
+            &lt;ci&gt;normal-ا&lt;/ci&gt;
+            &lt;ci&gt;normal-ف&lt;/ci&gt;
+            &lt;ci&gt;normal-ة&lt;/ci&gt;
+          &lt;/apply&gt;
+        &lt;/apply&gt;
+        &lt;ci&gt;normal-ح&lt;/ci&gt;
+        &lt;ci&gt;normal-ي&lt;/ci&gt;
+        &lt;ci&gt;normal-ث&lt;/ci&gt;
+        &lt;ci&gt;normal-ت&lt;/ci&gt;
+        &lt;ci&gt;normal-ط&lt;/ci&gt;
+        &lt;ci&gt;normal-ل&lt;/ci&gt;
+      &lt;/apply&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;\underline{تبلغ}\frac{تتداخل}{بالإضافة}حيثتطل&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;
+
+&lt;br /&gt;
+
+Test Hebrew: &lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;עִבְרִית&quot; display=&quot;inline&quot;&gt;
+  &lt;semantics&gt;
+    &lt;mrow&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ע&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ִ&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ב&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ְ&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ר&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ִ&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;י&lt;/mi&gt;
+      &lt;mo&gt;⁢&lt;/mo&gt;
+      &lt;mi mathvariant=&quot;normal&quot;&gt;ת&lt;/mi&gt;
+    &lt;/mrow&gt;
+    &lt;annotation-xml encoding=&quot;MathML-Content&quot;&gt;
+      &lt;apply&gt;
+        &lt;times/&gt;
+        &lt;ci&gt;normal-ע&lt;/ci&gt;
+        &lt;ci&gt;normal-ִ&lt;/ci&gt;
+        &lt;ci&gt;normal-ב&lt;/ci&gt;
+        &lt;ci&gt;normal-ְ&lt;/ci&gt;
+        &lt;ci&gt;normal-ר&lt;/ci&gt;
+        &lt;ci&gt;normal-ִ&lt;/ci&gt;
+        &lt;ci&gt;normal-י&lt;/ci&gt;
+        &lt;ci&gt;normal-ת&lt;/ci&gt;
+      &lt;/apply&gt;
+    &lt;/annotation-xml&gt;
+    &lt;annotation encoding=&quot;application/x-tex&quot;&gt;עִבְרִית&lt;/annotation&gt;
+  &lt;/semantics&gt;
+&lt;/math&gt;
+
+== Getting started ==
+* [//www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
+* [//www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
+* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]
+* [//www.mediawiki.org/wiki/Localisation#Translation_resources Localise MediaWiki for your language]</text>
+      <sha1>41hy6zu7d72dm0u3fsmlg80mflae7l1</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Differential diagnosis</title>
+    <ns>0</ns>
+    <id>2</id>
+    <revision>
+      <id>2</id>
+      <timestamp>2012-08-28T19:07:54Z</timestamp>
+      <contributor>
+        <username>Brainmachine</username>
+        <id>0</id>
+      </contributor>
+      <comment>+{{[[Template:Medical terms to describe disease conditions|medical terms to describe disease conditions]]}}</comment>
+      <text xml:space="preserve" bytes="42680">{{Use dmy dates|date=August 2010}}
+{{Interventions infobox
+ | Name        = Differential diagnosis
+ | Image       =
+ | Caption     =
+ | ICD10       =
+ | ICD9        =
+ | ICD9_mult   =
+ | MeshID      = D003937
+ | OPS301      =
+ | OtherCodes  =
+}}
+A '''differential diagnosis''' (sometimes abbreviated '''DDx''', '''ddx''', '''DD''', '''D/Dx''', or '''ΔΔ''') is a systematic [[diagnostic method]] used to identify the presence of an entity where multiple alternatives are possible (and the process may be termed '''differential diagnostic procedure'''), and may also refer to any of the included candidate alternatives (which may also be termed '''candidate condition'''). This method is essentially a [[process of elimination]] or at least of obtaining information that shrinks the &quot;probabilities&quot; of candidate conditions to negligible levels.  The &quot;probabilities&quot; at issue are [[Epistemology|epistemic]] rather than [[Ontology|ontological]] in that they are imaginative parameters in the mind of the diagnostician (or, for computerized or computer-assisted diagnosis, the software of the system), while in reality the target (such as a patient) either has a condition or not with an actual probability of either 0 or 100%.
+
+Differential diagnostic procedures are used by [[physician]]s, [[Psychiatry|psychiatrists]], and other trained medical professionals to [[Medical diagnosis|diagnose]] the specific [[disease]] in a [[patient]], or, at least, to eliminate any imminently life-threatening conditions.
+
+Differential diagnosis can be regarded as implementing aspects of the [[hypothetico-deductive method]] in the sense that the potential presence of candidate diseases or conditions can be viewed as hypotheses which are further processed as being true or false.
+
+==General components==
+{{for|additional, general, aspects|Diagnostic procedure}}
+{{refimprove|paragraph|date=October 2011}}
+There are various methods of performing a differential diagnostic procedure, but in general, it is based on the idea that one begins by considering the most common diagnosis first: a head cold versus meningitis, for example. As a reminder, medical students are taught the adage, &quot;When you hear hoofbeats, look for horses, not zebras,&quot; which means look for the simplest, most common explanation first. Only after the simplest diagnosis has been ruled out should the clinician consider more complex or exotic diagnoses.
+
+Differential diagnosis has four steps. First, the doctor should gather all information about the patient and create a symptoms list. The list can be in writing or in the doctor's head, as long as he or she makes a list. Second, the doctor should make a list of all possible causes (also termed &quot;candidate conditions&quot;) of the symptoms. Again, this can be in writing or in the doctor's head but it must be done. Third, the doctor should prioritize the list by placing the most urgently dangerous possible cause of the symptoms at the top of the list. Fourth, the doctor should rule out or treat the possible causes beginning with the most urgently dangerous condition and working his or her way down the list. &quot;Rule out&quot; practically means to use tests and other scientific methods to render a condition of clinically negligible probability of being the cause. 
+
+In some cases, there will remain ''no'' diagnosis; this suggests the physician has made an error, or that the true diagnosis is unknown to medicine. Removing diagnoses from the list is done by making observations and using tests that should have different results, depending on which diagnosis is correct.
+
+[[Mnemonic]]s are routinely taught to medical students to ensure that all possible pathological processes are considered, for example ''VINDICATE'': [[Vascular disease|'''V'''ascular]], [[Inflammation|'''I'''nflammatory]], [[Neoplasm|'''N'''eoplastic]], [[Degenerative disease|'''D'''egenerative]]/[[Deficiency (medicine)|'''D'''eficiency]], [[Idiopathic|'''I'''diopathic]]/[[Substance intoxication|'''I'''ntoxication]], [[Congenital disorder|'''C'''ongenital]], [[Autoimmune disease|'''A'''utoimmune]]/[[Allergy|'''A'''llergic]], [[Trauma (medicine)|'''T'''raumatic]], [[Endocrine disease|'''E'''ndocrine]]&lt;ref&gt;[http://pgblazer.com/2010/05/vindicate-mnemonic-for-differential-diagnosis.html  VINDICATE – Mnemonic for differential diagnosis] at PG Blazer.com.&lt;/ref&gt;
+
+==Specific methods==
+There are several methods for performing a differential diagnostic procedure, and several variants among those in turn. Furthermore, a differential diagnostic procedure can be used concomitantly or switchingly with protocols, guidelines or other diagnostic procedures (such as pattern-recognition or using [[medical algorithm]]s).
+
+For example, in case of [[medical emergency]], there may not be enough time to do any detailed calculations or estimations of different probabilities, in which case the [[ABC (medicine)|ABC protocol]] may be more appropriate. At a later, less acute, situation, there may be a switch to a more comprehensive differential diagnostic procedure.
+
+The differential diagnostic procedure may be easier in the finding of a ''[[pathognomonic]]'' sign or symptom, in which it is almost certain that the target condition is present, and in the absence of finding a ''[[sine qua non]]'' sign or symptom, in which case it is almost certain that the target condition is absent. In reality, however, the subjective probability of the presence of a condition is never exactly 100% or 0%, so in reality the procedure is usually aimed at specifying the various probabilities in order to form [[indication (medicine)|indications]] for further actions.
+
+===By epidemiology===
+One method of performing a differential diagnosis by epidemiology aims to estimate the probability of each candidate condition by comparing their probabilities to have occurred in the first place in the individual. It is based on probabilities related both to the presentation (such as pain) and probabilities of the various candidate conditions (such as diseases).
+
+====Theory====
+{{refimprove section|date=January 2012}}
+The probability that a presentation or condition would have occurred in the first place in an individual is not same as the probability that the presentation or condition ''has'' occurred in the individual, because the presentation ''has'' occurred by 100% certainty in the individual. Yet, the contributive probability fractions of each condition are assumed to be the same, relatively:
+
+&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; id=&quot;p1.1.m1&quot; class=&quot;ltx_Math&quot; alttext=&quot;\frac{P(Presentation~{}is~{}caused~{}by~{}condition~{}in~{}individual)}{P(%&amp;#10;Presentation~{}has~{}occurred~{}in~{}individual)}=\frac{P(Presentation~{}%&amp;#10;WHOIFPI~{}by~{}condition)}{P(Presentation~{}WHOIFPI)}&quot; xml:id=&quot;p1.1.m1.1&quot; display=&quot;inline&quot; xref=&quot;p1.1.m1.1.cmml&quot;&gt;
+  &lt;semantics xml:id=&quot;p1.1.m1.1a&quot; xref=&quot;p1.1.m1.1.cmml&quot;&gt;
+    &lt;mrow xml:id=&quot;p1.1.m1.1.4&quot; xref=&quot;p1.1.m1.1.4.cmml&quot;&gt;
+      &lt;mfrac xml:id=&quot;p1.1.m1.1.1&quot; xref=&quot;p1.1.m1.1.1.cmml&quot;&gt;
+        &lt;mrow xml:id=&quot;p1.1.m1.1.1.2&quot; xref=&quot;p1.1.m1.1.1.2.cmml&quot;&gt;
+          &lt;mi xml:id=&quot;p1.1.m1.1.1.2.1&quot; xref=&quot;p1.1.m1.1.1.2.1.cmml&quot;&gt;P&lt;/mi&gt;
+          &lt;mo xml:id=&quot;p1.1.m1.1.1.2.53&quot; xref=&quot;p1.1.m1.1.1.2.53.cmml&quot;&gt;⁢&lt;/mo&gt;
+          &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54a&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt;(&lt;/mo&gt;
+            &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54b&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.2&quot; xref=&quot;p1.1.m1.1.1.2.54.2.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.3&quot; xref=&quot;p1.1.m1.1.1.2.3.cmml&quot;&gt;P&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.4&quot; xref=&quot;p1.1.m1.1.1.2.4.cmml&quot;&gt;r&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1a&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.5&quot; xref=&quot;p1.1.m1.1.1.2.5.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1b&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.6&quot; xref=&quot;p1.1.m1.1.1.2.6.cmml&quot;&gt;s&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1c&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.7&quot; xref=&quot;p1.1.m1.1.1.2.7.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1d&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.8&quot; xref=&quot;p1.1.m1.1.1.2.8.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1e&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.9&quot; xref=&quot;p1.1.m1.1.1.2.9.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1f&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.10&quot; xref=&quot;p1.1.m1.1.1.2.10.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1g&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.11&quot; xref=&quot;p1.1.m1.1.1.2.11.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1h&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.12&quot; xref=&quot;p1.1.m1.1.1.2.12.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1i&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.13&quot; xref=&quot;p1.1.m1.1.1.2.13.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.2.1j&quot; xref=&quot;p1.1.m1.1.1.2.54.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.14&quot; xref=&quot;p1.1.m1.1.1.2.14.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.2.54c&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.3&quot; xref=&quot;p1.1.m1.1.1.2.54.3.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.16&quot; xref=&quot;p1.1.m1.1.1.2.16.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.3.1&quot; xref=&quot;p1.1.m1.1.1.2.54.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.17&quot; xref=&quot;p1.1.m1.1.1.2.17.cmml&quot;&gt;s&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.2.54d&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.4&quot; xref=&quot;p1.1.m1.1.1.2.54.4.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.19&quot; xref=&quot;p1.1.m1.1.1.2.19.cmml&quot;&gt;c&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.4.1&quot; xref=&quot;p1.1.m1.1.1.2.54.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.20&quot; xref=&quot;p1.1.m1.1.1.2.20.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.4.1a&quot; xref=&quot;p1.1.m1.1.1.2.54.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.21&quot; xref=&quot;p1.1.m1.1.1.2.21.cmml&quot;&gt;u&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.4.1b&quot; xref=&quot;p1.1.m1.1.1.2.54.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.22&quot; xref=&quot;p1.1.m1.1.1.2.22.cmml&quot;&gt;s&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.4.1c&quot; xref=&quot;p1.1.m1.1.1.2.54.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.23&quot; xref=&quot;p1.1.m1.1.1.2.23.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.4.1d&quot; xref=&quot;p1.1.m1.1.1.2.54.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.24&quot; xref=&quot;p1.1.m1.1.1.2.24.cmml&quot;&gt;d&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.2.54e&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.5&quot; xref=&quot;p1.1.m1.1.1.2.54.5.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.26&quot; xref=&quot;p1.1.m1.1.1.2.26.cmml&quot;&gt;b&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.5.1&quot; xref=&quot;p1.1.m1.1.1.2.54.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.27&quot; xref=&quot;p1.1.m1.1.1.2.27.cmml&quot;&gt;y&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.2.54f&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.6&quot; xref=&quot;p1.1.m1.1.1.2.54.6.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.29&quot; xref=&quot;p1.1.m1.1.1.2.29.cmml&quot;&gt;c&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.30&quot; xref=&quot;p1.1.m1.1.1.2.30.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1a&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.31&quot; xref=&quot;p1.1.m1.1.1.2.31.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1b&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.32&quot; xref=&quot;p1.1.m1.1.1.2.32.cmml&quot;&gt;d&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1c&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.33&quot; xref=&quot;p1.1.m1.1.1.2.33.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1d&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.34&quot; xref=&quot;p1.1.m1.1.1.2.34.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1e&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.35&quot; xref=&quot;p1.1.m1.1.1.2.35.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1f&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.36&quot; xref=&quot;p1.1.m1.1.1.2.36.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.6.1g&quot; xref=&quot;p1.1.m1.1.1.2.54.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.37&quot; xref=&quot;p1.1.m1.1.1.2.37.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.2.54g&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.7&quot; xref=&quot;p1.1.m1.1.1.2.54.7.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.39&quot; xref=&quot;p1.1.m1.1.1.2.39.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.7.1&quot; xref=&quot;p1.1.m1.1.1.2.54.7.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.40&quot; xref=&quot;p1.1.m1.1.1.2.40.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.2.54h&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.2.54.8&quot; xref=&quot;p1.1.m1.1.1.2.54.8.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.42&quot; xref=&quot;p1.1.m1.1.1.2.42.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.43&quot; xref=&quot;p1.1.m1.1.1.2.43.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1a&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.44&quot; xref=&quot;p1.1.m1.1.1.2.44.cmml&quot;&gt;d&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1b&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.45&quot; xref=&quot;p1.1.m1.1.1.2.45.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1c&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.46&quot; xref=&quot;p1.1.m1.1.1.2.46.cmml&quot;&gt;v&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1d&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.47&quot; xref=&quot;p1.1.m1.1.1.2.47.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1e&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.48&quot; xref=&quot;p1.1.m1.1.1.2.48.cmml&quot;&gt;d&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1f&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.49&quot; xref=&quot;p1.1.m1.1.1.2.49.cmml&quot;&gt;u&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1g&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.50&quot; xref=&quot;p1.1.m1.1.1.2.50.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54.8.1h&quot; xref=&quot;p1.1.m1.1.1.2.54.8.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.2.51&quot; xref=&quot;p1.1.m1.1.1.2.51.cmml&quot;&gt;l&lt;/mi&gt;
+              &lt;/mrow&gt;
+            &lt;/mrow&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.1.2.54i&quot; xref=&quot;p1.1.m1.1.1.2.54.cmml&quot;&gt;)&lt;/mo&gt;
+          &lt;/mrow&gt;
+        &lt;/mrow&gt;
+        &lt;mrow xml:id=&quot;p1.1.m1.1.1.3&quot; xref=&quot;p1.1.m1.1.1.3.cmml&quot;&gt;
+          &lt;mi xml:id=&quot;p1.1.m1.1.1.3.1&quot; xref=&quot;p1.1.m1.1.1.3.1.cmml&quot;&gt;P&lt;/mi&gt;
+          &lt;mo xml:id=&quot;p1.1.m1.1.1.3.43&quot; xref=&quot;p1.1.m1.1.1.3.43.cmml&quot;&gt;⁢&lt;/mo&gt;
+          &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44a&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt;(&lt;/mo&gt;
+            &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44b&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44.2&quot; xref=&quot;p1.1.m1.1.1.3.44.2.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.3&quot; xref=&quot;p1.1.m1.1.1.3.3.cmml&quot;&gt;P&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.4&quot; xref=&quot;p1.1.m1.1.1.3.4.cmml&quot;&gt;r&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1a&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.5&quot; xref=&quot;p1.1.m1.1.1.3.5.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1b&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.6&quot; xref=&quot;p1.1.m1.1.1.3.6.cmml&quot;&gt;s&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1c&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.7&quot; xref=&quot;p1.1.m1.1.1.3.7.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1d&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.8&quot; xref=&quot;p1.1.m1.1.1.3.8.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1e&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.9&quot; xref=&quot;p1.1.m1.1.1.3.9.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1f&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.10&quot; xref=&quot;p1.1.m1.1.1.3.10.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1g&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.11&quot; xref=&quot;p1.1.m1.1.1.3.11.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1h&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.12&quot; xref=&quot;p1.1.m1.1.1.3.12.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1i&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.13&quot; xref=&quot;p1.1.m1.1.1.3.13.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.2.1j&quot; xref=&quot;p1.1.m1.1.1.3.44.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.14&quot; xref=&quot;p1.1.m1.1.1.3.14.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.3.44c&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44.3&quot; xref=&quot;p1.1.m1.1.1.3.44.3.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.16&quot; xref=&quot;p1.1.m1.1.1.3.16.cmml&quot;&gt;h&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.3.1&quot; xref=&quot;p1.1.m1.1.1.3.44.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.17&quot; xref=&quot;p1.1.m1.1.1.3.17.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.3.1a&quot; xref=&quot;p1.1.m1.1.1.3.44.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.18&quot; xref=&quot;p1.1.m1.1.1.3.18.cmml&quot;&gt;s&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.3.44d&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44.4&quot; xref=&quot;p1.1.m1.1.1.3.44.4.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.20&quot; xref=&quot;p1.1.m1.1.1.3.20.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.21&quot; xref=&quot;p1.1.m1.1.1.3.21.cmml&quot;&gt;c&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1a&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.22&quot; xref=&quot;p1.1.m1.1.1.3.22.cmml&quot;&gt;c&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1b&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.23&quot; xref=&quot;p1.1.m1.1.1.3.23.cmml&quot;&gt;u&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1c&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.24&quot; xref=&quot;p1.1.m1.1.1.3.24.cmml&quot;&gt;r&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1d&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.25&quot; xref=&quot;p1.1.m1.1.1.3.25.cmml&quot;&gt;r&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1e&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.26&quot; xref=&quot;p1.1.m1.1.1.3.26.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.4.1f&quot; xref=&quot;p1.1.m1.1.1.3.44.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.27&quot; xref=&quot;p1.1.m1.1.1.3.27.cmml&quot;&gt;d&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.3.44e&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44.5&quot; xref=&quot;p1.1.m1.1.1.3.44.5.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.29&quot; xref=&quot;p1.1.m1.1.1.3.29.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.5.1&quot; xref=&quot;p1.1.m1.1.1.3.44.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.30&quot; xref=&quot;p1.1.m1.1.1.3.30.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.1.3.44f&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.1.3.44.6&quot; xref=&quot;p1.1.m1.1.1.3.44.6.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.32&quot; xref=&quot;p1.1.m1.1.1.3.32.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.33&quot; xref=&quot;p1.1.m1.1.1.3.33.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1a&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.34&quot; xref=&quot;p1.1.m1.1.1.3.34.cmml&quot;&gt;d&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1b&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.35&quot; xref=&quot;p1.1.m1.1.1.3.35.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1c&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.36&quot; xref=&quot;p1.1.m1.1.1.3.36.cmml&quot;&gt;v&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1d&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.37&quot; xref=&quot;p1.1.m1.1.1.3.37.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1e&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.38&quot; xref=&quot;p1.1.m1.1.1.3.38.cmml&quot;&gt;d&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1f&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.39&quot; xref=&quot;p1.1.m1.1.1.3.39.cmml&quot;&gt;u&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1g&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.40&quot; xref=&quot;p1.1.m1.1.1.3.40.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44.6.1h&quot; xref=&quot;p1.1.m1.1.1.3.44.6.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.1.3.41&quot; xref=&quot;p1.1.m1.1.1.3.41.cmml&quot;&gt;l&lt;/mi&gt;
+              &lt;/mrow&gt;
+            &lt;/mrow&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.1.3.44g&quot; xref=&quot;p1.1.m1.1.1.3.44.cmml&quot;&gt;)&lt;/mo&gt;
+          &lt;/mrow&gt;
+        &lt;/mrow&gt;
+      &lt;/mfrac&gt;
+      &lt;mo xml:id=&quot;p1.1.m1.1.2&quot; xref=&quot;p1.1.m1.1.2.cmml&quot;&gt;=&lt;/mo&gt;
+      &lt;mfrac xml:id=&quot;p1.1.m1.1.3&quot; xref=&quot;p1.1.m1.1.3.cmml&quot;&gt;
+        &lt;mrow xml:id=&quot;p1.1.m1.1.3.2&quot; xref=&quot;p1.1.m1.1.3.2.cmml&quot;&gt;
+          &lt;mi xml:id=&quot;p1.1.m1.1.3.2.1&quot; xref=&quot;p1.1.m1.1.3.2.1.cmml&quot;&gt;P&lt;/mi&gt;
+          &lt;mo xml:id=&quot;p1.1.m1.1.3.2.37&quot; xref=&quot;p1.1.m1.1.3.2.37.cmml&quot;&gt;⁢&lt;/mo&gt;
+          &lt;mrow xml:id=&quot;p1.1.m1.1.3.2.38&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38a&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt;(&lt;/mo&gt;
+            &lt;mrow xml:id=&quot;p1.1.m1.1.3.2.38b&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.3.2.38.2&quot; xref=&quot;p1.1.m1.1.3.2.38.2.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.3&quot; xref=&quot;p1.1.m1.1.3.2.3.cmml&quot;&gt;P&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.4&quot; xref=&quot;p1.1.m1.1.3.2.4.cmml&quot;&gt;r&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1a&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.5&quot; xref=&quot;p1.1.m1.1.3.2.5.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1b&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.6&quot; xref=&quot;p1.1.m1.1.3.2.6.cmml&quot;&gt;s&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1c&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.7&quot; xref=&quot;p1.1.m1.1.3.2.7.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1d&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.8&quot; xref=&quot;p1.1.m1.1.3.2.8.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1e&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.9&quot; xref=&quot;p1.1.m1.1.3.2.9.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1f&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.10&quot; xref=&quot;p1.1.m1.1.3.2.10.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1g&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.11&quot; xref=&quot;p1.1.m1.1.3.2.11.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1h&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.12&quot; xref=&quot;p1.1.m1.1.3.2.12.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1i&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.13&quot; xref=&quot;p1.1.m1.1.3.2.13.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.2.1j&quot; xref=&quot;p1.1.m1.1.3.2.38.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.14&quot; xref=&quot;p1.1.m1.1.3.2.14.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.3.2.38c&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.3.2.38.3&quot; xref=&quot;p1.1.m1.1.3.2.38.3.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.16&quot; xref=&quot;p1.1.m1.1.3.2.16.cmml&quot;&gt;W&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.3.1&quot; xref=&quot;p1.1.m1.1.3.2.38.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.17&quot; xref=&quot;p1.1.m1.1.3.2.17.cmml&quot;&gt;H&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.3.1a&quot; xref=&quot;p1.1.m1.1.3.2.38.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.18&quot; xref=&quot;p1.1.m1.1.3.2.18.cmml&quot;&gt;O&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.3.1b&quot; xref=&quot;p1.1.m1.1.3.2.38.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.19&quot; xref=&quot;p1.1.m1.1.3.2.19.cmml&quot;&gt;I&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.3.1c&quot; xref=&quot;p1.1.m1.1.3.2.38.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.20&quot; xref=&quot;p1.1.m1.1.3.2.20.cmml&quot;&gt;F&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.3.1d&quot; xref=&quot;p1.1.m1.1.3.2.38.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.21&quot; xref=&quot;p1.1.m1.1.3.2.21.cmml&quot;&gt;P&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.3.1e&quot; xref=&quot;p1.1.m1.1.3.2.38.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.22&quot; xref=&quot;p1.1.m1.1.3.2.22.cmml&quot;&gt;I&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.3.2.38d&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.3.2.38.4&quot; xref=&quot;p1.1.m1.1.3.2.38.4.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.24&quot; xref=&quot;p1.1.m1.1.3.2.24.cmml&quot;&gt;b&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.4.1&quot; xref=&quot;p1.1.m1.1.3.2.38.4.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.25&quot; xref=&quot;p1.1.m1.1.3.2.25.cmml&quot;&gt;y&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.3.2.38e&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.3.2.38.5&quot; xref=&quot;p1.1.m1.1.3.2.38.5.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.27&quot; xref=&quot;p1.1.m1.1.3.2.27.cmml&quot;&gt;c&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.28&quot; xref=&quot;p1.1.m1.1.3.2.28.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1a&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.29&quot; xref=&quot;p1.1.m1.1.3.2.29.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1b&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.30&quot; xref=&quot;p1.1.m1.1.3.2.30.cmml&quot;&gt;d&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1c&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.31&quot; xref=&quot;p1.1.m1.1.3.2.31.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1d&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.32&quot; xref=&quot;p1.1.m1.1.3.2.32.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1e&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.33&quot; xref=&quot;p1.1.m1.1.3.2.33.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1f&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.34&quot; xref=&quot;p1.1.m1.1.3.2.34.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38.5.1g&quot; xref=&quot;p1.1.m1.1.3.2.38.5.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.2.35&quot; xref=&quot;p1.1.m1.1.3.2.35.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+            &lt;/mrow&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.3.2.38f&quot; xref=&quot;p1.1.m1.1.3.2.38.cmml&quot;&gt;)&lt;/mo&gt;
+          &lt;/mrow&gt;
+        &lt;/mrow&gt;
+        &lt;mrow xml:id=&quot;p1.1.m1.1.3.3&quot; xref=&quot;p1.1.m1.1.3.3.cmml&quot;&gt;
+          &lt;mi xml:id=&quot;p1.1.m1.1.3.3.1&quot; xref=&quot;p1.1.m1.1.3.3.1.cmml&quot;&gt;P&lt;/mi&gt;
+          &lt;mo xml:id=&quot;p1.1.m1.1.3.3.24&quot; xref=&quot;p1.1.m1.1.3.3.24.cmml&quot;&gt;⁢&lt;/mo&gt;
+          &lt;mrow xml:id=&quot;p1.1.m1.1.3.3.25&quot; xref=&quot;p1.1.m1.1.3.3.25.cmml&quot;&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25a&quot; xref=&quot;p1.1.m1.1.3.3.25.cmml&quot;&gt;(&lt;/mo&gt;
+            &lt;mrow xml:id=&quot;p1.1.m1.1.3.3.25b&quot; xref=&quot;p1.1.m1.1.3.3.25.cmml&quot;&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.3.3.25.2&quot; xref=&quot;p1.1.m1.1.3.3.25.2.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.3&quot; xref=&quot;p1.1.m1.1.3.3.3.cmml&quot;&gt;P&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.4&quot; xref=&quot;p1.1.m1.1.3.3.4.cmml&quot;&gt;r&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1a&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.5&quot; xref=&quot;p1.1.m1.1.3.3.5.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1b&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.6&quot; xref=&quot;p1.1.m1.1.3.3.6.cmml&quot;&gt;s&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1c&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.7&quot; xref=&quot;p1.1.m1.1.3.3.7.cmml&quot;&gt;e&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1d&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.8&quot; xref=&quot;p1.1.m1.1.3.3.8.cmml&quot;&gt;n&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1e&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.9&quot; xref=&quot;p1.1.m1.1.3.3.9.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1f&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.10&quot; xref=&quot;p1.1.m1.1.3.3.10.cmml&quot;&gt;a&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1g&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.11&quot; xref=&quot;p1.1.m1.1.3.3.11.cmml&quot;&gt;t&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1h&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.12&quot; xref=&quot;p1.1.m1.1.3.3.12.cmml&quot;&gt;i&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1i&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.13&quot; xref=&quot;p1.1.m1.1.3.3.13.cmml&quot;&gt;o&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.2.1j&quot; xref=&quot;p1.1.m1.1.3.3.25.2.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.14&quot; xref=&quot;p1.1.m1.1.3.3.14.cmml&quot;&gt;n&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo separator=&quot;true&quot; xml:id=&quot;p1.1.m1.1.3.3.25c&quot; xref=&quot;p1.1.m1.1.3.3.25.cmml&quot;&gt; &lt;/mo&gt;
+              &lt;mrow xml:id=&quot;p1.1.m1.1.3.3.25.3&quot; xref=&quot;p1.1.m1.1.3.3.25.3.cmml&quot;&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.16&quot; xref=&quot;p1.1.m1.1.3.3.16.cmml&quot;&gt;W&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.3.1&quot; xref=&quot;p1.1.m1.1.3.3.25.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.17&quot; xref=&quot;p1.1.m1.1.3.3.17.cmml&quot;&gt;H&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.3.1a&quot; xref=&quot;p1.1.m1.1.3.3.25.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.18&quot; xref=&quot;p1.1.m1.1.3.3.18.cmml&quot;&gt;O&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.3.1b&quot; xref=&quot;p1.1.m1.1.3.3.25.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.19&quot; xref=&quot;p1.1.m1.1.3.3.19.cmml&quot;&gt;I&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.3.1c&quot; xref=&quot;p1.1.m1.1.3.3.25.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.20&quot; xref=&quot;p1.1.m1.1.3.3.20.cmml&quot;&gt;F&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.3.1d&quot; xref=&quot;p1.1.m1.1.3.3.25.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.21&quot; xref=&quot;p1.1.m1.1.3.3.21.cmml&quot;&gt;P&lt;/mi&gt;
+                &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25.3.1e&quot; xref=&quot;p1.1.m1.1.3.3.25.3.1.cmml&quot;&gt;⁢&lt;/mo&gt;
+                &lt;mi xml:id=&quot;p1.1.m1.1.3.3.22&quot; xref=&quot;p1.1.m1.1.3.3.22.cmml&quot;&gt;I&lt;/mi&gt;
+              &lt;/mrow&gt;
+            &lt;/mrow&gt;
+            &lt;mo xml:id=&quot;p1.1.m1.1.3.3.25d&quot; xref=&quot;p1.1.m1.1.3.3.25.cmml&quot;&gt;)&lt;/mo&gt;
+          &lt;/mrow&gt;
+        &lt;/mrow&gt;
+      &lt;/mfrac&gt;
+    &lt;/mrow&gt;
+    &lt;annotation-xml xml:id=&quot;p1.1.m1.1.cmml&quot; encoding=&quot;MathML-Content&quot; xref=&quot;p1.1.m1.1&quot;&gt;
+      &lt;apply xml:id=&quot;p1.1.m1.1.4.cmml&quot; xref=&quot;p1.1.m1.1.4&quot;&gt;
+        &lt;eq xml:id=&quot;p1.1.m1.1.2.cmml&quot; xref=&quot;p1.1.m1.1.2&quot;/&gt;
+        &lt;apply xml:id=&quot;p1.1.m1.1.1.cmml&quot; xref=&quot;p1.1.m1.1.1&quot;&gt;
+          &lt;divide xml:id=&quot;p1.1.m1.1.1.1.cmml&quot;/&gt;
+          &lt;apply xml:id=&quot;p1.1.m1.1.1.2.cmml&quot; xref=&quot;p1.1.m1.1.1.2&quot;&gt;
+            &lt;times xml:id=&quot;p1.1.m1.1.1.2.53.cmml&quot; xref=&quot;p1.1.m1.1.1.2.53&quot;/&gt;

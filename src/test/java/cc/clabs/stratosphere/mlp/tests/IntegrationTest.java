@@ -68,5 +68,5 @@ public class IntegrationTest {
 			System.out.println(pactString.toString());
 		}
 	}
-	
+
 }

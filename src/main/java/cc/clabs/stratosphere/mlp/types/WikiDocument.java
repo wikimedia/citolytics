@@ -19,7 +19,6 @@ package cc.clabs.stratosphere.mlp.types;
 import cc.clabs.stratosphere.mlp.utils.PlaintextDocumentBuilder;
 import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import cc.clabs.stratosphere.mlp.utils.TexIdentifierExtractor;
-
 import eu.stratosphere.pact.common.type.Value;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
@@ -31,8 +30,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.mylyn.wikitext.core.parser.MarkupParser;
 import org.eclipse.mylyn.wikitext.core.parser.markup.MarkupLanguage;
@@ -42,9 +39,6 @@ import org.eclipse.mylyn.wikitext.mediawiki.core.MediaWikiLanguage;
  * @author rob
  */
 public class WikiDocument implements Value {
-    
-    private static final Log LOG = LogFactory.getLog( WikiDocument.class );
-
     
     /*
      * Raw raw of the document
@@ -239,7 +233,12 @@ public class WikiDocument implements Value {
                 text = m.replaceFirst( "" );
             }
             else if ( identifiers.size() == 1 ) {
-                text = m.replaceFirst( identifiers.get( 0 ) );
+            	try{
+            		text = m.replaceFirst( identifiers.get( 0 ) );
+            	} catch(Exception e) {
+                    formulas.add( new PactFormula( key, formula ) );
+                    text = m.replaceFirst( key );
+            	}
             }
             else {
                 formulas.add( new PactFormula( key, formula ) );
