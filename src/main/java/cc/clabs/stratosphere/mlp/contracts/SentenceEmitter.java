@@ -19,17 +19,17 @@ package cc.clabs.stratosphere.mlp.contracts;
 import cc.clabs.stratosphere.mlp.types.PactSentence;
 import cc.clabs.stratosphere.mlp.types.PactWord;
 import cc.clabs.stratosphere.mlp.utils.SentenceUtils;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.MapStub;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactString;
 
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.stratosphere.api.java.record.functions.MapFunction;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.DoubleValue;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 
 import java.io.StringReader;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author rob
  */
-public class SentenceEmitter extends MapStub {
+public class SentenceEmitter extends MapFunction {
     
     /**
      * 
@@ -48,7 +48,7 @@ public class SentenceEmitter extends MapStub {
     /**
      * 
      */
-    private final PactRecord target = new PactRecord();
+    private final Record target = new Record();
 
     
     @Override
@@ -63,11 +63,11 @@ public class SentenceEmitter extends MapStub {
     
     
     @Override
-    public void map( PactRecord record, Collector<PactRecord> collector ) {
+    public void map( Record record, Collector<Record> collector ) {
         target.clear();
         // field 0 remains the same (id of the document)
-        target.setField( 0, record.getField( 0, PactInteger.class ) );       
-        String plaintext = record.getField( 1, PactString.class ).getValue();        
+        target.setField( 0, record.getField( 0, IntValue.class ) );
+        String plaintext = record.getField( 1, StringValue.class ).getValue();
         // tokenize the plaintext
         List<List<HasWord>> tokenized = MaxentTagger.tokenizeText( new StringReader( plaintext ) );
         Integer position = -1;    
@@ -85,7 +85,7 @@ public class SentenceEmitter extends MapStub {
             sentence = SentenceUtils.replaceAllByPattern( sentence, "MATH[0-9A-F]+", "FORMULA" );
             // emit the final sentence
             target.setField( 1, sentence );
-            target.setField( 2, new PactDouble( (double) position / (double) tokenized.size() ) );
+            target.setField( 2, new DoubleValue( (double) position / (double) tokenized.size() ) );
             collector.collect( target );
         }
     }

@@ -16,8 +16,9 @@
  */
 package cc.clabs.stratosphere.mlp.types;
 
-import eu.stratosphere.pact.common.type.base.PactList;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.types.ListValue;
+import eu.stratosphere.types.StringValue;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -25,7 +26,7 @@ import java.util.Iterator;
  *
  * @author rob
  */
-public class PactSentence extends PactList<PactWord> implements Cloneable {
+public class PactSentence extends ListValue<PactWord> implements Cloneable {
     
     /**
      * 
@@ -48,8 +49,7 @@ public class PactSentence extends PactList<PactWord> implements Cloneable {
     
     
     /**
-     * 
-     * @param value
+     *
      * @return 
      */
     public boolean containsWord( String word ) {
@@ -61,7 +61,7 @@ public class PactSentence extends PactList<PactWord> implements Cloneable {
      * @param word
      * @return 
      */
-    public boolean containsWord( PactString word ) {
+    public boolean containsWord( StringValue word ) {
         return containsWord( word.getValue() );
     }
     

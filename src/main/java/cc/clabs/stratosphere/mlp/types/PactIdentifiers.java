@@ -16,18 +16,18 @@
  */
 package cc.clabs.stratosphere.mlp.types;
 
-import eu.stratosphere.pact.common.type.base.PactList;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.types.ListValue;
+import eu.stratosphere.types.StringValue;
 
 /**
  *
  * @author rob
  */
-public final class PactIdentifiers extends PactList<PactString> {
+public final class PactIdentifiers extends ListValue<StringValue> {
 
     public Boolean containsIdentifier ( String identifier ) {
         Boolean found = false;
-        for ( PactString i : this )
+        for ( StringValue i : this )
             found = found || i.getValue().equals( identifier );
         return found;
     }

@@ -16,8 +16,9 @@
  */
 package cc.clabs.stratosphere.mlp.types;
 
-import eu.stratosphere.pact.common.type.Value;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.types.Value;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -32,16 +33,15 @@ public class PactFormula implements Value {
     /*
      * 
      */
-    private PactString hash = new PactString();
+    private StringValue hash = new StringValue();
     
     /*
      * 
      */
-    private PactString src = new PactString();
+    private StringValue src = new StringValue();
     
     /**
      * default constructor
-     * @see eu.stratosphere.nephele.io.IOReadableWritable
      */
     public PactFormula() { }
     

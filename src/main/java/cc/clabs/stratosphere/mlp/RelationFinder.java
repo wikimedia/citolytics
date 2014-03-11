@@ -19,15 +19,22 @@ package cc.clabs.stratosphere.mlp;
 import cc.clabs.stratosphere.mlp.contracts.*;
 import cc.clabs.stratosphere.mlp.io.*;
 import cc.clabs.stratosphere.mlp.types.*;
-import eu.stratosphere.pact.common.contract.*;
-import eu.stratosphere.pact.common.io.RecordOutputFormat;
-import eu.stratosphere.pact.common.plan.Plan;
-import eu.stratosphere.pact.common.plan.PlanAssembler;
-import eu.stratosphere.pact.common.plan.PlanAssemblerDescription;
-import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.stratosphere.api.common.Plan;
+import eu.stratosphere.api.common.Program;
+import eu.stratosphere.api.common.ProgramDescription;
+import eu.stratosphere.api.common.operators.FileDataSink;
+import eu.stratosphere.api.common.operators.FileDataSource;
+import eu.stratosphere.api.common.operators.Order;
+import eu.stratosphere.api.common.operators.Ordering;
+import eu.stratosphere.api.java.record.functions.MapFunction;
+import eu.stratosphere.api.java.record.io.CsvOutputFormat;
+import eu.stratosphere.api.java.record.operators.CoGroupOperator;
+import eu.stratosphere.api.java.record.operators.MapOperator;
+import eu.stratosphere.api.java.record.operators.ReduceOperator;
+import eu.stratosphere.types.DoubleValue;
+import eu.stratosphere.types.IntValue;
 
-public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
+public class RelationFinder implements Program, ProgramDescription {
 
     /**
     * {@inheritDoc}
@@ -53,35 +60,35 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
         
         FileDataSource source = new FileDataSource( WikiDocumentEmitter.class, dataset, "Dumps" );
         
-        MapContract doc = MapContract
+        MapOperator doc = MapOperator
                 .builder( DocumentProcessor.class )
                 .name( "Processing Documents" )
                 .input( source )
                 .build();
-        
-        MapContract sentences = MapContract
+
+        MapOperator sentences = MapOperator
                 .builder( SentenceEmitter.class )
                 .name( "Sentences" )
                 .input( doc )
                 .build();
         sentences.setParameter( "POS-MODEL", model );
         
-        CoGroupContract candidates = CoGroupContract
-                .builder( CandidateEmitter.class, PactInteger.class, 0, 0 )
+        CoGroupOperator candidates = CoGroupOperator
+                .builder( CandidateEmitter.class, IntValue.class, 0, 0 )
                 .name( "Candidates" )
                 .input1( doc )
                 .input2( sentences )
                 .build();
         // order sentences by their position within the document
-        candidates.setGroupOrderForInputTwo( new Ordering( 2, PactDouble.class, Order.ASCENDING ) );
+        candidates.setGroupOrderForInputTwo( new Ordering( 2, DoubleValue.class, Order.ASCENDING ) );
         // set the weighting factors
         candidates.setParameter( "α", alpha );
         candidates.setParameter( "β", beta );
         candidates.setParameter( "γ", gamma );
 
-        
-        ReduceContract filter = ReduceContract
-                .builder( FilterCandidates.class, PactInteger.class, 0 )
+
+        ReduceOperator filter = ReduceOperator
+                .builder(FilterCandidates.class, IntValue.class, 0)
                 .name( "Filter" )
                 .input( candidates )
                 .build();
@@ -90,10 +97,9 @@ public class RelationFinder implements PlanAssembler, PlanAssemblerDescription {
         // sets the minimum threshold for a candidate's score
         filter.setParameter( "THRESHOLD", threshold );
 
-        
-        
-        FileDataSink out = new FileDataSink( RecordOutputFormat.class, output, filter, "Output" );
-        RecordOutputFormat.configureRecordFormat( out )
+
+        FileDataSink out = new FileDataSink( CsvOutputFormat.class, output, filter, "Output" );
+        CsvOutputFormat.configureRecordFormat( out )
                 .recordDelimiter( '\n' )
                 .fieldDelimiter( '\t' )
                 .field( PactRelation.class, 0 );

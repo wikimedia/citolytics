@@ -17,10 +17,10 @@
 package cc.clabs.stratosphere.mlp.contracts;
 
 import cc.clabs.stratosphere.mlp.types.PactRelation;
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.ReduceStub;
-import eu.stratosphere.pact.common.type.PactRecord;
+import eu.stratosphere.api.java.record.functions.ReduceFunction;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.util.Collector;
 
 import java.util.Iterator;
 
@@ -28,7 +28,7 @@ import java.util.Iterator;
  *
  * @author rob
  */
-public class FilterCandidates extends ReduceStub {
+public class FilterCandidates extends ReduceFunction {
         
     
     /**
@@ -39,7 +39,7 @@ public class FilterCandidates extends ReduceStub {
     /**
      * 
      */
-    private final PactRecord target = new PactRecord();
+    private final Record target = new Record();
 
     
     @Override
@@ -50,9 +50,9 @@ public class FilterCandidates extends ReduceStub {
     
     
     @Override
-    public void reduce( Iterator<PactRecord> iterator, Collector<PactRecord> collector ) throws Exception {
+    public void reduce( Iterator<Record> iterator, Collector<Record> collector ) throws Exception {
         PactRelation relation;
-        PactRecord record;
+        Record record;
         
         while ( iterator.hasNext() ) {
             record = iterator.next();

@@ -28,10 +28,6 @@
   </properties>
 
   <repositories>
-	<repository>
-		<id>stratosphere.eu</id>
-		<url>http://dopa.dima.tu-berlin.de/jars</url>
-	</repository>
     <repository>
       <id>www2.ph.ed.ac.uk-releases</id>
       <url>http://www2.ph.ed.ac.uk/maven2</url>
@@ -39,12 +35,22 @@
   </repositories>
   
   <dependencies>
-    <dependency>
+          <dependency>
+              <groupId>eu.stratosphere</groupId>
+              <artifactId>stratosphere-java</artifactId>
+              <version>0.4</version>
+          </dependency>
+          <dependency>
+              <groupId>eu.stratosphere</groupId>
+              <artifactId>stratosphere-clients</artifactId>
+              <version>0.4</version>
+          </dependency>
+      <!--<dependency>
       <groupId>eu.stratosphere</groupId>
       <artifactId>pact-common</artifactId>
       <version>0.3</version>
       <type>jar</type>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>edu.stanford.nlp</groupId>
       <artifactId>stanford-corenlp</artifactId>

@@ -18,10 +18,11 @@ package cc.clabs.stratosphere.mlp.io;
 
 import cc.clabs.stratosphere.mlp.types.WikiDocument;
 import cc.clabs.stratosphere.mlp.utils.StringUtils;
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.io.TextInputFormat;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.io.TextInputFormat;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,23 +30,23 @@ import java.util.regex.Pattern;
  *
  * @author rob
  */
-public class WikiDocumentEmitter extends TextInputFormat  {
+public class WikiDocumentEmitter extends TextInputFormat {
 
     @Override
     public void configure (Configuration parameter) {
     	parameter.setString(DEFAULT_CHARSET_NAME, "UTF-8");
         super.configure( parameter );
-        this.delimiter =  "</page>".getBytes();
+        this.setDelimiter("</page>");
     }
     
     /* (non-Javadoc)
-     * @see eu.stratosphere.pact.common.io.DelimitedInputFormat#readRecord(eu.stratosphere.pact.common.type.PactRecord, byte[], int)
+     * @see eu.stratosphere.pact.common.io.DelimitedInputFormat#readRecord(eu.stratosphere.pact.common.type.Record, byte[], int)
      */
     @Override
-    public boolean readRecord(PactRecord target, byte[] bytes, int offset, int numBytes) {
+    public boolean readRecord(Record target, byte[] bytes, int offset, int numBytes) {
      
         super.readRecord( target, bytes, offset, numBytes );
-        String content = target.getField( 0, PactString.class ).getValue();
+        String content = target.getField( 0, StringValue.class ).getValue();
         
         // search for a page-xml entity
         Pattern pageRegex = Pattern.compile( "(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL );

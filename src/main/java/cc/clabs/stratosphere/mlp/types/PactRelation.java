@@ -16,10 +16,10 @@
  */
 package cc.clabs.stratosphere.mlp.types;
 
-import eu.stratosphere.pact.common.type.Key;
-import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.types.Key;
+import eu.stratosphere.types.DoubleValue;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.StringValue;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -30,18 +30,18 @@ import java.io.IOException;
  */
 public final class PactRelation implements Key {
 
-    private PactDouble score = new PactDouble();
-    private PactInteger iposition = new PactInteger();
-    private PactInteger wposition = new PactInteger();
-    private PactString identifier = new PactString();
+    private DoubleValue score = new DoubleValue();
+    private IntValue iposition = new IntValue();
+    private IntValue wposition = new IntValue();
+    private StringValue identifier = new StringValue();
     private PactSentence sentence = new PactSentence();
-    private PactInteger id = new PactInteger();
+    private IntValue id = new IntValue();
     
     /**
      * 
      * @return 
      */
-    public PactDouble getScore() {
+    public DoubleValue getScore() {
         return score;
     }
     
@@ -50,7 +50,7 @@ public final class PactRelation implements Key {
      * 
      * @param score 
      */
-    public void setScore( PactDouble score ) {
+    public void setScore( DoubleValue score ) {
         this.score = score;
     }
     
@@ -60,14 +60,14 @@ public final class PactRelation implements Key {
      * @param score 
      */
     public void setScore( Double score ) {
-        this.score = new PactDouble( score );
+        this.score = new DoubleValue( score );
     }
     
     /**
      * 
      * @return 
      */
-    public PactString getIdentifier() {
+    public StringValue getIdentifier() {
         return identifier;
     }
     
@@ -76,7 +76,7 @@ public final class PactRelation implements Key {
      * 
      * @param identifier 
      */
-    public void setIdentifier( PactString identifier ) {
+    public void setIdentifier( StringValue identifier ) {
         this.identifier = identifier;
     }
     
@@ -86,7 +86,7 @@ public final class PactRelation implements Key {
      * @param identifier 
      */
     public void setIdentifier( String identifier ) {
-        setIdentifier( new PactString( identifier ) );
+        setIdentifier( new StringValue( identifier ) );
     }
     
     
@@ -94,7 +94,7 @@ public final class PactRelation implements Key {
      * 
      * @return 
      */
-    public PactInteger getIdentifierPosition() {
+    public IntValue getIdentifierPosition() {
         return iposition;
     }
     
@@ -103,7 +103,7 @@ public final class PactRelation implements Key {
      * 
      * @param position 
      */
-    public void setIdentifierPosition( PactInteger position ) {
+    public void setIdentifierPosition( IntValue position ) {
         this.iposition = position;
     }
     
@@ -113,7 +113,7 @@ public final class PactRelation implements Key {
      * @param position 
      */
     public void setIdentifierPosition( Integer position ) {
-        setIdentifierPosition( new PactInteger( position ) );
+        setIdentifierPosition( new IntValue( position ) );
     }
     
     
@@ -121,7 +121,7 @@ public final class PactRelation implements Key {
      * 
      * @return 
      */
-    public PactInteger getWordPosition() {
+    public IntValue getWordPosition() {
         return wposition;
     }
     
@@ -130,7 +130,7 @@ public final class PactRelation implements Key {
      * 
      * @param position 
      */
-    public void setWordPosition( PactInteger position ) {
+    public void setWordPosition( IntValue position ) {
         this.wposition = position;
     }
     
@@ -140,7 +140,7 @@ public final class PactRelation implements Key {
      * @param position 
      */
     public void setWordPosition( Integer position ) {
-        setWordPosition( new PactInteger( position ) );
+        setWordPosition( new IntValue( position ) );
     }
     
     
@@ -165,11 +165,11 @@ public final class PactRelation implements Key {
      * 
      * @return 
      */
-    public PactInteger getId () {
+    public IntValue getId () {
         return this.id;
     }
     
-    public void setId( PactInteger id ) {
+    public void setId( IntValue id ) {
         this.id = id;
     }
     

@@ -17,8 +17,9 @@
 package cc.clabs.stratosphere.mlp.types;
 
 import edu.stanford.nlp.ling.TaggedWord;
-import eu.stratosphere.pact.common.type.Key;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.types.Key;
+import eu.stratosphere.types.StringValue;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -33,16 +34,15 @@ public class PactWord implements Key {
     /*
      * 
      */
-    private PactString word = new PactString();
+    private StringValue word = new StringValue();
     
     /*
      * 
      */
-    private PactString tag = new PactString();
+    private StringValue tag = new StringValue();
     
     /**
      * default constructor
-     * @see eu.stratosphere.nephele.io.IOReadableWritable
      */
     public PactWord() { }
     

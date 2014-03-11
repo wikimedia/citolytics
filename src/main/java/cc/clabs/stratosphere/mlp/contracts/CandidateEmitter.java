@@ -20,17 +20,18 @@ import cc.clabs.stratosphere.mlp.types.PactIdentifiers;
 import cc.clabs.stratosphere.mlp.types.PactRelation;
 import cc.clabs.stratosphere.mlp.types.PactSentence;
 import cc.clabs.stratosphere.mlp.types.PactWord;
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.stubs.CoGroupStub;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.CoGroupFunction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,11 +39,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author rob
  */
-public class CandidateEmitter extends CoGroupStub {
+public class CandidateEmitter extends CoGroupFunction{
         
     private static final Log LOG = LogFactory.getLog( CandidateEmitter.class );
         
-    private PactInteger id = null;
+    private IntValue id = null;
     
     private PactIdentifiers identifiers = null;
     
@@ -71,8 +72,8 @@ public class CandidateEmitter extends CoGroupStub {
 
     
     @Override
-    public void coGroup( Iterator<PactRecord> left, Iterator<PactRecord> right, Collector<PactRecord> collector ) {
-        
+    public void coGroup(Iterator<Record> left, Iterator<Record> right, Collector<Record> collector) throws Exception {
+
         // populating identifier list
         // we'll allways get one record from the left,
         // therefore, we don't need to iterate through
@@ -83,21 +84,21 @@ public class CandidateEmitter extends CoGroupStub {
         // populating sentences list
         ArrayList<PactSentence> sentences =  new ArrayList<>();
         while ( right.hasNext() ) {
-            PactRecord next = right.next();
+            Record next = right.next();
             // id should always be the same
-            id = next.getField( 0, PactInteger.class );
+            id = next.getField( 0, IntValue.class );
             // we need to clone the sentence objects, because of reused objects
             sentences.add( (PactSentence) next.getField( 1, PactSentence.class ).clone() );
         }
                 
-        for ( PactString identifier : identifiers ) {
+        for ( StringValue identifier : identifiers ) {
             ArrayList<PactSentence> list = new ArrayList<>();
             // populate the list
             for ( PactSentence sentence : sentences )
                 if ( sentence.containsWord( identifier ) )
                     list.add( sentence );
             // emit the generated candidate sentences
-            for ( PactRecord candidate : generateCandidates( list, identifier.getValue() ) ) {
+            for ( Record candidate : generateCandidates( list, identifier.getValue() ) ) {
                 collector.collect( candidate );
                 LOG.info( "candidate collected: " + candidate.toString() );
             }
@@ -113,8 +114,8 @@ public class CandidateEmitter extends CoGroupStub {
      * @param identifier
      * @return 
      */
-    private ArrayList<PactRecord> generateCandidates( ArrayList<PactSentence> sentences, String identifier ) {
-        ArrayList<PactRecord> candidates = new ArrayList<>();
+    private ArrayList<Record> generateCandidates( ArrayList<PactSentence> sentences, String identifier ) {
+        ArrayList<Record> candidates = new ArrayList<>();
         HashMap<String,Integer> ω = new HashMap<>();
         Integer Ω = 0;
         
@@ -171,7 +172,7 @@ public class CandidateEmitter extends CoGroupStub {
                 relation.setId( id );
                 
                 // emit the relation            
-                PactRecord record = new PactRecord();
+                Record record = new Record();
                 record.setField( 0, id );
                 record.setField( 1, relation );
                 candidates.add( record );
@@ -230,7 +231,6 @@ public class CandidateEmitter extends CoGroupStub {
     /**
      *
      * @param word
-     * @param identifier
      * @return 
      */
     private boolean filterWord( PactWord word ) {
@@ -241,5 +241,6 @@ public class CandidateEmitter extends CoGroupStub {
                // we're only interested in nouns, adjectives and entities
                !word.getTag().matches( "NN[PS]{0,2}|ENTITY|JJ" );
     }
-    
+
+
 }

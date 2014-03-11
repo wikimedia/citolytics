@@ -19,9 +19,6 @@ package cc.clabs.stratosphere.mlp.types;
 import cc.clabs.stratosphere.mlp.utils.PlaintextDocumentBuilder;
 import cc.clabs.stratosphere.mlp.utils.StringUtils;
 import cc.clabs.stratosphere.mlp.utils.TexIdentifierExtractor;
-import eu.stratosphere.pact.common.type.Value;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactString;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -31,6 +28,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.types.Value;
 import org.eclipse.mylyn.wikitext.core.parser.MarkupParser;
 import org.eclipse.mylyn.wikitext.core.parser.markup.MarkupLanguage;
 import org.eclipse.mylyn.wikitext.mediawiki.core.MediaWikiLanguage;
@@ -43,22 +43,22 @@ public class WikiDocument implements Value {
     /*
      * Raw raw of the document
      */
-    private PactString raw = new PactString();
+    private StringValue raw = new StringValue();
     
     /*
      * Plaintext version of the document
      */
-    private PactString plaintext = new PactString();
+    private StringValue plaintext = new StringValue();
     
     /*
      * Title of the document
      */
-    private PactString title = new PactString();
+    private StringValue title = new StringValue();
     
     /*
      * Wikipedia id of the document
      */
-    private PactInteger id = new PactInteger();
+    private IntValue id = new IntValue();
     
     /**
      * Wikipedia pages belong to different namespaces. Below
@@ -87,7 +87,7 @@ public class WikiDocument implements Value {
      *  108	Book
      *  109	Book talk
      */
-    private PactInteger ns = new PactInteger();
+    private IntValue ns = new IntValue();
     
     /*
      * Holds all formulas found within the document. The key of
@@ -203,8 +203,7 @@ public class WikiDocument implements Value {
     
     /**
      * Sets the raw body of the document.
-     * 
-     * @param raw 
+     *
      */
     public void setText( String text ) {
         this.raw.setValue( StringUtils.unescapeEntities( text ) );
@@ -249,7 +248,7 @@ public class WikiDocument implements Value {
             // add found identifers to the page wide list
             for ( String identifier : identifiers ) {
                 if ( knownIdentifiers.containsIdentifier( identifier ) ) continue;
-                knownIdentifiers.add( new PactString( identifier ) );
+                knownIdentifiers.add( new StringValue( identifier ) );
             }            
             
         }

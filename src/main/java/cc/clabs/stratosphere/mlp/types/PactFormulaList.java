@@ -16,10 +16,11 @@
  */
 package cc.clabs.stratosphere.mlp.types;
 
-import eu.stratosphere.pact.common.type.base.PactList;
+
+import eu.stratosphere.types.ListValue;
 
 /**
  *
  * @author rob
  */
-public class PactFormulaList extends PactList<PactFormula>{ }
+public class PactFormulaList extends ListValue<PactFormula> { }
