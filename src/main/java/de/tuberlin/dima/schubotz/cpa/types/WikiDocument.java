@@ -16,18 +16,13 @@
  */
 package de.tuberlin.dima.schubotz.cpa.types;
 
-import de.tuberlin.dima.schubotz.cpa.utils.PlaintextDocumentBuilder;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import eu.stratosphere.types.*;
 import eu.stratosphere.util.Collector;
-import org.eclipse.mylyn.wikitext.core.parser.MarkupParser;
-import org.eclipse.mylyn.wikitext.core.parser.markup.MarkupLanguage;
-import org.eclipse.mylyn.wikitext.mediawiki.core.MediaWikiLanguage;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.Math.abs;
-import static org.apache.xalan.lib.ExsltMath.power;
+import static java.lang.Math.pow;
 
 /**
  * @author rob
@@ -59,7 +54,7 @@ public class WikiDocument implements Value {
 
     /*
      * Plaintext version of the document
-     */
+     *
     private StringValue plaintext = new StringValue();
 
     /*
@@ -106,7 +101,7 @@ public class WikiDocument implements Value {
      * Returns a plaintext version of this document.
      *
      * @return a plaintext string
-     */
+     *
     public String getPlainText() {
         StringWriter writer = new StringWriter();
         MarkupParser parser = new MarkupParser();
@@ -116,7 +111,7 @@ public class WikiDocument implements Value {
         parser.parse(raw.getValue());
         plaintext.setValue(writer.toString());
         return plaintext.getValue();
-    }
+    } */
 
     @Override
     public void write(DataOutput out) throws IOException {
@@ -124,7 +119,7 @@ public class WikiDocument implements Value {
         ns.write(out);
         title.write(out);
         raw.write(out);
-        plaintext.write(out);
+        //plaintext.write(out);
     }
 
     @Override
@@ -133,7 +128,7 @@ public class WikiDocument implements Value {
         ns.read(in);
         title.read(in);
         raw.read(in);
-        plaintext.read(in);
+        //plaintext.read(in);
     }
 
     /**
@@ -226,7 +221,7 @@ public class WikiDocument implements Value {
                 int order = outLink.getKey().compareTo(outLink2.getKey());
                 if (order != 0) {
                     //TODO: Adjust distance metrics not to use chars but words or whatever is suitable here
-                    recDistance.setValue(1 / (power(abs(outLink2.getValue() - outLink.getValue()), 1)));
+                    recDistance.setValue(1 / (pow(abs(outLink2.getValue() - outLink.getValue()), 1)));
                     LeftLink.setValue(outLink.getKey());
                     RightLink.setValue(outLink2.getKey());
                     if (order < 0) {
