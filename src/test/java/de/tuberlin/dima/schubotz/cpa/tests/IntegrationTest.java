@@ -1,8 +1,11 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
+import de.tuberlin.dima.schubotz.cpa.RelationFinder;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentEmitter;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
+import eu.stratosphere.api.common.Plan;
+import eu.stratosphere.client.LocalExecutor;
 import eu.stratosphere.configuration.Configuration;
 import eu.stratosphere.types.Record;
 import eu.stratosphere.util.Collector;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -39,6 +43,7 @@ public class IntegrationTest {
 		wikiDocumentEmitter.readRecord(target, docString.getBytes(), 0, docString.length());
         WikiDocument doc = target.getField(0, WikiDocument.class);
         assertThat(doc.getText(), containsString("Albedo depends on the [[frequency]] of the radiation."));
+        assertEquals("Wrong NS", doc.getNS(), 0);
         List<Map.Entry<String, Integer>> links = doc.getOutLinks();
         Collector<Record> collector = new Collector<Record>() {
             @Override
@@ -51,7 +56,17 @@ public class IntegrationTest {
 
             }
         };
-        doc.collectLinks(collector);
+        doc.collectLinks(collector, 1.5);
+    }
+
+    @Test
+    //@Ignore
+    public void TestLocalExecution() throws Exception {
+        RelationFinder rc = new RelationFinder();
+        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikienmathsample.xml").nextElement().getPath();
+        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
+        Plan plan = rc.getPlan(inputFilename, outputFilename, "1.5", "0");
+        LocalExecutor.execute(plan);
     }
 
 }

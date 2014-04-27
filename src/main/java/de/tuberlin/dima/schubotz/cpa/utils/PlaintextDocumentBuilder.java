@@ -13,7 +13,8 @@
  * can do whatever you want with this stuff. If we meet some day, and you think
  * this stuff is worth it, you can buy me a beer in return.
  * ----------------------------------------------------------------------------
- */
+ *//*
+
 package de.tuberlin.dima.schubotz.cpa.utils;
 
 import org.eclipse.mylyn.wikitext.core.parser.Attributes;
@@ -23,6 +24,7 @@ import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
+*/
 /**
  * A DocumentBuilder for the mylyn wikitext parser. It converts
  * a document written in MediaWiki-Markup into plaintext. Most
@@ -30,16 +32,19 @@ import java.util.regex.Pattern;
  * linebreaks, headings, etc.
  *
  * @author rob
- */
+ *//*
+
 public class PlaintextDocumentBuilder extends DocumentBuilder {
 
     private StringWriter writer = new StringWriter();
     private StringWriter stream = null;
 
-    /**
-     * These lists store all blocks within a block/span that will
-     * not be rendered.
-     */
+    */
+/**
+ * These lists store all blocks within a block/span that will
+ * not be rendered.
+ *//*
+
     private LinkedList<BlockType> skipBlocks = new LinkedList<>();
     private LinkedList<SpanType> skipSpans = new LinkedList<>();
 
@@ -76,7 +81,8 @@ public class PlaintextDocumentBuilder extends DocumentBuilder {
         // empty/unknown inline tags
         doc = Pattern.compile("<([^ >]+)[^>]*>(.*?)</\\1>").matcher(doc).replaceAll("$2");
         // non inline tags
-        doc = Pattern.compile("<([^ >]+)[^>]*/?>").matcher(doc).replaceAll(" ");
+        doc = Pattern.compile("<([^ >]+)[^>]*//*
+?>").matcher(doc).replaceAll(" ");
         // fix for undetected links
         doc = Pattern.compile("\\[\\[([^\\|]*)|([^\\]]*)]]").matcher(doc).replaceAll("$2");
         doc = Pattern.compile("\\[\\[[^\\[\\]]*]]").matcher(doc).replaceAll("");
@@ -239,3 +245,4 @@ public class PlaintextDocumentBuilder extends DocumentBuilder {
     }
 
 }
+*/

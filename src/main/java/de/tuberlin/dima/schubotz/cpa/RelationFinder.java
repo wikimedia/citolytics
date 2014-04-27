@@ -43,9 +43,9 @@ public class RelationFinder implements Program, ProgramDescription {
         // parse job parameters
         String dataSet = args[0];
         String output = args[1];
-        
-        /*String alpha = args[3];
-        String threshold = args[6];*/
+
+        String alpha = ((args.length > 2) ? args[2] : "1.5");
+        String threshold = ((args.length > 3) ? args[3] : "1");
 
         FileDataSource source = new FileDataSource(WikiDocumentEmitter.class, dataSet, "Dumps");
 
@@ -64,8 +64,8 @@ public class RelationFinder implements Program, ProgramDescription {
 
         filter.setGroupOrder(new Ordering(2, IntValue.class, Order.DESCENDING));
 
-/*        filter.setParameter( "THRESHOLD", threshold );
-        filter.setParameter( "α", alpha );*/
+        filter.setParameter("THRESHOLD", threshold);
+        filter.setParameter("α", alpha);
 
 
         FileDataSink out = new FileDataSink( CsvOutputFormat.class, output, filter, "Output" );
@@ -85,7 +85,7 @@ public class RelationFinder implements Program, ProgramDescription {
     */
     @Override
     public String getDescription() {
-        return "Parameters: [DATASET] [OUTPUT]";// [ALPHA] [THRESHOLD]";
+        return "Parameters: [DATASET] [OUTPUT] [ALPHA] [THRESHOLD]";
     }
     
 }
