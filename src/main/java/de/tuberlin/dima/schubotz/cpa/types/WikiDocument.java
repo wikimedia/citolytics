@@ -33,7 +33,7 @@ import static java.lang.Math.*;
  * @author rob
  */
 public class WikiDocument implements Value {
-
+    private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList("File:", "Category:", "Image:"));
     private final LinkTuple linkTuple = new LinkTuple();
     private final StringValue LeftLink = new StringValue();
     private final StringValue RightLink = new StringValue();
@@ -99,17 +99,18 @@ public class WikiDocument implements Value {
      * Returns a plaintext version of this document.
      *
      * @return a plaintext string
-     *
-    public String getPlainText() {
-        StringWriter writer = new StringWriter();
-        MarkupParser parser = new MarkupParser();
-        MarkupLanguage wiki = new MediaWikiLanguage();
-        parser.setMarkupLanguage(wiki);
-        parser.setBuilder(new PlaintextDocumentBuilder(writer));
-        parser.parse(raw.getValue());
-        plaintext.setValue(writer.toString());
-        return plaintext.getValue();
-    } */
+     * <p/>
+     * public String getPlainText() {
+     * StringWriter writer = new StringWriter();
+     * MarkupParser parser = new MarkupParser();
+     * MarkupLanguage wiki = new MediaWikiLanguage();
+     * parser.setMarkupLanguage(wiki);
+     * parser.setBuilder(new PlaintextDocumentBuilder(writer));
+     * parser.parse(raw.getValue());
+     * plaintext.setValue(writer.toString());
+     * return plaintext.getValue();
+     * }
+     */
 
     @Override
     public void write(DataOutput out) throws IOException {
@@ -199,6 +200,15 @@ public class WikiDocument implements Value {
         this.raw.setValue(StringUtils.unescapeEntities(text));
     }
 
+    private boolean startsNotWith(String text, ArrayList<String> patterns) {
+        for (String stopPattern : patterns) {
+            if (text.startsWith(stopPattern)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void extractLinks() {
         Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
         String text = raw.getValue();
@@ -206,12 +216,11 @@ public class WikiDocument implements Value {
         Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
         text = p2.matcher(text).replaceAll("");
         Matcher m = p.matcher(text);
-
         outLinks = new ArrayList<>();
         while (m.find()) {
             if (m.groupCount() >= 1) {
                 String target = m.group(1).trim();
-                if (target.length() > 0) {
+                if (target.length() > 0 && startsNotWith(target, listOfStopPatterns)) {
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
                 }
             }
