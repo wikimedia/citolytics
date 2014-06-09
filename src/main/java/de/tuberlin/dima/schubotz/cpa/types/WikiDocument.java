@@ -17,7 +17,10 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import eu.stratosphere.types.*;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.types.Value;
 import eu.stratosphere.util.Collector;
 
 import java.io.DataInput;
@@ -27,7 +30,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 /**
  * @author rob
@@ -40,8 +44,8 @@ public class WikiDocument implements Value {
     /**
      * reciprocal distance *
      */
-    private final DoubleValue recDistance = new DoubleValue();
-    private final IntValue count = new IntValue(1);
+    //private final DoubleValue recDistance = new DoubleValue();
+    private final IntValue distance = new IntValue(1);
     private final Record target = new Record();
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
     private TreeMap<Integer, Integer> wordMap = null;
@@ -240,7 +244,7 @@ public class WikiDocument implements Value {
         }
     }
 
-    public void collectLinks(Collector<Record> collector, Double α) {
+    public void collectLinks(Collector<Record> collector) {
         //Skip all namespaces other than main
         if (ns.getValue() != 0) {
             return;
@@ -254,15 +258,15 @@ public class WikiDocument implements Value {
                     int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
                     int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
                     int d = max(abs(w1 - w2), 1);
-                    recDistance.setValue(1 / (pow(d, α)));
+                    distance.setValue(d);
+                    //recDistance.setValue(1 / (pow(d, α)));
                     LeftLink.setValue(outLink1.getKey());
                     RightLink.setValue(outLink2.getKey());
                     linkTuple.setFirst(LeftLink);
                     linkTuple.setSecond(RightLink);
                     target.clear();
                     target.addField(linkTuple);
-                    target.addField(recDistance);
-                    target.addField(count);
+                    target.addField(distance);
                     collector.collect(target);
                 }
             }

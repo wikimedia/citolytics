@@ -56,7 +56,7 @@ public class IntegrationTest {
 
             }
         };
-        doc.collectLinks(collector, 1.5);
+        doc.collectLinks(collector);
     }
 
     @Test

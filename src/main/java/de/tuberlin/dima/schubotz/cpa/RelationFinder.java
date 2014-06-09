@@ -62,12 +62,19 @@ public class RelationFinder implements Program, ProgramDescription {
                 .input(doc)
                 .build();
 
-        filter.setGroupOrder(new Ordering(2, IntValue.class, Order.DESCENDING));
+        Ordering countOrder = new Ordering(2, IntValue.class, Order.DESCENDING);
+        filter.setGroupOrder(countOrder);
 
         filter.setParameter("THRESHOLD", threshold);
         filter.setParameter("α", alpha);
 
-
+        /* 0 target.addField(linkTuple);
+        1 target.addField(distance);
+        2 target.addField(count);
+        3 distSquared
+        4 recDistα
+        5 min
+        6 max */
         FileDataSink out = new FileDataSink( CsvOutputFormat.class, output, filter, "Output" );
         CsvOutputFormat.configureRecordFormat( out )
                 .recordDelimiter('\n')
@@ -75,7 +82,12 @@ public class RelationFinder implements Program, ProgramDescription {
                 .field(LinkTuple.class, 0)
                 .field(DoubleValue.class, 1)
                 .field(IntValue.class, 2)
+                .field(IntValue.class, 3)
+                .field(DoubleValue.class, 4)
+                .field(IntValue.class, 5)
+                .field(IntValue.class, 6)
         ;
+        out.setGlobalOrder(countOrder);
 
         return new Plan(out, "CPA-demo");
     }
