@@ -42,7 +42,7 @@ public class WikiDocumentEmitter extends TextInputFormat {
      * @see eu.stratosphere.pact.common.io.DelimitedInputFormat#readRecord(eu.stratosphere.pact.common.type.Record, byte[], int)
      */
     @Override
-    public boolean readRecord(Record target, byte[] bytes, int offset, int numBytes) {
+    public Record readRecord(Record target, byte[] bytes, int offset, int numBytes) {
 
         super.readRecord(target, bytes, offset, numBytes);
         String content = target.getField(0, StringValue.class).getValue();
@@ -51,7 +51,7 @@ public class WikiDocumentEmitter extends TextInputFormat {
         Pattern pageRegex = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
         Matcher m = pageRegex.matcher(content);
         // if the record does not contain parsable page-xml
-        if (!m.find()) return false;
+        if (!m.find()) return target;
 
         // otherwise create a WikiDocument object from the xml
         WikiDocument doc = new WikiDocument();
@@ -61,10 +61,10 @@ public class WikiDocumentEmitter extends TextInputFormat {
         doc.setText(StringUtils.unescapeEntities(m.group(4)));
 
         // skip docs from namespaces other than
-        if (doc.getNS() != 0) return false;
+        if (doc.getNS() != 0) return target;
 
         target.setField(0, doc);
-        return true;
+        return target;
     }
 
 }

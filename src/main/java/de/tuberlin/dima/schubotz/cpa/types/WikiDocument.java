@@ -46,6 +46,7 @@ public class WikiDocument implements Value {
      */
     //private final DoubleValue recDistance = new DoubleValue();
     private final IntValue distance = new IntValue(1);
+    private final IntValue count = new IntValue(1);
     private final Record target = new Record();
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
     private TreeMap<Integer, Integer> wordMap = null;
@@ -267,6 +268,7 @@ public class WikiDocument implements Value {
                     target.clear();
                     target.addField(linkTuple);
                     target.addField(distance);
+                    target.addField(count);
                     collector.collect(target);
                 }
             }

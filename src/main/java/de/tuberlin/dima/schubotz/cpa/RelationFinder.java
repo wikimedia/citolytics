@@ -23,11 +23,12 @@ import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import eu.stratosphere.api.common.Plan;
 import eu.stratosphere.api.common.Program;
 import eu.stratosphere.api.common.ProgramDescription;
-import eu.stratosphere.api.common.operators.FileDataSink;
-import eu.stratosphere.api.common.operators.FileDataSource;
+import eu.stratosphere.api.common.distributions.UniformIntegerDistribution;
 import eu.stratosphere.api.common.operators.Order;
 import eu.stratosphere.api.common.operators.Ordering;
 import eu.stratosphere.api.java.record.io.CsvOutputFormat;
+import eu.stratosphere.api.java.record.operators.FileDataSink;
+import eu.stratosphere.api.java.record.operators.FileDataSource;
 import eu.stratosphere.api.java.record.operators.MapOperator;
 import eu.stratosphere.api.java.record.operators.ReduceOperator;
 import eu.stratosphere.types.DoubleValue;
@@ -75,19 +76,25 @@ public class RelationFinder implements Program, ProgramDescription {
         4 recDistα
         5 min
         6 max */
+
+        //CsvOutputFormat test = new CsvOutputFormat();
+        //test.setWriteMode( FileSystem.WriteMode.OVERWRITE );
+        //FileDataSink out = new FileDataSink( test, output, filter, "Output" );
         FileDataSink out = new FileDataSink( CsvOutputFormat.class, output, filter, "Output" );
         CsvOutputFormat.configureRecordFormat( out )
                 .recordDelimiter('\n')
                 .fieldDelimiter(';')
                 .field(LinkTuple.class, 0)
-                .field(DoubleValue.class, 1)
+                .field(IntValue.class, 1)
                 .field(IntValue.class, 2)
                 .field(IntValue.class, 3)
                 .field(DoubleValue.class, 4)
                 .field(IntValue.class, 5)
                 .field(IntValue.class, 6)
         ;
-        out.setGlobalOrder(countOrder);
+
+        UniformIntegerDistribution distribution = new UniformIntegerDistribution(Integer.parseInt(threshold), 2000);
+        //out.setGlobalOrder(countOrder, distribution);
 
         return new Plan(out, "CPA-demo");
     }

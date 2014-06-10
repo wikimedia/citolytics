@@ -37,8 +37,8 @@ public class IntegrationTest {
         // TODO: Figure out what's wrong with that
         // see https://github.com/stratosphere/stratosphere/wiki/Release-0.4-Codename-%22Ozone%22-Planning
 		//parameters.setString(eu.stratosphere.api.common.io.FileInputFormat.FILE_PARAMETER_KEY, "file:///some/file/that/will/not/be/read");
-        parameters.setString("pact.input.file.path", "file:///some/file/that/will/not/be/read");
-		wikiDocumentEmitter.configure(parameters);
+        parameters.setString("input.file.path", "file:///some/file/that/will/not/be/read");
+        wikiDocumentEmitter.configure(parameters);
 		Record target = new Record();
 		wikiDocumentEmitter.readRecord(target, docString.getBytes(), 0, docString.length());
         WikiDocument doc = target.getField(0, WikiDocument.class);
@@ -65,7 +65,7 @@ public class IntegrationTest {
         RelationFinder rc = new RelationFinder();
         String inputFilename = "file://" + getClass().getClassLoader().getResources("wikienmathsample.xml").nextElement().getPath();
         String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-        Plan plan = rc.getPlan(inputFilename, outputFilename, "1.5", "0");
+        Plan plan = rc.getPlan(inputFilename, outputFilename + Math.random() * Integer.MAX_VALUE, "1.5", "0");
         LocalExecutor.execute(plan);
     }
 

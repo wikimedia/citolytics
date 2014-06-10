@@ -24,12 +24,12 @@
         <dependency>
             <groupId>eu.stratosphere</groupId>
             <artifactId>stratosphere-java</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
         <dependency>
             <groupId>eu.stratosphere</groupId>
             <artifactId>stratosphere-clients</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

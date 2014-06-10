@@ -60,7 +60,7 @@ public class calculateCPA extends ReduceFunction {
         Record rec = null;
         int cnt = 0;
         int distance = 0;
-        int min = 0;
+        int min = Integer.MAX_VALUE;
         int max = 0;
         int distSquared = 0;
         double recDistα = 0.;
@@ -70,7 +70,7 @@ public class calculateCPA extends ReduceFunction {
             int c = rec.getField(2, IntValue.class).getValue();
             distance += d;
             cnt += c;
-            if (rec.getNumFields() > 2) {
+            if (rec.getNumFields() > 3) {
                 distSquared += rec.getField(3, IntValue.class).getValue();
                 recDistα += rec.getField(4, DoubleValue.class).getValue();
                 min = Math.min(min, rec.getField(5, IntValue.class).getValue());
@@ -86,7 +86,7 @@ public class calculateCPA extends ReduceFunction {
             assert rec != null;
             rec.setField(1, v2F(distance));
             rec.setField(2, v2F(cnt));
-            if (rec.getNumFields() > 2) {
+            if (rec.getNumFields() < 4) {
                 rec.addField(v2F(distSquared));
                 rec.addField(v2F(recDistα));
                 rec.addField(v2F(min));
