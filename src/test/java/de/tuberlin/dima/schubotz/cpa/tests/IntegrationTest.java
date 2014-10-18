@@ -4,11 +4,13 @@ import de.tuberlin.dima.schubotz.cpa.RelationFinder;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentEmitter;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
-import eu.stratosphere.api.common.Plan;
-import eu.stratosphere.client.LocalExecutor;
-import eu.stratosphere.configuration.Configuration;
-import eu.stratosphere.types.Record;
-import eu.stratosphere.util.Collector;
+import org.apache.flink.api.common.Plan;
+import org.apache.flink.client.LocalExecutor;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.types.Record;
+
+import org.apache.flink.types.StringValue;
+import org.apache.flink.util.Collector;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -29,8 +31,13 @@ public class IntegrationTest {
 		s.close();
 		return out;
 	}
-	@Test
-	public void testNormalDoc(){
+
+    @Test
+    public void testNormalDoc() {
+
+        System.out.println("start testnormal Doc");
+
+
 		String docString = getFileContents("wikienmathsample.xml");
 		WikiDocumentEmitter wikiDocumentEmitter = new WikiDocumentEmitter();
 		final Configuration parameters = new Configuration();
@@ -40,14 +47,27 @@ public class IntegrationTest {
         parameters.setString("input.file.path", "file:///some/file/that/will/not/be/read");
         wikiDocumentEmitter.configure(parameters);
 		Record target = new Record();
-		wikiDocumentEmitter.readRecord(target, docString.getBytes(), 0, docString.length());
-        WikiDocument doc = target.getField(0, WikiDocument.class);
+
+        wikiDocumentEmitter.readRecord(target, docString.getBytes(), 0, docString.length());
+
+        //System.out.println(target.getField(0, WikiDocument.class));
+
+        WikiDocument doc;
+
+        try {
+            doc = target.getField(0, WikiDocument.class);
+        } catch (ClassCastException e) {
+            doc = new WikiDocument();
+            doc.setText(target.getField(0, StringValue.class).toString());
+        }
+
         assertThat(doc.getText(), containsString("Albedo depends on the [[frequency]] of the radiation."));
         assertEquals("Wrong NS", doc.getNS(), 0);
         List<Map.Entry<String, Integer>> links = doc.getOutLinks();
         Collector<Record> collector = new Collector<Record>() {
             @Override
             public void collect(Record record) {
+
                 System.out.println(record.getField(0, LinkTuple.class).toString());
             }
 

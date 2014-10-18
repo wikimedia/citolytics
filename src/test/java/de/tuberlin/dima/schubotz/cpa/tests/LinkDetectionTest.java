@@ -24,7 +24,7 @@ public class LinkDetectionTest {
         doc.setText(getFileContents("linkTest.wmd"));
         List<Map.Entry<String, Integer>> links = doc.getOutLinks();
         for (Map.Entry<String, Integer> link : links) {
-            System.out.println(link.getKey());
+            System.out.println(link.getKey() + ";" + link.getValue());
         }
 
     }

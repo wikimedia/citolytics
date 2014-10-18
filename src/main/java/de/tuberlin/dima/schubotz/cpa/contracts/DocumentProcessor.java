@@ -18,10 +18,10 @@ package de.tuberlin.dima.schubotz.cpa.contracts;
 
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import eu.stratosphere.api.java.record.functions.MapFunction;
-import eu.stratosphere.types.Record;
-import eu.stratosphere.types.StringValue;
-import eu.stratosphere.util.Collector;
+import org.apache.flink.api.java.record.functions.MapFunction;
+import org.apache.flink.types.Record;
+import org.apache.flink.types.StringValue;
+import org.apache.flink.util.Collector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +30,13 @@ public class DocumentProcessor extends MapFunction {
 
     // private static final Log LOG = LogFactory.getLog(DocumentProcessor.class);
 
+    public static Matcher getPageMatcher(String content) {
+        // TODO skip if <redirect> exists?
+
+        // search for a page-xml entity
+        Pattern pageRegex = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
+        return pageRegex.matcher(content);
+    }
 
     @Override
     public void map(Record record, Collector<Record> collector) {
@@ -37,8 +44,7 @@ public class DocumentProcessor extends MapFunction {
         String content = record.getField(0, StringValue.class).getValue();
 
         // search for a page-xml entity
-        Pattern pageRegex = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
-        Matcher m = pageRegex.matcher(content);
+        Matcher m = getPageMatcher(content);
         // if the record does not contain parsable page-xml
         if (!m.find()) return;
 

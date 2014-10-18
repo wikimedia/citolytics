@@ -20,19 +20,20 @@ import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentEmitter;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
-import eu.stratosphere.api.common.Plan;
-import eu.stratosphere.api.common.Program;
-import eu.stratosphere.api.common.ProgramDescription;
-import eu.stratosphere.api.common.distributions.UniformIntegerDistribution;
-import eu.stratosphere.api.common.operators.Order;
-import eu.stratosphere.api.common.operators.Ordering;
-import eu.stratosphere.api.java.record.io.CsvOutputFormat;
-import eu.stratosphere.api.java.record.operators.FileDataSink;
-import eu.stratosphere.api.java.record.operators.FileDataSource;
-import eu.stratosphere.api.java.record.operators.MapOperator;
-import eu.stratosphere.api.java.record.operators.ReduceOperator;
-import eu.stratosphere.types.DoubleValue;
-import eu.stratosphere.types.IntValue;
+import org.apache.flink.api.common.Plan;
+import org.apache.flink.api.common.Program;
+import org.apache.flink.api.common.ProgramDescription;
+import org.apache.flink.api.common.distributions.UniformIntegerDistribution;
+import org.apache.flink.api.common.operators.Order;
+import org.apache.flink.api.common.operators.Ordering;
+import org.apache.flink.api.java.record.io.CsvOutputFormat;
+import org.apache.flink.api.java.record.operators.FileDataSink;
+import org.apache.flink.api.java.record.operators.FileDataSource;
+import org.apache.flink.api.java.record.operators.MapOperator;
+import org.apache.flink.api.java.record.operators.ReduceOperator;
+import org.apache.flink.types.DoubleValue;
+import org.apache.flink.types.IntValue;
+import org.apache.flink.types.LongValue;
 
 public class RelationFinder implements Program, ProgramDescription {
 
@@ -50,6 +51,15 @@ public class RelationFinder implements Program, ProgramDescription {
 
         FileDataSource source = new FileDataSource(WikiDocumentEmitter.class, dataSet, "Dumps");
 
+        // Mapper
+        /*
+            DocumentProcessor.map
+                doc new WikiDoc ( ...)
+                Collector out
+                doc.collectLinks(out)
+                    loop all outlinks
+                        out.collect( Record: linkTuple, distance, count )
+         */
         MapOperator doc = MapOperator
                 .builder( DocumentProcessor.class )
                 .name( "Processing Documents" )
@@ -80,14 +90,17 @@ public class RelationFinder implements Program, ProgramDescription {
         //CsvOutputFormat test = new CsvOutputFormat();
         //test.setWriteMode( FileSystem.WriteMode.OVERWRITE );
         //FileDataSink out = new FileDataSink( test, output, filter, "Output" );
+
+
         FileDataSink out = new FileDataSink( CsvOutputFormat.class, output, filter, "Output" );
         CsvOutputFormat.configureRecordFormat( out )
+
                 .recordDelimiter('\n')
                 .fieldDelimiter(';')
                 .field(LinkTuple.class, 0)
                 .field(IntValue.class, 1)
                 .field(IntValue.class, 2)
-                .field(IntValue.class, 3)
+                .field(LongValue.class, 3)
                 .field(DoubleValue.class, 4)
                 .field(IntValue.class, 5)
                 .field(IntValue.class, 6)

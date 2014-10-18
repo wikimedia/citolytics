@@ -16,8 +16,8 @@
  */
 package de.tuberlin.dima.schubotz.cpa.io;
 
-import eu.stratosphere.api.java.record.io.TextInputFormat;
-import eu.stratosphere.configuration.Configuration;
+import org.apache.flink.api.java.record.io.TextInputFormat;
+import org.apache.flink.configuration.Configuration;
 
 /**
  * @author rob

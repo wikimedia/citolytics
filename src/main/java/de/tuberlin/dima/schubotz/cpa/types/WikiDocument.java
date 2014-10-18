@@ -17,11 +17,13 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import eu.stratosphere.types.IntValue;
-import eu.stratosphere.types.Record;
-import eu.stratosphere.types.StringValue;
-import eu.stratosphere.types.Value;
-import eu.stratosphere.util.Collector;
+import org.apache.flink.core.memory.DataInputView;
+import org.apache.flink.core.memory.DataOutputView;
+import org.apache.flink.types.IntValue;
+import org.apache.flink.types.Record;
+import org.apache.flink.types.StringValue;
+import org.apache.flink.types.Value;
+import org.apache.flink.util.Collector;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -37,7 +39,15 @@ import static java.lang.Math.max;
  * @author rob
  */
 public class WikiDocument implements Value {
-    private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList("File:", "Category:", "Image:"));
+
+    // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
+    private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList(
+            "media:", "special:", "talk:", "user:", "user talk:", "wikipedia:", "wikipedia talk:", "file:", "file talk:", "mediawiki:", "mediawiki talk:",
+            "template:", "template talk:", "help:", "help talk:", "category:", "category talk:", "portal:", "portal talk:", "book:", "book talk:",
+            "draft:", "draft talk:", "education program:", "education program talk:", "timedtext:", "timedtext talk:", "module:", "module talk:", "topic:",
+            "image:"
+    ));
+
     private final LinkTuple linkTuple = new LinkTuple();
     private final StringValue LeftLink = new StringValue();
     private final StringValue RightLink = new StringValue();
@@ -118,7 +128,7 @@ public class WikiDocument implements Value {
      */
 
     @Override
-    public void write(DataOutput out) throws IOException {
+    public void write(DataOutputView out) throws IOException {
         id.write(out);
         ns.write(out);
         title.write(out);
@@ -127,7 +137,7 @@ public class WikiDocument implements Value {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInputView in) throws IOException {
         id.read(in);
         ns.read(in);
         title.read(in);
@@ -214,18 +224,63 @@ public class WikiDocument implements Value {
         return true;
     }
 
+    /**
+     * removes "See Also" section from wiki page xml
+     *
+     * @param wikiXmlLowerCase
+     * @return wikiXml with out "See Also" section
+     */
+    public String extractSeeAlsoSection(String wikiXmlLowerCase) {
+        String seeAlsoText = "";
+        String pattern = "==see also==";
+        int seeAlsoStart = wikiXmlLowerCase.indexOf(pattern);
+
+        if (seeAlsoStart > 0) {
+            int nextHeadlineStart = wikiXmlLowerCase.substring(seeAlsoStart + pattern.length()).indexOf("==");
+
+            if (nextHeadlineStart > 0) {
+                seeAlsoText = wikiXmlLowerCase.substring(seeAlsoStart, seeAlsoStart + pattern.length() + nextHeadlineStart);
+
+                wikiXmlLowerCase = wikiXmlLowerCase.substring(0, seeAlsoStart);
+                wikiXmlLowerCase += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
+                wikiXmlLowerCase += wikiXmlLowerCase.substring(seeAlsoStart + pattern.length() + nextHeadlineStart);
+            } else {
+                seeAlsoText = wikiXmlLowerCase.substring(seeAlsoStart);
+                wikiXmlLowerCase = wikiXmlLowerCase.substring(0, seeAlsoStart);
+                wikiXmlLowerCase += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
+            }
+        }
+
+        return wikiXmlLowerCase;
+    }
+
     private void extractLinks() {
+        outLinks = new ArrayList<>();
+
+        // [[Zielartikel|alternativer Text]]
+        // [[Artikelname]]
+        // [[#Wikilink|Wikilink]]
         Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
-        String text = raw.getValue();
+
+        // lowercase
+        String text = raw.getValue().toLowerCase();
+
+        // strip "see also" section
+        text = extractSeeAlsoSection(text);
+
         /* Remove all interwiki links */
         Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
         text = p2.matcher(text).replaceAll("");
         Matcher m = p.matcher(text);
-        outLinks = new ArrayList<>();
+
         while (m.find()) {
             if (m.groupCount() >= 1) {
                 String target = m.group(1).trim();
-                if (target.length() > 0 && startsNotWith(target, listOfStopPatterns)) {
+
+                if (target.length() > 0
+                        && !target.contains("<")
+                        && !target.contains(">")
+                        && startsNotWith(target, listOfStopPatterns)) {
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
                 }
             }
@@ -265,6 +320,7 @@ public class WikiDocument implements Value {
                     RightLink.setValue(outLink2.getKey());
                     linkTuple.setFirst(LeftLink);
                     linkTuple.setSecond(RightLink);
+
                     target.clear();
                     target.addField(linkTuple);
                     target.addField(distance);
@@ -289,4 +345,6 @@ public class WikiDocument implements Value {
         }
         return outLinks;
     }
+
+
 }
