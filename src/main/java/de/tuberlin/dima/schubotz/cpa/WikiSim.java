@@ -1,29 +1,33 @@
+/* __
+* \ \
+* _ _ \ \ ______
+* | | | | > \( __ )
+* | |_| |/ ^ \| || |
+* | ._,_/_/ \_\_||_|
+* | |
+* |_|
+*
+* ----------------------------------------------------------------------------
+* "THE BEER-WARE LICENSE" (Revision 42):
+* <rob ∂ CLABS dot CC> wrote this file. As long as you retain this notice you
+* can do whatever you want with this stuff. If we meet some day, and you think
+* this stuff is worth it, you can buy me a beer in return.
+* ----------------------------------------------------------------------------
+*/
 package de.tuberlin.dima.schubotz.cpa;
 
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes.ResultList;
-import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
-import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.types.IntValue;
-import org.apache.flink.util.Collector;
-
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Created by malteschwarzer on 08.11.14.
+ * Run with flink run -c de.tuberlin.dima.schubotz.cpa.WikiSim INPUTFILE OUTPUTFILE [alpha] [threshold]
  */
 public class WikiSim {
 

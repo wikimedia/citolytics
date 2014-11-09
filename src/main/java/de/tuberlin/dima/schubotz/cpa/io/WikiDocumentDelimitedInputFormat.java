@@ -6,7 +6,7 @@ import org.apache.flink.configuration.Configuration;
 import java.io.IOException;
 
 /**
- * Created by malteschwarzer on 08.11.14.
+ * Splits data input by </page>
  */
 public class WikiDocumentDelimitedInputFormat extends DelimitedInputFormat<String> {
 
