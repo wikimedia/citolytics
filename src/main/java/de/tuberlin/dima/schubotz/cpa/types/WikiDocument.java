@@ -16,6 +16,7 @@
  */
 package de.tuberlin.dima.schubotz.cpa.types;
 
+import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.flink.core.memory.DataInputView;
 import org.apache.flink.core.memory.DataOutputView;
@@ -25,8 +26,6 @@ import org.apache.flink.types.StringValue;
 import org.apache.flink.types.Value;
 import org.apache.flink.util.Collector;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -58,6 +57,8 @@ public class WikiDocument implements Value {
     private final IntValue distance = new IntValue(1);
     private final IntValue count = new IntValue(1);
     private final Record target = new Record();
+    private Result result;
+
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
     private TreeMap<Integer, Integer> wordMap = null;
     /*
@@ -225,33 +226,40 @@ public class WikiDocument implements Value {
     }
 
     /**
-     * removes "See Also" section from wiki page xml
+     * mark links of "See Also" section
      *
-     * @param wikiXmlLowerCase
-     * @return wikiXml with out "See Also" section
+     * @param wikiText
+     * @return wikiText with marked "See Also" links
      */
-    public String extractSeeAlsoSection(String wikiXmlLowerCase) {
+    public String extractSeeAlsoSection(String wikiText) {
+        int seeAlsoStart = -1;
         String seeAlsoText = "";
-        String pattern = "==see also==";
-        int seeAlsoStart = wikiXmlLowerCase.indexOf(pattern);
+        String seeAlsoTitle = "==see also==";
+        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
+        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
+
+        if (seeAlsoMatcher.find()) {
+            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
+        }
+
 
         if (seeAlsoStart > 0) {
-            int nextHeadlineStart = wikiXmlLowerCase.substring(seeAlsoStart + pattern.length()).indexOf("==");
+            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
 
             if (nextHeadlineStart > 0) {
-                seeAlsoText = wikiXmlLowerCase.substring(seeAlsoStart, seeAlsoStart + pattern.length() + nextHeadlineStart);
+                seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoStart + seeAlsoTitle.length() + nextHeadlineStart);
 
-                wikiXmlLowerCase = wikiXmlLowerCase.substring(0, seeAlsoStart);
-                wikiXmlLowerCase += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
-                wikiXmlLowerCase += wikiXmlLowerCase.substring(seeAlsoStart + pattern.length() + nextHeadlineStart);
+                wikiText = wikiText.substring(0, seeAlsoStart);
+                wikiText += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
+                wikiText += wikiText.substring(nextHeadlineStart);
             } else {
-                seeAlsoText = wikiXmlLowerCase.substring(seeAlsoStart);
-                wikiXmlLowerCase = wikiXmlLowerCase.substring(0, seeAlsoStart);
-                wikiXmlLowerCase += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
+                seeAlsoText = wikiText.substring(seeAlsoStart);
+                wikiText = wikiText.substring(0, seeAlsoStart);
+                wikiText += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
             }
         }
 
-        return wikiXmlLowerCase;
+        return wikiText;
     }
 
     private void extractLinks() {
@@ -262,8 +270,7 @@ public class WikiDocument implements Value {
         // [[#Wikilink|Wikilink]]
         Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
 
-        // lowercase
-        String text = raw.getValue().toLowerCase();
+        String text = raw.getValue(); //.toLowerCase();
 
         // strip "see also" section
         text = extractSeeAlsoSection(text);
@@ -275,7 +282,8 @@ public class WikiDocument implements Value {
 
         while (m.find()) {
             if (m.groupCount() >= 1) {
-                String target = m.group(1).trim();
+                // First char is not case sensitive
+                String target = org.apache.commons.lang.StringUtils.capitalize(m.group(1).trim());
 
                 if (target.length() > 0
                         && !target.contains("<")
@@ -300,6 +308,37 @@ public class WikiDocument implements Value {
         }
     }
 
+    public void collectLinksAsResult(Collector<Result> collector) {
+        //Skip all namespaces other than main
+        if (ns.getValue() != 0) {
+            return;
+        }
+        getOutLinks();
+        getWordMap();
+        for (Map.Entry<String, Integer> outLink1 : outLinks) {
+            for (Map.Entry<String, Integer> outLink2 : outLinks) {
+                int order = outLink1.getKey().compareTo(outLink2.getKey());
+                if (order > 0) {
+                    int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
+                    int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
+                    int d = max(abs(w1 - w2), 1);
+                    distance.setValue(d);
+                    //recDistance.setValue(1 / (pow(d, α)));
+
+
+                    linkTuple.setFirst(outLink1.getKey());
+                    linkTuple.setSecond(outLink2.getKey());
+
+                    result = new Result(linkTuple, distance.getValue(), count.getValue());
+                    collector.collect(result);
+                    //collector.collect(target);
+                }
+            }
+
+        }
+    }
+
+    @Deprecated
     public void collectLinks(Collector<Record> collector) {
         //Skip all namespaces other than main
         if (ns.getValue() != 0) {
@@ -316,6 +355,7 @@ public class WikiDocument implements Value {
                     int d = max(abs(w1 - w2), 1);
                     distance.setValue(d);
                     //recDistance.setValue(1 / (pow(d, α)));
+                    /*
                     LeftLink.setValue(outLink1.getKey());
                     RightLink.setValue(outLink2.getKey());
                     linkTuple.setFirst(LeftLink);
@@ -325,6 +365,8 @@ public class WikiDocument implements Value {
                     target.addField(linkTuple);
                     target.addField(distance);
                     target.addField(count);
+                    */
+
                     collector.collect(target);
                 }
             }

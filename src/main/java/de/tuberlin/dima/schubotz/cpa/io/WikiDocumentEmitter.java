@@ -22,6 +22,8 @@ import org.apache.flink.configuration.Configuration;
 /**
  * @author rob
  */
+
+@Deprecated
 public class WikiDocumentEmitter extends TextInputFormat {
 
     @Override
