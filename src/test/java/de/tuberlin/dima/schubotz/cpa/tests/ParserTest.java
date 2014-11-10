@@ -1,16 +1,9 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
-import de.tuberlin.dima.schubotz.cpa.RelationFinder;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
-import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentEmitter;
-import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import org.apache.flink.types.Record;
-import org.apache.flink.util.Collector;
 import org.junit.Test;
-
-import de.tuberlin.dima.schubotz.cpa.tests.IntegrationTest;
 
 import java.io.InputStream;
 import java.util.*;
@@ -83,12 +76,13 @@ public class ParserTest {
         System.out.println(doc.getId());
         //System.out.println( doc.getText() );
 
+        /*
         //List<Map.Entry<String, Integer>> links = doc.getOutLinks();
         Collector<Record> collector = new Collector<Record>() {
             @Override
             public void collect(Record record) {
 
-                System.out.println(record.getField(0, LinkTuple.class).toString());
+                System.out.println(record.getField(0, LinkTupleOld.class).toString());
             }
 
             @Override
@@ -99,5 +93,6 @@ public class ParserTest {
         System.out.println(doc.getOutLinks());
 
         doc.collectLinks(collector);
+         */
     }
 }

@@ -36,8 +36,14 @@ public class WikiSim {
         // set up the execution environment
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        String inputFilename = ((args.length > 0) ? args[0] : "file:///Users/malteschwarzer/IdeaProjects/cpa-demo/target/test-classes/wikiParserTest1.xml");
-        String outputFilename = ((args.length > 1) ? args[1] : "file:///Users/malteschwarzer/IdeaProjects/test.txt");
+        if (args.length <= 1) {
+            System.err.println("Input/output parameters missing!");
+            System.err.println(new WikiSim().getDescription());
+            System.exit(1);
+        }
+
+        String inputFilename = args[0];
+        String outputFilename = args[1];
 
         String alpha = ((args.length > 2) ? args[2] : "1.5");
         String threshold = ((args.length > 3) ? args[3] : "1");
@@ -46,6 +52,7 @@ public class WikiSim {
 
         config.setInteger("threshold", Integer.valueOf(threshold));
         config.setDouble("alpha", Double.valueOf(alpha));
+        config.setBoolean("median", true);
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 

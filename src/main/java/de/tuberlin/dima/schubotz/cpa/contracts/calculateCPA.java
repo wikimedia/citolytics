@@ -30,6 +30,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
 
     private Integer threshold;
     private Double alpha;
+    private boolean calculateMedian = false;
 
     @Override
     public void open(Configuration parameter) throws Exception {
@@ -37,6 +38,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
 
         alpha = parameter.getDouble("alpha", 1.5);
         threshold = parameter.getInteger("threshold", 1);
+        calculateMedian = parameter.getBoolean("median", false);
     }
 
     @Override
@@ -109,9 +111,11 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             res.setField(recDistα, 4);
             res.setField(min, 5);
             res.setField(max, 6);
-            res.setField(distList, 7);
-            res.setField(getMedian(distList), 8);
 
+            if (calculateMedian) {
+                res.setField(distList, 7);
+                res.setField(getMedian(distList), 8);
+            }
             resultCollector.collect(res);
         }
 
