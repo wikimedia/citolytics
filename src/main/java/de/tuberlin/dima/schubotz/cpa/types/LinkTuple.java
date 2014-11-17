@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
+import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import org.apache.flink.api.java.tuple.Tuple2;
 
 public class LinkTuple extends Tuple2<String, String> {
@@ -22,6 +23,6 @@ public class LinkTuple extends Tuple2<String, String> {
 
     @Override
     public String toString() {
-        return String.valueOf(getField(0)) + ";" + String.valueOf(getField(1));
+        return String.valueOf(getField(0)) + WikiSim.csvFieldDelimiter + String.valueOf(getField(1));
     }
 }

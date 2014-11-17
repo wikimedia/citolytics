@@ -48,15 +48,15 @@ public class WikiDocument implements Value {
     ));
 
     private final LinkTuple linkTuple = new LinkTuple();
-    private final StringValue LeftLink = new StringValue();
-    private final StringValue RightLink = new StringValue();
+    private final String LeftLink = "";
+    private final String RightLink = "";
     /**
      * reciprocal distance *
      */
     //private final DoubleValue recDistance = new DoubleValue();
-    private final IntValue distance = new IntValue(1);
-    private final IntValue count = new IntValue(1);
-    private final Record target = new Record();
+    private Integer distance = 1;
+    private Integer count = 1;
+    private String target = "";
     private Result result;
 
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
@@ -244,7 +244,8 @@ public class WikiDocument implements Value {
 
 
         if (seeAlsoStart > 0) {
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
+            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==")
+                    + seeAlsoStart + seeAlsoTitle.length();
 
             if (nextHeadlineStart > 0) {
                 seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoStart + seeAlsoTitle.length() + nextHeadlineStart);
@@ -262,6 +263,35 @@ public class WikiDocument implements Value {
         return wikiText;
     }
 
+    public String stripSeeAlsoSection(String wikiText) {
+        int seeAlsoStart = -1;
+        String seeAlsoText = "";
+        String seeAlsoTitle = "==see also==";
+        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
+        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
+
+        if (seeAlsoMatcher.find()) {
+            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
+        }
+
+        // See also section exists
+        if (seeAlsoStart > 0) {
+            int seeAlsoEnd = seeAlsoStart + seeAlsoTitle.length();
+            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
+
+            String strippedWikiText = wikiText.substring(0, seeAlsoStart);
+
+            // Append content after see also section
+            if (nextHeadlineStart > 0) {
+                strippedWikiText += wikiText.substring(nextHeadlineStart + seeAlsoEnd);
+            }
+
+            return strippedWikiText;
+        }
+
+        return wikiText;
+    }
+
     private void extractLinks() {
         outLinks = new ArrayList<>();
 
@@ -273,7 +303,7 @@ public class WikiDocument implements Value {
         String text = raw.getValue(); //.toLowerCase();
 
         // strip "see also" section
-        text = extractSeeAlsoSection(text);
+        text = stripSeeAlsoSection(text);
 
         /* Remove all interwiki links */
         Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
@@ -282,13 +312,14 @@ public class WikiDocument implements Value {
 
         while (m.find()) {
             if (m.groupCount() >= 1) {
-                // First char is not case sensitive
-                String target = org.apache.commons.lang.StringUtils.capitalize(m.group(1).trim());
+                target = m.group(1).trim();
 
                 if (target.length() > 0
                         && !target.contains("<")
                         && !target.contains(">")
-                        && startsNotWith(target, listOfStopPatterns)) {
+                        && startsNotWith(target.toLowerCase(), listOfStopPatterns)) {
+                    // First char is not case sensitive
+                    target = org.apache.commons.lang.StringUtils.capitalize(target);
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
                 }
             }
@@ -322,52 +353,16 @@ public class WikiDocument implements Value {
                     int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
                     int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
                     int d = max(abs(w1 - w2), 1);
-                    distance.setValue(d);
+                    distance = d;
                     //recDistance.setValue(1 / (pow(d, α)));
 
 
                     linkTuple.setFirst(outLink1.getKey());
                     linkTuple.setSecond(outLink2.getKey());
 
-                    result = new Result(linkTuple, distance.getValue(), count.getValue());
+                    result = new Result(linkTuple, distance, count);
                     collector.collect(result);
                     //collector.collect(target);
-                }
-            }
-
-        }
-    }
-
-    @Deprecated
-    public void collectLinks(Collector<Record> collector) {
-        //Skip all namespaces other than main
-        if (ns.getValue() != 0) {
-            return;
-        }
-        getOutLinks();
-        getWordMap();
-        for (Map.Entry<String, Integer> outLink1 : outLinks) {
-            for (Map.Entry<String, Integer> outLink2 : outLinks) {
-                int order = outLink1.getKey().compareTo(outLink2.getKey());
-                if (order > 0) {
-                    int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
-                    int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
-                    int d = max(abs(w1 - w2), 1);
-                    distance.setValue(d);
-                    //recDistance.setValue(1 / (pow(d, α)));
-                    /*
-                    LeftLink.setValue(outLink1.getKey());
-                    RightLink.setValue(outLink2.getKey());
-                    linkTuple.setFirst(LeftLink);
-                    linkTuple.setSecond(RightLink);
-
-                    target.clear();
-                    target.addField(linkTuple);
-                    target.addField(distance);
-                    target.addField(count);
-                    */
-
-                    collector.collect(target);
                 }
             }
 

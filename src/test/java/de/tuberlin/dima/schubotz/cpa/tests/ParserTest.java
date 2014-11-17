@@ -5,6 +5,8 @@ import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -25,12 +27,6 @@ public class ParserTest {
         s.close();
         return out;
     }
-
-    @Test
-    public void testSeeAlso() {
-        System.out.println(new WikiDocument().extractSeeAlsoSection(getFileContents("wikiSeeAlso.xml").toLowerCase()));
-    }
-
 
     @Test
     public void testHtmlLinks() {
