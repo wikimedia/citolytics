@@ -16,99 +16,134 @@
  */
 package de.tuberlin.dima.schubotz.cpa.contracts;
 
-import eu.stratosphere.api.java.record.functions.ReduceFunction;
-import eu.stratosphere.api.java.record.operators.ReduceOperator;
-import eu.stratosphere.configuration.Configuration;
-import eu.stratosphere.types.DoubleValue;
-import eu.stratosphere.types.IntValue;
-import eu.stratosphere.types.Record;
-import eu.stratosphere.util.Collector;
+import de.tuberlin.dima.schubotz.cpa.types.DataTypes;
+import org.apache.flink.api.common.functions.RichGroupReduceFunction;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.types.IntValue;
+import org.apache.flink.util.Collector;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
-@ReduceOperator.Combinable
-public class calculateCPA extends ReduceFunction {
+public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, DataTypes.Result> {
+    //public static final class GroupReducer implements GroupReduceFunction<Result, Result> {
 
     private Integer threshold;
-    private Double α;
+    private Double alpha;
+    private boolean calculateMedian = false;
 
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open( parameter );
-        α = Double.parseDouble(parameter.getString("α", "1.5"));
-        threshold = parameter.getInteger("THRESHOLD", 1);
+
+        alpha = parameter.getDouble("alpha", 1.5);
+        threshold = parameter.getInteger("threshold", 1);
+        calculateMedian = parameter.getBoolean("median", false);
     }
 
-    private IntValue v2F(int in) {
-        return new IntValue(in);
+    @Override
+    public void reduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector) throws Exception {
+        internalReduce(results, resultCollector, threshold);
     }
 
-    private DoubleValue v2F(double in) {
-        return new DoubleValue(in);
+    @Override
+    public void combine(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector) throws Exception {
+        internalReduce(results, resultCollector, 0);
     }
-    /*
-    Schema
-                    0 target.addField(linkTuple);
-                    1 target.addField(distance);
-                    2 target.addField(count);
-                    3 distSquared
-                    4 recDistα
-                    5 min
-                    6 max
-     */
-    private void internalReduce(Iterator<Record> iterator, Collector<Record> collector, Integer minOut) {
-        Record rec = null;
+
+    public void internalReduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector, int minOut) throws Exception {
+        Iterator<DataTypes.Result> iterator = results.iterator();
+        DataTypes.Result res = null;
+
+        // Set default values
         int cnt = 0;
         int distance = 0;
         int min = Integer.MAX_VALUE;
         int max = 0;
-        int distSquared = 0;
+        long distSquared = 0;
         double recDistα = 0.;
+        DataTypes.ResultList distList = new DataTypes.ResultList();
+
+        // Loop all record that belong to the given input key
         while (iterator.hasNext()) {
-            rec = iterator.next();
-            int d = rec.getField(1, IntValue.class).getValue();
-            int c = rec.getField(2, IntValue.class).getValue();
+            res = iterator.next();
+
+            // Fetch record fields
+            int d = res.getField(1); // distance
+            int c = res.getField(2); // count
+
+            // Increase total count, total distance
             distance += d;
             cnt += c;
-            if (rec.getNumFields() > 3) {
-                distSquared += rec.getField(3, IntValue.class).getValue();
-                recDistα += rec.getField(4, DoubleValue.class).getValue();
-                min = Math.min(min, rec.getField(5, IntValue.class).getValue());
-                max = Math.max(max, rec.getField(6, IntValue.class).getValue());
+
+            // Set min/max of distance
+            DataTypes.ResultList currentRl = res.getField(7);
+
+            //if (res.getNumFields() > 3) {
+            if (currentRl.size() > 1) {
+                distSquared += (Long) res.getField(3);
+                recDistα += (Double) res.getField(4);
+                min = Math.min(min, (Integer) res.getField(5));
+                max = Math.max(max, (Integer) res.getField(6));
+
+                distList = currentRl; //rec.getField(7, IntListValue.class); // Use existing distList
             } else {
                 min = Math.min(min, d);
                 max = Math.max(max, d);
                 distSquared += d * d;
-                recDistα += Math.pow(d, α);
+                recDistα += Math.pow(d, alpha);
+
+                // Add distance to list
+                distList.add(new IntValue(d));
             }
+
         }
+
+
+        // Total count greater than threshold
         if (cnt > minOut) {
-            assert rec != null;
-            rec.setField(1, v2F(distance));
-            rec.setField(2, v2F(cnt));
-            if (rec.getNumFields() < 4) {
-                rec.addField(v2F(distSquared));
-                rec.addField(v2F(recDistα));
-                rec.addField(v2F(min));
-                rec.addField(v2F(max));
-                //rec.addField();
-            } else {
-                rec.setField(3, v2F(distSquared));
-                rec.setField(4, v2F(recDistα));
-                rec.setField(5, v2F(min));
-                rec.setField(6, v2F(max));
+            assert res != null;
+
+            // Set total values in record (stratosphere IntValue)
+            res.setField(distance, 1);
+            res.setField(cnt, 2);
+            res.setField(distSquared, 3);
+            res.setField(recDistα, 4);
+            res.setField(min, 5);
+            res.setField(max, 6);
+
+            if (calculateMedian) {
+                res.setField(distList, 7);
+                res.setField(getMedian(distList), 8);
             }
-            collector.collect(rec);
+            resultCollector.collect(res);
         }
+
     }
 
-    @Override
-    public void reduce(Iterator<Record> iterator, Collector<Record> collector) {
-        internalReduce(iterator, collector, threshold);
-    }
+    public static double getMedian(DataTypes.ResultList listv) {
+        //listv.toArray(v); // NOT WORKING - Bug?
+        Integer[] v = new Integer[listv.size()];
+        int i = 0;
 
-    @Override
-    public void combine(Iterator<Record> iterator, Collector<Record> collector) {
-        internalReduce(iterator, collector, 0);
+        for (IntValue vv : listv) {
+            v[i] = vv.getValue();
+            i++;
+        }
+
+        Arrays.sort(v);
+
+        if (v.length == 0) {
+            return 0;
+        } else if (v.length == 1) {
+            return v[0];
+        } else {
+            int middle = v.length / 2;
+            if (v.length % 2 == 1) {
+                return v[middle];
+            } else {
+                return (v[middle - 1] + v[middle]) / 2.0;
+            }
+        }
     }
 }

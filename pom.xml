@@ -6,7 +6,7 @@
     <artifactId>cpa</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>CPA-Stratosphere demo</name>
+    <name>CPA-Flink demo</name>
 
     <licenses>
         <license>
@@ -22,15 +22,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.stratosphere</groupId>
-            <artifactId>stratosphere-java</artifactId>
-            <version>0.5</version>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-java</artifactId>
+            <version>0.7.0-incubating</version>
         </dependency>
         <dependency>
-            <groupId>eu.stratosphere</groupId>
-            <artifactId>stratosphere-clients</artifactId>
-            <version>0.5</version>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients</artifactId>
+            <version>0.7.0-incubating</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

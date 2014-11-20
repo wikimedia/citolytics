@@ -16,15 +16,16 @@
  */
 package de.tuberlin.dima.schubotz.cpa.types;
 
+import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import eu.stratosphere.types.IntValue;
-import eu.stratosphere.types.Record;
-import eu.stratosphere.types.StringValue;
-import eu.stratosphere.types.Value;
-import eu.stratosphere.util.Collector;
+import org.apache.flink.core.memory.DataInputView;
+import org.apache.flink.core.memory.DataOutputView;
+import org.apache.flink.types.IntValue;
+import org.apache.flink.types.Record;
+import org.apache.flink.types.StringValue;
+import org.apache.flink.types.Value;
+import org.apache.flink.util.Collector;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -37,7 +38,15 @@ import static java.lang.Math.max;
  * @author rob
  */
 public class WikiDocument implements Value {
-    private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList("File:", "Category:", "Image:"));
+
+    // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
+    private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList(
+            "media:", "special:", "talk:", "user:", "user talk:", "wikipedia:", "wikipedia talk:", "file:", "file talk:", "mediawiki:", "mediawiki talk:",
+            "template:", "template talk:", "help:", "help talk:", "category:", "category talk:", "portal:", "portal talk:", "book:", "book talk:",
+            "draft:", "draft talk:", "education program:", "education program talk:", "timedtext:", "timedtext talk:", "module:", "module talk:", "topic:",
+            "image:"
+    ));
+
     private final LinkTuple linkTuple = new LinkTuple();
     private final StringValue LeftLink = new StringValue();
     private final StringValue RightLink = new StringValue();
@@ -48,6 +57,8 @@ public class WikiDocument implements Value {
     private final IntValue distance = new IntValue(1);
     private final IntValue count = new IntValue(1);
     private final Record target = new Record();
+    private Result result;
+
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
     private TreeMap<Integer, Integer> wordMap = null;
     /*
@@ -118,7 +129,7 @@ public class WikiDocument implements Value {
      */
 
     @Override
-    public void write(DataOutput out) throws IOException {
+    public void write(DataOutputView out) throws IOException {
         id.write(out);
         ns.write(out);
         title.write(out);
@@ -127,7 +138,7 @@ public class WikiDocument implements Value {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInputView in) throws IOException {
         id.read(in);
         ns.read(in);
         title.read(in);
@@ -214,18 +225,70 @@ public class WikiDocument implements Value {
         return true;
     }
 
+    /**
+     * mark links of "See Also" section
+     *
+     * @param wikiText
+     * @return wikiText with marked "See Also" links
+     */
+    public String extractSeeAlsoSection(String wikiText) {
+        int seeAlsoStart = -1;
+        String seeAlsoText = "";
+        String seeAlsoTitle = "==see also==";
+        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
+        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
+
+        if (seeAlsoMatcher.find()) {
+            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
+        }
+
+
+        if (seeAlsoStart > 0) {
+            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
+
+            if (nextHeadlineStart > 0) {
+                seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoStart + seeAlsoTitle.length() + nextHeadlineStart);
+
+                wikiText = wikiText.substring(0, seeAlsoStart);
+                wikiText += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
+                wikiText += wikiText.substring(nextHeadlineStart);
+            } else {
+                seeAlsoText = wikiText.substring(seeAlsoStart);
+                wikiText = wikiText.substring(0, seeAlsoStart);
+                wikiText += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
+            }
+        }
+
+        return wikiText;
+    }
+
     private void extractLinks() {
+        outLinks = new ArrayList<>();
+
+        // [[Zielartikel|alternativer Text]]
+        // [[Artikelname]]
+        // [[#Wikilink|Wikilink]]
         Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
-        String text = raw.getValue();
+
+        String text = raw.getValue(); //.toLowerCase();
+
+        // strip "see also" section
+        text = extractSeeAlsoSection(text);
+
         /* Remove all interwiki links */
         Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
         text = p2.matcher(text).replaceAll("");
         Matcher m = p.matcher(text);
-        outLinks = new ArrayList<>();
+
         while (m.find()) {
             if (m.groupCount() >= 1) {
-                String target = m.group(1).trim();
-                if (target.length() > 0 && startsNotWith(target, listOfStopPatterns)) {
+                // First char is not case sensitive
+                String target = org.apache.commons.lang.StringUtils.capitalize(m.group(1).trim());
+
+                if (target.length() > 0
+                        && !target.contains("<")
+                        && !target.contains(">")
+                        && startsNotWith(target, listOfStopPatterns)) {
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
                 }
             }
@@ -245,6 +308,37 @@ public class WikiDocument implements Value {
         }
     }
 
+    public void collectLinksAsResult(Collector<Result> collector) {
+        //Skip all namespaces other than main
+        if (ns.getValue() != 0) {
+            return;
+        }
+        getOutLinks();
+        getWordMap();
+        for (Map.Entry<String, Integer> outLink1 : outLinks) {
+            for (Map.Entry<String, Integer> outLink2 : outLinks) {
+                int order = outLink1.getKey().compareTo(outLink2.getKey());
+                if (order > 0) {
+                    int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
+                    int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
+                    int d = max(abs(w1 - w2), 1);
+                    distance.setValue(d);
+                    //recDistance.setValue(1 / (pow(d, α)));
+
+
+                    linkTuple.setFirst(outLink1.getKey());
+                    linkTuple.setSecond(outLink2.getKey());
+
+                    result = new Result(linkTuple, distance.getValue(), count.getValue());
+                    collector.collect(result);
+                    //collector.collect(target);
+                }
+            }
+
+        }
+    }
+
+    @Deprecated
     public void collectLinks(Collector<Record> collector) {
         //Skip all namespaces other than main
         if (ns.getValue() != 0) {
@@ -261,14 +355,18 @@ public class WikiDocument implements Value {
                     int d = max(abs(w1 - w2), 1);
                     distance.setValue(d);
                     //recDistance.setValue(1 / (pow(d, α)));
+                    /*
                     LeftLink.setValue(outLink1.getKey());
                     RightLink.setValue(outLink2.getKey());
                     linkTuple.setFirst(LeftLink);
                     linkTuple.setSecond(RightLink);
+
                     target.clear();
                     target.addField(linkTuple);
                     target.addField(distance);
                     target.addField(count);
+                    */
+
                     collector.collect(target);
                 }
             }
@@ -289,4 +387,6 @@ public class WikiDocument implements Value {
         }
         return outLinks;
     }
+
+
 }

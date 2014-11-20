@@ -1,14 +1,27 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
-import eu.stratosphere.types.Pair;
-import eu.stratosphere.types.StringValue;
+import org.apache.flink.api.java.tuple.Tuple2;
 
-/**
- * Created by Moritz on 27.04.14.
- */
-public class LinkTuple extends Pair<StringValue, StringValue> {
+public class LinkTuple extends Tuple2<String, String> {
+    public void LinkTuple() {
+
+    }
+
+    public void LinkTuple(String first, String second) {
+        setFirst(first);
+        setSecond(second);
+    }
+
+    public void setFirst(String first) {
+        setField(first, 0);
+    }
+
+    public void setSecond(String second) {
+        setField(second, 1);
+    }
+
     @Override
     public String toString() {
-        return String.valueOf(getFirst()) + ";" + getSecond();
+        return String.valueOf(getField(0)) + ";" + String.valueOf(getField(1));
     }
 }
