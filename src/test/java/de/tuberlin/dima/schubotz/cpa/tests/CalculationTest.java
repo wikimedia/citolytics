@@ -11,7 +11,7 @@ public class CalculationTest {
     public void TestLocalExecution() throws Exception {
 
         String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath();
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.csv").nextElement().getPath();
+        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
 
         WikiSim.main(new String[]{inputFilename, outputFilename, "1.5", "0"});
     }
