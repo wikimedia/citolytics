@@ -1,6 +1,6 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
-import org.apache.flink.api.java.tuple.Tuple9;
+import org.apache.flink.api.java.tuple.*;
 import org.apache.flink.types.*;
 
 public class DataTypes {
@@ -17,7 +17,7 @@ public class DataTypes {
     /**
      * linkTuple, distance, count, distSquared, recDistα, min, max, distanceList, median
      */
-    public static class Result extends Tuple9<LinkTuple, Integer, Integer, Long, Double, Integer, Integer, ResultList, Double> {
+    public static class Result extends Tuple9<LinkTuple, Integer, Long, Long, Double, Integer, Integer, ResultList, Double> {
         private static final long serialVersionUID = 1L;
 
         public Result() {
@@ -27,7 +27,7 @@ public class DataTypes {
         public Result(LinkTuple link, Integer distance, Integer count) {
             setField(link, 0);
             setField(distance, 1);
-            setField(count, 2);
+            setField(Long.valueOf(count), 2);
             setField(new Long(0), 3);
             setField(new Double(0), 4);
             setField(0, 5);
@@ -36,4 +36,34 @@ public class DataTypes {
             setField(new Double(0), 8);
         }
     }
+
+
+    public static class HistogramResult extends Tuple4<Integer, Integer, Integer, Long> {
+        private static final long serialVersionUID = 1L;
+
+        public HistogramResult() {
+
+        }
+
+        public HistogramResult(int ns, int articleCount, int linkCount, long linkpairCount) {
+            setField(ns, 0);
+            setField(articleCount, 1);
+            setField(linkCount, 2);
+            setField(linkpairCount, 3);
+        }
+    }
+
+    public static class MapperResult extends Tuple3<LinkTuple, Integer, Integer> {
+        private static final long serialVersionUID = 1L;
+
+        public MapperResult() {
+        }
+
+        public MapperResult(LinkTuple link, int distance, int count) {
+            setField(link, 0);
+            setField(distance, 1);
+            setField(count, 2);
+        }
+    }
+
 }

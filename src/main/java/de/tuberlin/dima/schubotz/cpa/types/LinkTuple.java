@@ -1,5 +1,7 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
+import de.tuberlin.dima.schubotz.cpa.WikiSim;
+import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple2;
 
 public class LinkTuple extends Tuple2<String, String> {
@@ -22,6 +24,8 @@ public class LinkTuple extends Tuple2<String, String> {
 
     @Override
     public String toString() {
-        return String.valueOf(getField(0)) + ";" + String.valueOf(getField(1));
+        return StringUtils.addCsvEnclosures(String.valueOf(getField(0)))
+                + WikiSim.csvFieldDelimiter
+                + StringUtils.addCsvEnclosures(String.valueOf(getField(1)));
     }
 }
