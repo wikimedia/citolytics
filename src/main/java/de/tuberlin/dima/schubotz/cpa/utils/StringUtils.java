@@ -40,4 +40,7 @@ public class StringUtils {
         return html4.translate(iso.translate(basic.translate(text)));
     }
 
+    public static String addCsvEnclosures(String value) {
+        return "\"" + value.replace("\\", "\\\\") + "\"";
+    }
 }
