@@ -26,12 +26,15 @@ import org.apache.flink.util.Collector;
 import java.util.Arrays;
 import java.util.Iterator;
 
+/**
+ * CalculateCPA
+ */
+
 @Combinable
 public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, DataTypes.Result> {
-    //public static final class GroupReducer implements GroupReduceFunction<Result, Result> {
 
-    private Integer reducerThreshold;
-    private Integer combinerThreshold;
+    private long reducerThreshold;
+    private long combinerThreshold;
 
     private Double alpha;
     private boolean calculateMedian = false;
@@ -56,14 +59,12 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
         internalReduce(results, resultCollector, combinerThreshold);
     }
 
-    public void internalReduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector, int minOut) throws Exception {
+    public void internalReduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector, long minOut) throws Exception {
         Iterator<DataTypes.Result> iterator = results.iterator();
         DataTypes.Result res = null;
 
-        //System.out.println("threshold: " + reducerThreshold + ";" + combinerThreshold);
-
         // Set default values
-        int cnt = 0;
+        long cnt = 0;
         int distance = 0;
         int min = Integer.MAX_VALUE;
         int max = 0;
@@ -77,7 +78,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
 
             // Fetch record fields
             int d = res.getField(1); // distance
-            int c = res.getField(2); // count
+            long c = res.getField(2); // count
 
             // Increase total count, total distance
             distance += d;
@@ -87,8 +88,6 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             //DataTypes.ResultList currentRl = res.getField(7);
 
             // Record already reduced?
-            //if (res.getNumFields() > 3) {
-            //if (currentRl.size() > 1) {
             if ((Long) res.getField(3) > 0) {
                 distSquared += (Long) res.getField(3);
                 recDistα += (Double) res.getField(4);
@@ -105,9 +104,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
                 // Add distance to list
                 //distList.add(new IntValue(d));
             }
-
         }
-
 
         // Total count greater than threshold
         if (cnt > minOut) {
