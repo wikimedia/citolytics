@@ -226,46 +226,13 @@ public class WikiDocument implements Value {
     }
 
     /**
-     * mark links of "See Also" section
+     * remove links of "See Also" section
      *
      * @param wikiText
-     * @return wikiText with marked "See Also" links
+     * @return wikiText without "See Also" links
      */
-    public String extractSeeAlsoSection(String wikiText) {
-        int seeAlsoStart = -1;
-        String seeAlsoText = "";
-        String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
-        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
-
-        if (seeAlsoMatcher.find()) {
-            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
-        }
-
-
-        if (seeAlsoStart > 0) {
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==")
-                    + seeAlsoStart + seeAlsoTitle.length();
-
-            if (nextHeadlineStart > 0) {
-                seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoStart + seeAlsoTitle.length() + nextHeadlineStart);
-
-                wikiText = wikiText.substring(0, seeAlsoStart);
-                wikiText += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
-                wikiText += wikiText.substring(nextHeadlineStart);
-            } else {
-                seeAlsoText = wikiText.substring(seeAlsoStart);
-                wikiText = wikiText.substring(0, seeAlsoStart);
-                wikiText += seeAlsoText.replaceAll("\\[\\[(.*?)((\\||#).*?)?\\]\\]", "[[SEEALSO_$1]]");
-            }
-        }
-
-        return wikiText;
-    }
-
     public String stripSeeAlsoSection(String wikiText) {
         int seeAlsoStart = -1;
-        String seeAlsoText = "";
         String seeAlsoTitle = "==see also==";
         Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
         Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
@@ -346,6 +313,8 @@ public class WikiDocument implements Value {
         }
         getOutLinks();
         getWordMap();
+
+        // Loop all link pairs
         for (Map.Entry<String, Integer> outLink1 : outLinks) {
             for (Map.Entry<String, Integer> outLink2 : outLinks) {
                 int order = outLink1.getKey().compareTo(outLink2.getKey());
@@ -355,16 +324,13 @@ public class WikiDocument implements Value {
                     int d = max(abs(w1 - w2), 1);
                     //recDistance.setValue(1 / (pow(d, α)));
 
-
                     linkTuple.setFirst(outLink1.getKey());
                     linkTuple.setSecond(outLink2.getKey());
 
-                    result = new Result(linkTuple, d, count);
-                    collector.collect(result);
-                    //collector.collect(target);
+                    // Add result to collector
+                    collector.collect(new Result(linkTuple, d, count));
                 }
             }
-
         }
     }
 
