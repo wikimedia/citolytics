@@ -8,23 +8,20 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
-import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Extracts "See also" links from Wikipedia articles and creates CSV for DB import
+ * Extracts internal links from Wikipedia articles and creates CSV for DB import
  * <p/>
- * TODO: Check if link exists in article body
- * <p/>
- * table structure: article (primary key), "see also"-link target, position, total count of "see also"-links,
+ * table structure: article (primary key), link target
  */
-public class SeeAlsoExtractor {
+public class LinksExtractor {
 
     public static String csvRowDelimiter = "\n";
     public static String csvFieldDelimiter = "\t";
@@ -46,7 +43,7 @@ public class SeeAlsoExtractor {
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // ArticleCounter, Links (, AvgDistance
-        DataSet<Tuple4<String, String, Integer, Integer>> output = text.flatMap(new FlatMapFunction<String, Tuple4<String, String, Integer, Integer>>() {
+        DataSet<Tuple2<String, String>> output = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
             public void flatMap(String content, Collector out) {
 
                 Matcher m = DocumentProcessor.getPageMatcher(content);
@@ -62,53 +59,25 @@ public class SeeAlsoExtractor {
                 // skip docs from namespaces other than
                 if (doc.getNS() != 0) return;
 
-                doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(4))));
+                doc.setText(StringUtils.unescapeEntities(m.group(4)));
                 List<Map.Entry<String, Integer>> links = doc.getOutLinks();
 
-                int pos = 1;
                 for (Map.Entry<String, Integer> outLink : links) {
 
-                    out.collect(new Tuple4<>(StringUtils.addCsvEnclosures(doc.getTitle()), StringUtils.addCsvEnclosures(outLink.getKey()), pos, links.size()));
-                    pos++;
+                    out.collect(new Tuple2<>(
+                            StringUtils.addCsvEnclosures(doc.getTitle()),
+                            StringUtils.addCsvEnclosures(outLink.getKey())
+                    ));
+                    //System.out.println(outLink.getKey());
                 }
             }
-        });
+        }).distinct();
 
+        //output.print();
         output.writeAsCsv(outputFilename, csvRowDelimiter, csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
 
-        env.execute("WikiSeeAlsoExtractor");
+        env.execute("WikiLinksExtractor");
     }
 
-
-    /**
-     * get text of "See Also" section
-     *
-     * @param wikiText
-     * @return seeAlsoText
-     */
-    public static String getSeeAlsoSection(String wikiText) {
-        int seeAlsoStart = -1;
-        String seeAlsoText = "";
-        String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
-        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
-
-        if (seeAlsoMatcher.find()) {
-            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
-        }
-
-        if (seeAlsoStart > 0) {
-            int seeAlsoEnd = seeAlsoStart + seeAlsoTitle.length();
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
-
-            if (nextHeadlineStart > 0) {
-                seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoEnd + nextHeadlineStart);
-            } else {
-                seeAlsoText = wikiText.substring(seeAlsoStart);
-            }
-        }
-
-        return seeAlsoText;
-    }
 
 }

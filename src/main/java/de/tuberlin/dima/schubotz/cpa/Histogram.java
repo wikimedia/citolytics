@@ -15,9 +15,6 @@ import org.apache.flink.core.fs.FileSystem;
  */
 public class Histogram {
 
-    public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = "\t";
-
     public static void main(String[] args) throws Exception {
 
         // set up the execution environment
@@ -36,13 +33,13 @@ public class Histogram {
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
+
         // ArticleCounter, Links (, AvgDistance
         DataSet<HistogramResult> output = text.flatMap(new HistogramMapper())
                 .groupBy(0)
                 .reduceGroup(new HistogramReducer());
 
         output.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
-        //res.writeAsCsv(outputFilename, csvRowDelimiter, csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
 
         env.execute("WikiHistogram");
     }
