@@ -16,7 +16,7 @@
 */
 package de.tuberlin.dima.schubotz.cpa;
 
-import de.tuberlin.dima.schubotz.cpa.contracts.CalculateCPA;
+import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
@@ -67,7 +67,7 @@ public class WikiSim {
 
         DataSet<Result> res = text.flatMap(new DocumentProcessor())
                 .groupBy(0) // Group by LinkTuple
-                .reduceGroup(new CalculateCPA())
+                .reduceGroup(new calculateCPA())
 
                 .withParameters(config)
 

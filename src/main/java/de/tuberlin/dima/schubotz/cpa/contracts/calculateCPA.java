@@ -23,6 +23,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.types.IntValue;
 import org.apache.flink.util.Collector;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -30,8 +31,8 @@ import java.util.Iterator;
 public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, DataTypes.Result> {
     //public static final class GroupReducer implements GroupReduceFunction<Result, Result> {
 
-    private Integer reducerThreshold;
-    private Integer combinerThreshold;
+    private long reducerThreshold;
+    private long combinerThreshold;
 
     private Double alpha;
     private boolean calculateMedian = false;
@@ -41,8 +42,8 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
         super.open(parameter);
 
         alpha = parameter.getDouble("alpha", 1.5);
-        reducerThreshold = parameter.getInteger("reducerThreshold", 1);
-        combinerThreshold = parameter.getInteger("combinerThreshold", 0);
+        reducerThreshold = parameter.getLong("reducerThreshold", 1);
+        combinerThreshold = parameter.getLong("combinerThreshold", 0);
         calculateMedian = parameter.getBoolean("median", false);
     }
 
@@ -56,19 +57,17 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
         internalReduce(results, resultCollector, combinerThreshold);
     }
 
-    public void internalReduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector, int minOut) throws Exception {
+    public void internalReduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector, long minOut) throws Exception {
         Iterator<DataTypes.Result> iterator = results.iterator();
         DataTypes.Result res = null;
 
-        //System.out.println("threshold: " + reducerThreshold + ";" + combinerThreshold);
-
         // Set default values
-        int cnt = 0;
-        int distance = 0;
-        int min = Integer.MAX_VALUE;
-        int max = 0;
+        long cnt = 0;
+        long distance = 0;
+        long min = Long.MAX_VALUE; //Integer.MAX_VALUE;
+        long max = 0;
         long distSquared = 0;
-        double recDistα = 0.;
+        double recDistα = 0; //new BigDecimal(0);
         //DataTypes.ResultList distList = new DataTypes.ResultList();
 
         // Loop all record that belong to the given input key
@@ -76,8 +75,8 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             res = iterator.next();
 
             // Fetch record fields
-            int d = res.getField(1); // distance
-            int c = res.getField(2); // count
+            long d = res.getDistance(); // distance
+            long c = res.getCount(); //getField(2); // count
 
             // Increase total count, total distance
             distance += d;
@@ -89,17 +88,19 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             // Record already reduced?
             //if (res.getNumFields() > 3) {
             //if (currentRl.size() > 1) {
-            if ((Long) res.getField(3) > 0) {
-                distSquared += (Long) res.getField(3);
-                recDistα += (Double) res.getField(4);
-                min = Math.min(min, (Integer) res.getField(5));
-                max = Math.max(max, (Integer) res.getField(6));
+            //if ((Long) res.getField(3) > 0) {
+            if (res.getDistSquared() > 0) {
+                distSquared += res.getDistSquared(); //(Long) res.getField(3);
+                recDistα += res.getCPA(); //(Double) res.getField(4);
+                min = Math.min(min, res.getMin()); //(Integer) res.getField(5));
+                max = Math.max(max, res.getMax()); //(Integer) res.getField(6));
 
                 //distList = currentRl; //rec.getField(7, IntListValue.class); // Use existing distList
             } else {
                 min = Math.min(min, d);
                 max = Math.max(max, d);
                 distSquared += d * d;
+                //recDistα.add(new BigDecimal(Math.pow(d, alpha)));
                 recDistα += Math.pow(d, alpha);
 
                 // Add distance to list
@@ -108,19 +109,27 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
 
         }
 
-
         // Total count greater than threshold
         if (cnt > minOut) {
             assert res != null;
 
             // Set total values in record (stratosphere IntValue)
-            res.setField(distance, 1);
-            res.setField(cnt, 2);
-            res.setField(distSquared, 3);
-            res.setField(recDistα, 4);
+            res.setDistance(distance);
+            res.setCount(cnt);
+            res.setDistSquared(distSquared);
+            res.setCPA(recDistα);
+            res.setMin(min);
+            res.setMax(max);
 
-            res.setField(min, 5);
-            res.setField(max, 6);
+
+//            res.setField(distance, 1);
+//
+//            res.setField(cnt, 2);
+//            res.setField(distSquared, 3);
+//            res.setField(recDistα, 4);
+//
+//            res.setField(min, 5);
+//            res.setField(max, 6);
 
             if (calculateMedian) {
                 //res.setField(distList, 7);

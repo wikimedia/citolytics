@@ -46,8 +46,8 @@ public class WikiDocument {
      * reciprocal distance *
      */
     //private final DoubleValue recDistance = new DoubleValue();
-    private Integer distance = 1;
-    private Integer count = 1;
+    private int distance = 1;
+    private int count = 1;
     private String target = "";
     private Result result;
 

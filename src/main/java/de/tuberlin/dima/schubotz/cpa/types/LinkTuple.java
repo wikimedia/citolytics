@@ -22,10 +22,32 @@ public class LinkTuple extends Tuple2<String, String> {
         setField(second, 1);
     }
 
+    public String getFirst() {
+        return getField(0);
+    }
+
+    public String getSecond() {
+        return getField(1);
+    }
+
     @Override
     public String toString() {
-        return StringUtils.addCsvEnclosures(String.valueOf(getField(0)))
+        return String.valueOf(getField(0))
                 + WikiSim.csvFieldDelimiter
-                + StringUtils.addCsvEnclosures(String.valueOf(getField(1)));
+                + String.valueOf(getField(1));
+    }
+
+    public long getHash() {
+        return hash(getFirst() + getSecond());
+    }
+
+    public static long hash(String string) {
+        long h = 1125899906842597L; // prime
+        int len = string.length();
+
+        for (int i = 0; i < len; i++) {
+            h = 31 * h + string.charAt(i);
+        }
+        return h;
     }
 }
