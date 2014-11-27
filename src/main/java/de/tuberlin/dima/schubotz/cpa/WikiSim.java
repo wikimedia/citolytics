@@ -16,8 +16,8 @@
 */
 package de.tuberlin.dima.schubotz.cpa;
 
+import de.tuberlin.dima.schubotz.cpa.contracts.CalculateCPA;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
-import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
 import org.apache.flink.api.java.DataSet;
@@ -56,8 +56,8 @@ public class WikiSim {
         Configuration config = new Configuration();
 
 
-        config.setInteger("reducerThreshold", Integer.valueOf(reducerThreshold));
-        config.setInteger("combinerThreshold", Integer.valueOf(combinerThreshold));
+        config.setLong("reducerThreshold", Long.valueOf(reducerThreshold));
+        config.setLong("combinerThreshold", Long.valueOf(combinerThreshold));
 
         config.setDouble("alpha", Double.valueOf(alpha));
         config.setBoolean("median", true);
@@ -67,7 +67,7 @@ public class WikiSim {
 
         DataSet<Result> res = text.flatMap(new DocumentProcessor())
                 .groupBy(0) // Group by LinkTuple
-                .reduceGroup(new calculateCPA())
+                .reduceGroup(new CalculateCPA())
 
                 .withParameters(config)
 
