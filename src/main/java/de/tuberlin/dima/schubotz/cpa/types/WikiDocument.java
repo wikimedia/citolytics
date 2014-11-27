@@ -17,16 +17,8 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
 import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
-import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import org.apache.flink.core.memory.DataInputView;
-import org.apache.flink.core.memory.DataOutputView;
-import org.apache.flink.types.IntValue;
-import org.apache.flink.types.Record;
-import org.apache.flink.types.StringValue;
-import org.apache.flink.types.Value;
 import org.apache.flink.util.Collector;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +29,7 @@ import static java.lang.Math.max;
 /**
  * @author rob
  */
-public class WikiDocument implements Value {
+public class WikiDocument {
 
     // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
     private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList(
@@ -64,7 +56,7 @@ public class WikiDocument implements Value {
     /*
      * Raw raw of the document
      */
-    private StringValue raw = new StringValue();
+    private String raw;
 
     /*
      * Plaintext version of the document
@@ -74,12 +66,12 @@ public class WikiDocument implements Value {
     /*
      * Title of the document
      */
-    private StringValue title = new StringValue();
+    private String title;
 
     /*
      * Wikipedia id of the document
      */
-    private IntValue id = new IntValue();
+    private int id;
 
     /**
      * Wikipedia pages belong to different namespaces. Below
@@ -108,43 +100,7 @@ public class WikiDocument implements Value {
      * 108	Book
      * 109	Book talk
      */
-    private IntValue ns = new IntValue();
-
-
-    /**
-     * Returns a plaintext version of this document.
-     *
-     * @return a plaintext string
-     * <p/>
-     * public String getPlainText() {
-     * StringWriter writer = new StringWriter();
-     * MarkupParser parser = new MarkupParser();
-     * MarkupLanguage wiki = new MediaWikiLanguage();
-     * parser.setMarkupLanguage(wiki);
-     * parser.setBuilder(new PlaintextDocumentBuilder(writer));
-     * parser.parse(raw.getValue());
-     * plaintext.setValue(writer.toString());
-     * return plaintext.getValue();
-     * }
-     */
-
-    @Override
-    public void write(DataOutputView out) throws IOException {
-        id.write(out);
-        ns.write(out);
-        title.write(out);
-        raw.write(out);
-        //plaintext.write(out);
-    }
-
-    @Override
-    public void read(DataInputView in) throws IOException {
-        id.read(in);
-        ns.read(in);
-        title.read(in);
-        raw.read(in);
-        //plaintext.read(in);
-    }
+    private int ns;
 
     /**
      * Returns the document id.
@@ -152,7 +108,7 @@ public class WikiDocument implements Value {
      * @return id of the document
      */
     public int getId() {
-        return id.getValue();
+        return id;
     }
 
     /**
@@ -160,8 +116,8 @@ public class WikiDocument implements Value {
      *
      * @param id
      */
-    public void setId(Integer id) {
-        this.id.setValue(id);
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
@@ -170,7 +126,7 @@ public class WikiDocument implements Value {
      * @return title of the document
      */
     public String getTitle() {
-        return title.getValue();
+        return title;
     }
 
     /**
@@ -179,7 +135,7 @@ public class WikiDocument implements Value {
      * @param title
      */
     public void setTitle(String title) {
-        this.title.setValue(title);
+        this.title = title;
     }
 
     /**
@@ -188,7 +144,7 @@ public class WikiDocument implements Value {
      * @return namespace id
      */
     public int getNS() {
-        return ns.getValue();
+        return ns;
     }
 
     /**
@@ -197,7 +153,7 @@ public class WikiDocument implements Value {
      * @param ns
      */
     public void setNS(int ns) {
-        this.ns.setValue(ns);
+        this.ns = ns;
     }
 
     /**
@@ -206,14 +162,14 @@ public class WikiDocument implements Value {
      * @return the raw body
      */
     public String getText() {
-        return raw.getValue();
+        return raw;
     }
 
     /**
      * Sets the raw body of the document.
      */
     public void setText(String text) {
-        this.raw.setValue(StringUtils.unescapeEntities(text));
+        this.raw = text;
     }
 
     private boolean startsNotWith(String text, ArrayList<String> patterns) {
@@ -267,7 +223,7 @@ public class WikiDocument implements Value {
         // [[#Wikilink|Wikilink]]
         Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
 
-        String text = raw.getValue(); //.toLowerCase();
+        String text = raw; //.toLowerCase();
 
         // strip "see also" section
         text = stripSeeAlsoSection(text);
@@ -295,7 +251,7 @@ public class WikiDocument implements Value {
 
     private void SplitWS() {
         Pattern p = Pattern.compile("\\s+");
-        String text = raw.getValue();
+        String text = raw;
         Matcher m = p.matcher(text);
         int currentWS = 0;
         wordMap = new TreeMap<>();
@@ -308,7 +264,7 @@ public class WikiDocument implements Value {
 
     public void collectLinksAsResult(Collector<Result> collector) {
         //Skip all namespaces other than main
-        if (ns.getValue() != 0) {
+        if (ns != 0) {
             return;
         }
         getOutLinks();
