@@ -353,14 +353,13 @@ public class WikiDocument implements Value {
                     int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
                     int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
                     int d = max(abs(w1 - w2), 1);
-                    distance = d;
                     //recDistance.setValue(1 / (pow(d, α)));
 
 
                     linkTuple.setFirst(outLink1.getKey());
                     linkTuple.setSecond(outLink2.getKey());
 
-                    result = new Result(linkTuple, distance, count);
+                    result = new Result(linkTuple, d, count);
                     collector.collect(result);
                     //collector.collect(target);
                 }
