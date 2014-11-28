@@ -32,7 +32,7 @@ import org.apache.flink.core.fs.FileSystem;
 public class WikiSim {
 
     public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = ";";
+    public static String csvFieldDelimiter = "\t";
 
     public static void main(String[] args) throws Exception {
 
@@ -52,13 +52,10 @@ public class WikiSim {
         String reducerThreshold = ((args.length > 3) ? args[3] : "1");
         String combinerThreshold = ((args.length > 4) ? args[4] : "0");
 
-
         Configuration config = new Configuration();
-
 
         config.setLong("reducerThreshold", Long.valueOf(reducerThreshold));
         config.setLong("combinerThreshold", Long.valueOf(combinerThreshold));
-
         config.setDouble("alpha", Double.valueOf(alpha));
         config.setBoolean("median", true);
 

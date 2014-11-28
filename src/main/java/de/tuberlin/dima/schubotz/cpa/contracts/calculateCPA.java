@@ -29,7 +29,6 @@ import java.util.Iterator;
 
 @Combinable
 public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, DataTypes.Result> {
-    //public static final class GroupReducer implements GroupReduceFunction<Result, Result> {
 
     private long reducerThreshold;
     private long combinerThreshold;
@@ -86,9 +85,6 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             //DataTypes.ResultList currentRl = res.getField(7);
 
             // Record already reduced?
-            //if (res.getNumFields() > 3) {
-            //if (currentRl.size() > 1) {
-            //if ((Long) res.getField(3) > 0) {
             if (res.getDistSquared() > 0) {
                 distSquared += res.getDistSquared(); //(Long) res.getField(3);
                 recDistα += res.getCPA(); //(Double) res.getField(4);
