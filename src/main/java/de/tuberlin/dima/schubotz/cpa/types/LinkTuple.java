@@ -5,11 +5,11 @@ import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple2;
 
 public class LinkTuple extends Tuple2<String, String> {
-    public void LinkTuple() {
+    public LinkTuple() {
 
     }
 
-    public void LinkTuple(String first, String second) {
+    public LinkTuple(String first, String second) {
         setFirst(first);
         setSecond(second);
     }
@@ -32,6 +32,10 @@ public class LinkTuple extends Tuple2<String, String> {
 
     public boolean isValid() {
         return getFirst().length() > 0 && getSecond().length() > 0 && !getFirst().equals("\\") && !getSecond().equals("\\");
+    }
+
+    public LinkTuple getTwin() {
+        return new LinkTuple(getSecond(), getFirst());
     }
 
     @Override
