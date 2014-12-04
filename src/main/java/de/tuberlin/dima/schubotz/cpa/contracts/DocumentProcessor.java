@@ -16,8 +16,8 @@
  */
 package de.tuberlin.dima.schubotz.cpa.contracts;
 
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
@@ -25,9 +25,9 @@ import org.apache.flink.util.Collector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DocumentProcessor implements FlatMapFunction<String, DataTypes.Result> {
+public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult> {
     @Override
-    public void flatMap(String content, Collector<DataTypes.Result> out) {
+    public void flatMap(String content, Collector<WikiSimResult> out) {
 
         // search for a page-xml entity
         Matcher m = getPageMatcher(content);

@@ -19,7 +19,7 @@ package de.tuberlin.dima.schubotz.cpa;
 import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
@@ -32,7 +32,7 @@ import org.apache.flink.core.fs.FileSystem;
 public class WikiSim {
 
     public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = "\t";
+    public static String csvFieldDelimiter = "|";
 
     public static void main(String[] args) throws Exception {
 
@@ -62,7 +62,7 @@ public class WikiSim {
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
 
-        DataSet<Result> res = text.flatMap(new DocumentProcessor())
+        DataSet<WikiSimResult> res = text.flatMap(new DocumentProcessor())
                 .groupBy(0) // Group by LinkTuple
                 .reduceGroup(new calculateCPA())
 

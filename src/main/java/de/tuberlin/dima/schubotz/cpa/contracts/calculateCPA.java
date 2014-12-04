@@ -16,7 +16,9 @@
  */
 package de.tuberlin.dima.schubotz.cpa.contracts;
 
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimBigDecimal;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResultList;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
 import org.apache.flink.configuration.Configuration;
@@ -28,7 +30,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 @Combinable
-public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, DataTypes.Result> {
+public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
 
     private long reducerThreshold;
     private long combinerThreshold;
@@ -47,26 +49,27 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
     }
 
     @Override
-    public void reduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector) throws Exception {
+    public void reduce(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector) throws Exception {
         internalReduce(results, resultCollector, reducerThreshold);
     }
 
     @Override
-    public void combine(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector) throws Exception {
+    public void combine(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector) throws Exception {
         internalReduce(results, resultCollector, combinerThreshold);
     }
 
-    public void internalReduce(Iterable<DataTypes.Result> results, Collector<DataTypes.Result> resultCollector, long minOut) throws Exception {
-        Iterator<DataTypes.Result> iterator = results.iterator();
-        DataTypes.Result res = null;
+    public void internalReduce(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector, long minOut) throws Exception {
+        Iterator<WikiSimResult> iterator = results.iterator();
+        WikiSimResult res = null;
 
         // Set default values
         long cnt = 0;
         long distance = 0;
-        long min = Long.MAX_VALUE; //Integer.MAX_VALUE;
+        long min = Long.MAX_VALUE;
         long max = 0;
         long distSquared = 0;
-        double recDistα = 0; //new BigDecimal(0);
+        //WikiSimBigDecimal recDistα = new WikiSimBigDecimal(); //new BigDecimal(0);
+        double recDistα = .0;
         //DataTypes.ResultList distList = new DataTypes.ResultList();
 
         // Loop all record that belong to the given input key
@@ -88,6 +91,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             if (res.getDistSquared() > 0) {
                 distSquared += res.getDistSquared(); //(Long) res.getField(3);
                 recDistα += res.getCPA(); //(Double) res.getField(4);
+                //recDistα.add(res.getCPA());
                 min = Math.min(min, res.getMin()); //(Integer) res.getField(5));
                 max = Math.max(max, res.getMax()); //(Integer) res.getField(6));
 
@@ -96,7 +100,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
                 min = Math.min(min, d);
                 max = Math.max(max, d);
                 distSquared += d * d;
-                //recDistα.add(new BigDecimal(Math.pow(d, alpha)));
+                //recDistα.add(new WikiSimBigDecimal(new BigDecimal(Math.pow(d, alpha))));
                 recDistα += Math.pow(d, alpha);
 
                 // Add distance to list
@@ -117,16 +121,6 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
             res.setMin(min);
             res.setMax(max);
 
-
-//            res.setField(distance, 1);
-//
-//            res.setField(cnt, 2);
-//            res.setField(distSquared, 3);
-//            res.setField(recDistα, 4);
-//
-//            res.setField(min, 5);
-//            res.setField(max, 6);
-
             if (calculateMedian) {
                 //res.setField(distList, 7);
                 //res.setField(getMedian(distList), 8);
@@ -137,7 +131,7 @@ public class calculateCPA extends RichGroupReduceFunction<DataTypes.Result, Data
 
     }
 
-    public static double getMedian(DataTypes.ResultList listv) {
+    public static double getMedian(WikiSimResultList listv) {
         //listv.toArray(v); // NOT WORKING - Bug?
         Integer[] v = new Integer[listv.size()];
         int i = 0;

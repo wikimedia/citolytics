@@ -3,7 +3,7 @@ package de.tuberlin.dima.schubotz.cpa;
 import de.tuberlin.dima.schubotz.cpa.contracts.HistogramMapper;
 import de.tuberlin.dima.schubotz.cpa.contracts.HistogramReducer;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes.HistogramResult;
+import de.tuberlin.dima.schubotz.cpa.types.HistogramResult;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;

@@ -1,7 +1,7 @@
 package de.tuberlin.dima.schubotz.cpa.contracts;
 
 
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes.HistogramResult;
+import de.tuberlin.dima.schubotz.cpa.types.HistogramResult;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
 
