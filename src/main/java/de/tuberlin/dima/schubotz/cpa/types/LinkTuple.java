@@ -15,11 +15,11 @@ public class LinkTuple extends Tuple2<String, String> {
     }
 
     public void setFirst(String first) {
-        setField(first, 0);
+        setField(first.trim(), 0);
     }
 
     public void setSecond(String second) {
-        setField(second, 1);
+        setField(second.trim(), 1);
     }
 
     public String getFirst() {
@@ -28,6 +28,10 @@ public class LinkTuple extends Tuple2<String, String> {
 
     public String getSecond() {
         return getField(1);
+    }
+
+    public boolean isValid() {
+        return getFirst().length() > 0 && getSecond().length() > 0 && !getFirst().equals("\\") && !getSecond().equals("\\");
     }
 
     @Override
