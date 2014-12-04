@@ -16,7 +16,7 @@
  */
 package de.tuberlin.dima.schubotz.cpa.types;
 
-import de.tuberlin.dima.schubotz.cpa.types.DataTypes.Result;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import org.apache.flink.util.Collector;
 
 import java.util.*;
@@ -49,7 +49,7 @@ public class WikiDocument {
     private int distance = 1;
     private int count = 1;
     private String target = "";
-    private Result result;
+    private WikiSimResult result;
 
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
     private TreeMap<Integer, Integer> wordMap = null;
@@ -262,7 +262,7 @@ public class WikiDocument {
         }
     }
 
-    public void collectLinksAsResult(Collector<Result> collector) {
+    public void collectLinksAsResult(Collector<WikiSimResult> collector) {
         //Skip all namespaces other than main
         if (ns != 0) {
             return;
@@ -284,7 +284,9 @@ public class WikiDocument {
                     linkTuple.setSecond(outLink2.getKey());
 
                     // Add result to collector
-                    collector.collect(new Result(linkTuple, d, count));
+                    if (linkTuple.isValid()) {
+                        collector.collect(new WikiSimResult(linkTuple, d, count));
+                    }
                 }
             }
         }
