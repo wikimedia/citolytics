@@ -16,6 +16,7 @@ import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.types.ListValue;
 import org.apache.flink.types.StringValue;
 import org.apache.flink.util.Collector;
@@ -141,9 +142,9 @@ public class Evaluation {
 //                        out.collect(new Tuple2(record.getField(0), list));
 //                    }
 //                });
-
-
 //        seeAlsoResults.print();
+
+        join.writeAsCsv(outputFilename, csvRowDelimiter, String.valueOf(csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
         join.print();
 
         env.execute("Evaluation");

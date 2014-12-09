@@ -2,8 +2,11 @@ package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
+import org.apache.flink.util.Collector;
 import org.junit.Test;
+import sun.jvm.hotspot.utilities.Assert;
 
 import static org.junit.Assert.*;
 
@@ -91,4 +94,41 @@ public class ParserTest {
         doc.collectLinks(collector);
          */
     }
+
+    @Test
+    public void RedirectTest() {
+
+        Collector<WikiSimResult> collector = new Collector<WikiSimResult>() {
+            @Override
+            public void collect(WikiSimResult record) {
+
+                System.out.println(record.toString());
+            }
+
+            @Override
+            public void close() {
+
+            }
+        };
+
+        String content = getFileContents("wikiRedirect.xml");
+        new DocumentProcessor().flatMap(content, collector);
+
+        System.out.println("#####");
+
+        content = getFileContents("wikiSeeAlso.xml");
+        new DocumentProcessor().flatMap(content, collector);
+
+    }
+
+    @Test
+    public void RedirectTest2() {
+        String content = getFileContents("wikiRedirect.xml");
+
+        System.out.println(DocumentProcessor.getRedirectMatcher(content).find());
+
+        Assert.that(DocumentProcessor.getRedirectMatcher(content).find(), "Redirect  not found");
+
+    }
+
 }

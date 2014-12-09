@@ -66,20 +66,8 @@ public class LinkGraph {
             public void flatMap(String content, Collector<Tuple4<String, String, String, Integer>> out) throws Exception {
                 LinkTuple linkTuple = new LinkTuple();
 
-                Matcher m = DocumentProcessor.getPageMatcher(content);
-                // if the record does not contain parsable page-xml
-                if (!m.find()) return;
-
-                // otherwise create a WikiDocument object from the xml
-                WikiDocument doc = new WikiDocument();
-                doc.setId(Integer.parseInt(m.group(3)));
-                doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
-                doc.setNS(Integer.parseInt(m.group(2)));
-
-                // skip docs from namespaces other than
-                if (doc.getNS() != 0) return;
-
-                doc.setText(StringUtils.unescapeEntities(m.group(4)));
+                WikiDocument doc = DocumentProcessor.processDoc(content);
+                if (doc == null) return;
 
                 // Get links & wordmap
                 List<Map.Entry<String, Integer>> outLinks = doc.getOutLinks();

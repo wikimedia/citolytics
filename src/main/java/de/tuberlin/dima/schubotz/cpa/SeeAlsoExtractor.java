@@ -49,20 +49,10 @@ public class SeeAlsoExtractor {
         DataSet<Tuple4<String, String, Integer, Integer>> output = text.flatMap(new FlatMapFunction<String, Tuple4<String, String, Integer, Integer>>() {
             public void flatMap(String content, Collector out) {
 
-                Matcher m = DocumentProcessor.getPageMatcher(content);
-                // if the record does not contain parsable page-xml
-                if (!m.find()) return;
+                WikiDocument doc = DocumentProcessor.processDoc(content, true);
 
-                // otherwise create a WikiDocument object from the xml
-                WikiDocument doc = new WikiDocument();
-                doc.setId(Integer.parseInt(m.group(3)));
-                doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
-                doc.setNS(Integer.parseInt(m.group(2)));
+                if (doc == null) return;
 
-                // skip docs from namespaces other than
-                if (doc.getNS() != 0) return;
-
-                doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(4))));
                 List<Map.Entry<String, Integer>> links = doc.getOutLinks();
 
                 int pos = 1;
@@ -79,36 +69,5 @@ public class SeeAlsoExtractor {
         env.execute("WikiSeeAlsoExtractor");
     }
 
-
-    /**
-     * get text of "See Also" section
-     *
-     * @param wikiText
-     * @return seeAlsoText
-     */
-    public static String getSeeAlsoSection(String wikiText) {
-        int seeAlsoStart = -1;
-        String seeAlsoText = "";
-        String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
-        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
-
-        if (seeAlsoMatcher.find()) {
-            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
-        }
-
-        if (seeAlsoStart > 0) {
-            int seeAlsoEnd = seeAlsoStart + seeAlsoTitle.length();
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
-
-            if (nextHeadlineStart > 0) {
-                seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoEnd + nextHeadlineStart);
-            } else {
-                seeAlsoText = wikiText.substring(seeAlsoStart);
-            }
-        }
-
-        return seeAlsoText;
-    }
 
 }

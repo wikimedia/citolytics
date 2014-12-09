@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 public class LinksExtractor {
 
     public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = "\t";
+    public static String csvFieldDelimiter = "|";
 
     public static void main(String[] args) throws Exception {
 
@@ -46,27 +46,16 @@ public class LinksExtractor {
         DataSet<Tuple2<String, String>> output = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
             public void flatMap(String content, Collector out) {
 
-                Matcher m = DocumentProcessor.getPageMatcher(content);
-                // if the record does not contain parsable page-xml
-                if (!m.find()) return;
+                WikiDocument doc = DocumentProcessor.processDoc(content);
+                if (doc == null) return;
 
-                // otherwise create a WikiDocument object from the xml
-                WikiDocument doc = new WikiDocument();
-                doc.setId(Integer.parseInt(m.group(3)));
-                doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
-                doc.setNS(Integer.parseInt(m.group(2)));
-
-                // skip docs from namespaces other than
-                if (doc.getNS() != 0) return;
-
-                doc.setText(StringUtils.unescapeEntities(m.group(4)));
                 List<Map.Entry<String, Integer>> links = doc.getOutLinks();
 
                 for (Map.Entry<String, Integer> outLink : links) {
 
                     out.collect(new Tuple2<>(
-                            StringUtils.addCsvEnclosures(doc.getTitle()),
-                            StringUtils.addCsvEnclosures(outLink.getKey())
+                            doc.getTitle(),
+                            outLink.getKey()
                     ));
                     //System.out.println(outLink.getKey());
                 }
