@@ -52,7 +52,7 @@ public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult>
         // otherwise create a WikiDocument object from the xml
         WikiDocument doc = new WikiDocument();
         doc.setId(Integer.parseInt(m.group(3)));
-        doc.setTitle(m.group(1));
+        doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
         doc.setNS(Integer.parseInt(m.group(2)));
 
         // skip docs from namespaces other than
