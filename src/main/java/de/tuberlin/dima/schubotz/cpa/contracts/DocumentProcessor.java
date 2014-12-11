@@ -91,11 +91,11 @@ public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult>
         int seeAlsoStart = -1;
         String seeAlsoText = "";
         String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
+        Pattern seeAlsoPattern = Pattern.compile("^" + seeAlsoTitle + "$", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
         Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
 
         if (seeAlsoMatcher.find()) {
-            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
+            seeAlsoStart = seeAlsoMatcher.start();
         }
 
         if (seeAlsoStart > 0) {

@@ -1,7 +1,12 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
+import de.tuberlin.dima.schubotz.cpa.SeeAlsoExtractor;
+import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -11,6 +16,13 @@ import static org.junit.Assert.assertTrue;
  * Created by malteschwarzer on 13.11.14.
  */
 public class SeeAlsoTest {
+
+    @Test
+    public void LocalExecution() throws Exception {
+        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso2.xml").nextElement().getPath();
+
+        SeeAlsoExtractor.main(new String[]{inputFilename, "print"});
+    }
 
     @Test
     public void seeAlsoNotExists() {
@@ -86,5 +98,90 @@ public class SeeAlsoTest {
         assertNotSame("Text not changed", input, text);
 
         System.out.println(text);
+    }
+
+    @Test
+    public void beginningOfLine() {
+        String content =
+                "===2010s===\n" +
+                        "As of the [[2014 NFL season|2014 season]], ''Football Night in America'' is hosted by [[Bob Costas]], who hosts from the game site, with [[Dan Patrick]] emceeing from the [[Stamford, Connecticut]] studio. [[Tony Dungy]] and [[Rodney Harrison]] are studio analysts. ''[[Sports Illustrated]]'' reporter [[Peter King (sportswriter)|Peter King]] serves as a feature reporter.  ''FNIA'' was broadcast from Studio 8G (and then from Studio 8H) from the GE (now Comcast) Building at 30 Rockefeller Plaza in New York from 2006-2013 before its own relocation to Stamford in September 2014, joining all of NBC Sports' other operations and [[NBCSN]].\n" +
+                        "\n" +
+                        "The NFL also has a strict policy prohibiting networks to run ads during the Super Bowl from the gambling industry, and has rejected ads from the [[Las Vegas Convention and Visitors Authority]]. It had been reported that if the television program ''[[Las Vegas (TV series)|Las Vegas]]'' was still on the air when [[NBC]] televised [[Super Bowl XLIII]] in 2009, they likely would not have be allowed to promote the series during the entire block of programming.<ref>{{cite news| url=http://www.usatoday.com/sports/football/nfl/2005-08-04-las-vegas-ads_x.htm | work=USA Today | first=Steve | last=Friess | title=NFL may ban 'Vegas' promos during games | date=August 4, 2005}}</ref> As ''Vegas'' ended during the 2007–2008 television season, this was no longer an issue for NBC.\n" +
+                        "\n" +
+                        "With an average U.S. audience of 98.7 million viewers, Super Bowl XLIII was the most-watched Super Bowl in history, and at that point the second-most-watched U.S. television program of any kind (trailing only the [[Goodbye, Farewell, and Amen|final episode of ''M*A*S*H'']] in 1983; both would be broken by [[Super Bowl XLIV]] the following year). However, the [[Nielsen rating]] of 42.1, was lower than the 43.3 rating for the previous year's [[Super Bowl XLII|game]].\n" +
+                        "\n" +
+                        "On December 14, 2011, the NFL, along with Fox, NBC and CBS, announced the league's rights deal with all three networks was extended to the end of the 2022 season. The three network rights deal includes the continued rotation of the Super Bowl yearly among the three, meaning NBC will air Super Bowls [[Super Bowl XLIX|XLIX]] (2015), [[Super Bowl LII|LII]] (2018), and LV (2021).<ref>{{cite news|url=http://blog.chron.com/ultimatetexans/2011/12/nfl-extends-broadcast-agreements-through-2022-generating-billions/|title=NFL extends broadcast agreements through 2022, generating billions|last=Barron|first=David|date=December 14, 2011|work=Houston Chronicle|accessdate=December 19, 2011}}</ref> The new rights deal also includes NBC receiving the primetime game of the Thanksgiving tripleheader previously carried by NFL Network, along with a division playoff game and one wild card game rather than the full Wild Card Saturday package.\n" +
+                        "\n" +
+                        "NBC's broadcast of [[Super Bowl XLVI]] at the end of the [[2011 NFL season|2011 season]] became the most-watched program in the history of [[Television in the United States|United States television]], with 111.3 million US viewers, according to [[Nielsen Company|Nielsen]].<ref>{{cite web|first=David |last=Bauder |url=http://www.huffingtonpost.com/2012/02/06/super-bowl-ratings-record-tv-giants-patriots_n_1258107.html |title=Super Bowl Ratings Record: Giants-Patriots Game Is Highest-Rated TV Show In US History |work=Huffington Post |date=February 6, 2012 |accessdate=February 7, 2012}}</ref>\n" +
+                        "\n" +
+                        "Sunday Night Football was the most watched program in the United States in the 2011-12 season and again in the 2013-14 season, in the latter case, NBC finished the season as the #1 network among 18-49 year olds for the first time since 2004 and #2 in overall viewers behind longtime leader CBS.<ref>{{cite web | url=http://www.thefutoncritic.com/ratings/2014/05/20/nbc-wins-the-2013-14-september-to-may-primetime-television-season-702212/20140520nbc04/ | title=NBC Wins the 2013-14 September-to-May Primetime Television Season | work=The Futon Critic | date=May 20, 2014 | accessdate=September 8, 2014}}</ref>\n" +
+                        "\n" +
+                        "====See also====\n" +
+                        "*[[Super Bowl XLIII]] – As previously mentioned, Super Bowl XLIII was NBC's first Super Bowl broadcast since [[Super Bowl XXXII]] at the end of the [[1997 NFL season|1997 season]],<ref>{{cite web|url=http://www.cnbc.com/id/28898650/site/14081545/for/cnbc/ |title=NBC says Super Bowl ad sales nearly done – News |publisher=CNBC.com |date=January 28, 2009 |accessdate=February 4, 2009}} {{Dead link|date=September 2010|bot=H3llBot}}</ref> and was available in [[1080i]] [[high definition television|high definition]].  [[Play-by-play]] announcer [[Al Michaels]] and [[color commentator]] [[John Madden]] were in the booth, with [[Andrea Kremer]] and [[Alex Flanagan]] serving as [[sideline reporter]]s. The pre-game show – a record five hours long – was hosted by the ''[[Football Night in America]]'' team headed by [[Bob Costas]], and preceded by a two-hour special edition of ''[[Today (NBC program)|Today]]'' hosted by the regular weekday team live from Tampa and the [[NFL Films]] – produced ''Road to the Super Bowl''. [[Matt Millen]] was part of the coverage as a studio analyst. The'' Today'' contribution included portions of a taped interview with President Obama and pictures of troops viewing the proceedings in Iraq. John Madden was the first person to have announced a Super Bowl for each of the four major U.S. television networks, having called five Super Bowls for [[NFL on CBS|CBS]], three for [[NFL on Fox|Fox]], and two for [[Monday Night Football|ABC]] prior to joining NBC in [[2006 NFL season|2006]]. Meanwhile, Al Michaels was the third man to do play-by-play for a Super Bowl on NBC television (following in the footsteps of [[Curt Gowdy]] and [[Dick Enberg]]). Also, Michaels became the second person (after [[Pat Summerall]] on [[NFL on CBS|CBS]] and [[NFL on Fox|Fox]]) to be the lead Super Bowl play-by-play announcer for two different major U.S. networks ([[Monday Night Football|ABC]] and [[NBC Sunday Night Football|NBC]]). This would prove to be the final game Madden would call, as he announced his retirement from broadcasting on April 16, 2009. The Super Bowl was one of two major professional sports championship series [[NBC Sports|NBC]] broadcast in 2009, as they would also broadcast the [[2009 Stanley Cup Finals|Stanley Cup Finals]]. Both championship series involved teams from Pittsburgh winning championships.<ref name=StanleyCupFinals/> [[Mike Emrick]], [[Ed Olczyk]], and [[Pierre McGuire]] mentioned this when they called the Stanley Cup Finals.<ref name=StanleyCupFinals>{{cite video|title=[[NHL on NBC]]: Game 7 of the 2009 Stanley Cup Finals|medium=television|publisher=NBC Sports|date=June 12, 2009}} Emrick, Olczyk, and McGuire mentioned about Pittsburgh having two championships in the same year, as the [[Pittsburgh Penguins|Penguins]] won the Stanley Cup.</ref> Super Bowl XLIII was the final Super Bowl to air in the [[analog television]] format in the United States before the [[DTV transition in the United States|nationwide digital television transition]]. The transition, originally scheduled for February 17 was pushed back to June 12, the same day the Penguins won the Stanley Cup.\n" +
+                        "\n" +
+                        "*[[Super Bowl XLVI]] – It was also [[Streaming media|streamed]] live online, both to computers (via NFL.com and NBCSports.com) and mobile devices (via [[Verizon Wireless]]'s NFL Mobile [[Application software|app]]), the first legal online streaming of a Super Bowl telecast in the USA.<ref>{{cite news\n" +
+                        "|url=http://abcnews.go.com/blogs/technology/2011/12/super-bowl-will-be-live-streamed-online-for-first-time/\n" +
+                        "|title=Super Bowl Will Be Live-Streamed Online for First Time|publisher=[[ABC News]]|work=technology Review|first=Lauren|last=Effron|date=December 20, 2011|accessdate=January 4, 2012}}</ref><ref>{{cite news |url=http://www.cnn.com/2011/12/20/tech/web/super-bowl-online/index.html?hpt=hp_t3|title=NFL playoffs, Super Bowl to be streamed online|publisher=CNN|work=CNN Tech|first=Mark|last=Milian|date=December 20, 2011|accessdate=January 4, 2012}}</ref> [[Al Michaels]] called [[play-by-play]] for NBC.<ref>{{cite news| url=http://www.usatoday.com/sports/2005-04-18-nbc-abc_x.htm | work=USA Today | first1=Michael | last1=Hiestand | title=ESPN gets 'MNF' | date=April 19, 2005}}</ref> marking the eighth time that he was behind the microphone for a Super Bowl and the second time he called a Super Bowl for NBC (Michaels had previously done play-by-play for Super Bowls [[Super Bowl XXII|XXII]], [[Super Bowl|XXV]], [[XXIX]], [[XXXIV]], [[Super Bowl XXXVII|XXXVII]], and [[Super Bowl XL|XL]] for [[Monday Night Football|ABC]] and [[Super Bowl XLIII]] for NBC). [[Cris Collinsworth]] was the [[color analyst]] for the game, his second Super Bowl as a game analyst and first since he was in the booth for [[Super Bowl XXXIX]] for [[NFL on Fox|Fox]]. [[Michele Tafoya]] was the [[sideline reporter]]. [[Bob Costas]] and [[Dan Patrick]] (who also presided over the trophy presentation ceremony) hosted the pregame, halftime, and postgame coverage for NBC with ''[[Football Night in America]]'' analysts [[Tony Dungy]] and [[Rodney Harrison]] and special guest analysts (who were seated next to Costas during the pre-game festivities), [[Aaron Rodgers]] and [[Hines Ward]]. Also helping out on NBC's broadcast were reporters [[Alex Flanagan]] and [[Randy Moss (sports reporter)|Randy Moss]] and NFL insiders [[Mike Florio]] and [[Peter King (sportswriter)|Peter King]].\n" +
+                        "\n" +
+                        "==Pregame/Studio programs==\n" +
+                        "{{main|The NFL on NBC pregame show|Football Night in America}}\n" +
+                        "\n" +
+                        "==Commentators==\n" +
+                        "{{main|Football Night in America|NBC Sunday Night Football|List of NFL on NBC announcers|List of NFL on NBC pregame show panelists}}\n" +
+                        "\n" +
+                        "==See also==\n" +
+                        "*[[List of NFL on NBC commentator pairings]]\n" +
+                        "*[[List of AFL Championship Game broadcasters]]\n" +
+                        "*[[List of NFL Championship Game broadcasters]]\n" +
+                        "*[[List of AFC Championship Game broadcasters]]\n" +
+                        "*[[List of NFC Championship Game broadcasters]]\n" +
+                        "*[[List of Super Bowl broadcasters]]\n" +
+                        "*''[[NFL on NBC Radio]]''\n" +
+                        "*[[NFL on NBC music]]\n" +
+                        "\n" +
+                        "==References==\n" +
+                        "{{reflist|2}}\n" +
+                        "\n" +
+                        "==External links==\n" +
+                        "* {{official website|http://www.nbcsports.com/nfl/}}\n" +
+                        "**[http://www.nbcsports.com/sundaynightfootball/index.html Sunday Night Football]\n" +
+                        "* {{IMDb title|0407424}}\n" +
+                        "\n" +
+                        "{{Navboxes|list1=\n" +
+                        "{{s-start}}\n" +
+                        "{{succession box|before=[[NFL on DuMont|DuMont]]| title=[[National Football League]] broadcaster (with [[NFL on CBS|CBS]])| years=[[1955 NFL season|1955]]–[[1963 NFL season|63]]| after=[[NFL on CBS|CBS]]}}\n" +
+                        "{{succession box|before=[[American Football League on ABC|ABC]]| title=[[American Football League]] broadcaster| years=[[1965 American Football League season|1965]]–[[1969 American Football League season|1969]]| after=[[AFL-NFL Merger]]}}\n" +
+                        "{{succession box|before=[[AFL-NFL Merger]]| title=[[American Football Conference]] broadcaster| years=[[1970 NFL Season|1970]]–[[1997 NFL Season|1997]]| after=[[NFL on CBS|CBS]]}}\n" +
+                        "{{succession box|before=[[ESPN Sunday Night Football|ESPN]] and [[NFL on TNT|TNT]]| title=NFL [[NBC Sunday Night Football|Sunday Night Football]] broadcaster| years=[[2006 NFL season|2006]]–present| after=incumbent}}\n" +
+                        "{{succession box|before=[[Monday Night Football|ABC]]| title=NFL Saturday Wild Card Playoff broadcaster| years=[[2006 NFL season|2006]]–present| after=incumbent}}\n" +
+                        "{{succession box|before=[[Monday Night Football|ABC]]| title=[[National Football League Kickoff game|NFL kickoff game]] broadcaster| years=[[2006 NFL season|2006]]–present| after=incumbent}}\n" +
+                        "{{s-end}}\n" +
+                        "{{NBC Sports}}\n" +
+                        "{{NFL on NBC}}\n" +
+                        "{{NFL on NBC Radio}}\n" +
+                        "{{National Football League on television and radio}}\n" +
+                        "{{AFL (1960 - 1969)}}\n" +
+                        "{{NBCNetwork Shows (current and upcoming)}}\n" +
+                        "}}\n" +
+                        "\n" +
+                        "{{DEFAULTSORT:Nfl On Nbc}}\n" +
+                        "[[Category:NBC network shows]]\n" +
+                        "[[Category:NBC Sports]]\n" +
+                        "[[Category:American Football League]]\n" +
+                        "[[Category:Canadian Football League on television]]\n" +
+                        "[[Category:1955 American television series debuts]]\n" +
+                        "[[Category:1998 American television series endings]]\n" +
+                        "[[Category:2006 American television series debuts]]\n" +
+                        "[[Category:1950s American television series]]\n" +
+                        "[[Category:1960s American television series]]\n" +
+                        "[[Category:1970s American television series]]\n" +
+                        "[[Category:1980s American television series]]\n" +
+                        "[[Category:1990s American television series]]\n" +
+                        "[[Category:2000s American television series]]\n" +
+                        "[[Category:2010s American television series]]\n" +
+                        "[[Category:National Football League television series|NBC]]\n" +
+                        "[[Category:Television series revived after cancellation]]\n";
+
+        System.out.println(Pattern.compile("^==See also==$", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE).matcher(content).find());
     }
 }

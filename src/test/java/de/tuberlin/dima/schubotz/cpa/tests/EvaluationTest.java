@@ -1,24 +1,39 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
-import de.tuberlin.dima.schubotz.cpa.evaluation.CPAResult;
+import de.tuberlin.dima.schubotz.cpa.evaluation.types.CPAResult;
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
+import de.tuberlin.dima.schubotz.cpa.evaluation.io.CPAResultInputFormat;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class EvaluationTest {
     @Test
     public void TestLocal() throws Exception {
-        String inputWikiFilename = "file://" + getClass().getClassLoader().getResources("evaluation_wikisim.csv").nextElement().getPath();
+        String inputCpaFilename = "file://" + getClass().getClassLoader().getResources("evaluation_cpa.csv").nextElement().getPath();
         String inputSeeAlsoFilename = "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath();
 
         String outputFilename = "file://" + getClass().getClassLoader().getResources("evaluation.out").nextElement().getPath();
 
-        Evaluation.main(new String[]{inputSeeAlsoFilename, inputWikiFilename, outputFilename});
+        outputFilename = "print";
+
+        Evaluation.main(new String[]{inputSeeAlsoFilename, inputCpaFilename, outputFilename});
+    }
+
+    @Test
+    public void FullEval() throws Exception {
+
+        Evaluation.main(new String[]{
+                "print",
+                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("testresult.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath(),
+
+                "20"
+        });
     }
 
     @Test
@@ -29,11 +44,14 @@ public class EvaluationTest {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
 
-        DataSet<CPAResult> res = env.readCsvFile(inputWikiFilename)
-                .fieldDelimiter('|')
-
-                .includeFields("0110001000")
-                .tupleType(CPAResult.class);
+        DataSource<CPAResult> res = env.readFile(new CPAResultInputFormat(), inputWikiFilename);
+//
+//        readCsvFile(inputWikiFilename)
+//                .fieldDelimiter('|')
+//
+//                .includeFields("0110001000")
+//                .tupleType(CPAResult.class);
+        ;
 
         res.print();
 

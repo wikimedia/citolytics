@@ -190,11 +190,11 @@ public class WikiDocument {
     public String stripSeeAlsoSection(String wikiText) {
         int seeAlsoStart = -1;
         String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile(seeAlsoTitle, Pattern.CASE_INSENSITIVE);
+        Pattern seeAlsoPattern = Pattern.compile("^" + seeAlsoTitle, Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
         Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
 
         if (seeAlsoMatcher.find()) {
-            seeAlsoStart = wikiText.indexOf(seeAlsoMatcher.group());
+            seeAlsoStart = seeAlsoMatcher.start();
         }
 
         // See also section exists

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class SeeAlsoExtractor {
 
     public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = "\t";
+    public static String csvFieldDelimiter = "|";
 
     public static void main(String[] args) throws Exception {
 
@@ -58,13 +58,17 @@ public class SeeAlsoExtractor {
                 int pos = 1;
                 for (Map.Entry<String, Integer> outLink : links) {
 
-                    out.collect(new Tuple4<>(StringUtils.addCsvEnclosures(doc.getTitle()), StringUtils.addCsvEnclosures(outLink.getKey()), pos, links.size()));
+                    out.collect(new Tuple4<>(doc.getTitle(), outLink.getKey(), pos, links.size()));
                     pos++;
                 }
             }
         });
 
-        output.writeAsCsv(outputFilename, csvRowDelimiter, csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+        if (outputFilename.equals("print")) {
+            output.print();
+        } else {
+            output.writeAsCsv(outputFilename, csvRowDelimiter, csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+        }
 
         env.execute("WikiSeeAlsoExtractor");
     }
