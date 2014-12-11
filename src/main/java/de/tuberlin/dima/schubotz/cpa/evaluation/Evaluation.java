@@ -55,7 +55,7 @@ public class Evaluation {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("Usage: " + getDescription());
             System.exit(1);
         }
 
@@ -206,5 +206,9 @@ public class Evaluation {
         }
 
         env.execute("Evaluation");
+    }
+
+    public static String getDescription() {
+        return "OUTPUT SEEALSO WIKISIM MLT LINKS [FIRST-N-RESULTS]";
     }
 }
