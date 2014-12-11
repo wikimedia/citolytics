@@ -82,6 +82,8 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
                     record.setField(Integer.valueOf(fields[k]), f);
                 } else if (clazz == Double.class) {
                     record.setField(Double.valueOf(fields[k]), f);
+                } else if (clazz == Float.class) {
+                    record.setField(Float.valueOf(fields[k]), f);
                 } else if (clazz == Long.class) {
                     record.setField(Long.valueOf(fields[k]), f);
                 } else {

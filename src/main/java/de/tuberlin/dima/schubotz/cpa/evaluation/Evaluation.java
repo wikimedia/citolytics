@@ -2,6 +2,8 @@ package de.tuberlin.dima.schubotz.cpa.evaluation;
 
 import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.*;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationReducer;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.OuterJoin;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.*;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
@@ -118,20 +120,7 @@ public class Evaluation {
 
                 .first(firstN)
                 .groupBy(0)
-                .reduceGroup(new GroupReduceFunction<Tuple3<String, String, Double>, EvaluationResult>() {
-                    @Override
-                    public void reduce(Iterable<Tuple3<String, String, Double>> results, Collector<EvaluationResult> out) throws Exception {
-                        Iterator<Tuple3<String, String, Double>> iterator = results.iterator();
-                        Tuple3<String, String, Double> record = null;
-                        StringListValue list = new StringListValue();
-
-                        while (iterator.hasNext()) {
-                            record = iterator.next();
-                            list.add(new StringValue((String) record.getField(1)));
-                        }
-                        out.collect(new EvaluationResult((String) record.getField(0), list));
-                    }
-                });
+                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Double>>());
 
 
         // CoCit
@@ -143,20 +132,7 @@ public class Evaluation {
 
                 .first(firstN)
                 .groupBy(0)
-                .reduceGroup(new GroupReduceFunction<Tuple3<String, String, Long>, EvaluationResult>() {
-                    @Override
-                    public void reduce(Iterable<Tuple3<String, String, Long>> results, Collector<EvaluationResult> out) throws Exception {
-                        Iterator<Tuple3<String, String, Long>> iterator = results.iterator();
-                        Tuple3<String, String, Long> record = null;
-                        StringListValue list = new StringListValue();
-
-                        while (iterator.hasNext()) {
-                            record = iterator.next();
-                            list.add(new StringValue((String) record.getField(1)));
-                        }
-                        out.collect(new EvaluationResult((String) record.getField(0), list));
-                    }
-                });
+                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Long>>());
 
 
         // Prepare MLT
@@ -164,20 +140,7 @@ public class Evaluation {
                 .sortGroup(2, Order.DESCENDING)
                 .first(firstN)
                 .groupBy(0)
-                .reduceGroup(new GroupReduceFunction<MLTResult, EvaluationResult>() {
-                    @Override
-                    public void reduce(Iterable<MLTResult> results, Collector<EvaluationResult> out) throws Exception {
-                        Iterator<MLTResult> iterator = results.iterator();
-                        MLTResult record = null;
-                        StringListValue list = new StringListValue();
-
-                        while (iterator.hasNext()) {
-                            record = iterator.next();
-                            list.add(new StringValue((String) record.getField(1)));
-                        }
-                        out.collect(new EvaluationResult((String) record.getField(0), list));
-                    }
-                });
+                .reduceGroup(new EvaluationReducer<MLTResult>());
 
         // Prepare SeeAlso
         DataSet<EvaluationResult> seeAlsoResults = env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
@@ -190,13 +153,13 @@ public class Evaluation {
                 });
 
         // Outer Join SeeAlso x CPA
-        DataSet<Tuple4<String, StringListValue, StringListValue, Integer>> output = seeAlsoResults
+        DataSet<EvaluationFinalResult> output = seeAlsoResults
                 .coGroup(cpaResults)
                 .where(0)
                 .equalTo(0)
-                .with(new CoGroupFunction<EvaluationResult, EvaluationResult, Tuple4<String, StringListValue, StringListValue, Integer>>() {
+                .with(new CoGroupFunction<EvaluationResult, EvaluationResult, EvaluationFinalResult>() {
                     @Override
-                    public void coGroup(Iterable<EvaluationResult> first, Iterable<EvaluationResult> second, Collector<Tuple4<String, StringListValue, StringListValue, Integer>> out) throws Exception {
+                    public void coGroup(Iterable<EvaluationResult> first, Iterable<EvaluationResult> second, Collector<EvaluationFinalResult> out) throws Exception {
 
                         Iterator<EvaluationResult> iterator1 = first.iterator();
                         Iterator<EvaluationResult> iterator2 = second.iterator();
@@ -204,30 +167,37 @@ public class Evaluation {
                         EvaluationResult record1 = null;
                         EvaluationResult record2 = null;
 
-                        StringListValue emptyList = StringListValue.valueOf(new String[]{});
 
                         if (iterator1.hasNext()) {
                             record1 = iterator1.next();
                             StringListValue list1 = (StringListValue) record1.getField(1);
 
+                            EvaluationFinalResult outRecord = new EvaluationFinalResult(
+                                    (String) record1.getField(0), list1);
+
                             if (iterator2.hasNext()) {
                                 record2 = iterator2.next();
                                 StringListValue list2 = (StringListValue) record2.getField(1);
 
-                                out.collect(new Tuple4<String, StringListValue, StringListValue, Integer>(
-                                        (String) record1.getField(0), list1, list2, ListUtils.intersection(list1, list2).size()
-                                ));
+                                outRecord.setField(list2, 2);
+                                outRecord.setField(ListUtils.intersection(list1, list2).size(), 3);
 
-                            } else {
-                                out.collect(new Tuple4<String, StringListValue, StringListValue, Integer>(
-                                        (String) record1.getField(0), list1, emptyList, 0
-                                ));
                             }
+
+                            out.collect(outRecord);
                         }
                     }
-                });
-
-        // TODO outer join CoCit + MLT
+                })
+                        // CoCIt
+                .coGroup(cocitResults)
+                .where(0)
+                .equalTo(0)
+                .with(new OuterJoin(EvaluationFinalResult.COCIT_LIST_KEY))
+                        // MLT
+                .coGroup(mltResults)
+                .where(0)
+                .equalTo(0)
+                .with(new OuterJoin(EvaluationFinalResult.MLT_LIST_KEY));
 
         if (outputFilename.equals("print")) {
             output.print();
@@ -237,5 +207,4 @@ public class Evaluation {
 
         env.execute("Evaluation");
     }
-
 }
