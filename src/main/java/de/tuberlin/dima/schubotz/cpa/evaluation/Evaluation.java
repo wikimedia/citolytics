@@ -12,9 +12,11 @@ import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
@@ -63,6 +65,11 @@ public class Evaluation {
         String mltInputFilename = args[3];
         String linksInputFilename = args[4];
 
+        boolean enableLinkFilter = true;
+
+        if (linksInputFilename.equals("nofilter")) {
+            enableLinkFilter = false;
+        }
 
         //final int MIN_MATCHES_COUNT = (args.length > 3 ? Integer.valueOf(args[3]) : 1);
         final int firstN = (args.length > 5 ? Integer.valueOf(args[5]) : 10);
@@ -84,38 +91,42 @@ public class Evaluation {
 //        linkHashes.print();
 
         // Filter existing links
-        DataSet<WikiSimPlainResult> wikiSimResults = env.readFile(new WikiSimResultInputFormat(), wikiSimInputFilename)
-                .coGroup(links)
-                .where(1)
-                .equalTo(0)
-                .with(new CoGroupFunction<WikiSimPlainResult, LinkResult, WikiSimPlainResult>() {
-                    @Override
-                    public void coGroup(Iterable<WikiSimPlainResult> first, Iterable<LinkResult> second, Collector<WikiSimPlainResult> out) throws Exception {
-                        // if not exists?
-                        Iterator<WikiSimPlainResult> firstIterator = first.iterator();
-                        Iterator<LinkResult> secondIterator = second.iterator();
+        DataSet<WikiSimPlainResult> wikiSimResults = env.readFile(new WikiSimResultInputFormat(), wikiSimInputFilename);
 
-                        if (firstIterator.hasNext()) {
-                            WikiSimPlainResult record = firstIterator.next();
+        if (enableLinkFilter) {
+            wikiSimResults = wikiSimResults
+                    .coGroup(links)
+                    .where(1)
+                    .equalTo(0)
+                    .with(new CoGroupFunction<WikiSimPlainResult, LinkResult, WikiSimPlainResult>() {
+                        @Override
+                        public void coGroup(Iterable<WikiSimPlainResult> first, Iterable<LinkResult> second, Collector<WikiSimPlainResult> out) throws Exception {
+                            // if not exists?
+                            Iterator<WikiSimPlainResult> firstIterator = first.iterator();
+                            Iterator<LinkResult> secondIterator = second.iterator();
 
-                            long hashA = StringUtils.hash((String) record.getField(1) + (String) record.getField(2));
-                            long hashB = StringUtils.hash((String) record.getField(2) + (String) record.getField(1));
+                            if (firstIterator.hasNext()) {
+                                WikiSimPlainResult record = firstIterator.next();
+
+                                long hashA = StringUtils.hash((String) record.getField(1) + (String) record.getField(2));
+                                long hashB = StringUtils.hash((String) record.getField(2) + (String) record.getField(1));
 
 
-                            while (secondIterator.hasNext()) {
-                                LinkResult link = secondIterator.next();
+                                while (secondIterator.hasNext()) {
+                                    LinkResult link = secondIterator.next();
 
-                                long hash = StringUtils.hash((String) link.getField(0) + (String) link.getField(1));
+                                    long hash = StringUtils.hash((String) link.getField(0) + (String) link.getField(1));
 
-                                if (hash == hashA || hash == hashB)
-                                    return;
+                                    if (hash == hashA || hash == hashB)
+                                        return;
+                                }
+
+                                out.collect(record);
                             }
 
-                            out.collect(record);
                         }
-
-                    }
-                })
+                    });
+        }
 
 //                .filter(new RichFilterFunction<WikiSimPlainResult>() {
 //                    Collection<Long> linkHashes;
@@ -138,7 +149,6 @@ public class Evaluation {
 //                        }
 //                    }
 //                }).withBroadcastSet(linkHashes, "linkHashes")
-                ;
 
 
         // CPA
@@ -165,8 +175,46 @@ public class Evaluation {
                 .reduceGroup(new EvaluationReducer<Tuple3<String, String, Long>>());
 
 
-        // Prepare MLT TODO Link exists filter
-        DataSet<EvaluationResult> mltResults = env.readFile(new MLTResultInputFormat(), mltInputFilename).groupBy(0)
+        // Prepare MLT
+        DataSet<MLTResult> mltTmpResults = env.readFile(new MLTResultInputFormat(), mltInputFilename);
+
+        if (enableLinkFilter) {
+            mltTmpResults = mltTmpResults
+                    // Filter existing links
+                    .coGroup(links)
+                    .where(0)
+                    .equalTo(0)
+                    .with(new CoGroupFunction<MLTResult, LinkResult, MLTResult>() {
+                        @Override
+                        public void coGroup(Iterable<MLTResult> first, Iterable<LinkResult> second, Collector<MLTResult> out) throws Exception {
+                            // if not exists?
+                            Iterator<MLTResult> firstIterator = first.iterator();
+                            Iterator<LinkResult> secondIterator = second.iterator();
+
+                            if (firstIterator.hasNext()) {
+                                MLTResult record = firstIterator.next();
+
+                                long hashA = StringUtils.hash((String) record.getField(0) + (String) record.getField(1));
+                                long hashB = StringUtils.hash((String) record.getField(1) + (String) record.getField(0));
+
+                                while (secondIterator.hasNext()) {
+                                    LinkResult link = secondIterator.next();
+
+                                    long hash = StringUtils.hash((String) link.getField(0) + (String) link.getField(1));
+
+                                    if (hash == hashA || hash == hashB)
+                                        return;
+                                }
+
+                                out.collect(record);
+                            }
+
+                        }
+                    });
+        }
+
+        DataSet<EvaluationResult> mltResults = mltTmpResults
+                .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
                 .first(firstN)
                 .groupBy(0)
@@ -227,7 +275,22 @@ public class Evaluation {
                 .coGroup(mltResults)
                 .where(0)
                 .equalTo(0)
-                .with(new OuterJoin(EvaluationFinalResult.MLT_LIST_KEY));
+                .with(new OuterJoin(EvaluationFinalResult.MLT_LIST_KEY))
+
+
+                        // Aggregate
+                .reduce(new ReduceFunction<EvaluationFinalResult>() {
+                    @Override
+                    public EvaluationFinalResult reduce(EvaluationFinalResult first, EvaluationFinalResult second) throws Exception {
+
+                        EvaluationFinalResult res = new EvaluationFinalResult("total", EvaluationFinalResult.EMPTY_LIST);
+
+                        res.setField((int) first.getField(res.CPA_MATCHES_KEY) + (int) second.getField(res.CPA_MATCHES_KEY), res.CPA_MATCHES_KEY);
+                        res.setField((int) first.getField(res.COCIT_MATCHES_KEY) + (int) second.getField(res.COCIT_MATCHES_KEY), res.COCIT_MATCHES_KEY);
+                        res.setField((int) first.getField(res.MLT_MATCHES_KEY) + (int) second.getField(res.MLT_MATCHES_KEY), res.MLT_MATCHES_KEY);
+                        return res;
+                    }
+                });
 
         if (outputFilename.equals("print")) {
             output.print();
