@@ -4,7 +4,6 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.types.EvaluationResult;
 import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.types.StringValue;
 import org.apache.flink.util.Collector;
 

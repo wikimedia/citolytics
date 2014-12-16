@@ -46,16 +46,8 @@ public class LinkTuple extends Tuple2<String, String> {
     }
 
     public long getHash() {
-        return hash(getFirst() + getSecond());
+        return StringUtils.hash(getFirst() + getSecond());
     }
 
-    public static long hash(String string) {
-        long h = 1125899906842597L; // prime
-        int len = string.length();
 
-        for (int i = 0; i < len; i++) {
-            h = 31 * h + string.charAt(i);
-        }
-        return h;
-    }
 }

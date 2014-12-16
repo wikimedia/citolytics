@@ -7,6 +7,7 @@ import org.apache.flink.types.StringValue;
  * Created by malteschwarzer on 04.12.14.
  */
 public class StringListValue extends ListValue<StringValue> {
+
     public String XtoString() {
         // removes brackets
         return super.toString().substring(1, super.toString().length() - 1);

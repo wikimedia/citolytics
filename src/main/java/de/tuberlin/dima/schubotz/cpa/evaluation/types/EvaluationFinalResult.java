@@ -6,7 +6,7 @@ import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.api.java.tuple.Tuple8;
 
 /**
- * Created by malteschwarzer on 11.12.14.
+ * TODO: add total see also count
  */
 public class EvaluationFinalResult extends Tuple8<String, StringListValue, StringListValue, Integer, StringListValue, Integer, StringListValue, Integer> {
     final static StringListValue EMPTY_LIST = StringListValue.valueOf(new String[]{});
