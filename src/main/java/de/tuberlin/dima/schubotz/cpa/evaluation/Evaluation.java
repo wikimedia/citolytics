@@ -111,7 +111,6 @@ public class Evaluation {
                                 long hashA = StringUtils.hash((String) record.getField(1) + (String) record.getField(2));
                                 long hashB = StringUtils.hash((String) record.getField(2) + (String) record.getField(1));
 
-
                                 while (secondIterator.hasNext()) {
                                     LinkResult link = secondIterator.next();
 
@@ -155,6 +154,11 @@ public class Evaluation {
         DataSet<EvaluationResult> cpaResults = wikiSimResults
                 .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.CPA_KEY)
                 .types(String.class, String.class, Double.class)
+                .union(
+                        wikiSimResults
+                                .project(WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.CPA_KEY)
+                                .types(String.class, String.class, Double.class)
+                )
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
 
@@ -167,6 +171,11 @@ public class Evaluation {
         DataSet<EvaluationResult> cocitResults = wikiSimResults
                 .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.COCIT_KEY)
                 .types(String.class, String.class, Long.class)
+                .union(
+                        wikiSimResults
+                                .project(WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.COCIT_KEY)
+                                .types(String.class, String.class, Long.class)
+                )
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
 
