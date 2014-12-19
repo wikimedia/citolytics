@@ -50,12 +50,12 @@ public class WikiSim {
 
         String alpha = ((args.length > 2) ? args[2] : "1.5");
         String reducerThreshold = ((args.length > 3) ? args[3] : "1");
-        String combinerThreshold = ((args.length > 4) ? args[4] : "0");
+        String combinerThreshold = ((args.length > 4) ? args[4] : "1");
 
         Configuration config = new Configuration();
 
-        config.setLong("reducerThreshold", Long.valueOf(reducerThreshold));
-        config.setLong("combinerThreshold", Long.valueOf(combinerThreshold));
+        config.setInteger("reducerThreshold", Integer.valueOf(reducerThreshold));
+        config.setInteger("combinerThreshold", Integer.valueOf(combinerThreshold));
         config.setDouble("alpha", Double.valueOf(alpha));
         config.setBoolean("median", true);
 

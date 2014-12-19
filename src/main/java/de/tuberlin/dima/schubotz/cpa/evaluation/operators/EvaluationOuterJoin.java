@@ -12,11 +12,13 @@ import java.util.Iterator;
 /**
  * Created by malteschwarzer on 11.12.14.
  */
-public class OuterJoin implements CoGroupFunction<EvaluationFinalResult, EvaluationResult, EvaluationFinalResult> {
+public class EvaluationOuterJoin implements CoGroupFunction<EvaluationFinalResult, EvaluationResult, EvaluationFinalResult> {
 
+    int[] firstN;
     int joinAtKey;
 
-    public OuterJoin(int joinAtKey) {
+    public EvaluationOuterJoin(int[] firstN, int joinAtKey) {
+        this.firstN = firstN;
         this.joinAtKey = joinAtKey;
     }
 
@@ -29,11 +31,9 @@ public class OuterJoin implements CoGroupFunction<EvaluationFinalResult, Evaluat
         EvaluationFinalResult record = null;
         EvaluationResult join = null;
 
-        StringListValue emptyList = StringListValue.valueOf(new String[]{});
-
         if (iterator1.hasNext()) {
             record = iterator1.next();
-            StringListValue recordList = record.getField(1);
+            StringListValue recordList = record.getField(EvaluationFinalResult.SEEALSO_LIST_KEY);
 
             if (iterator2.hasNext()) {
                 join = iterator2.next();
@@ -41,7 +41,22 @@ public class OuterJoin implements CoGroupFunction<EvaluationFinalResult, Evaluat
                 StringListValue joinList = (StringListValue) join.getField(1);
 
                 record.setField(joinList, joinAtKey);
-                record.setField(ListUtils.intersection(recordList, joinList).size(), joinAtKey + 1);
+
+                int matchesCount = -1;
+
+                for (int i = 0; i < firstN.length; i++) {
+                    int length = firstN[i];
+
+                    if (joinList.size() < length)
+                        length = joinList.size();
+
+                    // If matchesCount is already 0, avoid intersection
+                    if (matchesCount != 0) {
+                        matchesCount = ListUtils.intersection(recordList, joinList.subList(0, length)).size();
+                    }
+
+                    record.setField(matchesCount, joinAtKey + 1 + i);
+                }
             }
 
             out.collect(record);

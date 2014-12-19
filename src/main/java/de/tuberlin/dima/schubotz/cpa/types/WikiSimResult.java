@@ -1,21 +1,32 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
+import org.apache.flink.api.java.tuple.Tuple5;
+import org.apache.flink.api.java.tuple.Tuple6;
+import org.apache.flink.api.java.tuple.Tuple8;
 import org.apache.flink.api.java.tuple.Tuple9;
 
 /**
  * Result for WikiSim
  * <p/>
- * 0 hash
- * 1 linkTuple
- * 2 distance
- * 3 count
- * 4 distSquared
- * 5 CPA
- * 6 minDist
- * 7 maxDist
- * 8 median
+ * 0 Long   hash
+ * 1 JPO    linkTuple
+ * 2 Long   distance
+ * 3 Integer   count
+ * 4 Long   distSquared #
+ * 5 Double CPA
+ * 6 Long   minDist #
+ * 7 Long   maxDist #
+ * 8 Double median  #
  */
-public class WikiSimResult extends Tuple9<Long, LinkTuple, Long, Long, Long, Double, Long, Long, Double> {
+public class WikiSimResult extends Tuple6<Long, LinkTuple, Long, Integer, Long, Double> {
+    private final boolean MINMAX = false;
+
+    private final static int MAX_KEY = 7;
+    private final static int MIN_KEY = 6;
+    private final static int CPA_KEY = 5;
+    private final static int DISTSQUARED_KEY = 4;
+    private final static int COUNT_KEY = 3;
+    private final static int DISTANCE_KEY = 2;
 
     public WikiSimResult() {
 
@@ -26,55 +37,63 @@ public class WikiSimResult extends Tuple9<Long, LinkTuple, Long, Long, Long, Dou
         setField(link.getHash(), 0);
         setField(link, 1);
 
-        setField(Long.valueOf(distance), 2);
-        setField(Long.valueOf(count), 3); //  count
+        setDistance(distance);
+        setCount(count);
 
-        setField(new Long(0), 4);
-        //setField(new WikiSimBigDecimal(), 5);
-        setField(new Double(0), 5);
+        setDistSquared(0);
+        setCPA(.0);
+        setMin(0);
+        setMax(0);
 
-        setField(new Long(0), 6);
-        setField(new Long(0), 7);
-        //setField(new ResultList(), 7);
-        //setField(new WikiSimBigDecimal(), 8);
-        setField(new Double(0), 8);
+        setMedian(.0);
 
     }
 
     public void setDistance(long distance) {
-        setField(distance, 2);
+        setField(distance, DISTANCE_KEY);
     }
 
-    public void setCount(long count) {
-        setField(count, 3);
+    public void setDistance(int distance) {
+        setField(Long.valueOf(distance), DISTANCE_KEY);
+    }
+
+
+    public void setCount(int count) {
+        setField(count, COUNT_KEY);
     }
 
     public void setDistSquared(long distSquared) {
-        setField(distSquared, 4);
+        setField(distSquared, DISTSQUARED_KEY);
     }
 
     public void setCPA(double cpa) {
-        setField(cpa, 5);
+        setField(cpa, CPA_KEY);
     }
 
     public void setMin(long min) {
-        setField(min, 6);
+        if (MINMAX)
+            setField(min, MIN_KEY);
     }
 
     public void setMax(long max) {
-        setField(max, 7);
+        if (MINMAX)
+            setField(max, MAX_KEY);
+    }
+
+    public void setMedian(double median) {
+//        setField(median, 8);
     }
 
     public long getDistance() {
-        return getField(2);
+        return getField(DISTANCE_KEY);
     }
 
-    public long getCount() {
-        return getField(3);
+    public int getCount() {
+        return getField(COUNT_KEY);
     }
 
     public long getDistSquared() {
-        return getField(4);
+        return getField(DISTSQUARED_KEY);
     }
 
     /*public WikiSimBigDecimal getCPA() {
@@ -82,14 +101,20 @@ public class WikiSimResult extends Tuple9<Long, LinkTuple, Long, Long, Long, Dou
     }*/
 
     public double getCPA() {
-        return getField(5);
+        return getField(CPA_KEY);
     }
 
     public long getMin() {
-        return getField(6);
+        if (MINMAX)
+            return getField(MIN_KEY);
+        else
+            return 0;
     }
 
     public long getMax() {
-        return getField(7);
+        if (MINMAX)
+            return getField(MAX_KEY);
+        else
+            return 0;
     }
 }

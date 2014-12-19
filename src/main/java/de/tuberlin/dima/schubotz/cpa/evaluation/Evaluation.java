@@ -4,19 +4,18 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.io.LinksResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.MLTResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.SeeAlsoResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.WikiSimResultInputFormat;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationOuterJoin;
 import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationReducer;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.OuterJoin;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.LinkExistsFilter;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.*;
 import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
@@ -72,7 +71,12 @@ public class Evaluation {
         }
 
         //final int MIN_MATCHES_COUNT = (args.length > 3 ? Integer.valueOf(args[3]) : 1);
-        final int firstN = (args.length > 5 ? Integer.valueOf(args[5]) : 10);
+
+        // Sorted DESC
+        final int[] firstX = new int[]{10, 5, 1}; //, 10, 15, 20};
+        final int firstN = firstX[0]; //(args.length > 5 ? Integer.valueOf(args[5]) : 10);
+
+        final boolean aggregate = (args.length > 5 && args[5].equals("y") ? true : false);
 
         // set up the execution environment
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
@@ -98,56 +102,8 @@ public class Evaluation {
                     .coGroup(links)
                     .where(1)
                     .equalTo(0)
-                    .with(new CoGroupFunction<WikiSimPlainResult, LinkResult, WikiSimPlainResult>() {
-                        @Override
-                        public void coGroup(Iterable<WikiSimPlainResult> first, Iterable<LinkResult> second, Collector<WikiSimPlainResult> out) throws Exception {
-                            // if not exists?
-                            Iterator<WikiSimPlainResult> firstIterator = first.iterator();
-                            Iterator<LinkResult> secondIterator = second.iterator();
-
-                            if (firstIterator.hasNext()) {
-                                WikiSimPlainResult record = firstIterator.next();
-
-                                long hashA = StringUtils.hash((String) record.getField(1) + (String) record.getField(2));
-                                long hashB = StringUtils.hash((String) record.getField(2) + (String) record.getField(1));
-
-                                while (secondIterator.hasNext()) {
-                                    LinkResult link = secondIterator.next();
-
-                                    long hash = StringUtils.hash((String) link.getField(0) + (String) link.getField(1));
-
-                                    if (hash == hashA || hash == hashB)
-                                        return;
-                                }
-
-                                out.collect(record);
-                            }
-
-                        }
-                    });
+                    .with(new LinkExistsFilter<WikiSimPlainResult>(1, 2));
         }
-
-//                .filter(new RichFilterFunction<WikiSimPlainResult>() {
-//                    Collection<Long> linkHashes;
-//
-//                    @Override
-//                    public void open(Configuration parameters) throws Exception {
-//                        linkHashes = getRuntimeContext().getBroadcastVariable("linkHashes");
-//                    }
-//
-//                    @Override
-//                    public boolean filter(WikiSimPlainResult in) throws Exception {
-//                        // Filter if link exists (link hash exists)
-//                        if (linkHashes.contains(LinkTuple.hash((String) in.getField(1) + (String) in.getField(2)))
-//                                || linkHashes.contains(LinkTuple.hash((String) in.getField(2) + (String) in.getField(1)))
-//                                ) {
-////                        if (linkHashes.contains(in.getField(0))) {
-//                            return false;
-//                        } else {
-//                            return true;
-//                        }
-//                    }
-//                }).withBroadcastSet(linkHashes, "linkHashes")
 
 
         // CPA
@@ -170,19 +126,18 @@ public class Evaluation {
         // CoCit
         DataSet<EvaluationResult> cocitResults = wikiSimResults
                 .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.COCIT_KEY)
-                .types(String.class, String.class, Long.class)
+                .types(String.class, String.class, Integer.class)
                 .union(
                         wikiSimResults
                                 .project(WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.COCIT_KEY)
-                                .types(String.class, String.class, Long.class)
+                                .types(String.class, String.class, Integer.class)
                 )
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
 
                 .first(firstN)
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Long>>());
-
+                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Integer>>());
 
         // Prepare MLT
         DataSet<MLTResult> mltTmpResults = env.readFile(new MLTResultInputFormat(), mltInputFilename);
@@ -193,33 +148,7 @@ public class Evaluation {
                     .coGroup(links)
                     .where(0)
                     .equalTo(0)
-                    .with(new CoGroupFunction<MLTResult, LinkResult, MLTResult>() {
-                        @Override
-                        public void coGroup(Iterable<MLTResult> first, Iterable<LinkResult> second, Collector<MLTResult> out) throws Exception {
-                            // if not exists?
-                            Iterator<MLTResult> firstIterator = first.iterator();
-                            Iterator<LinkResult> secondIterator = second.iterator();
-
-                            if (firstIterator.hasNext()) {
-                                MLTResult record = firstIterator.next();
-
-                                long hashA = StringUtils.hash((String) record.getField(0) + (String) record.getField(1));
-                                long hashB = StringUtils.hash((String) record.getField(1) + (String) record.getField(0));
-
-                                while (secondIterator.hasNext()) {
-                                    LinkResult link = secondIterator.next();
-
-                                    long hash = StringUtils.hash((String) link.getField(0) + (String) link.getField(1));
-
-                                    if (hash == hashA || hash == hashB)
-                                        return;
-                                }
-
-                                out.collect(record);
-                            }
-
-                        }
-                    });
+                    .with(new LinkExistsFilter<MLTResult>(0, 1));
         }
 
         DataSet<EvaluationResult> mltResults = mltTmpResults
@@ -230,12 +159,15 @@ public class Evaluation {
                 .reduceGroup(new EvaluationReducer<MLTResult>());
 
         // Prepare SeeAlso
-        DataSet<EvaluationResult> seeAlsoResults = env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
-                .map(new MapFunction<SeeAlsoResult, EvaluationResult>() {
+        DataSet<EvaluationFinalResult> seeAlsoResults = env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
+                // possible filter: if total = X
+                .map(new MapFunction<SeeAlsoResult, EvaluationFinalResult>() {
                     @Override
-                    public EvaluationResult map(SeeAlsoResult in) throws Exception {
+                    public EvaluationFinalResult map(SeeAlsoResult in) throws Exception {
                         String[] list = ((String) in.getField(1)).split(",");
-                        return new EvaluationResult((String) in.getField(0), StringListValue.valueOf(list));
+                        return new EvaluationFinalResult(
+                                (String) in.getField(0), StringListValue.valueOf(list));
+
                     }
                 });
 
@@ -244,62 +176,38 @@ public class Evaluation {
                 .coGroup(cpaResults)
                 .where(0)
                 .equalTo(0)
-                .with(new CoGroupFunction<EvaluationResult, EvaluationResult, EvaluationFinalResult>() {
-                    @Override
-                    public void coGroup(Iterable<EvaluationResult> first, Iterable<EvaluationResult> second, Collector<EvaluationFinalResult> out) throws Exception {
+                .with(new EvaluationOuterJoin(firstX, EvaluationFinalResult.CPA_LIST_KEY))
 
-                        Iterator<EvaluationResult> iterator1 = first.iterator();
-                        Iterator<EvaluationResult> iterator2 = second.iterator();
-
-                        EvaluationResult record1 = null;
-                        EvaluationResult record2 = null;
-
-
-                        if (iterator1.hasNext()) {
-                            record1 = iterator1.next();
-                            StringListValue list1 = (StringListValue) record1.getField(1);
-
-                            EvaluationFinalResult outRecord = new EvaluationFinalResult(
-                                    (String) record1.getField(0), list1);
-
-                            if (iterator2.hasNext()) {
-                                record2 = iterator2.next();
-                                StringListValue list2 = (StringListValue) record2.getField(1);
-
-                                outRecord.setField(list2, 2);
-                                outRecord.setField(ListUtils.intersection(list1, list2).size(), 3);
-
-                            }
-
-                            out.collect(outRecord);
-                        }
-                    }
-                })
                         // CoCIt
                 .coGroup(cocitResults)
                 .where(0)
                 .equalTo(0)
-                .with(new OuterJoin(EvaluationFinalResult.COCIT_LIST_KEY))
+                .with(new EvaluationOuterJoin(firstX, EvaluationFinalResult.COCIT_LIST_KEY))
                         // MLT
                 .coGroup(mltResults)
                 .where(0)
                 .equalTo(0)
-                .with(new OuterJoin(EvaluationFinalResult.MLT_LIST_KEY))
+                .with(new EvaluationOuterJoin(firstX, EvaluationFinalResult.MLT_LIST_KEY));
 
+        if (aggregate) {
+            // Aggregate
+            output = output.reduce(new ReduceFunction<EvaluationFinalResult>() {
+                @Override
+                public EvaluationFinalResult reduce(EvaluationFinalResult first, EvaluationFinalResult second) throws Exception {
 
-                        // Aggregate
-                .reduce(new ReduceFunction<EvaluationFinalResult>() {
-                    @Override
-                    public EvaluationFinalResult reduce(EvaluationFinalResult first, EvaluationFinalResult second) throws Exception {
+                    EvaluationFinalResult res = new EvaluationFinalResult("total", EvaluationFinalResult.EMPTY_LIST);
 
-                        EvaluationFinalResult res = new EvaluationFinalResult("total", EvaluationFinalResult.EMPTY_LIST);
-
-                        res.setField((int) first.getField(res.CPA_MATCHES_KEY) + (int) second.getField(res.CPA_MATCHES_KEY), res.CPA_MATCHES_KEY);
-                        res.setField((int) first.getField(res.COCIT_MATCHES_KEY) + (int) second.getField(res.COCIT_MATCHES_KEY), res.COCIT_MATCHES_KEY);
-                        res.setField((int) first.getField(res.MLT_MATCHES_KEY) + (int) second.getField(res.MLT_MATCHES_KEY), res.MLT_MATCHES_KEY);
-                        return res;
+                    for (int i = 0; i < firstX.length; i++) {
+                        res.aggregateField(first, second, res.CPA_MATCHES_KEY + i);
+                        res.aggregateField(first, second, res.COCIT_MATCHES_KEY + i);
+                        res.aggregateField(first, second, res.MLT_MATCHES_KEY + i);
                     }
-                });
+
+                    return res;
+                }
+
+            });
+        }
 
         if (outputFilename.equals("print")) {
             output.print();
@@ -311,6 +219,6 @@ public class Evaluation {
     }
 
     public static String getDescription() {
-        return "OUTPUT SEEALSO WIKISIM MLT LINKS [FIRST-N-RESULTS]";
+        return "OUTPUT SEEALSO WIKISIM MLT LINKS [AGGREGATE]";
     }
 }

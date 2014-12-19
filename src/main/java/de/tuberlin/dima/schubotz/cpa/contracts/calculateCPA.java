@@ -32,8 +32,8 @@ import java.util.Iterator;
 @Combinable
 public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
 
-    private long reducerThreshold;
-    private long combinerThreshold;
+    private int reducerThreshold;
+    private int combinerThreshold;
 
     private Double alpha;
     private boolean calculateMedian = false;
@@ -43,8 +43,8 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
         super.open(parameter);
 
         alpha = parameter.getDouble("alpha", 1.5);
-        reducerThreshold = parameter.getLong("reducerThreshold", 1);
-        combinerThreshold = parameter.getLong("combinerThreshold", 0);
+        reducerThreshold = parameter.getInteger("reducerThreshold", 1);
+        combinerThreshold = parameter.getInteger("combinerThreshold", 1);
         calculateMedian = parameter.getBoolean("median", false);
     }
 
@@ -58,12 +58,12 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
         internalReduce(results, resultCollector, combinerThreshold);
     }
 
-    public void internalReduce(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector, long minOut) throws Exception {
+    public void internalReduce(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector, int minOut) throws Exception {
         Iterator<WikiSimResult> iterator = results.iterator();
         WikiSimResult res = null;
 
         // Set default values
-        long cnt = 0;
+        int cnt = 0;
         long distance = 0;
         long min = Long.MAX_VALUE;
         long max = 0;
@@ -78,7 +78,7 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
 
             // Fetch record fields
             long d = res.getDistance(); // distance
-            long c = res.getCount(); //getField(2); // count
+            int c = res.getCount(); //getField(2); // count
 
             // Increase total count, total distance
             distance += d;
@@ -88,7 +88,7 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
             //DataTypes.ResultList currentRl = res.getField(7);
 
             // Record already reduced?
-            if (res.getDistSquared() > 0) {
+            if (res.getCPA() > 0) {
                 distSquared += res.getDistSquared(); //(Long) res.getField(3);
                 recDistα += res.getCPA(); //(Double) res.getField(4);
                 //recDistα.add(res.getCPA());
