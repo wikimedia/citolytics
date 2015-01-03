@@ -8,9 +8,6 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationOuterJoin;
 import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationReducer;
 import de.tuberlin.dima.schubotz.cpa.evaluation.operators.LinkExistsFilter;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.*;
-import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
-import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.operators.Order;
@@ -18,9 +15,6 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.util.Collector;
-
-import java.util.Iterator;
 
 /**
  * Evaluation
@@ -47,7 +41,7 @@ import java.util.Iterator;
 public class Evaluation {
     public static String csvRowDelimiter = "\n";
     public static char csvFieldDelimiter = '|';
-
+    public static String seeAlsoDelimiter = "#";
 
     public static void main(String[] args) throws Exception {
 
@@ -73,8 +67,7 @@ public class Evaluation {
         //final int MIN_MATCHES_COUNT = (args.length > 3 ? Integer.valueOf(args[3]) : 1);
 
         // Sorted DESC
-        final int[] firstX = new int[]{10, 5, 1}; //, 10, 15, 20};
-        final int firstN = firstX[0]; //(args.length > 5 ? Integer.valueOf(args[5]) : 10);
+        final int[] firstN = new int[]{10, 5, 1}; //, 10, 15, 20};
 
         final boolean aggregate = (args.length > 5 && args[5].equals("y") ? true : false);
 
@@ -118,9 +111,9 @@ public class Evaluation {
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
 
-                .first(firstN)
+                .first(firstN[0])
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Double>>());
+                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Double>>(firstN[0]));
 
 
         // CoCit
@@ -135,9 +128,9 @@ public class Evaluation {
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
 
-                .first(firstN)
+                .first(firstN[0])
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Integer>>());
+                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Integer>>(firstN[0]));
 
         // Prepare MLT
         DataSet<MLTResult> mltTmpResults = env.readFile(new MLTResultInputFormat(), mltInputFilename);
@@ -154,9 +147,9 @@ public class Evaluation {
         DataSet<EvaluationResult> mltResults = mltTmpResults
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
-                .first(firstN)
+                .first(firstN[0])
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<MLTResult>());
+                .reduceGroup(new EvaluationReducer<MLTResult>(firstN[0]));
 
         // Prepare SeeAlso
         DataSet<EvaluationFinalResult> seeAlsoResults = env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
@@ -164,9 +157,9 @@ public class Evaluation {
                 .map(new MapFunction<SeeAlsoResult, EvaluationFinalResult>() {
                     @Override
                     public EvaluationFinalResult map(SeeAlsoResult in) throws Exception {
-                        String[] list = ((String) in.getField(1)).split(",");
+                        String[] list = ((String) in.getField(1)).split(seeAlsoDelimiter);
                         return new EvaluationFinalResult(
-                                (String) in.getField(0), StringListValue.valueOf(list));
+                                (String) in.getField(0), list);
 
                     }
                 });
@@ -176,18 +169,34 @@ public class Evaluation {
                 .coGroup(cpaResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstX, EvaluationFinalResult.CPA_LIST_KEY))
+                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.CPA_LIST_KEY, EvaluationFinalResult.CPA_MATCHES_KEY))
 
                         // CoCIt
                 .coGroup(cocitResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstX, EvaluationFinalResult.COCIT_LIST_KEY))
+                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.COCIT_LIST_KEY, EvaluationFinalResult.COCIT_MATCHES_KEY))
                         // MLT
                 .coGroup(mltResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstX, EvaluationFinalResult.MLT_LIST_KEY));
+                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.MLT_LIST_KEY, EvaluationFinalResult.MLT_MATCHES_KEY))
+
+//                .filter(new FilterFunction<EvaluationFinalResult>() {
+//                    @Override
+//                    public boolean filter(EvaluationFinalResult record) throws Exception {
+//                        if(
+//                                (int) record.getField(record.MLT_MATCHES_KEY) > 0
+//                                && (int) record.getField(record.CPA_MATCHES_KEY) > 0
+//                                && (int) record.getField(record.COCIT_MATCHES_KEY) > 0
+//                            ) {
+//                            return true;
+//                        } else {
+//                            return false;
+//                        }
+//                    }
+//                })
+                ;
 
         if (aggregate) {
             // Aggregate
@@ -197,10 +206,10 @@ public class Evaluation {
 
                     EvaluationFinalResult res = new EvaluationFinalResult("total", EvaluationFinalResult.EMPTY_LIST);
 
-                    for (int i = 0; i < firstX.length; i++) {
-                        res.aggregateField(first, second, res.CPA_MATCHES_KEY + i);
-                        res.aggregateField(first, second, res.COCIT_MATCHES_KEY + i);
-                        res.aggregateField(first, second, res.MLT_MATCHES_KEY + i);
+                    for (int i = 0; i < firstN.length; i++) {
+                        res.aggregateField(first, second, EvaluationFinalResult.CPA_MATCHES_KEY + i);
+                        res.aggregateField(first, second, EvaluationFinalResult.COCIT_MATCHES_KEY + i);
+                        res.aggregateField(first, second, EvaluationFinalResult.MLT_MATCHES_KEY + i);
                     }
 
                     return res;
@@ -209,16 +218,28 @@ public class Evaluation {
             });
         }
 
+        // Make arrays printable
+        DataSet<EvaluationResultOutput> outputNice = output.map(new MapFunction<EvaluationFinalResult, EvaluationResultOutput>() {
+            @Override
+            public EvaluationResultOutput map(EvaluationFinalResult in) throws Exception {
+                return new EvaluationResultOutput(in);
+            }
+        });
+
         if (outputFilename.equals("print")) {
-            output.print();
+            outputNice.print();
         } else {
-            output.writeAsCsv(outputFilename, csvRowDelimiter, String.valueOf(csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
+            outputNice.writeAsCsv(outputFilename, csvRowDelimiter, String.valueOf(csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
         }
+
 
         env.execute("Evaluation");
     }
 
+
     public static String getDescription() {
         return "OUTPUT SEEALSO WIKISIM MLT LINKS [AGGREGATE]";
     }
+
+
 }

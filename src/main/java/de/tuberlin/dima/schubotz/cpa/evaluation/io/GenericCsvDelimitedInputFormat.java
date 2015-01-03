@@ -1,6 +1,5 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.io;
 
-import de.tuberlin.dima.schubotz.cpa.evaluation.types.CPAResult;
 import org.apache.flink.api.common.io.DelimitedInputFormat;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.configuration.Configuration;
@@ -39,22 +38,6 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
     public GenericCsvDelimitedInputFormat setFieldDelimitter(String delimitter) {
         fieldDelimitter = delimitter;
         return this;
-    }
-
-    public int getFieldCount() {
-        if (fieldCount == -1) {
-            if (includedFields == null) {
-                fieldCount = new CPAResult().getArity();
-            } else {
-                fieldCount = 0;
-                for (int i = 0; i < includedFields.length(); i++) {
-                    if (includedFields.charAt(i) == '1') {
-                        fieldCount++;
-                    }
-                }
-            }
-        }
-        return fieldCount;
     }
 
     @Override

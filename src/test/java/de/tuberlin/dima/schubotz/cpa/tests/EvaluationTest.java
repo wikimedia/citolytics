@@ -1,13 +1,18 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
-import de.tuberlin.dima.schubotz.cpa.evaluation.types.CPAResult;
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
-import de.tuberlin.dima.schubotz.cpa.evaluation.io.CPAResultInputFormat;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationOuterJoin;
+import de.tuberlin.dima.schubotz.cpa.evaluation.types.EvaluationFinalResult;
+import de.tuberlin.dima.schubotz.cpa.evaluation.types.EvaluationResult;
+import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
+import org.apache.commons.collections.ListUtils;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.util.Collector;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 public class EvaluationTest {
     @Test
@@ -27,37 +32,45 @@ public class EvaluationTest {
 
         Evaluation.main(new String[]{
                 "print",
+//                "file://" + getClass().getClassLoader().getResources("evaluation.out").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("testresult.csv").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath(),
 
-                "20"
+                "n"
         });
     }
 
     @Test
-    public void TestCSVInput() throws Exception {
-        String inputWikiFilename = "file://" + getClass().getClassLoader().getResources("testresult.csv").nextElement().getPath();
+    public void OutJoinTest() throws Exception {
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+        ArrayList<EvaluationFinalResult> first = new ArrayList<>();
 
+        first.add(new EvaluationFinalResult("foo", new String[]{"bar", "x", "y"}));
 
-        DataSource<CPAResult> res = env.readFile(new CPAResultInputFormat(), inputWikiFilename);
-//
-//        readCsvFile(inputWikiFilename)
-//                .fieldDelimiter('|')
-//
-//                .includeFields("0110001000")
-//                .tupleType(CPAResult.class);
-        ;
+        ArrayList<EvaluationResult> second = new ArrayList<>();
 
-        res.print();
+        second.add(new EvaluationResult("foo", new String[]{"q", "bar", "y", null, null}, 3));
 
-        env.execute("CSV Input test");
+        Collector<EvaluationFinalResult> collector = new Collector<EvaluationFinalResult>() {
+            @Override
+            public void collect(EvaluationFinalResult record) {
+
+                System.out.println(record);
+            }
+
+            @Override
+            public void close() {
+
+            }
+        };
+
+        new EvaluationOuterJoin(new int[]{10, 5, 1}, EvaluationFinalResult.COCIT_LIST_KEY, EvaluationFinalResult.COCIT_MATCHES_KEY)
+                .coGroup(first, second, collector);
 
     }
+
 
     @Test
     public void TestCSVInput2() throws Exception {
@@ -76,6 +89,19 @@ public class EvaluationTest {
         res.print();
 
         env.execute("CSV Input test");
+
+    }
+
+    @Test
+    public void ListTest() {
+
+
+        StringListValue listA = StringListValue.valueOf(new String[]{"x", "w"});
+        StringListValue listB = StringListValue.valueOf(new String[]{"v", "w", "x", "y", "z"});
+
+        for (int i = 0; i < 50; i++) {
+            System.out.println(ListUtils.intersection(listA, listB));
+        }
 
     }
 }

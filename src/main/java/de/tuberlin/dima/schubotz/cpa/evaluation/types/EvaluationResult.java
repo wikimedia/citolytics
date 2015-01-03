@@ -1,18 +1,18 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.types;
 
-import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
-import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 
 /**
- * article | list target
+ * article | list target | length
  */
-public class EvaluationResult extends Tuple2<String, StringListValue> {
+public class EvaluationResult extends Tuple3<String, String[], Integer> {
     public EvaluationResult() {
 
     }
 
-    public EvaluationResult(String article, StringListValue targets) {
+    public EvaluationResult(String article, String[] targets, int length) {
         setField(article, 0);
         setField(targets, 1);
+        setField(length, 2);
     }
 }
