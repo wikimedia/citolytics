@@ -16,7 +16,6 @@
  */
 package de.tuberlin.dima.schubotz.cpa.contracts;
 
-import de.tuberlin.dima.schubotz.cpa.types.WikiSimBigDecimal;
 import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.cpa.types.WikiSimResultList;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
@@ -25,7 +24,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.types.IntValue;
 import org.apache.flink.util.Collector;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -35,14 +33,19 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
     private int reducerThreshold;
     private int combinerThreshold;
 
-    private Double alpha;
+    private double[] alpha;
     private boolean calculateMedian = false;
 
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
 
-        alpha = parameter.getDouble("alpha", 1.5);
+        String[] arr = parameter.getString("alpha", "1.5").split(",");
+        alpha = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            alpha[i] = Double.parseDouble(arr[i]);
+        }
+
         reducerThreshold = parameter.getInteger("reducerThreshold", 1);
         combinerThreshold = parameter.getInteger("combinerThreshold", 1);
         calculateMedian = parameter.getBoolean("median", false);
@@ -69,7 +72,7 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
         long max = 0;
         long distSquared = 0;
         //WikiSimBigDecimal recDistα = new WikiSimBigDecimal(); //new BigDecimal(0);
-        double recDistα = .0;
+        double[] recDistα = new double[alpha.length];
         //DataTypes.ResultList distList = new DataTypes.ResultList();
 
         // Loop all record that belong to the given input key
@@ -88,9 +91,12 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
             //DataTypes.ResultList currentRl = res.getField(7);
 
             // Record already reduced?
-            if (res.getCPA() > 0) {
+            if (res.getCount() > 1) {
                 distSquared += res.getDistSquared(); //(Long) res.getField(3);
-                recDistα += res.getCPA(); //(Double) res.getField(4);
+
+                for (int i = 0; i < alpha.length; i++) {
+                    recDistα[i] += res.getCPA(i); //(Double) res.getField(4);
+                }
                 //recDistα.add(res.getCPA());
                 min = Math.min(min, res.getMin()); //(Integer) res.getField(5));
                 max = Math.max(max, res.getMax()); //(Integer) res.getField(6));
@@ -101,8 +107,9 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
                 max = Math.max(max, d);
                 distSquared += d * d;
                 //recDistα.add(new WikiSimBigDecimal(new BigDecimal(Math.pow(d, alpha))));
-                recDistα += Math.pow(d, alpha);
-
+                for (int i = 0; i < alpha.length; i++) {
+                    recDistα[i] += Math.pow(d, alpha[i]);
+                }
                 // Add distance to list
                 //distList.add(new IntValue(d));
             }

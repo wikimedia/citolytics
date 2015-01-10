@@ -1,16 +1,17 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.types;
 
-import org.apache.flink.api.java.tuple.Tuple18;
+import de.tuberlin.dima.schubotz.cpa.types.list.IntegerListValue;
+import org.apache.flink.api.java.tuple.Tuple12;
 
 import java.util.Arrays;
 
 /**
  * Nice result output, Arrays are printable (toString)
  */
-public class EvaluationResultOutput extends Tuple18<String, Integer, String,
-        String, Integer, Integer, Integer, Integer,
-        String, Integer, Integer, Integer, Integer,
-        String, Integer, Integer, Integer, Integer> {
+public class EvaluationResultOutput extends Tuple12<String, Integer, String,
+        String, Integer, IntegerListValue,
+        String, Integer, IntegerListValue,
+        String, Integer, IntegerListValue> {
 
     public EvaluationResultOutput() {
 

@@ -3,7 +3,7 @@ package de.tuberlin.dima.schubotz.cpa;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
-import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
+import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -14,7 +14,6 @@ import org.apache.flink.util.Collector;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 /**
  * Extracts internal links from Wikipedia articles and creates CSV for DB import
@@ -22,9 +21,6 @@ import java.util.regex.Matcher;
  * table structure: article (primary key), link target
  */
 public class LinksExtractor {
-
-    public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = "|";
 
     public static void main(String[] args) throws Exception {
 
@@ -63,7 +59,7 @@ public class LinksExtractor {
         }).distinct();
 
         //output.print();
-        output.writeAsCsv(outputFilename, csvRowDelimiter, csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+        output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
 
         env.execute("WikiLinksExtractor");
     }

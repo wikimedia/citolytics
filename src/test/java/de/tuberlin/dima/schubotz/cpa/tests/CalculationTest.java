@@ -15,7 +15,7 @@ public class CalculationTest {
         String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath();
         String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
 
-        WikiSim.main(new String[]{inputFilename, outputFilename, "1.5", "1"});
+        WikiSim.main(new String[]{inputFilename, outputFilename, "1.5,1.25,1,0.5,0", "1"});
     }
 
     @Test

@@ -4,6 +4,7 @@ import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
+import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -27,8 +28,6 @@ import static java.lang.Math.max;
  * Output CSV: Article; LinkTuple; Distance
  */
 public class LinkGraph {
-    public static String csvRowDelimiter = "\n";
-    public static char csvFieldDelimiter = '|';
 
     public static void main(String[] args) throws Exception {
 
@@ -47,7 +46,7 @@ public class LinkGraph {
         String outputFilename = args[2];
 
         DataSet<Tuple2<String, String>> linkTupleList = env.readCsvFile(inputLinkTuplesFilename)
-                .fieldDelimiter(csvFieldDelimiter)
+                .fieldDelimiter(WikiSimConfiguration.csvFieldDelimiter.charAt(0))
                 .types(String.class, String.class);
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputWikiFilename);
@@ -101,7 +100,7 @@ public class LinkGraph {
         }).withBroadcastSet(linkTupleList, "linkTupleList");
 
 
-        result.writeAsCsv(outputFilename, csvRowDelimiter, String.valueOf(csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
+        result.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
 
         env.execute("LinkGraph");
 

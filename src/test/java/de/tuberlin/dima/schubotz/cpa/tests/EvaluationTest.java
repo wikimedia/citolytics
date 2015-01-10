@@ -1,18 +1,14 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationOuterJoin;
-import de.tuberlin.dima.schubotz.cpa.evaluation.types.EvaluationFinalResult;
-import de.tuberlin.dima.schubotz.cpa.evaluation.types.EvaluationResult;
-import de.tuberlin.dima.schubotz.cpa.types.StringListValue;
+import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
 import org.apache.commons.collections.ListUtils;
+import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.util.Collector;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 public class EvaluationTest {
     @Test
@@ -42,34 +38,34 @@ public class EvaluationTest {
         });
     }
 
-    @Test
-    public void OutJoinTest() throws Exception {
-
-        ArrayList<EvaluationFinalResult> first = new ArrayList<>();
-
-        first.add(new EvaluationFinalResult("foo", new String[]{"bar", "x", "y"}));
-
-        ArrayList<EvaluationResult> second = new ArrayList<>();
-
-        second.add(new EvaluationResult("foo", new String[]{"q", "bar", "y", null, null}, 3));
-
-        Collector<EvaluationFinalResult> collector = new Collector<EvaluationFinalResult>() {
-            @Override
-            public void collect(EvaluationFinalResult record) {
-
-                System.out.println(record);
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
-
-        new EvaluationOuterJoin(new int[]{10, 5, 1}, EvaluationFinalResult.COCIT_LIST_KEY, EvaluationFinalResult.COCIT_MATCHES_KEY)
-                .coGroup(first, second, collector);
-
-    }
+//    @Test
+//    public void OutJoinTest() throws Exception {
+//
+//        ArrayList<GenericEvaluationFinalResult> first = new ArrayList<>();
+//
+//        first.add(new GenericEvaluationFinalResult("foo", new String[]{"bar", "x", "y"}));
+//
+//        ArrayList<EvaluationResult> second = new ArrayList<>();
+//
+//        second.add(new EvaluationResult("foo", new String[]{"q", "bar", "y", null, null}, 3));
+//
+//        Collector<GenericEvaluationFinalResult> collector = new Collector<GenericEvaluationFinalResult>() {
+//            @Override
+//            public void collect(GenericEvaluationFinalResult record) {
+//
+//                System.out.println(record);
+//            }
+//
+//            @Override
+//            public void close() {
+//
+//            }
+//        };
+//
+//        new EvaluationOuterJoin(new int[]{10, 5, 1}, GenericEvaluationFinalResult.COCIT_LIST_KEY, GenericEvaluationFinalResult.COCIT_MATCHES_KEY)
+//                .coGroup(first, second, collector);
+//
+//    }
 
 
     @Test
@@ -103,5 +99,22 @@ public class EvaluationTest {
             System.out.println(ListUtils.intersection(listA, listB));
         }
 
+    }
+
+    @Test
+    public void SortFirstTest() throws Exception {
+        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+
+        DataSet<Tuple3<String, String, Integer>> input = env.fromElements(
+                new Tuple3<String, String, Integer>("A", "a", 1),
+                new Tuple3<String, String, Integer>("A", "aa", 1),
+
+                new Tuple3<String, String, Integer>("B", "b", 2),
+                new Tuple3<String, String, Integer>("B", "bb", 2),
+                new Tuple3<String, String, Integer>("D", "d", 2));
+
+        input.groupBy(0).sortGroup(2, Order.ASCENDING).first(1).print();
+
+        env.execute("sort");
     }
 }

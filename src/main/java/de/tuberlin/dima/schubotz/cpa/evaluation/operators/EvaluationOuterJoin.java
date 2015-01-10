@@ -62,7 +62,8 @@ public class EvaluationOuterJoin implements CoGroupFunction<EvaluationFinalResul
                         matchesCount = getIntersectionCount(subList, recordList);
                     }
 
-                    record.setField(matchesCount, matchesKey + i);
+                    record.setMatchesCount(matchesCount, matchesKey, i);
+//                    record.setField(matchesCount, matchesKey + i);
                 }
             }
 

@@ -16,10 +16,11 @@
 */
 package de.tuberlin.dima.schubotz.cpa;
 
-import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
+import de.tuberlin.dima.schubotz.cpa.contracts.calculateCPA;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
+import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
@@ -31,8 +32,6 @@ import org.apache.flink.core.fs.FileSystem;
  */
 public class WikiSim {
 
-    public static String csvRowDelimiter = "\n";
-    public static String csvFieldDelimiter = "|";
 
     public static void main(String[] args) throws Exception {
 
@@ -56,7 +55,7 @@ public class WikiSim {
 
         config.setInteger("reducerThreshold", Integer.valueOf(reducerThreshold));
         config.setInteger("combinerThreshold", Integer.valueOf(combinerThreshold));
-        config.setDouble("alpha", Double.valueOf(alpha));
+        config.setString("alpha", alpha);
         config.setBoolean("median", true);
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
@@ -72,7 +71,7 @@ public class WikiSim {
                 ;
 
         //res.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
-        res.writeAsCsv(outputFilename, csvRowDelimiter, csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+        res.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
 
         env.execute("WikiSim");
     }

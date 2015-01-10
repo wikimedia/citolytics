@@ -1,9 +1,7 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
-import org.apache.flink.api.java.tuple.Tuple5;
-import org.apache.flink.api.java.tuple.Tuple6;
+import de.tuberlin.dima.schubotz.cpa.types.list.DoubleListValue;
 import org.apache.flink.api.java.tuple.Tuple8;
-import org.apache.flink.api.java.tuple.Tuple9;
 
 /**
  * Result for WikiSim
@@ -18,12 +16,12 @@ import org.apache.flink.api.java.tuple.Tuple9;
  * 7 Long   maxDist #
  * 8 Double median  #
  */
-public class WikiSimResult extends Tuple6<Long, LinkTuple, Long, Integer, Long, Double> {
-    private final boolean MINMAX = false;
+public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, Long, Long, DoubleListValue> {
+    private final boolean MINMAX = true;
 
-    private final static int MAX_KEY = 7;
-    private final static int MIN_KEY = 6;
-    private final static int CPA_KEY = 5;
+    private final static int CPA_LIST_KEY = 7;
+    private final static int MAX_KEY = 6;
+    private final static int MIN_KEY = 5;
     private final static int DISTSQUARED_KEY = 4;
     private final static int COUNT_KEY = 3;
     private final static int DISTANCE_KEY = 2;
@@ -32,20 +30,21 @@ public class WikiSimResult extends Tuple6<Long, LinkTuple, Long, Integer, Long, 
 
     }
 
-    public WikiSimResult(LinkTuple link, int distance, int count) {
+    public WikiSimResult(LinkTuple link, int distance) {
 
         setField(link.getHash(), 0);
         setField(link, 1);
 
         setDistance(distance);
-        setCount(count);
+        setCount(1);
 
         setDistSquared(0);
-        setCPA(.0);
         setMin(0);
         setMax(0);
 
         setMedian(.0);
+
+        setField(new DoubleListValue(), CPA_LIST_KEY);
 
     }
 
@@ -66,8 +65,8 @@ public class WikiSimResult extends Tuple6<Long, LinkTuple, Long, Integer, Long, 
         setField(distSquared, DISTSQUARED_KEY);
     }
 
-    public void setCPA(double cpa) {
-        setField(cpa, CPA_KEY);
+    public void setCPA(double[] cpa) {
+        setField(DoubleListValue.valueOf(cpa), CPA_LIST_KEY);
     }
 
     public void setMin(long min) {
@@ -96,12 +95,8 @@ public class WikiSimResult extends Tuple6<Long, LinkTuple, Long, Integer, Long, 
         return getField(DISTSQUARED_KEY);
     }
 
-    /*public WikiSimBigDecimal getCPA() {
-        return getField(5);
-    }*/
-
-    public double getCPA() {
-        return getField(CPA_KEY);
+    public double getCPA(int alphaKey) {
+        return ((DoubleListValue) getField(CPA_LIST_KEY)).get(alphaKey).getValue();
     }
 
     public long getMin() {

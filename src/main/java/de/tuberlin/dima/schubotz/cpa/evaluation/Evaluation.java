@@ -67,7 +67,7 @@ public class Evaluation {
         //final int MIN_MATCHES_COUNT = (args.length > 3 ? Integer.valueOf(args[3]) : 1);
 
         // Sorted DESC
-        final int[] firstN = new int[]{10, 5, 1}; //, 10, 15, 20};
+        final int[] firstN = new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; //, 10, 15, 20};
 
         final boolean aggregate = (args.length > 5 && args[5].equals("y") ? true : false);
 
@@ -109,7 +109,9 @@ public class Evaluation {
                                 .types(String.class, String.class, Double.class)
                 )
                 .groupBy(0)
+
                 .sortGroup(2, Order.DESCENDING)
+                .sortGroup(1, Order.ASCENDING)
 
                 .first(firstN[0])
                 .groupBy(0)
@@ -118,6 +120,7 @@ public class Evaluation {
 
         // CoCit
         DataSet<EvaluationResult> cocitResults = wikiSimResults
+//        DataSet<Tuple3<String, String, Integer>> cocitResults = wikiSimResults
                 .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.COCIT_KEY)
                 .types(String.class, String.class, Integer.class)
                 .union(
@@ -127,6 +130,7 @@ public class Evaluation {
                 )
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
+                .sortGroup(1, Order.ASCENDING) // Order chain required for consistent results
 
                 .first(firstN[0])
                 .groupBy(0)
@@ -147,6 +151,7 @@ public class Evaluation {
         DataSet<EvaluationResult> mltResults = mltTmpResults
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
+                .sortGroup(1, Order.ASCENDING)
                 .first(firstN[0])
                 .groupBy(0)
                 .reduceGroup(new EvaluationReducer<MLTResult>(firstN[0]));
@@ -176,13 +181,15 @@ public class Evaluation {
                 .where(0)
                 .equalTo(0)
                 .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.COCIT_LIST_KEY, EvaluationFinalResult.COCIT_MATCHES_KEY))
+
                         // MLT
                 .coGroup(mltResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.MLT_LIST_KEY, EvaluationFinalResult.MLT_MATCHES_KEY))
+                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.MLT_LIST_KEY, EvaluationFinalResult.MLT_MATCHES_KEY));
 
-//                .filter(new FilterFunction<EvaluationFinalResult>() {
+//        if(filter) {
+//           output = output.filter(new FilterFunction<EvaluationFinalResult>() {
 //                    @Override
 //                    public boolean filter(EvaluationFinalResult record) throws Exception {
 //                        if(
@@ -195,8 +202,8 @@ public class Evaluation {
 //                            return false;
 //                        }
 //                    }
-//                })
-                ;
+//                });
+//        }
 
         if (aggregate) {
             // Aggregate
