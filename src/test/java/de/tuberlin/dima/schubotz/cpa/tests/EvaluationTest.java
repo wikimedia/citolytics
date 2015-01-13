@@ -30,11 +30,15 @@ public class EvaluationTest {
                 "print",
 //                "file://" + getClass().getClassLoader().getResources("evaluation.out").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
-                "file://" + getClass().getClassLoader().getResources("testresult.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
-                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath(),
-
-                "n"
+                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
+                // first N
+                , "10,5,1"
+                // cpa key
+                , "8"
+                // aggregate
+//                "n"
         });
     }
 

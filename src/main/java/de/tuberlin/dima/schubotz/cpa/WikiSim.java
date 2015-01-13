@@ -32,7 +32,6 @@ import org.apache.flink.core.fs.FileSystem;
  */
 public class WikiSim {
 
-
     public static void main(String[] args) throws Exception {
 
         // set up the execution environment
@@ -60,8 +59,7 @@ public class WikiSim {
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
-
-        DataSet<WikiSimResult> res = text.flatMap(new DocumentProcessor())
+        DataSet<WikiSimResult> output = text.flatMap(new DocumentProcessor())
                 .groupBy(0) // Group by LinkTuple
                 .reduceGroup(new calculateCPA())
 
@@ -70,13 +68,16 @@ public class WikiSim {
                 // reduce -> Median
                 ;
 
-        //res.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
-        res.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+        if (outputFilename.equals("print")) {
+            output.print();
+        } else {
+            output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+        }
 
         env.execute("WikiSim");
     }
 
     public String getDescription() {
-        return "Parameters: [DATASET] [OUTPUT] [ALPHA] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD]";
+        return "Parameters: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD]";
     }
 }

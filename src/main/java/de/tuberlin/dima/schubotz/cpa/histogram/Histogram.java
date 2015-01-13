@@ -1,9 +1,7 @@
-package de.tuberlin.dima.schubotz.cpa;
+package de.tuberlin.dima.schubotz.cpa.histogram;
 
-import de.tuberlin.dima.schubotz.cpa.contracts.HistogramMapper;
-import de.tuberlin.dima.schubotz.cpa.contracts.HistogramReducer;
+import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
-import de.tuberlin.dima.schubotz.cpa.types.HistogramResult;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;

@@ -6,6 +6,7 @@ import org.apache.flink.configuration.Configuration;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -57,22 +58,33 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
         int f = 0;
 
         for (int k = 0; k < fields.length; k++) {
-            if (isIncludedField(k)) {
-                Class clazz = (Class) ((ParameterizedType) record.getClass().getGenericSuperclass()).getActualTypeArguments()[f];
+            try {
+                if (isIncludedField(k) && record.getArity() > k) {
+                    Class clazz = (Class) ((ParameterizedType) record.getClass().getGenericSuperclass()).getActualTypeArguments()[f];
 
-                // Cast to Tuple types
-                if (clazz == Integer.class) {
-                    record.setField(Integer.valueOf(fields[k]), f);
-                } else if (clazz == Double.class) {
-                    record.setField(Double.valueOf(fields[k]), f);
-                } else if (clazz == Float.class) {
-                    record.setField(Float.valueOf(fields[k]), f);
-                } else if (clazz == Long.class) {
-                    record.setField(Long.valueOf(fields[k]), f);
-                } else {
-                    record.setField(clazz.cast(fields[k]), f);
+                    // Cast to Tuple types
+                    if (clazz == Integer.class) {
+                        record.setField(Integer.valueOf(fields[k]), f);
+                    } else if (clazz == Double.class) {
+                        record.setField(Double.valueOf(fields[k]), f);
+                    } else if (clazz == Float.class) {
+                        record.setField(Float.valueOf(fields[k]), f);
+                    } else if (clazz == Long.class) {
+                        record.setField(Long.valueOf(fields[k]), f);
+                    } else if (clazz == String.class) {
+                        record.setField(String.valueOf(fields[k]), f);
+                    } else {
+                        try {
+                            record.setField(clazz.cast(fields[k]), f);
+                        } catch (ClassCastException e) {
+                            throw new IOException("Field type is not supported. Field: " + k);
+                        }
+                    }
+                    f++;
                 }
-                f++;
+            } catch (StringIndexOutOfBoundsException e) {
+                throw new IOException("Cannot read line: " + Arrays.toString(fields) + "\nField: " + k + "; Include fields: " + includedFields);
+
             }
         }
 
@@ -84,7 +96,7 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
     }
 
     private boolean isIncludedField(int index) {
-        if (includedFields != null && includedFields.charAt(index) == '0') {
+        if (includedFields != null && includedFields.length() >= index && includedFields.charAt(index) == '0') {
             return false;
         } else {
             return true;

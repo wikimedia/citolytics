@@ -4,9 +4,9 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.io.LinksResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.MLTResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.SeeAlsoResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.WikiSimResultInputFormat;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationOuterJoin;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.EvaluationReducer;
 import de.tuberlin.dima.schubotz.cpa.evaluation.operators.LinkExistsFilter;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.ListBuilder;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.MatchesCounter;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.*;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
@@ -64,12 +64,11 @@ public class Evaluation {
             enableLinkFilter = false;
         }
 
-        //final int MIN_MATCHES_COUNT = (args.length > 3 ? Integer.valueOf(args[3]) : 1);
-
         // Sorted DESC
-        final int[] firstN = new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; //, 10, 15, 20};
+        final int[] firstN = (args.length > 5 ? parseFirstXInput(args[5]) : new int[]{10}); //, 10, 15, 20};
+        int wikiSimCpaKey = (args.length > 6 ? Integer.parseInt(args[6]) : WikiSimPlainResult.CPA_KEY);
+        final boolean aggregate = (args.length > 7 && args[7].equals("y") ? true : false);
 
-        final boolean aggregate = (args.length > 5 && args[5].equals("y") ? true : false);
 
         // set up the execution environment
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
@@ -100,12 +99,12 @@ public class Evaluation {
 
 
         // CPA
-        DataSet<EvaluationResult> cpaResults = wikiSimResults
-                .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.CPA_KEY)
+        DataSet<ListResult> cpaResults = wikiSimResults
+                .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, wikiSimCpaKey)
                 .types(String.class, String.class, Double.class)
                 .union(
                         wikiSimResults
-                                .project(WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.CPA_KEY)
+                                .project(WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.PAGE1_KEY, wikiSimCpaKey)
                                 .types(String.class, String.class, Double.class)
                 )
                 .groupBy(0)
@@ -115,11 +114,11 @@ public class Evaluation {
 
                 .first(firstN[0])
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Double>>(firstN[0]));
+                .reduceGroup(new ListBuilder<Tuple3<String, String, Double>>(firstN[0]));
 
 
         // CoCit
-        DataSet<EvaluationResult> cocitResults = wikiSimResults
+        DataSet<ListResult> cocitResults = wikiSimResults
 //        DataSet<Tuple3<String, String, Integer>> cocitResults = wikiSimResults
                 .project(WikiSimPlainResult.PAGE1_KEY, WikiSimPlainResult.PAGE2_KEY, WikiSimPlainResult.COCIT_KEY)
                 .types(String.class, String.class, Integer.class)
@@ -134,7 +133,7 @@ public class Evaluation {
 
                 .first(firstN[0])
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<Tuple3<String, String, Integer>>(firstN[0]));
+                .reduceGroup(new ListBuilder<Tuple3<String, String, Integer>>(firstN[0]));
 
         // Prepare MLT
         DataSet<MLTResult> mltTmpResults = env.readFile(new MLTResultInputFormat(), mltInputFilename);
@@ -148,45 +147,45 @@ public class Evaluation {
                     .with(new LinkExistsFilter<MLTResult>(0, 1));
         }
 
-        DataSet<EvaluationResult> mltResults = mltTmpResults
+        DataSet<ListResult> mltResults = mltTmpResults
                 .groupBy(0)
                 .sortGroup(2, Order.DESCENDING)
                 .sortGroup(1, Order.ASCENDING)
                 .first(firstN[0])
                 .groupBy(0)
-                .reduceGroup(new EvaluationReducer<MLTResult>(firstN[0]));
+                .reduceGroup(new ListBuilder<MLTResult>(firstN[0]));
 
         // Prepare SeeAlso
-        DataSet<EvaluationFinalResult> seeAlsoResults = env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
+        DataSet<EvaluationResult> seeAlsoResults = env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
                 // possible filter: if total = X
-                .map(new MapFunction<SeeAlsoResult, EvaluationFinalResult>() {
+                .map(new MapFunction<SeeAlsoResult, EvaluationResult>() {
                     @Override
-                    public EvaluationFinalResult map(SeeAlsoResult in) throws Exception {
+                    public EvaluationResult map(SeeAlsoResult in) throws Exception {
                         String[] list = ((String) in.getField(1)).split(seeAlsoDelimiter);
-                        return new EvaluationFinalResult(
+                        return new EvaluationResult(
                                 (String) in.getField(0), list);
 
                     }
                 });
-
+//
         // Outer Join SeeAlso x CPA
-        DataSet<EvaluationFinalResult> output = seeAlsoResults
+        DataSet<EvaluationResult> output = seeAlsoResults
                 .coGroup(cpaResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.CPA_LIST_KEY, EvaluationFinalResult.CPA_MATCHES_KEY))
+                .with(new MatchesCounter(firstN, EvaluationResult.CPA_LIST_KEY, EvaluationResult.CPA_MATCHES_KEY))
 
                         // CoCIt
                 .coGroup(cocitResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.COCIT_LIST_KEY, EvaluationFinalResult.COCIT_MATCHES_KEY))
+                .with(new MatchesCounter(firstN, EvaluationResult.COCIT_LIST_KEY, EvaluationResult.COCIT_MATCHES_KEY))
 
                         // MLT
                 .coGroup(mltResults)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluationOuterJoin(firstN, EvaluationFinalResult.MLT_LIST_KEY, EvaluationFinalResult.MLT_MATCHES_KEY));
+                .with(new MatchesCounter(firstN, EvaluationResult.MLT_LIST_KEY, EvaluationResult.MLT_MATCHES_KEY));
 
 //        if(filter) {
 //           output = output.filter(new FilterFunction<EvaluationFinalResult>() {
@@ -207,16 +206,16 @@ public class Evaluation {
 
         if (aggregate) {
             // Aggregate
-            output = output.reduce(new ReduceFunction<EvaluationFinalResult>() {
+            output = output.reduce(new ReduceFunction<EvaluationResult>() {
                 @Override
-                public EvaluationFinalResult reduce(EvaluationFinalResult first, EvaluationFinalResult second) throws Exception {
+                public EvaluationResult reduce(EvaluationResult first, EvaluationResult second) throws Exception {
 
-                    EvaluationFinalResult res = new EvaluationFinalResult("total", EvaluationFinalResult.EMPTY_LIST);
+                    EvaluationResult res = new EvaluationResult("total", EvaluationResult.EMPTY_LIST);
 
                     for (int i = 0; i < firstN.length; i++) {
-                        res.aggregateField(first, second, EvaluationFinalResult.CPA_MATCHES_KEY + i);
-                        res.aggregateField(first, second, EvaluationFinalResult.COCIT_MATCHES_KEY + i);
-                        res.aggregateField(first, second, EvaluationFinalResult.MLT_MATCHES_KEY + i);
+                        res.aggregateField(first, second, EvaluationResult.CPA_MATCHES_KEY + i);
+                        res.aggregateField(first, second, EvaluationResult.COCIT_MATCHES_KEY + i);
+                        res.aggregateField(first, second, EvaluationResult.MLT_MATCHES_KEY + i);
                     }
 
                     return res;
@@ -225,28 +224,39 @@ public class Evaluation {
             });
         }
 
-        // Make arrays printable
-        DataSet<EvaluationResultOutput> outputNice = output.map(new MapFunction<EvaluationFinalResult, EvaluationResultOutput>() {
-            @Override
-            public EvaluationResultOutput map(EvaluationFinalResult in) throws Exception {
-                return new EvaluationResultOutput(in);
-            }
-        });
+//        // Make arrays printable
+//        DataSet<EvaluationResultOutput> outputNice = output.map(new MapFunction<EvaluationFinalResult, EvaluationResultOutput>() {
+//            @Override
+//            public EvaluationResultOutput map(EvaluationFinalResult in) throws Exception {
+//                return new EvaluationResultOutput(in);
+//            }
+//        });
 
         if (outputFilename.equals("print")) {
-            outputNice.print();
+            output.print();
         } else {
-            outputNice.writeAsCsv(outputFilename, csvRowDelimiter, String.valueOf(csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
+            output.writeAsCsv(outputFilename, csvRowDelimiter, String.valueOf(csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
         }
-
 
         env.execute("Evaluation");
     }
-
 
     public static String getDescription() {
         return "OUTPUT SEEALSO WIKISIM MLT LINKS [AGGREGATE]";
     }
 
 
+    public static int[] parseFirstXInput(String str) {
+        String[] array = str.split(",");
+        int[] output = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            output[i] = Integer.parseInt(array[i]);
+
+            if (i > 0 && output[i - 1] <= output[i]) {
+                System.err.println("FirstN is not ordered descending. " + output[i - 1] + " <= " + output[i]);
+                System.exit(1);
+            }
+        }
+        return output;
+    }
 }

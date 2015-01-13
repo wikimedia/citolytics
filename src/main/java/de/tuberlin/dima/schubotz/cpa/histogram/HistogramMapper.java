@@ -1,13 +1,9 @@
-package de.tuberlin.dima.schubotz.cpa.contracts;
+package de.tuberlin.dima.schubotz.cpa.histogram;
 
+import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
-import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-import de.tuberlin.dima.schubotz.cpa.types.HistogramResult;
-
-import java.util.regex.Matcher;
 
 
 public class HistogramMapper implements FlatMapFunction<String, HistogramResult> {
