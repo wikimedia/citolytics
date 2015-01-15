@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.types;
 
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.MatchesCounter;
 import de.tuberlin.dima.schubotz.cpa.types.list.IntegerListValue;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
 import org.apache.flink.api.java.tuple.Tuple15;
@@ -47,7 +48,7 @@ public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
         setField(EMPTY_LIST, CPA_LIST_KEY);
         setField(0, CPA_LIST_KEY + 1); // list size
         setField(new Double(0), CPA_MRR_KEY);
-        setField(new IntegerListValue(), CPA_MATCHES_KEY);
+
 //        setField(0, CPA_MATCHES_KEY + 1);
 //        setField(0, CPA_MATCHES_KEY + 2);
 
@@ -55,7 +56,7 @@ public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
         // CoCit
         setField(EMPTY_LIST, COCIT_LIST_KEY);
         setField(0, COCIT_LIST_KEY + 1);
-        setField(new IntegerListValue(), COCIT_MATCHES_KEY);
+
         setField(new Double(0), COCIT_MRR_KEY);
 //        setField(0, COCIT_MATCHES_KEY + 1);
 //        setField(0, COCIT_MATCHES_KEY + 2);
@@ -65,9 +66,23 @@ public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
         setField(EMPTY_LIST, MLT_LIST_KEY);
         setField(0, MLT_LIST_KEY + 1);
         setField(new Double(0), MLT_MMR_KEY);
-        setField(new IntegerListValue(), MLT_MATCHES_KEY);
+
 //        setField(0, MLT_MATCHES_KEY + 1);
 //        setField(0, MLT_MATCHES_KEY + 2);
+
+        initMatchesCount();
+    }
+
+    public void initMatchesCount() {
+        IntegerListValue emptyList = new IntegerListValue();
+
+        for (int i = 0; i < MatchesCounter.topKs.length; i++) {
+            emptyList.add(new IntValue(0));
+        }
+
+        setField(emptyList, CPA_MATCHES_KEY);
+        setField(emptyList, MLT_MATCHES_KEY);
+        setField(emptyList, COCIT_MATCHES_KEY);
 
     }
 
@@ -83,4 +98,9 @@ public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
         this.setField((int) a.getField(key) + (int) b.getField(key), key);
     }
 
+    public void cocitCheck() {
+        if (getField(CPA_LIST_KEY).equals(getField(COCIT_LIST_KEY)) == false) {
+            System.out.println("### COCIT != CPA" + this.toString());
+        }
+    }
 }

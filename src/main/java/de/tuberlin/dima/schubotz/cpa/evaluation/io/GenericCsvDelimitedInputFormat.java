@@ -31,6 +31,10 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
         return this;
     }
 
+    public String getIncludedFields() {
+        return includedFields;
+    }
+
     public GenericCsvDelimitedInputFormat setRowDelimitter(String delimitter) {
         rowDelimitter = delimitter;
         return this;
@@ -56,11 +60,12 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
 //        System.out.println(Arrays.asList(fields));
 
         int f = 0;
-
         for (int k = 0; k < fields.length; k++) {
             try {
-                if (isIncludedField(k) && record.getArity() > k) {
+                if (isIncludedField(k) && f < record.getArity()) {
                     Class clazz = (Class) ((ParameterizedType) record.getClass().getGenericSuperclass()).getActualTypeArguments()[f];
+
+//                    System.out.println(f + " - " + k + ": " + fields[k] + " -> " + clazz.getCanonicalName());
 
                     // Cast to Tuple types
                     if (clazz == Integer.class) {
@@ -83,7 +88,7 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
                     f++;
                 }
             } catch (StringIndexOutOfBoundsException e) {
-                throw new IOException("Cannot read line: " + Arrays.toString(fields) + "\nField: " + k + "; Include fields: " + includedFields);
+                throw new IOException("Cannot read line: " + Arrays.toString(fields) + "\nField: " + k + "; Include fields: " + includedFields + "\n" + e.getMessage());
 
             }
         }
@@ -96,7 +101,7 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
     }
 
     private boolean isIncludedField(int index) {
-        if (includedFields != null && includedFields.length() >= index && includedFields.charAt(index) == '0') {
+        if (includedFields != null && index < includedFields.length() && includedFields.charAt(index) == '0') {
             return false;
         } else {
             return true;

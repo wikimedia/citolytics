@@ -1,6 +1,8 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.MatchesCounter;
+import de.tuberlin.dima.schubotz.cpa.evaluation.types.ComparableResult;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
 import org.apache.commons.collections.ListUtils;
 import org.apache.flink.api.common.operators.Order;
@@ -8,7 +10,11 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EvaluationTest {
     @Test
@@ -120,5 +126,52 @@ public class EvaluationTest {
         input.groupBy(0).sortGroup(2, Order.ASCENDING).first(1).print();
 
         env.execute("sort");
+    }
+
+    @Test
+    public void MRRTest() {
+        StringListValue seealso = StringListValue.valueOf(new String[]{"A", "B", "C", "D"});
+        StringListValue cpa = StringListValue.valueOf(new String[]{"E", "B"});
+
+        System.out.println(
+                MatchesCounter.getMeanReciprocalRank(cpa, seealso)
+        );
+
+
+        double d = 1 / 2;
+        System.out.println(
+                d
+        );
+    }
+
+    @Test
+    public void IncludeFields() {
+        System.out.println("011010001".length());
+        System.out.println("011010001".charAt(9));
+
+    }
+
+    @Test
+    public void SortTest() {
+        int maxListLength = 3;
+
+        List<ComparableResult<Double>> res = new ArrayList<>();
+
+        res.add(new ComparableResult<>("A", "A", new Double(1.2)));
+        res.add(new ComparableResult<>("A", "B", new Double(1.3)));
+        res.add(new ComparableResult<>("A", "C", new Double(1.3)));
+
+        res = Ordering.natural().greatestOf(res, maxListLength);
+
+
+        System.out.println(res);
+    }
+
+    @Test
+    public void CastTest() {
+        Tuple3<String, String, Double> t = new Tuple3<String, String, Double>("x", "y", .2);
+
+        System.out.println(((ComparableResult<Double>) t));
+
     }
 }
