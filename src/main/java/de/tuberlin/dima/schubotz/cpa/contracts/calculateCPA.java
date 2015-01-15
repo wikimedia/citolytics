@@ -108,7 +108,7 @@ public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSim
                 distSquared += d * d;
                 //recDistα.add(new WikiSimBigDecimal(new BigDecimal(Math.pow(d, alpha))));
                 for (int i = 0; i < alpha.length; i++) {
-                    recDistα[i] += Math.pow(d, alpha[i]);
+                    recDistα[i] += Math.pow(d, -alpha[i]);
                 }
                 // Add distance to list
                 //distList.add(new IntValue(d));
