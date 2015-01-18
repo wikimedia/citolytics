@@ -1,6 +1,6 @@
 CPA Example
 ================================
-
+[![Build Status](https://drone.io/github.com/TU-Berlin/cpa-demo/status.png)](https://drone.io/github.com/TU-Berlin/cpa-demo/latest)
 # Run
 * compile the maven project
 * upload the Jar file to the stratosphere web interface
