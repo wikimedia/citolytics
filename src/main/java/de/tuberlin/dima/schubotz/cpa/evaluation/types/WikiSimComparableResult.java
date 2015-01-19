@@ -25,10 +25,11 @@ public class WikiSimComparableResult<T extends Comparable> extends Tuple3<String
 
     @Override
     public int compareTo(WikiSimComparableResult<T> other) {
+        // first sort (descending)
         int firstSort = -1 * ((T) other.getField(SORT1_FIELD)).compareTo((T) getField(SORT1_FIELD));
 
         if (firstSort == 0) {
-            // second sort
+            // second sort (ascending)
             return ((String) other.getField(SORT2_FIELD)).compareTo((String) getField(SORT2_FIELD));
         } else {
             return firstSort;
