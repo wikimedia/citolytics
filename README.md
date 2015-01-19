@@ -5,6 +5,13 @@ CPA Example
 * compile the maven project
 * upload the Jar file to the stratosphere web interface
 
+# Usage
+* WikiSim: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD]
+** e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
+
+* Evaluation: [OUTPUT] [SEEALSO-DATASET] [WIKISIM-DATASET] [MLT-DATASET] [LINKS/NOFILTER] [TOP-K1, TOP-K2, ...] [CPA-FIELD]
+** e.g.: hdfs://cluster/eval.out hdfs://cluster/seealso.csv hdfs://cluster/results.out hdfs://cluster/mlt.csv nofilter 10,5,1 8
+
 # TODO
 document program execution
 first successfull local run (dopa-1):
