@@ -3,26 +3,28 @@ package de.tuberlin.dima.schubotz.cpa.evaluation.types;
 import org.apache.flink.api.java.tuple.Tuple3;
 
 /**
- * Created by malteschwarzer on 15.01.15.
+ * Makes WikiSimResults comparable
+ * - Sort1 Field: Ordered Descending (CoCit/CPA scores)
+ * - Sort2 Field: Ordered Ascending (Article recommendation)
  */
-public class ComparableResult<T extends Comparable> extends Tuple3<String, String, T> implements Comparable<ComparableResult<T>> {
+public class WikiSimComparableResult<T extends Comparable> extends Tuple3<String, String, T> implements Comparable<WikiSimComparableResult<T>> {
     public final static int SORT1_FIELD = 2;
     public final static int SORT2_FIELD = 1;
 
-    public ComparableResult(Tuple3<String, String, T> tuple) {
+    public WikiSimComparableResult(Tuple3<String, String, T> tuple) {
         setField(tuple.getField(0), 0);
         setField(tuple.getField(1), 1);
         setField(tuple.getField(1), 2);
     }
 
-    public ComparableResult(String f0, String f1, T f2) {
+    public WikiSimComparableResult(String f0, String f1, T f2) {
         setField(f0, 0);
         setField(f1, 1);
         setField(f2, 2);
     }
 
     @Override
-    public int compareTo(ComparableResult<T> other) {
+    public int compareTo(WikiSimComparableResult<T> other) {
         int firstSort = -1 * ((T) other.getField(SORT1_FIELD)).compareTo((T) getField(SORT1_FIELD));
 
         if (firstSort == 0) {
