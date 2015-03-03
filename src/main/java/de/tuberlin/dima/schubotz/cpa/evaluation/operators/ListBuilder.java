@@ -1,51 +1,89 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.operators;
 
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.ListResult;
+import de.tuberlin.dima.schubotz.cpa.evaluation.types.ResultRecord;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
-import org.apache.flink.api.common.functions.GroupReduceFunction;
-import org.apache.flink.api.java.tuple.Tuple;
-import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
+import org.apache.flink.api.common.functions.RichGroupReduceFunction;
+import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
+import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.apache.flink.types.StringValue;
 import org.apache.flink.util.Collector;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Transform result set into EvaluationResult format:
  * <p/>
  * article name | array( result1, result2, ... ) | number of results
  *
- * @param <IN> input format (Tuple)
+ * @param <SORT> input format (Tuple)
  */
-public class ListBuilder<SORT extends Comparable, IN extends Tuple> implements GroupReduceFunction<IN, ListResult> {
+
+@Combinable
+public class ListBuilder<SORT extends Comparable> extends RichGroupReduceFunction<ResultRecord<SORT>, ListResult> {
     int maxListLength;
 
     public ListBuilder(int maxListLength) {
         this.maxListLength = maxListLength;
     }
 
+
     @Override
-    public void reduce(Iterable<IN> results, Collector<ListResult> out) throws Exception {
-        Iterator<IN> iterator = results.iterator();
-        IN record = null;
+    public void combine(Iterable<ResultRecord<SORT>> in, Collector<ResultRecord<SORT>> out) throws Exception {
+        Iterator<ResultRecord<SORT>> iterator = in.iterator();
+        ResultRecord<SORT> record = null;
+        String articleName = null;
 
-        StringListValue resultList = new StringListValue();
-
-        // Convert to ComparableResult, add to SortedList with fixed length
-        MinMaxPriorityQueue<WikiSimComparableResult<SORT>> queue = MinMaxPriorityQueue.maximumSize(maxListLength).create();
-
+        // Convert to ComparableResult, add to unsortedList with fixed length
+//        MinMaxPriorityQueue<WikiSimComparableResult<SORT>> unsortedQueue = MinMaxPriorityQueue.maximumSize(maxListLength).create();
+        ArrayList<WikiSimComparableResult<SORT>> unsortedList = new ArrayList<>();
 
         while (iterator.hasNext()) {
             record = iterator.next();
-            queue.add(new WikiSimComparableResult<SORT>((String) record.getField(0), (String) record.getField(1), (SORT) record.getField(2)));
+            articleName = record.getField(0);
+
+            unsortedList.addAll((List<WikiSimComparableResult<SORT>>) record.getField(1));
+//            unsortedQueue.addAll((List<WikiSimComparableResult<SORT>>) record.getField(1));
         }
 
+//        List<WikiSimComparableResult<SORT>> sortedList = Ordering.natural().greatestOf(unsortedList, maxListLength);
+
+
+        if (articleName != null) {
+            out.collect(new ResultRecord<>(articleName, new ArrayList<>(unsortedList)));
+//            out.collect(new ResultRecord<>(articleName, new ArrayList<>(unsortedQueue)));
+        } else {
+            throw new Exception("Articlname not set!");
+        }
+    }
+
+    @Override
+    public void reduce(Iterable<ResultRecord<SORT>> in, Collector<ListResult> out) throws Exception {
+        Iterator<ResultRecord<SORT>> iterator = in.iterator();
+        ResultRecord<SORT> record = null;
+
+        // Convert to ComparableResult, add to unsortedList with fixed length
+//        MinMaxPriorityQueue<WikiSimComparableResult<SORT>> unsortedQueue = MinMaxPriorityQueue.maximumSize(maxListLength).create();
+        List<WikiSimComparableResult<SORT>> unsortedList = new ArrayList<>();
+
+        while (iterator.hasNext()) {
+            record = iterator.next();
+            unsortedList.addAll((List<WikiSimComparableResult<SORT>>) record.getField(1));
+
+//            unsortedList.add(new WikiSimComparableResult<SORT>((String) record.getField(0), (String) record.getField(1), (SORT) record.getField(2)));
+        }
+
+        List<WikiSimComparableResult<SORT>> sortedList = Ordering.natural().greatestOf(unsortedList, maxListLength);
         // Add to ResultList
-        for (WikiSimComparableResult<SORT> item : queue) {
-            resultList.add(new StringValue((String) item.getField(1)));
+        StringListValue resultList = new StringListValue();
+        for (WikiSimComparableResult<SORT> item : sortedList) {
+            resultList.add(new StringValue(item.getSortField2()));
         }
 
         out.collect(new ListResult((String) record.getField(0), resultList, resultList.size()));
     }
+
 }

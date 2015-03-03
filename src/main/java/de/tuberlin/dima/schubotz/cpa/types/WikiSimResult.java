@@ -17,7 +17,9 @@ import org.apache.flink.api.java.tuple.Tuple8;
  * 8 Double median  #
  */
 public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, Long, Long, DoubleListValue> {
-    private final boolean MINMAX = true;
+    private final boolean enableMinMax = true;
+    private final boolean enableDistSquared = false;
+    private final boolean enableCount = false;
 
     private final static int CPA_LIST_KEY = 7;
     private final static int MAX_KEY = 6;
@@ -70,12 +72,12 @@ public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, 
     }
 
     public void setMin(long min) {
-        if (MINMAX)
+        if (enableMinMax)
             setField(min, MIN_KEY);
     }
 
     public void setMax(long max) {
-        if (MINMAX)
+        if (enableMinMax)
             setField(max, MAX_KEY);
     }
 
@@ -100,14 +102,14 @@ public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, 
     }
 
     public long getMin() {
-        if (MINMAX)
+        if (enableMinMax)
             return getField(MIN_KEY);
         else
             return 0;
     }
 
     public long getMax() {
-        if (MINMAX)
+        if (enableMinMax)
             return getField(MAX_KEY);
         else
             return 0;

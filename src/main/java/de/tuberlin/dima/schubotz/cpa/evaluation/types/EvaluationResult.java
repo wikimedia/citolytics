@@ -1,30 +1,34 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.types;
 
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.MatchesCounter;
 import de.tuberlin.dima.schubotz.cpa.types.list.IntegerListValue;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
-import org.apache.flink.api.java.tuple.Tuple15;
+import org.apache.flink.api.java.tuple.Tuple18;
 import org.apache.flink.types.IntValue;
 
 /**
  *
  */
-public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
-        StringListValue, Integer, Double, IntegerListValue,
-        StringListValue, Integer, Double, IntegerListValue,
-        StringListValue, Integer, Double, IntegerListValue> {
+public class EvaluationResult extends Tuple18<String, Integer, StringListValue,
+        StringListValue, Integer, Double, Double, IntegerListValue,
+        StringListValue, Integer, Double, Double, IntegerListValue,
+        StringListValue, Integer, Double, Double, IntegerListValue> {
     public final static StringListValue EMPTY_LIST = new StringListValue();
+
+    public static int topKlength;
 
     public final static int SEEALSO_LIST_KEY = 2;
     public final static int CPA_LIST_KEY = 3;
-    public final static int CPA_MRR_KEY = 5;
-    public final static int CPA_MATCHES_KEY = 6;
-    public final static int COCIT_LIST_KEY = 7;
-    public final static int COCIT_MRR_KEY = 9;
-    public final static int COCIT_MATCHES_KEY = 10;
-    public final static int MLT_LIST_KEY = 11;
-    public final static int MLT_MMR_KEY = 13;
-    public final static int MLT_MATCHES_KEY = 14;
+    public final static int CPA_HRR_KEY = 5;
+    public final static int CPA_TOPK_KEY = 6;
+    public final static int CPA_MATCHES_KEY = 7;
+    public final static int COCIT_LIST_KEY = 8;
+    public final static int COCIT_HRR_KEY = 10;
+    public final static int COCIT_TOPK_KEY = 11;
+    public final static int COCIT_MATCHES_KEY = 12;
+    public final static int MLT_LIST_KEY = 13;
+    public final static int MLT_HRR_KEY = 15;
+    public final static int MLT_TOPK_KEY = 16;
+    public final static int MLT_MATCHES_KEY = 17;
 
 
     public EvaluationResult() {
@@ -47,28 +51,19 @@ public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
         // CPA
         setField(EMPTY_LIST, CPA_LIST_KEY);
         setField(0, CPA_LIST_KEY + 1); // list size
-        setField(new Double(0), CPA_MRR_KEY);
-
-//        setField(0, CPA_MATCHES_KEY + 1);
-//        setField(0, CPA_MATCHES_KEY + 2);
-
 
         // CoCit
         setField(EMPTY_LIST, COCIT_LIST_KEY);
         setField(0, COCIT_LIST_KEY + 1);
 
-        setField(new Double(0), COCIT_MRR_KEY);
-//        setField(0, COCIT_MATCHES_KEY + 1);
-//        setField(0, COCIT_MATCHES_KEY + 2);
-
-
         // MLT
         setField(EMPTY_LIST, MLT_LIST_KEY);
         setField(0, MLT_LIST_KEY + 1);
-        setField(new Double(0), MLT_MMR_KEY);
 
-//        setField(0, MLT_MATCHES_KEY + 1);
-//        setField(0, MLT_MATCHES_KEY + 2);
+        // Double fields
+        for (int doubleField : new int[]{CPA_HRR_KEY, CPA_TOPK_KEY, COCIT_HRR_KEY, COCIT_TOPK_KEY, MLT_HRR_KEY, MLT_TOPK_KEY}) {
+            setField(new Double(0), doubleField);
+        }
 
         initMatchesCount();
     }
@@ -76,7 +71,7 @@ public class EvaluationResult extends Tuple15<String, Integer, StringListValue,
     public void initMatchesCount() {
         IntegerListValue emptyList = new IntegerListValue();
 
-        for (int i = 0; i < MatchesCounter.topKs.length; i++) {
+        for (int i = 0; i < topKlength; i++) {
             emptyList.add(new IntValue(0));
         }
 

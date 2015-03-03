@@ -15,14 +15,18 @@ import java.util.Iterator;
  */
 public class MatchesCounter implements CoGroupFunction<EvaluationResult, ListResult, EvaluationResult> {
 
-    public static int[] topKs = new int[]{10, 5, 1};
+    int[] topKs; //= new int[]{10, 5, 1};
     int listKey;
     int matchesKey;
+    int hrrKey;
+    int topKKey;
 
-    public MatchesCounter(int[] topKs, int listKey, int matchesKey) {
+    public MatchesCounter(int[] topKs, int listKey, int matchesKey, int hrrKey, int topKKey) {
         this.topKs = topKs;
         this.listKey = listKey;
         this.matchesKey = matchesKey;
+        this.hrrKey = hrrKey;
+        this.topKKey = topKKey;
     }
 
     @Override
@@ -37,16 +41,19 @@ public class MatchesCounter implements CoGroupFunction<EvaluationResult, ListRes
 
         if (iterator1.hasNext()) {
             record = iterator1.next();
-            StringListValue recordList = record.getField(EvaluationResult.SEEALSO_LIST_KEY);
+            StringListValue seeAlsoList = record.getField(EvaluationResult.SEEALSO_LIST_KEY);
 
-            if (iterator2.hasNext()) {
+            if (seeAlsoList.size() > 0 && iterator2.hasNext()) {
                 join = iterator2.next();
 
                 StringListValue joinList = (StringListValue) join.getField(1);
                 int joinLength = joinList.size();
 
-                // Set MRR
-                record.setField(getMeanReciprocalRank(joinList, recordList), listKey + 2);
+                // Set HRR
+                record.setField(getHarmonicReciprocalRank(joinList, seeAlsoList), hrrKey);
+
+                // Set TopK
+                record.setField(getTopKScore(joinList, seeAlsoList), topKKey);
 
                 record.setField(joinList, listKey);
                 record.setField(joinLength, listKey + 1);
@@ -61,7 +68,7 @@ public class MatchesCounter implements CoGroupFunction<EvaluationResult, ListRes
 
                     // If matchesCount is already 0, avoid intersection
                     if (matchesCount != 0) {
-                        matchesCount = ListUtils.intersection(recordList, joinList.subList(0, topK)).size();
+                        matchesCount = ListUtils.intersection(seeAlsoList, joinList.subList(0, topK)).size();
                     }
 
                     record.setMatchesCount(matchesCount, matchesKey, i);
@@ -71,6 +78,54 @@ public class MatchesCounter implements CoGroupFunction<EvaluationResult, ListRes
 
             out.collect(record);
         }
+    }
+
+    public static double getTopKScore(StringListValue recommendedResults, StringListValue correctResponseList) {
+        // topK = correct recommended results / total number of correct results
+        if (recommendedResults.size() == 0)
+            return 0;
+
+        int subListLength = correctResponseList.size();
+
+        if (recommendedResults.size() < correctResponseList.size()) {
+            subListLength = recommendedResults.size();
+        }
+
+        // cast to double to receive double result
+        return ((double) ListUtils.intersection(correctResponseList, recommendedResults.subList(0, subListLength)).size())
+                / ((double) correctResponseList.size());
+    }
+
+    public static double getHarmonicReciprocalRank(StringListValue recommendedResults, StringListValue correctResponseList) {
+        double rank = 0;
+
+        if (correctResponseList.size() == 0)
+            return 0;
+
+        for (StringValue response : recommendedResults) {
+            rank += getHarmonicReciprocalRank(correctResponseList, response);
+        }
+
+        return rank / getHarmonicNumber(correctResponseList.size());
+    }
+
+    public static double getHarmonicNumber(int n) {
+        double sum = 0.0;
+        for (int i = 1; i <= n; i++) {
+            //sum += 1.0 / i;
+            sum += (1.0 / i);
+        }
+        return sum;
+    }
+
+    public static double getHarmonicReciprocalRank(StringListValue correctResults, StringValue recomendedResult) {
+        int rank = correctResults.indexOf(recomendedResult) + 1;
+        double hrr = 0;
+
+        if (rank > 0) {
+            hrr = 1.0 / rank;
+        }
+        return hrr;
     }
 
     public static double getMeanReciprocalRank(StringListValue sortedResults, StringListValue correctResponseList) {

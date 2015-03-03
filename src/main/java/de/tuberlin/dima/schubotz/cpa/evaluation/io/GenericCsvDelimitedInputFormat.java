@@ -15,12 +15,12 @@ import java.util.regex.Pattern;
 public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends DelimitedInputFormat<OUT> {
 
     private static final long serialVersionUID = 1L;
-    private String charsetName = "UTF-8";
+    protected String charsetName = "UTF-8";
 
-    private String rowDelimitter = "\n";
-    private String fieldDelimitter = "|";
-    private String includedFields = null;
-    private int fieldCount = -1;
+    protected String rowDelimitter = "\n";
+    protected String fieldDelimitter = "|";
+    protected String includedFields = null;
+    protected int fieldCount = -1;
 
     public String getCharsetName() {
         return charsetName;
@@ -100,7 +100,7 @@ public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends Delimited
         return record;
     }
 
-    private boolean isIncludedField(int index) {
+    protected boolean isIncludedField(int index) {
         if (includedFields != null && index < includedFields.length() && includedFields.charAt(index) == '0') {
             return false;
         } else {
