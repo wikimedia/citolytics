@@ -69,8 +69,6 @@ public class Evaluation {
     private DataSet<LinkResult> links;
 
     private final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-    ;
-
 
     public Evaluation() {
 
@@ -152,7 +150,7 @@ public class Evaluation {
 
         return env.readFile(new SeeAlsoResultInputFormat(), seeAlsoInputFilename)
                 .setParallelism(parallelism)
-                // possible filter: if total = X
+                        // possible filter: if total = X
                 .map(new MapFunction<SeeAlsoResult, EvaluationResult>() {
                     @Override
                     public EvaluationResult map(SeeAlsoResult in) throws Exception {

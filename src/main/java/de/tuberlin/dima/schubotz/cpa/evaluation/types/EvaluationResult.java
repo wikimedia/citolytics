@@ -6,6 +6,9 @@ import org.apache.flink.api.java.tuple.Tuple18;
 import org.apache.flink.types.IntValue;
 
 /**
+ * Evaluation result (output)
+ *
+ *
  *
  */
 public class EvaluationResult extends Tuple18<String, Integer, StringListValue,

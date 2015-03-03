@@ -5,7 +5,11 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import java.util.ArrayList;
 
 /**
- * Created by malteschwarzer on 23.01.15.
+ * Contains WikiSim results
+ *
+ * 0: Article
+ * 1: List<WikiSimResults>
+ *
  */
 public class ResultRecord<SORT extends Comparable> extends Tuple2<String, ArrayList<WikiSimComparableResult<SORT>>> {
     public ResultRecord() {
