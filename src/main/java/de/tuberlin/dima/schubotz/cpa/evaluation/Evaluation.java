@@ -4,10 +4,7 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.io.LinksResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.MLTResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.SeeAlsoResultInputFormat;
 import de.tuberlin.dima.schubotz.cpa.evaluation.io.WikiSimResultInputFormat;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.LinkExistsFilter;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.ListBuilder;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.ListMapper;
-import de.tuberlin.dima.schubotz.cpa.evaluation.operators.MatchesCounter;
+import de.tuberlin.dima.schubotz.cpa.evaluation.operators.*;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.*;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
@@ -174,7 +171,7 @@ public class Evaluation {
         config.setInteger("scoreField", wikiSimCpaKey);
 
         // Input
-        DataSet<ResultRecord<Double>> cpaDataSet = lines.flatMap(new RichFlatMapFunction<String, ResultRecord<Double>>() {
+        DataSet<Tuple3<String, String, Double>> cpaDataSet = lines.flatMap(new RichFlatMapFunction<String, Tuple3<String, String, Double>>() {
             protected int page1_field = 1;
             protected int page2_field = 2;
             protected int score_field;
@@ -188,31 +185,36 @@ public class Evaluation {
             }
 
             @Override
-            public void flatMap(String line, Collector<ResultRecord<Double>> out) throws Exception {
+            public void flatMap(String line, Collector<Tuple3<String, String, Double>> out) throws Exception {
                 String[] fields = line.split(Pattern.quote(fieldDelimitter));
 
-                out.collect(new ResultRecord<>(
-                        fields[page1_field], fields[page2_field], Double.valueOf(fields[score_field])
-                ));
-                out.collect(new ResultRecord<>(
-                        fields[page2_field], fields[page1_field], Double.valueOf(fields[score_field])
-                ));
+//                out.collect(new ResultRecord<>(
+//                        fields[page1_field], fields[page2_field], Double.valueOf(fields[score_field])
+//                ));
+//                out.collect(new ResultRecord<>(
+//                        fields[page2_field], fields[page1_field], Double.valueOf(fields[score_field])
+//                ));
+
+                out.collect(new Tuple3<>(fields[page1_field], fields[page2_field], Double.valueOf(fields[score_field])));
+                out.collect(new Tuple3<>(fields[page2_field], fields[page1_field], Double.valueOf(fields[score_field])));
 
             }
         }).withParameters(config);
 
         // Prepare
-        DataSet<ListResult> cpaResults = cpaDataSet
-                .groupBy(0)
-                .reduceGroup(new ListBuilder<Double>(topKs[0]));
+//        DataSet<ListResult> cpaResults = cpaDataSet
+//                .groupBy(0)
+//                .reduceGroup(new ListBuilder<Double>(topKs[0]));
 //                .setParallelism();
 
         // Evaluate
         evaluationResults = evaluationResults
-                .coGroup(cpaResults)
+
+                .coGroup(cpaDataSet)
+//                .coGroup(cpaResults)
                 .where(0)
                 .equalTo(0)
-                .with(new MatchesCounter(topKs,
+                .with(new MatchesCounterPlainResults(topKs,
                         EvaluationResult.CPA_LIST_KEY,
                         EvaluationResult.CPA_MATCHES_KEY,
                         EvaluationResult.CPA_HRR_KEY,

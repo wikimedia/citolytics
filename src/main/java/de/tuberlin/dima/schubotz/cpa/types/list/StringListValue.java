@@ -3,6 +3,9 @@ package de.tuberlin.dima.schubotz.cpa.types.list;
 import org.apache.flink.types.ListValue;
 import org.apache.flink.types.StringValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StringListValue extends ListValue<StringValue> {
 
     public String XtoString() {
@@ -23,6 +26,14 @@ public class StringListValue extends ListValue<StringValue> {
 
     public void add(String s) {
         this.add(new StringValue(s));
+    }
+
+    public List<String> asList() {
+        List<String> list = new ArrayList<>();
+        while (this.listIterator().hasNext()) {
+            list.add(this.listIterator().next().getValue());
+        }
+        return list;
     }
 
 }

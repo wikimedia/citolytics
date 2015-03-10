@@ -24,6 +24,10 @@ public class WikiSimComparableResult<T extends Comparable> extends Tuple2<String
         return getField(SORT2_FIELD);
     }
 
+    public String getName() {
+        return getField(0);
+    }
+
     public WikiSimComparableResult(String f0, T f1) {
         setField(f0, 0);
         setField(f1, 1);
