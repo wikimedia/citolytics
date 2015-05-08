@@ -6,7 +6,8 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.better.ResultCoGrouper;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.cpa.evaluation.utils.EvaluationMeasures;
 import de.tuberlin.dima.schubotz.cpa.histogram.EvaluationHistogram;
-import de.tuberlin.dima.schubotz.cpa.redirects.MergeRedirects;
+import de.tuberlin.dima.schubotz.cpa.redirects.SeeAlsoRedirects;
+import de.tuberlin.dima.schubotz.cpa.redirects.WikiSimRedirects;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
 import junit.framework.Assert;
 import org.apache.commons.collections.ListUtils;
@@ -45,8 +46,8 @@ public class EvaluationTest {
     }
 
     @Test
-    public void TestMergeRedirects() throws Exception {
-        MergeRedirects.main(
+    public void TestWikiSimRedirects() throws Exception {
+        WikiSimRedirects.main(
                 new String[]{
                         "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
                         "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath(),
@@ -55,6 +56,16 @@ public class EvaluationTest {
         );
     }
 
+    @Test
+    public void TestSeeAlsoRedirects() throws Exception {
+        SeeAlsoRedirects.main(
+                new String[]{
+                        "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
+                        "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath(),
+                        "print"
+                }
+        );
+    }
     @Test
     public void HistogramTest() throws Exception {
 

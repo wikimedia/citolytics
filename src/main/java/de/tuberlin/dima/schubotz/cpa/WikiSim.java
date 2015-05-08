@@ -56,7 +56,7 @@ public class WikiSim {
         config.setInteger("combinerThreshold", Integer.valueOf(combinerThreshold));
         config.setString("alpha", alpha);
         config.setBoolean("median", true);
-        config.setBoolean("wiki2006", true);
+        config.setBoolean("wiki2006", (args.length > 5 && args[5].equals("2006") ? true : false));
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
@@ -80,6 +80,6 @@ public class WikiSim {
     }
 
     public String getDescription() {
-        return "Parameters: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD]";
+        return "Parameters: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] [WIKI-VERSION]";
     }
 }

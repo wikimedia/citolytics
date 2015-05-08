@@ -1,10 +1,12 @@
 package de.tuberlin.dima.schubotz.cpa.redirects;
 
+import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.Arrays;
@@ -12,7 +14,7 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 
-public class MergeRedirects {
+public class WikiSimRedirects {
     public static boolean debug = false;
 
     public static void main(String[] args) throws Exception {
@@ -21,7 +23,7 @@ public class MergeRedirects {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         if (args.length <= 2) {
-            System.err.print("Error: Parameter missing! " + Arrays.toString(args));
+            System.err.print("Error: Parameter missing! Required: WIKISIM REDIRECTS OUTPUT, Current: " + Arrays.toString(args));
             System.exit(1);
         }
 
@@ -73,10 +75,13 @@ public class MergeRedirects {
                     }
                 });
 
+        if (outputFilename.equals("print")) {
+            res.print();
+        } else {
+            res.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
+        }
 
-        res.print();
-
-        env.execute();
+        env.execute("WikiSimRedirects");
     }
 
     // -9223368383335529186|Mister Immortal|Jarrod Washburn|722|1|1.0|0.00483709781788956|0.004240471278688157
