@@ -58,7 +58,7 @@ public class ParserTest {
         String docString = getFileContents("linkTest.wmd");
 
         // search for a page-xml entity
-        Matcher m = DocumentProcessor.getPageMatcher(docString);
+        Matcher m = new DocumentProcessor().getPageMatcher(docString);
         // if the record does not contain parsable page-xml
         if (!m.find()) return;
 

@@ -2,10 +2,13 @@ package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.evaluation.BetterEvaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
+import de.tuberlin.dima.schubotz.cpa.evaluation.better.ResultCoGrouper;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.cpa.evaluation.utils.EvaluationMeasures;
 import de.tuberlin.dima.schubotz.cpa.histogram.EvaluationHistogram;
+import de.tuberlin.dima.schubotz.cpa.redirects.MergeRedirects;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
+import junit.framework.Assert;
 import org.apache.commons.collections.ListUtils;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
@@ -21,7 +24,8 @@ import java.util.*;
 
 public class EvaluationTest {
 
-    @Test
+    @Deprecated
+//    @Test
     public void LocalTest() throws Exception {
 
         Evaluation.main(new String[]{
@@ -41,23 +45,53 @@ public class EvaluationTest {
     }
 
     @Test
+    public void TestMergeRedirects() throws Exception {
+        MergeRedirects.main(
+                new String[]{
+                        "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
+                        "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath(),
+                        "print"
+                }
+        );
+    }
+
+    @Test
     public void HistogramTest() throws Exception {
 
         EvaluationHistogram.main(new String[]{
                 "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
-                "print"
+                "print",
+                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath()
+
 //                ,"y"
         });
     }
 
     @Test
-    public void EvalPerformanceTest() throws Exception {
+    public void EvalCPATest() throws Exception {
 
         BetterEvaluation.main(new String[]{
                 "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
+//                "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
                 "print",
-                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath()
+                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
+//                ,"y"
+        });
+    }
 
+    @Test
+    public void EvalMLTTest() throws Exception {
+
+        BetterEvaluation.main(new String[]{
+//                "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
+                "print",
+                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
+                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
+                , "2"
+                , "0"
+                , "1"
 //                ,"y"
         });
     }
@@ -129,45 +163,129 @@ public class EvaluationTest {
     }
 
     @Test
-    public void MinMaxQueueTest() {
+    public void MinMaxQueueTest() throws Exception {
         int maxListLength = 4;
         MinMaxPriorityQueue<WikiSimComparableResult<Double>> queue = MinMaxPriorityQueue
-
+                .orderedBy(new Comparator<WikiSimComparableResult<Double>>() {
+                    @Override
+                    public int compare(WikiSimComparableResult<Double> o1, WikiSimComparableResult<Double> o2) {
+                        return -1 * o1.compareTo(o2);
+                    }
+                })
                 .maximumSize(maxListLength).create();
 
-        queue.add(new WikiSimComparableResult<>("A", 5.0));
+        WikiSimComparableResult<Double> testItemLow = new WikiSimComparableResult<>("B", 2.0);
+        WikiSimComparableResult<Double> testItemHigh = new WikiSimComparableResult<>("A", 5.0);
+
+        queue.add(testItemLow);
+        queue.add(testItemLow);
+        queue.add(testItemLow);
+        queue.add(testItemLow);
+        queue.add(testItemHigh);
         queue.add(new WikiSimComparableResult<>("A", 4.0));
         queue.add(new WikiSimComparableResult<>("A", 3.0));
         queue.add(new WikiSimComparableResult<>("A", 2.0));
-        queue.add(new WikiSimComparableResult<>("B", 2.0));
+        queue.add(testItemLow);
 
-        System.out.println(queue);
+        System.out.println("Simple Queue" + queue);
 
+        if (queue.contains(testItemLow)) {
+            throw new Exception("testItemLow NOT should exist in queue: " + testItemLow);
+        }
 
-        MinMaxPriorityQueue<Integer> q = MinMaxPriorityQueue
-                .orderedBy(new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer o1, Integer o2) {
-                        return o1.compareTo(o2);
-                    }
-                })
-                .maximumSize(4).create();
+        if (!queue.contains(testItemHigh)) {
+            throw new Exception("testItemHigh should exist in queue: " + testItemHigh);
+        }
 
-        q.add(1);
-        q.add(2);
-        q.add(3);
-        q.add(4);
-        q.add(5);
-        q.add(6);
-        q.add(1);
-        q.add(1);
+        if (testItemHigh.compareTo(testItemLow) != 1) {
+            throw new Exception(testItemHigh + " compareTo " + testItemLow + " = " + testItemHigh.compareTo(testItemLow) + " // should be = 1");
+        }
 
-
-        System.out.println(q);
-        System.out.println(Ordering.natural().greatestOf(q, 4));
     }
 
     @Test
+    public void GreatestOfTest() throws Exception {
+        WikiSimComparableResult<Double> testItemLow = new WikiSimComparableResult<>("B", 2.0);
+        WikiSimComparableResult<Double> testItemHigh = new WikiSimComparableResult<>("A", 5.0);
+
+        List<WikiSimComparableResult<Double>> unsortedList = new ArrayList<>();
+
+        unsortedList.add(testItemLow);
+        unsortedList.add(new WikiSimComparableResult<>("A", 2.0));
+        unsortedList.add(testItemHigh);
+        unsortedList.add(new WikiSimComparableResult<>("A", 3.0));
+        unsortedList.add(new WikiSimComparableResult<>("A", 4.0));
+
+
+        List<WikiSimComparableResult<Double>> sortedList = Ordering.natural().greatestOf(unsortedList, 4);
+
+
+        System.out.println("Unsorted: " + unsortedList);
+        System.out.println("Sorted: " + sortedList);
+
+        if (sortedList.get(0) != testItemHigh) {
+            throw new Exception("testItemHigh is not first item: " + testItemHigh);
+        }
+
+        if (sortedList.contains(testItemLow)) {
+            throw new Exception("testItemLow should not be in sortedList: " + testItemLow);
+        }
+
+    }
+
+    @Test
+    public void MAPTest() {
+
+        List<String> retrieved = Arrays.asList("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20".split(","));
+        HashSet<String> relevant = new HashSet<>();
+
+        relevant.addAll(Arrays.asList("1,3,6,10,20".split(",")));
+
+        double map = EvaluationMeasures.getMeanAveragePrecision(retrieved, relevant);
+
+        Assert.assertEquals("MAP is wrong (MAP * 10000)", 5633, Math.round(map * 10000));
+    }
+
+    @Test
+    public void MatchTest() {
+
+        List<String> relevant = Arrays.asList("Drag bit,Driller (oil),Drill bit,Drilling stabilizer,Drilling rig,Hole opener".split(","));
+
+        List<WikiSimComparableResult<Double>> retrieved = new ArrayList<>();
+
+        retrieved.add(new WikiSimComparableResult<>("Hole opener", 3.0517578125E-5));
+        retrieved.add(new WikiSimComparableResult<>("Drilling stabilizer", 9.313225746154785E-10));
+        retrieved.add(new WikiSimComparableResult<>("Drill bit", 2.1268224907304786E-12));
+        retrieved.add(new WikiSimComparableResult<>("Drag bit", 2.8421709430404007E-14));
+        retrieved.add(new WikiSimComparableResult<>("Driller (oil)", 1.0E-15));
+        retrieved.add(new WikiSimComparableResult<>("Drilling rig", 6.490547151887447E-17));
+
+        retrieved.add(new WikiSimComparableResult<>("Tungsten carbide", 3.1475538306147624E-25));
+        retrieved.add(new WikiSimComparableResult<>("Well bore", 5.986591089105288E-27));
+
+        retrieved = Ordering.natural().greatestOf(retrieved, 10);
+
+        // 8 retrieved
+        System.out.println("Retrieved = " + retrieved.size() + " : " + retrieved);
+
+        double hrr = EvaluationMeasures.getHarmonicReciprocalRank(ResultCoGrouper.getResultNamesAsList(retrieved), relevant);
+        double map = EvaluationMeasures.getMeanAveragePrecision(ResultCoGrouper.getResultNamesAsList(retrieved), relevant);
+        int[] matches = EvaluationMeasures.getMatchesCount(ResultCoGrouper.getResultNamesAsList(retrieved), relevant);
+
+        System.out.println("HRR = " + hrr);
+        System.out.println("MAP = " + map);
+
+        System.out.println("MatchesCount = " + Arrays.toString(matches));
+
+        Assert.assertEquals("MatchesCount is wrong", 6, matches[0]);
+        Assert.assertEquals("MatchesCount is wrong", 5, matches[1]);
+        Assert.assertEquals("MatchesCount is wrong", 1, matches[2]);
+
+        Assert.assertEquals("HRR is wrong", 1.0000000000000002, hrr);
+        Assert.assertEquals("MAP is wrong", 1.0, map);
+    }
+
+    @Deprecated
     public void unionTest() throws Exception {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
@@ -196,7 +314,7 @@ public class EvaluationTest {
         env.execute("CSV Input test");
     }
 
-    @Test
+    @Deprecated
     public void collectionTest() throws Exception {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
@@ -253,7 +371,7 @@ public class EvaluationTest {
         env.execute("CSV Input test");
     }
 
-    @Test
+    @Deprecated
     public void doubleTest() {
         int a = 1;
         int b = 8;
@@ -263,7 +381,7 @@ public class EvaluationTest {
 
     }
 
-    @Test
+    @Deprecated
     public void parseDoublePerformanceTest2() {
 
         int runs = 999999;
