@@ -10,13 +10,11 @@ public class HistogramMapper implements FlatMapFunction<String, HistogramResult>
     @Override
     public void flatMap(String content, Collector<HistogramResult> resultCollector) throws Exception {
 
-        WikiDocument doc = DocumentProcessor.processDoc(content);
+        WikiDocument doc = new DocumentProcessor().processDoc(content);
 
         if (doc == null) return;
 
         int linksCount = doc.getOutLinks().size();
-
-        //System.out.println(linksCount);
 
         resultCollector.collect(new HistogramResult(doc.getNS(), 1, linksCount, Long.valueOf(linksCount * linksCount)));
     }

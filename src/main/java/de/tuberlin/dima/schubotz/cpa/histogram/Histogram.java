@@ -5,7 +5,6 @@ import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
-import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 
 /**
@@ -27,19 +26,19 @@ public class Histogram {
         String inputFilename = args[0];
         String outputFilename = args[1];
 
-        Configuration config = new Configuration();
-
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
-
 
         // ArticleCounter, Links (, AvgDistance
         DataSet<HistogramResult> output = text.flatMap(new HistogramMapper())
-                .groupBy(0)
-                .reduceGroup(new HistogramReducer());
+                .reduce(new HistogramReducer());
 
-        output.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
+        if (outputFilename.equals("print")) {
+            output.print();
+        } else {
+            output.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
+        }
 
-        env.execute("WikiHistogram");
+        env.execute("WikiHistogram (ns, articlecount, linkcount, linkpairs)");
     }
 
 

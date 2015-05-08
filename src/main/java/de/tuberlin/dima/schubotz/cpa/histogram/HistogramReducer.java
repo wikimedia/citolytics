@@ -1,49 +1,33 @@
 package de.tuberlin.dima.schubotz.cpa.histogram;
 
 
-import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
-import org.apache.flink.util.Collector;
-
-import java.util.Iterator;
+import org.apache.flink.api.common.functions.RichReduceFunction;
 
 
 @Combinable
-public class HistogramReducer extends RichGroupReduceFunction<HistogramResult, HistogramResult> {
+public class HistogramReducer extends RichReduceFunction<HistogramResult> {
 
-    public void internalReduce(Iterable<HistogramResult> results, Collector<HistogramResult> resultCollector) throws Exception {
-        Iterator<HistogramResult> iterator = results.iterator();
-        HistogramResult res = null;
+    public HistogramResult internalReduce(HistogramResult a, HistogramResult b) throws Exception {
 
-        int articleCount = 0;
-        int linkCount = 0;
-        long linkpairCount = 0;
+        // articleCount
+        a.setField((Integer) a.getField(1) + (Integer) b.getField(1), 1);
 
-        while (iterator.hasNext()) {
-            res = iterator.next();
+        // linkCount
+        a.setField((Integer) a.getField(2) + (Integer) b.getField(2), 2);
 
-            articleCount += (int) res.getField(1);
-            linkCount += (int) res.getField(2);
-            linkpairCount += (long) res.getField(3);
-        }
+        // linkpairCount
+        a.setField((Long) a.getField(3) + (Long) b.getField(3), 3);
 
-        if (res == null)
-            return;
-
-        res.setField(articleCount, 1);
-        res.setField(linkCount, 2);
-        res.setField(linkpairCount, 3);
-
-        resultCollector.collect(res);
+        return a;
     }
 
     @Override
-    public void reduce(Iterable<HistogramResult> results, Collector<HistogramResult> resultCollector) throws Exception {
-        internalReduce(results, resultCollector);
+    public HistogramResult reduce(HistogramResult a, HistogramResult b) throws Exception {
+        return internalReduce(a, b);
     }
 
-    @Override
-    public void combine(Iterable<HistogramResult> results, Collector<HistogramResult> resultCollector) throws Exception {
-        internalReduce(results, resultCollector);
+    public HistogramResult combine(HistogramResult a, HistogramResult b) throws Exception {
+        return internalReduce(a, b);
     }
 }

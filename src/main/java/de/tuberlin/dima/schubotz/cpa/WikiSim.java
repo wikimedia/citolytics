@@ -56,10 +56,12 @@ public class WikiSim {
         config.setInteger("combinerThreshold", Integer.valueOf(combinerThreshold));
         config.setString("alpha", alpha);
         config.setBoolean("median", true);
+        config.setBoolean("wiki2006", true);
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         DataSet<WikiSimResult> output = text.flatMap(new DocumentProcessor())
+                .withParameters(config)
                 .groupBy(0) // Group by LinkTuple
                 .reduceGroup(new calculateCPA())
 

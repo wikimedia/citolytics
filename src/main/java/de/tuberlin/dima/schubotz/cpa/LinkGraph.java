@@ -63,7 +63,7 @@ public class LinkGraph {
             public void flatMap(String content, Collector<Tuple4<String, String, String, Integer>> out) throws Exception {
                 LinkTuple linkTuple = new LinkTuple();
 
-                WikiDocument doc = DocumentProcessor.processDoc(content);
+                WikiDocument doc = new DocumentProcessor().processDoc(content);
                 if (doc == null) return;
 
                 // Get links & wordmap

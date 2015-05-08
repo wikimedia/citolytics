@@ -1,7 +1,7 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
 import de.tuberlin.dima.schubotz.cpa.types.list.DoubleListValue;
-import org.apache.flink.api.java.tuple.Tuple8;
+import org.apache.flink.api.java.tuple.Tuple5;
 
 /**
  * Result for WikiSim
@@ -12,19 +12,28 @@ import org.apache.flink.api.java.tuple.Tuple8;
  * 3 Integer   count
  * 4 Long   distSquared #
  * 5 Double CPA
- * 6 Long   minDist #
- * 7 Long   maxDist #
- * 8 Double median  #
+ * -- 6 Long   minDist #
+ * --  7 Long   maxDist #
+ * -- 8 Double median  #
  */
-public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, Long, Long, DoubleListValue> {
-    private final boolean enableMinMax = true;
+public class WikiSimResult extends Tuple5<
+        Long, // hash
+        LinkTuple,
+        Long, // distance
+        Integer, // count
+//        Long, // distSquared
+//        Long, // min
+//        Long, // max
+        DoubleListValue // CPA
+        > {
+    private final boolean enableMinMax = false;
     private final boolean enableDistSquared = false;
-    private final boolean enableCount = false;
+//    private final boolean enableCount = false;
 
-    private final static int CPA_LIST_KEY = 7;
-    private final static int MAX_KEY = 6;
-    private final static int MIN_KEY = 5;
-    private final static int DISTSQUARED_KEY = 4;
+    private final static int CPA_LIST_KEY = 4;
+    private final static int MAX_KEY = 6; // disabled
+    private final static int MIN_KEY = 5; // disabled
+    private final static int DISTSQUARED_KEY = 4; // disabled
     private final static int COUNT_KEY = 3;
     private final static int DISTANCE_KEY = 2;
 
@@ -64,7 +73,8 @@ public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, 
     }
 
     public void setDistSquared(long distSquared) {
-        setField(distSquared, DISTSQUARED_KEY);
+        if (enableDistSquared)
+            setField(distSquared, DISTSQUARED_KEY);
     }
 
     public void setCPA(double[] cpa) {
@@ -94,7 +104,10 @@ public class WikiSimResult extends Tuple8<Long, LinkTuple, Long, Integer, Long, 
     }
 
     public long getDistSquared() {
-        return getField(DISTSQUARED_KEY);
+        if (enableDistSquared)
+            return getField(DISTSQUARED_KEY);
+        else
+            return 0;
     }
 
     public double getCPA(int alphaKey) {

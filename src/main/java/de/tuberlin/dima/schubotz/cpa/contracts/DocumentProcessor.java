@@ -19,13 +19,26 @@ package de.tuberlin.dima.schubotz.cpa.contracts;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
-import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult> {
+public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult> {
+
+    // WikiDump of 2006 does not contain namespace tags
+    private boolean enableWiki2006 = false;
+
+    @Override
+    public void open(Configuration parameter) throws Exception {
+        super.open(parameter);
+
+        enableWiki2006 = parameter.getBoolean("wiki2006", true);
+    }
+
+
     @Override
     public void flatMap(String content, Collector<WikiSimResult> out) {
 
@@ -36,11 +49,11 @@ public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult>
         doc.collectLinksAsResult(out);
     }
 
-    public static WikiDocument processDoc(String content) {
+    public WikiDocument processDoc(String content) {
         return processDoc(content, false);
     }
 
-    public static WikiDocument processDoc(String content, boolean processSeeAlsoOnly) {
+    public WikiDocument processDoc(String content, boolean processSeeAlsoOnly) {
         // search for redirect -> skip if found
         if (getRedirectMatcher(content).find()) return null;
 
@@ -51,17 +64,30 @@ public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult>
 
         // otherwise create a WikiDocument object from the xml
         WikiDocument doc = new WikiDocument();
-        doc.setId(Integer.parseInt(m.group(3)));
-        doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
-        doc.setNS(Integer.parseInt(m.group(2)));
+        if (enableWiki2006) {
+            doc.setId(Integer.parseInt(m.group(2)));
+            doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
 
-        // skip docs from namespaces other than
-        if (doc.getNS() != 0) return null;
-
-        if (processSeeAlsoOnly) {
-            doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(4))));
+            if (processSeeAlsoOnly) {
+                doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(3))));
+            } else {
+                doc.setText(StringUtils.unescapeEntities(m.group(3)));
+            }
         } else {
-            doc.setText(StringUtils.unescapeEntities(m.group(4)));
+            // Default WikiXml
+            doc.setId(Integer.parseInt(m.group(3)));
+            doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
+            doc.setNS(Integer.parseInt(m.group(2)));
+
+            // skip docs from namespaces other than
+            if (doc.getNS() != 0) return null;
+
+
+            if (processSeeAlsoOnly) {
+                doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(4))));
+            } else {
+                doc.setText(StringUtils.unescapeEntities(m.group(4)));
+            }
         }
 
         return doc;
@@ -73,10 +99,18 @@ public class DocumentProcessor implements FlatMapFunction<String, WikiSimResult>
         return redirect.matcher(content);
     }
 
-    public static Matcher getPageMatcher(String content) {
+    public Matcher getPageMatcher(String content) {
 
         // search for a page-xml entity
-        Pattern pageRegex = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
+        // needle: title, (ns), id, text
+        Pattern pageRegex;
+
+        if (enableWiki2006) {
+            pageRegex = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
+        } else {
+            pageRegex = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
+        }
+
         return pageRegex.matcher(content);
     }
 

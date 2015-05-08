@@ -45,7 +45,7 @@ public class SeeAlsoExtractor {
         DataSet<Tuple4<String, String, Integer, Integer>> output = text.flatMap(new FlatMapFunction<String, Tuple4<String, String, Integer, Integer>>() {
             public void flatMap(String content, Collector out) {
 
-                WikiDocument doc = DocumentProcessor.processDoc(content, true);
+                WikiDocument doc = new DocumentProcessor().processDoc(content, true);
 
                 if (doc == null) return;
 

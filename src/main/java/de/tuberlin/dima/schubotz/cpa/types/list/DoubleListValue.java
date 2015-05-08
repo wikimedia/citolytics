@@ -18,4 +18,18 @@ public class DoubleListValue extends ListValue<DoubleValue> {
         }
         return list;
     }
+
+    public static DoubleListValue sum(DoubleListValue firstList, DoubleListValue secondList) throws Exception {
+        if (firstList.size() != secondList.size()) {
+            throw new Exception("Cannot sum lists with different size.");
+        }
+
+        int i = 0;
+        for (DoubleValue firstValue : firstList) {
+            firstList.set(i, new DoubleValue(firstValue.getValue() + secondList.get(i).getValue()));
+            i++;
+        }
+
+        return firstList;
+    }
 }

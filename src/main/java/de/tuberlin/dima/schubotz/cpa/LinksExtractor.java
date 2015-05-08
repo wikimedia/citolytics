@@ -42,7 +42,7 @@ public class LinksExtractor {
         DataSet<Tuple2<String, String>> output = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
             public void flatMap(String content, Collector out) {
 
-                WikiDocument doc = DocumentProcessor.processDoc(content);
+                WikiDocument doc = new DocumentProcessor().processDoc(content);
                 if (doc == null) return;
 
                 List<Map.Entry<String, Integer>> links = doc.getOutLinks();

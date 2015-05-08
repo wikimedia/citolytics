@@ -210,6 +210,30 @@ public class WikiDocument {
         return wikiText;
     }
 
+    /**
+     * Extract headlines from article content.
+     * <p/>
+     * Wiki-Markup:
+     * <p/>
+     * ==Section==
+     * ===Subsection===
+     * ====Sub-subsection===
+     *
+     * @return List of headlines
+     */
+    public List<String> getHeadlines() {
+        List<String> headlines = new ArrayList<>();
+
+        Pattern regex = Pattern.compile("^([=]{1,3})(.+)([=]{1,3})$", Pattern.MULTILINE);
+        Matcher matcher = regex.matcher(raw);
+
+        while (matcher.find()) {
+            headlines.add(matcher.group(0).trim());
+        }
+
+        return headlines;
+    }
+
     private void extractLinks() {
         outLinks = new ArrayList<>();
 
@@ -285,6 +309,30 @@ public class WikiDocument {
                 }
             }
         }
+    }
+
+    public double getAvgLinkDistance() {
+        getOutLinks();
+        getWordMap();
+
+        double linkPairs = 0;
+        double distance = 0;
+
+        // Loop all link pairs
+        for (Map.Entry<String, Integer> outLink1 : outLinks) {
+            for (Map.Entry<String, Integer> outLink2 : outLinks) {
+                int order = outLink1.getKey().compareTo(outLink2.getKey());
+                if (order > 0) {
+                    int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
+                    int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
+
+                    distance += max(abs(w1 - w2), 1);
+                    linkPairs++;
+                }
+            }
+        }
+
+        return distance / linkPairs;
     }
 
     public TreeMap<Integer, Integer> getWordMap() {
