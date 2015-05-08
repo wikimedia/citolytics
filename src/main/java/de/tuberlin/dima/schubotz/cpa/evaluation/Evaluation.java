@@ -40,6 +40,8 @@ import java.util.regex.Pattern;
  * - MLT Links
  * -- matches
  */
+
+@Deprecated
 public class Evaluation {
     public static String csvRowDelimiter = "\n";
     public static char csvFieldDelimiter = '|';
@@ -55,10 +57,10 @@ public class Evaluation {
     public int wikiSimCoCitKey;
     public int[] topKs;
 
-    public boolean enableLinkFilter = false;
-    public boolean enableCPA = true;
+    public boolean enableLinkFilter = true;
+    public boolean enableCPA = false;
     public boolean enableMLT = false;
-    public boolean enableCoCit = false;
+    public boolean enableCoCit = true;
 
 
     private DataSet<EvaluationResult> evaluationResults;
@@ -114,14 +116,16 @@ public class Evaluation {
 
         // Filter existing links
         // setIncludeFields <--- wikiSimCpaKey
-        wikiSimResults = env.readFile(new WikiSimResultInputFormat().setCPAKey(wikiSimCpaKey), wikiSimInputFilename);
+        if (enableCoCit || enableCPA) {
+            wikiSimResults = env.readFile(new WikiSimResultInputFormat().setCPAKey(wikiSimCpaKey), wikiSimInputFilename);
 
-        if (enableLinkFilter) {
-            wikiSimResults = wikiSimResults
-                    .coGroup(getLinksDataSet())
-                    .where(1)
-                    .equalTo(0)
-                    .with(new LinkExistsFilter<WikiSimPlainResult>(1, 2));
+            if (enableLinkFilter) {
+                wikiSimResults = wikiSimResults
+                        .coGroup(getLinksDataSet())
+                        .where(1)
+                        .equalTo(0)
+                        .with(new LinkExistsFilter<WikiSimPlainResult>(1, 2));
+            }
         }
 
         //Outer Join SeeAlso x CPA

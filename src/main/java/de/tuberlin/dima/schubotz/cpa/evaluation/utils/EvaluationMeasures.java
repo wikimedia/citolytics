@@ -2,6 +2,7 @@ package de.tuberlin.dima.schubotz.cpa.evaluation.utils;
 
 import org.apache.commons.collections.ListUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 public class EvaluationMeasures {
@@ -75,5 +76,42 @@ public class EvaluationMeasures {
             mrr = 1.0 / rank;
         }
         return mrr;
+    }
+
+    public static double getMeanAveragePrecision(List<String> retrievedDocuments, Collection<String> relevantDocuments) {
+        double retrievedRelevantDocuments = 0;
+        double precisionSum = 0;
+        double i = 0;
+
+        for (String retrievedDocument : retrievedDocuments) {
+            i++;
+            if (relevantDocuments.contains(retrievedDocument)) {
+                retrievedRelevantDocuments++;
+                precisionSum += retrievedRelevantDocuments / i;
+            }
+        }
+
+        return precisionSum / relevantDocuments.size();
+    }
+
+    public static int[] getMatchesCount(List<String> retrievedDocuments, List<String> relevantDocuments) {
+        int[] matchesLengths = new int[]{10, 5, 1};
+        int[] matches = new int[]{0, 0, 0};
+
+        for (int i = 0; i < matchesLengths.length; i++) {
+            int matchesLength = matchesLengths[i];
+
+            if (retrievedDocuments.size() < matchesLength)
+                matchesLength = retrievedDocuments.size();
+
+            // If matchesCount is already 0, avoid intersection
+            if (i > 0 && matches[i - 1] == 0) {
+
+            } else {
+                matches[i] = ListUtils.intersection(relevantDocuments, retrievedDocuments.subList(0, matchesLength)).size();
+            }
+        }
+
+        return matches;
     }
 }
