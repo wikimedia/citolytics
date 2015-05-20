@@ -46,7 +46,11 @@ public class LinkTuple extends Tuple2<String, String> {
     }
 
     public long getHash() {
-        return StringUtils.hash(getFirst() + getSecond());
+        return getHash(getFirst(), getSecond());
+    }
+
+    public static long getHash(String first, String second) {
+        return StringUtils.hash(first + WikiSimConfiguration.csvFieldDelimiter + second);
     }
 
 

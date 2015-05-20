@@ -1,7 +1,8 @@
-package de.tuberlin.dima.schubotz.cpa;
+package de.tuberlin.dima.schubotz.cpa.linkgraph;
 
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
+import de.tuberlin.dima.schubotz.cpa.redirects.WikiSimRedirects;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
@@ -34,20 +35,30 @@ public class LinkGraph {
         // set up the execution environment
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        if (args.length <= 2) {
+        if (args.length <= 3) {
             System.err.println("Input/output parameters missing!");
             System.err.println(getDescription());
             System.exit(1);
         }
 
         String inputWikiFilename = args[0];
-        String inputLinkTuplesFilename = args[1];
+        String inputLinkTuplesFilename = args[2];
 
-        String outputFilename = args[2];
+        String outputFilename = args[3];
+
+        DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
 
         DataSet<Tuple2<String, String>> linkTupleList = env.readCsvFile(inputLinkTuplesFilename)
                 .fieldDelimiter(WikiSimConfiguration.csvFieldDelimiter.charAt(0))
-                .types(String.class, String.class);
+                .types(String.class, String.class)
+                .coGroup(redirects)
+                .where(1) // link B (Redirect target)
+                .equalTo(1) // redirect target
+                .with(new ReplaceLinkTuples(1))
+                .coGroup(redirects)
+                .where(0) // link A (Redirect target)
+                .equalTo(1) // redirect target
+                .with(new ReplaceLinkTuples(0));
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputWikiFilename);
 
@@ -99,14 +110,16 @@ public class LinkGraph {
             }
         }).withBroadcastSet(linkTupleList, "linkTupleList");
 
-
-        result.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
-
+        if (outputFilename.equals("print")) {
+            result.print().setParallelism(1);
+        } else {
+            result.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+        }
         env.execute("LinkGraph");
 
     }
 
     public static String getDescription() {
-        return "Parameters: [WIKI DATASET] [LINKTUPLE CSV] [OUTPUT]";
+        return "Parameters: [WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]";
     }
 }

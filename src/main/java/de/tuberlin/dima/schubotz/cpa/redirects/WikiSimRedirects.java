@@ -1,16 +1,13 @@
 package de.tuberlin.dima.schubotz.cpa.redirects;
 
 import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
-import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.util.Collector;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.regex.Pattern;
 
 
@@ -29,6 +26,7 @@ public class WikiSimRedirects {
 
         String outputFilename = args[2];
 
+        int hash = 0;
         int pageA = 1;
         int pageB = 2;
         int redirectSource = 0;
@@ -52,28 +50,8 @@ public class WikiSimRedirects {
                 .equalTo(redirectSource)
                 .with(new ReplaceRedirects(pageB))
                         // sum duplicated tuples
-                .groupBy(pageA, pageB)
-                .reduceGroup(new GroupReduceFunction<WikiSimRedirectResult, WikiSimRedirectResult>() {
-                    @Override
-                    public void reduce(Iterable<WikiSimRedirectResult> in, Collector<WikiSimRedirectResult> out) throws Exception {
-                        Iterator<WikiSimRedirectResult> iterator = in.iterator();
-                        WikiSimRedirectResult reducedRecord = null;
-
-                        while (iterator.hasNext()) {
-                            WikiSimRedirectResult currentRecord = iterator.next();
-
-                            // init
-                            if (reducedRecord == null) {
-                                reducedRecord = currentRecord;
-                            } else {
-                                // sum
-                                reducedRecord.sumWith(currentRecord);
-                            }
-                        }
-
-                        out.collect(reducedRecord);
-                    }
-                });
+                .groupBy(hash)
+                .reduceGroup(new ReduceResults());
 
         if (outputFilename.equals("print")) {
             res.print();

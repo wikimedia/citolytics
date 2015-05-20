@@ -1,8 +1,8 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
-import de.tuberlin.dima.schubotz.cpa.LinksExtractor;
 import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.cpa.histogram.Histogram;
+import de.tuberlin.dima.schubotz.cpa.linkgraph.LinksExtractor;
 import org.junit.Test;
 
 /**

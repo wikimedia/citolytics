@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.cpa.redirects;
 
+import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
@@ -8,6 +9,7 @@ import java.util.Iterator;
 
 public class ReplaceRedirects implements CoGroupFunction<WikiSimRedirectResult, Tuple2<String, String>, WikiSimRedirectResult> {
     public int replaceField = 0;
+    public int hashField = 0;
     public int pageAField = 1;
     public int pageBField = 2;
     public int redirectTargetField = 1;
@@ -27,7 +29,7 @@ public class ReplaceRedirects implements CoGroupFunction<WikiSimRedirectResult, 
             if (iteratorRedirect.hasNext()) {
                 Tuple2<String, String> recordRedirect = iteratorRedirect.next();
 
-                // replace
+                // replace page
                 recordA.setField(recordRedirect.getField(redirectTargetField), replaceField);
 
                 // check for alphabetic order
@@ -39,6 +41,8 @@ public class ReplaceRedirects implements CoGroupFunction<WikiSimRedirectResult, 
                     recordA.setField(recordA.getField(pageAField), pageBField);
                     recordA.setField(tmp, pageAField);
                 }
+                // update hash
+                recordA.setField(LinkTuple.getHash((String) recordA.getField(pageAField), (String) recordA.getField(pageBField)), hashField);
             }
             out.collect(recordA);
         }

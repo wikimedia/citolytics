@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
+import de.tuberlin.dima.schubotz.cpa.clickstream.ClickStream;
 import de.tuberlin.dima.schubotz.cpa.evaluation.BetterEvaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.better.ResultCoGrouper;
@@ -8,6 +9,7 @@ import de.tuberlin.dima.schubotz.cpa.evaluation.utils.EvaluationMeasures;
 import de.tuberlin.dima.schubotz.cpa.histogram.EvaluationHistogram;
 import de.tuberlin.dima.schubotz.cpa.redirects.SeeAlsoRedirects;
 import de.tuberlin.dima.schubotz.cpa.redirects.WikiSimRedirects;
+import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
 import junit.framework.Assert;
 import org.apache.commons.collections.ListUtils;
@@ -43,6 +45,19 @@ public class EvaluationTest {
                 // aggregate
 //                "n"
         });
+    }
+
+    @Test
+    public void TestClickStream() throws Exception {
+        ClickStream.main(
+                new String[]{
+                        "file://" + getClass().getClassLoader().getResources("clickstream_preview.tsv").nextElement().getPath(),
+                        "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
+                        "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath(),
+
+                        "print"
+                }
+        );
     }
 
     @Test
@@ -86,7 +101,8 @@ public class EvaluationTest {
 //                "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
                 "print",
                 "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
-                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
+                "nofilter"
+//                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
 //                ,"y"
         });
     }
@@ -452,6 +468,15 @@ public class EvaluationTest {
         long timeB = System.nanoTime() - startB;
         System.out.printf("Double to double took an average of %.1f us%n", timeB / runs / 1000.0);
 
+    }
+
+    @Test
+    public void HashTest() throws Exception {
+        String pageA = "Foo";
+        String pageB = "Bar";
+
+        if (LinkTuple.getHash(pageA, pageB) != LinkTuple.getHash(pageA, pageB))
+            throw new Exception("Hash not the same.");
     }
 
     @Test

@@ -1,5 +1,6 @@
-package de.tuberlin.dima.schubotz.cpa;
+package de.tuberlin.dima.schubotz.cpa.linkgraph;
 
+import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.cpa.contracts.DocumentProcessor;
 import de.tuberlin.dima.schubotz.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;

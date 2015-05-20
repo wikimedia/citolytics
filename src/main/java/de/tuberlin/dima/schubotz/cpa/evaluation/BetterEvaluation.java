@@ -47,8 +47,6 @@ public class BetterEvaluation {
         seeAlsoInputFilename = args[2];
         linksInputFilename = args[3];
 
-        System.out.println(seeAlsoInputFilename);
-
         int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 8);
         int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
         int fieldPageB = (args.length > 6 ? Integer.valueOf(args[6]) : 2);
@@ -70,15 +68,15 @@ public class BetterEvaluation {
                 .withParameters(config);
 
         // LinkFilter
-        if (linksInputFilename.isEmpty() || linksInputFilename.equals("nofilter")) {
+        if (!linksInputFilename.isEmpty() && !linksInputFilename.equals("nofilter")) {
             wikiSimDataSet = wikiSimDataSet
-                    .coGroup(getLinkDataSet(env))
+                    .coGroup(getLinkDataSet(env, linksInputFilename))
                     .where(0)
                     .equalTo(0)
                     .with(new BetterLinkExistsFilter());
 
             seeAlsoDataSet = seeAlsoDataSet
-                    .coGroup(getLinkDataSet(env))
+                    .coGroup(getLinkDataSet(env, linksInputFilename))
                     .where(0)
                     .equalTo(0)
                     .with(new BetterSeeAlsoLinkExistsFilter());
@@ -105,9 +103,9 @@ public class BetterEvaluation {
     }
 
 
-    public static DataSet<Tuple2<String, HashSet<String>>> getLinkDataSet(ExecutionEnvironment env) {
+    public static DataSet<Tuple2<String, HashSet<String>>> getLinkDataSet(ExecutionEnvironment env, String filename) {
         if (links == null) {
-            links = env.readTextFile(linksInputFilename)
+            links = env.readTextFile(filename)
 
                     .map(new MapFunction<String, Tuple2<String, HashSet<String>>>() {
                         Pattern delimiter = Pattern.compile(Pattern.quote("|"));
