@@ -48,8 +48,6 @@ public class WikiSimRedirectResult extends Tuple6<
 //        setField(sum((ArrayList<Double>) otherResult.getField(5), f5), 5);
     }
 
-    dd
-
     public static ArrayList<Double> sum(ArrayList<Double> firstList, ArrayList<Double> secondList) throws Exception {
         if (firstList.size() != secondList.size()) {
             throw new Exception("Cannot sum lists with different size.");

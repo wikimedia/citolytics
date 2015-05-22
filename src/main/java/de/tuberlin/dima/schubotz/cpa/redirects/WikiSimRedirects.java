@@ -35,24 +35,24 @@ public class WikiSimRedirects {
 
         DataSet<Tuple2<String, String>> redirects = getRedirectsDataSet(env, args[1]);
 
-        DataSet<WikiSimRedirectResult> res = getWikiSimDataSet(env, args[0]);
+        DataSet<WikiSimRedirectResult> wikiSim = getWikiSimDataSet(env, args[0]);
 
-//        DataSet<WikiSimRedirectResult> res = wikiSim
-//                // replace page names with redirect target
-//                // page A
-//                .coGroup(redirects)
-//                .where(pageA)
-//                .equalTo(redirectSource)
-//                .with(new ReplaceRedirects(pageA))
-//                        // page B
-//
-//                .coGroup(redirects)
-//                .where(pageB)
-//                .equalTo(redirectSource)
-//                .with(new ReplaceRedirects(pageB))
-//                        // sum duplicated tuples
-//                .groupBy(hash)
-//                .reduceGroup(new ReduceResults());
+        DataSet<WikiSimRedirectResult> res = wikiSim
+                // replace page names with redirect target
+                // page A
+                .coGroup(redirects)
+                .where(pageA)
+                .equalTo(redirectSource)
+                .with(new ReplaceRedirects(pageA))
+                        // page B
+
+                .coGroup(redirects)
+                .where(pageB)
+                .equalTo(redirectSource)
+                .with(new ReplaceRedirects(pageB))
+                        // sum duplicated tuples
+                .groupBy(hash)
+                .reduceGroup(new ReduceResults());
 
         if (outputFilename.equals("print")) {
             res.print();
