@@ -5,9 +5,6 @@ import de.tuberlin.dima.schubotz.cpa.histogram.Histogram;
 import de.tuberlin.dima.schubotz.cpa.linkgraph.LinksExtractor;
 import org.junit.Test;
 
-/**
- * Created by malteschwarzer on 15.10.14.
- */
 public class CalculationTest {
     @Test
     public void TestLocalExecution() throws Exception {

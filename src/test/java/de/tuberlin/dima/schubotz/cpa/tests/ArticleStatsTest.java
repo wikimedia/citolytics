@@ -10,9 +10,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.util.Scanner;
 
-/**
- * Created by malteschwarzer on 27.01.15.
- */
+
 public class ArticleStatsTest {
     @Test
     public void LocalExecution() throws Exception {

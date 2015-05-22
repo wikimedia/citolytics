@@ -1,16 +1,16 @@
 package de.tuberlin.dima.schubotz.cpa.clickstream;
 
+import com.google.common.collect.Sets;
 import de.tuberlin.dima.schubotz.cpa.evaluation.BetterEvaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.better.SeeAlsoInputMapper;
 import de.tuberlin.dima.schubotz.cpa.evaluation.operators.BetterSeeAlsoLinkExistsFilter;
 import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.common.functions.CoGroupFunction;
-import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
@@ -18,9 +18,45 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Created by malteschwarzer on 09.05.15.
+ * Using Wikipedia ClickStream data set as relevance judgements.
+ * <p/>
+ * General information: http://meta.wikimedia.org/wiki/Research:Wikipedia_clickstream
+ * Download: http://figshare.com/articles/Wikipedia_Clickstream/1305770
+ * Examples: http://ewulczyn.github.io/Wikipedia_Clickstream_Getting_Started/
+ * <p/>
+ * Fields: rev_id, curr_id, n, prev_title, curr_title, type
  */
 public class ClickStream {
+    public final static HashSet<String> filterNameSpaces = Sets.newHashSet(
+            "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
+            "other-bing", "other-facebook", "other-twitter", "other-other"
+    );
+
+    public final static String filterType = "link";
+
+    public static DataSet<Tuple3<String, String, Integer>> getClickStreamDataSet(ExecutionEnvironment env, String filename) {
+        return env.readTextFile(filename)
+                .flatMap(new FlatMapFunction<String, Tuple3<String, String, Integer>>() {
+                    @Override
+                    public void flatMap(String s, Collector<Tuple3<String, String, Integer>> out) throws Exception {
+                        String[] cols = s.split(Pattern.quote("\t"));
+
+                        if (cols.length == 6) {
+                            if (filterType.equals(cols[5]) && !filterNameSpaces.contains(cols[3])) {
+                                out.collect(new Tuple3<>(
+                                        cols[3],
+                                        cols[4],
+                                        cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2])
+                                ));
+                            }
+                        } else {
+                            throw new Exception("Wrong column length: " + cols.length + "; " + Arrays.toString(cols));
+                        }
+                    }
+                })
+                ;
+    }
+
     public static void main(String[] args) throws Exception {
 
         // set up the execution environment
@@ -34,27 +70,8 @@ public class ClickStream {
         String linksFilename = args[2];
         String outputFilename = args[3];
 
-        // prev_id, curr_id, n, prev_title, curr_title
-        DataSet<Tuple5<Integer, Integer, Integer, String, String>> clickStream = env.readTextFile(args[0])
-
-                .map(new MapFunction<String, Tuple5<Integer, Integer, Integer, String, String>>() {
-                    @Override
-                    public Tuple5<Integer, Integer, Integer, String, String> map(String s) throws Exception {
-                        String[] cols = s.split(Pattern.quote("\t"));
-
-                        if (cols.length == 5) {
-                            return new Tuple5<>(
-                                    cols[0].isEmpty() ? 0 : Integer.valueOf(cols[0]),
-                                    cols[1].isEmpty() ? 0 : Integer.valueOf(cols[1]),
-                                    cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2]),
-                                    cols[3],
-                                    cols[4]
-                            );
-                        } else {
-                            throw new Exception("Wrong column length: " + cols.length + "; " + Arrays.toString(cols));
-                        }
-                    }
-                });
+        // prev_title, curr_title, n
+        DataSet<Tuple3<String, String, Integer>> clickStream = getClickStreamDataSet(env, args[0]);
 
         DataSet<Tuple2<String, ArrayList<String>>> seeAlso = env.readTextFile(args[1])
                 .map(new SeeAlsoInputMapper());
@@ -68,12 +85,12 @@ public class ClickStream {
                 .with(new BetterSeeAlsoLinkExistsFilter())
                 .coGroup(clickStream)
                 .where(0)
-                .equalTo(3)
-                .with(new CoGroupFunction<Tuple2<String, ArrayList<String>>, Tuple5<Integer, Integer, Integer, String, String>, Tuple3<String, String, Integer>>() {
+                .equalTo(0)
+                .with(new CoGroupFunction<Tuple2<String, ArrayList<String>>, Tuple3<String, String, Integer>, Tuple3<String, String, Integer>>() {
                     @Override
-                    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> seeAlso, Iterable<Tuple5<Integer, Integer, Integer, String, String>> clickStream, Collector<Tuple3<String, String, Integer>> out) throws Exception {
+                    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> seeAlso, Iterable<Tuple3<String, String, Integer>> clickStream, Collector<Tuple3<String, String, Integer>> out) throws Exception {
                         Iterator<Tuple2<String, ArrayList<String>>> seeAlsoIterator = seeAlso.iterator();
-                        Iterator<Tuple5<Integer, Integer, Integer, String, String>> clickStreamIterator = clickStream.iterator();
+                        Iterator<Tuple3<String, String, Integer>> clickStreamIterator = clickStream.iterator();
 
                         if (seeAlsoIterator.hasNext()) {
                             Tuple2<String, ArrayList<String>> seeAlsoRecord = seeAlsoIterator.next();
@@ -83,9 +100,9 @@ public class ClickStream {
                             HashMap<String, Integer> clickStreamMap = new HashMap<>();
 
                             while (clickStreamIterator.hasNext()) {
-                                Tuple5<Integer, Integer, Integer, String, String> clickStreamRecord = clickStreamIterator.next();
+                                Tuple3<String, String, Integer> clickStreamRecord = clickStreamIterator.next();
 
-                                clickStreamMap.put((String) clickStreamRecord.getField(4), (Integer) clickStreamRecord.getField(2));
+                                clickStreamMap.put((String) clickStreamRecord.getField(1), (Integer) clickStreamRecord.getField(2));
                             }
 
                             for (String link : linkList) {

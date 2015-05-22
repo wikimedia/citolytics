@@ -1,14 +1,14 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.clickstream.ClickStream;
+import de.tuberlin.dima.schubotz.cpa.clickstream.ClickStreamEvaluation;
+import de.tuberlin.dima.schubotz.cpa.clickstream.ClickStreamStats;
 import de.tuberlin.dima.schubotz.cpa.evaluation.BetterEvaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.Evaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.better.ResultCoGrouper;
 import de.tuberlin.dima.schubotz.cpa.evaluation.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.cpa.evaluation.utils.EvaluationMeasures;
 import de.tuberlin.dima.schubotz.cpa.histogram.EvaluationHistogram;
-import de.tuberlin.dima.schubotz.cpa.redirects.SeeAlsoRedirects;
-import de.tuberlin.dima.schubotz.cpa.redirects.WikiSimRedirects;
 import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.cpa.types.list.StringListValue;
 import junit.framework.Assert;
@@ -61,26 +61,28 @@ public class EvaluationTest {
     }
 
     @Test
-    public void TestWikiSimRedirects() throws Exception {
-        WikiSimRedirects.main(
+    public void TestClickStreamEvaluation() throws Exception {
+        ClickStreamEvaluation.main(
                 new String[]{
                         "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
-                        "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath(),
-                        "print"
+                        "file://" + getClass().getClassLoader().getResources("2015_02_clickstream_preview.tsv").nextElement().getPath(),
+                        "print",
+                        "print",
+                        "nofilter"
                 }
         );
     }
 
     @Test
-    public void TestSeeAlsoRedirects() throws Exception {
-        SeeAlsoRedirects.main(
+    public void TestClickStreamStats() throws Exception {
+        ClickStreamStats.main(
                 new String[]{
-                        "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
-                        "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath(),
+                        "file://" + getClass().getClassLoader().getResources("2015_02_clickstream_preview.tsv").nextElement().getPath(),
                         "print"
                 }
         );
     }
+
     @Test
     public void HistogramTest() throws Exception {
 

@@ -12,7 +12,14 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 public class WikiSimGroupReducer implements GroupReduceFunction<Tuple3<String, String, Double>, Tuple2<String, WikiSimComparableResultList<Double>>> {
-    int maxQueueSize = 20;
+    public int maxQueueSize = 20;
+
+    public WikiSimGroupReducer() {
+    }
+
+    public WikiSimGroupReducer(int maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
 
     @Override
     public void reduce(Iterable<Tuple3<String, String, Double>> in, Collector<Tuple2<String, WikiSimComparableResultList<Double>>> out) throws Exception {

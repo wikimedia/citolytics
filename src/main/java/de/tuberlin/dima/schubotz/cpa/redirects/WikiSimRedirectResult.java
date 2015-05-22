@@ -2,8 +2,8 @@ package de.tuberlin.dima.schubotz.cpa.redirects;
 
 import de.tuberlin.dima.schubotz.cpa.types.list.DoubleListValue;
 import org.apache.flink.api.java.tuple.Tuple6;
-import org.apache.flink.types.DoubleValue;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class WikiSimRedirectResult extends Tuple6<
@@ -32,18 +32,35 @@ public class WikiSimRedirectResult extends Tuple6<
         setField(Long.valueOf(cols[3]), 3);
         setField(Integer.valueOf(cols[4]), 4);
 
+        // ArrayList
+        //setField(StringUtils.getDoubleListFromString(cols[5], delimiterPattern), 5);
+
         // DoubleListValue
-        String[] dbs = cols[5].split(delimiterPattern);
-        DoubleListValue list = new DoubleListValue();
-        for (String db : dbs) {
-            list.add(new DoubleValue(Double.valueOf(db)));
-        }
-        setField(list, 5);
+        setField(DoubleListValue.valueOf(cols[5], delimiterPattern), 5);
     }
+
 
     public void sumWith(WikiSimRedirectResult otherResult) throws Exception {
         setField(((Long) otherResult.getField(3)) + f3, 3); // distance
         setField(((Integer) otherResult.getField(4)) + f4, 4); // count
-        setField(DoubleListValue.sum((DoubleListValue) otherResult.getField(5), f5), 5);
+
+        setField(DoubleListValue.sum(f5, (DoubleListValue) otherResult.getField(5)), 5);
+//        setField(sum((ArrayList<Double>) otherResult.getField(5), f5), 5);
+    }
+
+    dd
+
+    public static ArrayList<Double> sum(ArrayList<Double> firstList, ArrayList<Double> secondList) throws Exception {
+        if (firstList.size() != secondList.size()) {
+            throw new Exception("Cannot sum lists with different size.");
+        }
+
+        int i = 0;
+        for (double firstValue : firstList) {
+            firstList.set(i, firstValue + secondList.get(i));
+            i++;
+        }
+
+        return firstList;
     }
 }

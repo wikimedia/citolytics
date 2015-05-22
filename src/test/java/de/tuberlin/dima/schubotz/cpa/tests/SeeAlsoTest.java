@@ -1,20 +1,14 @@
 package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.SeeAlsoExtractor;
-import de.tuberlin.dima.schubotz.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.cpa.types.WikiDocument;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-/**
- * Created by malteschwarzer on 13.11.14.
- */
+
 public class SeeAlsoTest {
 
     @Test

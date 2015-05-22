@@ -20,6 +20,8 @@ import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
 
+import java.util.ArrayList;
+
 /**
  * @author rob
  */
@@ -52,5 +54,14 @@ public class StringUtils {
             h = 31 * h + string.charAt(i);
         }
         return h;
+    }
+
+    public static ArrayList<Double> getDoubleListFromString(String delimitedString, String delimiterPattern) {
+        ArrayList<Double> list = new ArrayList<>();
+        String[] dbs = delimitedString.split(delimiterPattern);
+        for (String db : dbs) {
+            list.add(Double.valueOf(db));
+        }
+        return list;
     }
 }

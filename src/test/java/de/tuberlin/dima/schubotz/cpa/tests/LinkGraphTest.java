@@ -3,9 +3,7 @@ package de.tuberlin.dima.schubotz.cpa.tests;
 import de.tuberlin.dima.schubotz.cpa.linkgraph.LinkGraph;
 import org.junit.Test;
 
-/**
- * Created by malteschwarzer on 04.12.14.
- */
+
 public class LinkGraphTest {
     @Test
     public void TestLocal() throws Exception {
