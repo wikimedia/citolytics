@@ -51,7 +51,7 @@ public class EvaluationTest {
     public void TestClickStream() throws Exception {
         ClickStream.main(
                 new String[]{
-                        "file://" + getClass().getClassLoader().getResources("clickstream_preview.tsv").nextElement().getPath(),
+                        "file://" + getClass().getClassLoader().getResources("2015_02_clickstream_preview.tsv").nextElement().getPath(),
                         "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
                         "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath(),
 
