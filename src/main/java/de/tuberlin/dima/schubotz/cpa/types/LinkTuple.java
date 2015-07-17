@@ -34,6 +34,10 @@ public class LinkTuple extends Tuple2<String, String> {
         return getFirst().length() > 0 && getSecond().length() > 0 && !getFirst().equals("\\") && !getSecond().equals("\\");
     }
 
+    public static boolean isValid(String first, String second) {
+        return first.length() > 0 && second.length() > 0 && !first.equals("\\") && !second.equals("\\");
+    }
+
     public LinkTuple getTwin() {
         return new LinkTuple(getSecond(), getFirst());
     }

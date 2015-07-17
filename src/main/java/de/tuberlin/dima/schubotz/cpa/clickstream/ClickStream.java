@@ -1,6 +1,5 @@
 package de.tuberlin.dima.schubotz.cpa.clickstream;
 
-import com.google.common.collect.Sets;
 import de.tuberlin.dima.schubotz.cpa.evaluation.BetterEvaluation;
 import de.tuberlin.dima.schubotz.cpa.evaluation.better.SeeAlsoInputMapper;
 import de.tuberlin.dima.schubotz.cpa.evaluation.operators.BetterSeeAlsoLinkExistsFilter;
@@ -12,6 +11,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.shaded.com.google.common.collect.Sets;
 import org.apache.flink.util.Collector;
 
 import java.util.*;

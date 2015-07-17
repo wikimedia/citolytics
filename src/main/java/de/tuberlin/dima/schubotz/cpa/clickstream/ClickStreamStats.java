@@ -1,6 +1,5 @@
 package de.tuberlin.dima.schubotz.cpa.clickstream;
 
-import com.google.common.collect.Iterators;
 import de.tuberlin.dima.schubotz.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
@@ -9,6 +8,7 @@ import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.shaded.com.google.common.collect.Iterators;
 import org.apache.flink.util.Collector;
 
 public class ClickStreamStats {
@@ -37,7 +37,8 @@ public class ClickStreamStats {
 
         if (outputFilename.equals("print")) {
             output.print()
-                    .setParallelism(1);
+//                    .setParallelism(1)
+            ;
         } else {
             output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, "\t", FileSystem.WriteMode.OVERWRITE)
                     .setParallelism(1);

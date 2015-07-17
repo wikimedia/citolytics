@@ -299,13 +299,17 @@ public class WikiDocument {
                     int d = max(abs(w1 - w2), 1);
                     //recDistance.setValue(1 / (pow(d, α)));
 
-                    linkTuple.setFirst(outLink1.getKey());
-                    linkTuple.setSecond(outLink2.getKey());
-
-                    // Add result to collector
-                    if (linkTuple.isValid()) {
-                        collector.collect(new WikiSimResult(linkTuple, d));
+                    if (LinkTuple.isValid(outLink1.getKey(), outLink2.getKey())) {
+                        collector.collect(new WikiSimResult(outLink1.getKey(), outLink2.getKey(), d));
                     }
+
+//                    linkTuple.setFirst(outLink1.getKey());
+//                    linkTuple.setSecond(outLink2.getKey());
+//
+//                    // Add result to collector
+//                    if (linkTuple.isValid()) {
+//                        collector.collect(new WikiSimResult(linkTuple, d));
+//                    }
                 }
             }
         }

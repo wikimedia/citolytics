@@ -36,9 +36,10 @@ public class Histogram {
             output.print();
         } else {
             output.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
+            env.execute("WikiHistogram (ns, articlecount, linkcount, linkpairs)");
         }
 
-        env.execute("WikiHistogram (ns, articlecount, linkcount, linkpairs)");
+
     }
 
 

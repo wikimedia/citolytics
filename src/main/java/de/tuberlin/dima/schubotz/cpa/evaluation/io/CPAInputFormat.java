@@ -1,7 +1,7 @@
 package de.tuberlin.dima.schubotz.cpa.evaluation.io;
 
-import com.google.common.primitives.Ints;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.shaded.com.google.common.primitives.Ints;
 
 import java.io.IOException;
 import java.util.Arrays;

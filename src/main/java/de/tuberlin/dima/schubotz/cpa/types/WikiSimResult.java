@@ -1,7 +1,7 @@
 package de.tuberlin.dima.schubotz.cpa.types;
 
 import de.tuberlin.dima.schubotz.cpa.types.list.DoubleListValue;
-import org.apache.flink.api.java.tuple.Tuple5;
+import org.apache.flink.api.java.tuple.Tuple6;
 
 /**
  * Result for WikiSim
@@ -16,9 +16,10 @@ import org.apache.flink.api.java.tuple.Tuple5;
  * --  7 Long   maxDist #
  * -- 8 Double median  #
  */
-public class WikiSimResult extends Tuple5<
+public class WikiSimResult extends Tuple6<
         Long, // hash
-        LinkTuple,
+        String, // page A
+        String, // page B
         Long, // distance
         Integer, // count
 //        Long, // distSquared
@@ -30,33 +31,46 @@ public class WikiSimResult extends Tuple5<
     private final boolean enableDistSquared = false;
 //    private final boolean enableCount = false;
 
-    private final static int CPA_LIST_KEY = 4;
-    private final static int MAX_KEY = 6; // disabled
-    private final static int MIN_KEY = 5; // disabled
-    private final static int DISTSQUARED_KEY = 4; // disabled
-    private final static int COUNT_KEY = 3;
-    private final static int DISTANCE_KEY = 2;
+    private final static int CPA_LIST_KEY = 5;
+    private final static int MAX_KEY = 7; // disabled
+    private final static int MIN_KEY = 6; // disabled
+    private final static int DISTSQUARED_KEY = 5; // disabled
+    private final static int COUNT_KEY = 4;
+    private final static int DISTANCE_KEY = 3;
 
     public WikiSimResult() {
-
+        // Flink needs empty constructor
     }
 
     public WikiSimResult(LinkTuple link, int distance) {
 
         setField(link.getHash(), 0);
-        setField(link, 1);
+        setField(link.getFirst(), 1);
+        setField(link.getSecond(), 2);
+
+//        setField(link, 1);
 
         setDistance(distance);
-        setCount(1);
+        init();
+    }
 
+    public WikiSimResult(String pageA, String pageB, int distance) {
+
+        setField(LinkTuple.getHash(pageA, pageB), 0);
+        setField(pageA, 1);
+        setField(pageB, 2);
+
+        setDistance(distance);
+        init();
+    }
+
+    public void init() {
+        setCount(1);
         setDistSquared(0);
         setMin(0);
         setMax(0);
-
         setMedian(.0);
-
         setField(new DoubleListValue(), CPA_LIST_KEY);
-
     }
 
     public void setDistance(long distance) {
@@ -77,6 +91,10 @@ public class WikiSimResult extends Tuple5<
             setField(distSquared, DISTSQUARED_KEY);
     }
 
+    public void setCPA(DoubleListValue cpa) {
+        setField(cpa, CPA_LIST_KEY);
+    }
+
     public void setCPA(double[] cpa) {
         setField(DoubleListValue.valueOf(cpa), CPA_LIST_KEY);
     }
@@ -95,6 +113,14 @@ public class WikiSimResult extends Tuple5<
 //        setField(median, 8);
     }
 
+    public long getHash() {
+        return getField(0);
+    }
+
+//    public LinkTuple getLinkTuple() {
+//        return getField(1);
+//    }
+
     public long getDistance() {
         return getField(DISTANCE_KEY);
     }
@@ -108,6 +134,10 @@ public class WikiSimResult extends Tuple5<
             return getField(DISTSQUARED_KEY);
         else
             return 0;
+    }
+
+    public DoubleListValue getCPA() {
+        return getField(CPA_LIST_KEY);
     }
 
     public double getCPA(int alphaKey) {

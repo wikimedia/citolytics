@@ -3,6 +3,9 @@ package de.tuberlin.dima.schubotz.cpa.tests;
 
 import de.tuberlin.dima.schubotz.cpa.redirects.SeeAlsoRedirects;
 import de.tuberlin.dima.schubotz.cpa.redirects.WikiSimRedirects;
+import de.tuberlin.dima.schubotz.cpa.redirects.WikiSimRedirectsResult2;
+import de.tuberlin.dima.schubotz.cpa.types.LinkTuple;
+import de.tuberlin.dima.schubotz.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.cpa.types.list.DoubleListValue;
 import de.tuberlin.dima.schubotz.cpa.utils.StringUtils;
 import org.apache.flink.types.DoubleValue;
@@ -44,6 +47,20 @@ public class RedirectTest {
                         "print"
                 }
         );
+    }
+
+    @Test
+    public void TestResultConstructor() {
+        WikiSimResult r1 = new WikiSimResult(new LinkTuple("Page A", "Page B"), 99);
+        r1.setCPA(new double[]{0.1, 0.5, 1.5, 24.5, 88});
+        r1.setDistSquared(500);
+
+        System.out.println("r1 = " + r1);
+
+        WikiSimRedirectsResult2 r2 = new WikiSimRedirectsResult2(r1);
+
+        System.out.println("r2 = " + r2);
+
     }
 
     @Test

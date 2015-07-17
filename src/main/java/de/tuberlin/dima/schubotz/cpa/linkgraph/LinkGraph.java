@@ -111,7 +111,8 @@ public class LinkGraph {
         }).withBroadcastSet(linkTupleList, "linkTupleList");
 
         if (outputFilename.equals("print")) {
-            result.print().setParallelism(1);
+            result.print()
+            ;
         } else {
             result.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
         }

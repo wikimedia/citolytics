@@ -42,16 +42,16 @@ public class WikiSimRedirects {
                 .coGroup(redirects)
                 .where(pageA)
                 .equalTo(redirectSource)
-                .with(new ReplaceRedirects(pageA))
+                .with(new ReplaceRedirectsSingle(pageA))
                         // page B
 
                 .coGroup(redirects)
                 .where(pageB)
                 .equalTo(redirectSource)
-                .with(new ReplaceRedirects(pageB))
+                .with(new ReplaceRedirectsSingle(pageB))
                         // sum duplicated tuples
                 .groupBy(hash)
-                .reduceGroup(new ReduceResults());
+                .reduceGroup(new ReduceResultsSingle());
 
         if (outputFilename.equals("print")) {
             res.print();

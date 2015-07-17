@@ -1,0 +1,47 @@
+<page>
+    <title>Source A</title>
+    <ns>0</ns>
+    <id>11858</id>
+    <revision>
+        <id>518833992</id>
+        <parentid>511689418</parentid>
+        <timestamp>2012-10-20T06:12:35Z</timestamp>
+        <contributor>
+            <username>M0rphzone</username>
+            <id>14664094</id>
+        </contributor>
+        <comment>Redirected to main topic</comment>
+        <text xml:space="preserve">
+
+          egaergerg  [[Foo]] aergearg
+            [[Bar]] egerg
+            argaerg reag aer reagear [[Redirect article]]
+        </text>
+        <sha1>k77e50uxik162v2pjys615dq2kjyehb</sha1>
+        <model>wikitext</model>
+        <format>text/x-wiki</format>
+    </revision>
+</page>
+<page>
+<title>Source B</title>
+<ns>0</ns>
+<id>11858</id>
+<revision>
+    <id>518833992</id>
+    <parentid>511689418</parentid>
+    <timestamp>2012-10-20T06:12:35Z</timestamp>
+    <contributor>
+        <username>M0rphzone</username>
+        <id>14664094</id>
+    </contributor>
+    <comment>Redirected to main topic</comment>
+    <text xml:space="preserve">
+
+            [[Foo]] aergaer egraerg aer erg aerg  aerg
+            [[Bar]] eragerg [[Redirect article 2]]
+        </text>
+    <sha1>k77e50uxik162v2pjys615dq2kjyehb</sha1>
+    <model>wikitext</model>
+    <format>text/x-wiki</format>
+</revision>
+</page>
