@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 @Combinable
-public class calculateCPA extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
+public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
 
     private int reducerThreshold;
     private int combinerThreshold;

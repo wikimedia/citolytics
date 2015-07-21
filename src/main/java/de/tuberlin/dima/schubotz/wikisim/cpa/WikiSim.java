@@ -17,8 +17,8 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
+import de.tuberlin.dima.schubotz.wikisim.cpa.operators.CPAReducer;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
-import de.tuberlin.dima.schubotz.wikisim.cpa.operators.calculateCPA;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
 import de.tuberlin.dima.schubotz.wikisim.redirects.ReduceResults;
@@ -34,16 +34,35 @@ import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.core.fs.FileSystem;
 
 /**
- * Run with flink run -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim INPUTFILE OUTPUTFILE [alpha] [reducerThreshold] [combinerThreshold] [format] [redirects-file]
+ * Flink job for computing CPA results depended on CPI alpha values.
+ *
+ * Arguments:
+ * 0 = Wikipedia XML Dump (hdfs)
+ * 1 = Output filename (hdfs)
+ * 2 = CPI alpha values, each value is represented by a separate column in the output (comma separated; e.g. 0.5,1.0,1.5)
+ * 3 = Reducer threshold: Discard records with lower number of co-citations (default: 1)
+ * 4 = Combiner threshold: Discard records with lower number of co-citations (default: 1)
+ * 5 = Format of Wikipedia XML Dump (default: 2013; set to "2006" for older dumps)
+ * 6 = Resolve redirects? Set path to redirects set (default: n)
+ *
  */
 public class WikiSim {
     public static String jobName = "WikiSim";
 
+    public static String getUsage() {
+        return "Usage: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] [WIKI-VERSION] [REDIRECTS-DATESET]";
+    }
+
+    /**
+     * Executes Flink job
+     *
+     * @param args {input, output, alpha, reducerThreshold, combinerThreshold, wiki-format, redirects}
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         // set up the execution environment
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
 
         // Bug fix (heartbeat bug)
         // https://issues.apache.org/jira/browse/FLINK-2299
@@ -55,41 +74,37 @@ public class WikiSim {
         // ---
 
         if (args.length <= 1) {
-            System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("Error: Input/output parameters missing!");
+            System.err.println(WikiSim.getUsage());
             System.exit(1);
         }
 
+        // Read arguments
         String inputFilename = args[0];
         String outputFilename = args[1];
 
-        String alpha = ((args.length > 2) ? args[2] : "1.5");
-        String reducerThreshold = ((args.length > 3) ? args[3] : "1");
-        String combinerThreshold = ((args.length > 4) ? args[4] : "1");
         boolean redirected = ((args.length > 6 && !args[6].equalsIgnoreCase("n")) ? true : false);
 
+        // Configuration for 2nd order functions
         Configuration config = new Configuration();
+        config.setString("alpha", ((args.length > 2) ? args[2] : "1.5"));
+        config.setInteger("reducerThreshold", (args.length > 3) ? Integer.valueOf(args[3]) : 1);
+        config.setInteger("combinerThreshold", (args.length > 4) ? Integer.valueOf(args[4]) : 1);
 
-        config.setInteger("reducerThreshold", Integer.valueOf(reducerThreshold));
-        config.setInteger("combinerThreshold", Integer.valueOf(combinerThreshold));
-        config.setString("alpha", alpha);
         config.setBoolean("median", true);
         config.setBoolean("wiki2006", (args.length > 5 && args[5].equals("2006") ? true : false));
 
+        // Read Wikipedia XML Dump
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Calculate results
         DataSet<WikiSimResult> wikiSimResults = text.flatMap(new DocumentProcessor())
                 .withParameters(config)
-                .groupBy(0) // Group by LinkTuple
-                .reduceGroup(new calculateCPA())
+                .groupBy(0) // Group by LinkTuple.hash()
+                .reduceGroup(new CPAReducer())
+                .withParameters(config);
 
-                .withParameters(config)
-
-                // reduce -> Median
-                ;
-
-        // Merge redirects
+        // Resolve redirects
         if (redirected) {
             jobName += " with redirects";
 
@@ -100,6 +115,15 @@ public class WikiSim {
         }
     }
 
+    /**
+     * Write output to CSV file or print to console.
+     *
+     * @param env
+     * @param dataSet
+     * @param outputFilename
+     * @param jobName
+     * @throws Exception
+     */
     public static void writeOutput(ExecutionEnvironment env, DataSet dataSet, String outputFilename, String jobName) throws Exception {
         if (outputFilename.equals("print")) {
             dataSet.print();
@@ -109,6 +133,17 @@ public class WikiSim {
         }
     }
 
+    /**
+     * Resolve Wikipedia redirects in results
+     * <p/>
+     * Wikipedia uses inconsistent internal links, therefore, we need to check each result record
+     * for redirects, map redirects to their targets and sum up resulting duplicates.
+     *
+     * @param env
+     * @param wikiSimResults
+     * @param filename
+     * @return Result set with resolved redirects
+     */
     public static DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String filename) {
         // fields
         int hash = 0;
@@ -120,7 +155,6 @@ public class WikiSim {
         DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, filename);
 
         return wikiSimResults
-
                 // replace page names with redirect target
                 // page A
                 .coGroup(redirects)
@@ -137,7 +171,5 @@ public class WikiSim {
                 .reduceGroup(new ReduceResults());
     }
 
-    public String getDescription() {
-        return "Parameters: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] [WIKI-VERSION]";
-    }
+
 }

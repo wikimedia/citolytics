@@ -24,6 +24,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
+/**
+ * Flink job for running a "See also"-based evaluation on CPA or MLT result sets.
+ * <p/>
+ * Arguments:
+ * 0 = RESULT-SET: path to results of CPA/CoCit or MLT
+ * 1 = OUTPUT: filename of results (HDFS or print)
+ * 2 = SEEALSO: path to extracted "See also"-links (output of wikisim.seealso.SeeAlsoExtractor)
+ * 3 = LINKS-SET: path to extracted wiki links for filtering existing links (output of wikisim.linkgraph.LinksExtractor)
+ * 4 = SCORE-FIELD: column of score field in result set (default: 8)
+ * 5 = PAGE-A-FIELD: column of page A in result set (default: 1)
+ * 6 = PAGE-B-FIELD: column of page B in result set (default: 2)
+ */
 public class SeeAlsoEvaluation {
     public static String outputFilename;
     public static String seeAlsoInputFilename;
@@ -130,13 +142,8 @@ public class SeeAlsoEvaluation {
                                     set);
                         }
                     });
-
-//        links.print();
         }
 
         return links;
-//        return env.fromElements(
-//                new Tuple2<>("QQQ", new HashSet<>(Arrays.asList(new String[]{"MLT link"})))
-//        );
     }
 }
