@@ -14,6 +14,7 @@ import java.util.Iterator;
  * first: results (T)
  * second: linkgraph (LinkResult)
  */
+@Deprecated
 public class LinkExistsFilter<T extends Tuple> implements CoGroupFunction<T, LinkResult, T> {
 
     private int link1key;

@@ -292,24 +292,21 @@ public class WikiDocument {
         // Loop all link pairs
         for (Map.Entry<String, Integer> outLink1 : outLinks) {
             for (Map.Entry<String, Integer> outLink2 : outLinks) {
-                int order = outLink1.getKey().compareTo(outLink2.getKey());
-                if (order > 0) {
+                // Check alphabetical order (A before B)
+                String pageA = outLink1.getKey();
+                String pageB = outLink2.getKey();
+                int order = pageA.compareTo(pageB);
+
+                if (order < 0) {
                     int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
                     int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
                     int d = max(abs(w1 - w2), 1);
                     //recDistance.setValue(1 / (pow(d, α)));
 
-                    if (LinkTuple.isValid(outLink1.getKey(), outLink2.getKey())) {
-                        collector.collect(new WikiSimResult(outLink1.getKey(), outLink2.getKey(), d));
+                    if (LinkTuple.isValid(pageA, pageB)) {
+                        collector.collect(new WikiSimResult(pageA, pageB, d));
                     }
 
-//                    linkTuple.setFirst(outLink1.getKey());
-//                    linkTuple.setSecond(outLink2.getKey());
-//
-//                    // Add result to collector
-//                    if (linkTuple.isValid()) {
-//                        collector.collect(new WikiSimResult(linkTuple, d));
-//                    }
                 }
             }
         }

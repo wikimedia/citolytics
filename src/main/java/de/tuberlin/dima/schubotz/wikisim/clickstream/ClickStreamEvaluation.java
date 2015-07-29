@@ -1,6 +1,5 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.WikiSimGroupReducer;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.WikiSimInputMapper;
@@ -35,7 +34,6 @@ public class ClickStreamEvaluation {
 
         if (args.length <= 3) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
             System.exit(1);
         }
 
@@ -165,7 +163,6 @@ public class ClickStreamEvaluation {
                     }
                 });
 
-
         if (outputFilename.equals("print")) {
             output.print();
             // aggregate
@@ -173,9 +170,11 @@ public class ClickStreamEvaluation {
         } else {
             output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
             output.reduce(new ClickStreamAggregateOutput()).writeAsCsv(outputAggregateFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
+
+            env.execute("ClickStreamEvaluation (Fields: Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]");
+
         }
 
-        env.execute("ClickStreamEvaluation (Fields: Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]");
     }
 
 }

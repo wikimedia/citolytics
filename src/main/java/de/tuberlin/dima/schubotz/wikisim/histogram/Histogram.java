@@ -1,14 +1,13 @@
 package de.tuberlin.dima.schubotz.wikisim.histogram;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
-import org.apache.flink.core.fs.FileSystem;
 
 /**
- * counts links & linkpairs
+ * Generate statistic from Wikipedia XML Dump. Counts links & link pairs
  */
 public class Histogram {
 
@@ -19,7 +18,7 @@ public class Histogram {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("USAGE: <input> <output>");
             System.exit(1);
         }
 
@@ -32,15 +31,9 @@ public class Histogram {
         DataSet<HistogramResult> output = text.flatMap(new HistogramMapper())
                 .reduce(new HistogramReducer());
 
-        if (outputFilename.equals("print")) {
-            output.print();
-        } else {
-            output.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
-            env.execute("WikiHistogram (ns, articlecount, linkcount, linkpairs)");
-        }
-
+        new WikiSimOutputWriter<HistogramResult>("WikiHistogram (ns, articlecount, linkcount, linkpairs)")
+                .asText()
+                .write(env, output, outputFilename);
 
     }
-
-
 }

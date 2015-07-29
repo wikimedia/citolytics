@@ -20,6 +20,8 @@ import java.util.List;
  * *
  * ResultRecords are not
  */
+
+@Deprecated
 public class MatchesCounterPlainResults<SORT extends Comparable> implements CoGroupFunction<EvaluationResult, Tuple3<String, String, SORT>, EvaluationResult> {
 
     int[] topKs; //= new int[]{10, 5, 1};

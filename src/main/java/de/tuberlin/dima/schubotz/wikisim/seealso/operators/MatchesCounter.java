@@ -13,6 +13,8 @@ import java.util.Iterator;
 /**
  * Join EvaluationResult set to EvaluationFinalResult, intersect results and count matches.
  */
+
+@Deprecated
 public class MatchesCounter implements CoGroupFunction<EvaluationResult, ListResult, EvaluationResult> {
 
     int[] topKs; //= new int[]{10, 5, 1};

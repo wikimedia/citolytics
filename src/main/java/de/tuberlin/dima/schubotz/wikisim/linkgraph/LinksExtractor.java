@@ -1,6 +1,5 @@
 package de.tuberlin.dima.schubotz.wikisim.linkgraph;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
@@ -30,7 +29,7 @@ public class LinksExtractor {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("USAGE: <wiki-xml-dump> <output>");
             System.exit(1);
         }
 

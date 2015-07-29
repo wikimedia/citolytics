@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.redirects;
+package de.tuberlin.dima.schubotz.wikisim.redirects.single;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import org.apache.commons.lang.StringUtils;
@@ -13,14 +13,14 @@ import java.util.regex.Pattern;
  * 2: Page B
  * 3: Everything else
  */
-public class WikiSimRedirectsResult2 extends Tuple4<Long, String, String, String> {
+public class WikiSimRedirectsResult extends Tuple4<Long, String, String, String> {
     public static final String delimiterPattern = Pattern.quote("|");
 
-    public WikiSimRedirectsResult2() {
+    public WikiSimRedirectsResult() {
         // Flink needs empty constructor
     }
 
-    public WikiSimRedirectsResult2(WikiSimResult result) {
+    public WikiSimRedirectsResult(WikiSimResult result) {
 
         setField(result.getHash(), 0);
         setField(result.f1, 1);
@@ -37,7 +37,7 @@ public class WikiSimRedirectsResult2 extends Tuple4<Long, String, String, String
         setField(fields, 3);
     }
 
-    public WikiSimRedirectsResult2(String delimitedLine) {
+    public WikiSimRedirectsResult(String delimitedLine) {
         String[] cols = delimitedLine.split(delimiterPattern, getArity());
 
         setField(Long.valueOf(cols[0]), 0);
@@ -46,7 +46,7 @@ public class WikiSimRedirectsResult2 extends Tuple4<Long, String, String, String
         setField(cols[3], 3); // rest of WikiSimResult
     }
 
-    public void sumWith(WikiSimRedirectsResult2 otherResult) throws Exception {
+    public void sumWith(WikiSimRedirectsResult otherResult) throws Exception {
 
         // sum rest of ResultSet
         String[] colsA = f3.split(delimiterPattern);

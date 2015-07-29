@@ -17,13 +17,13 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
+import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiOutputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.CPAReducer;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
 import de.tuberlin.dima.schubotz.wikisim.redirects.ReduceResults;
 import de.tuberlin.dima.schubotz.wikisim.redirects.ReplaceRedirects;
-import de.tuberlin.dima.schubotz.wikisim.redirects.WikiSimRedirects;
+import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
@@ -35,7 +35,7 @@ import org.apache.flink.core.fs.FileSystem;
 
 /**
  * Flink job for computing CPA results depended on CPI alpha values.
- *
+ * <p/>
  * Arguments:
  * 0 = Wikipedia XML Dump (hdfs)
  * 1 = Output filename (hdfs)
@@ -44,7 +44,6 @@ import org.apache.flink.core.fs.FileSystem;
  * 4 = Combiner threshold: Discard records with lower number of co-citations (default: 1)
  * 5 = Format of Wikipedia XML Dump (default: 2013; set to "2006" for older dumps)
  * 6 = Resolve redirects? Set path to redirects set (default: n)
- *
  */
 public class WikiSim {
     public static String jobName = "WikiSim";
@@ -112,6 +111,9 @@ public class WikiSim {
         } else {
             // Write undirected output
             writeOutput(env, wikiSimResults, outputFilename, jobName);
+//            new WikiSimOutputWriter<WikiSimResult>()
+//                    .setJobName(jobName)
+//                    .write(env, wikiSimResults, outputFilename);
         }
     }
 
@@ -128,7 +130,8 @@ public class WikiSim {
         if (outputFilename.equals("print")) {
             dataSet.print();
         } else {
-            dataSet.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+            //dataSet.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+            dataSet.write(new WikiOutputFormat<WikiSimResult>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
             env.execute(jobName);
         }
     }

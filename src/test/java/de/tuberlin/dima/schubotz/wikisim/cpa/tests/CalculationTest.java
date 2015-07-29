@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
+import de.tuberlin.dima.schubotz.wikisim.cpa.TestOutput;
 import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.TestUtils;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
@@ -19,6 +20,16 @@ public class CalculationTest {
         WikiSim.main(new String[]{inputFilename, outputFilename, "1.5,1.25,1,0.5,0", "1"});
     }
 
+    @Test
+    public void ValidateWikiSimOutput() throws Exception {
+
+        String inputFilename = "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath();
+        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
+        outputFilename = "print";
+
+        TestOutput.main(new String[]{inputFilename, outputFilename});
+    }
+
 
     @Test
     public void TestWiki2006() throws Exception {
@@ -35,8 +46,12 @@ public class CalculationTest {
     public void TestRedirectedExecution() throws Exception {
 
         String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiRedirectedLinks.xml").nextElement().getPath();
+
+//        inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath();
+
+
         String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-        outputFilename = "print";
+//        String outputFilename = "print";
 
         WikiSim.main(new String[]{inputFilename, outputFilename, "1.5,1.75", "0", "0", "n", "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath()});
     }

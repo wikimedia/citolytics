@@ -1,16 +1,18 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.shaded.com.google.common.collect.Iterators;
 import org.apache.flink.util.Collector;
 
+/**
+ * Flink Job for testing clickstream dataset.
+ */
 public class ClickStreamStats {
     public static void main(String[] args) throws Exception {
         // set up the execution environment
@@ -35,15 +37,10 @@ public class ClickStreamStats {
                 .aggregate(Aggregations.SUM, 0)
                 .and(Aggregations.SUM, 1);
 
-        if (outputFilename.equals("print")) {
-            output.print()
-//                    .setParallelism(1)
-            ;
-        } else {
-            output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, "\t", FileSystem.WriteMode.OVERWRITE)
-                    .setParallelism(1);
-        }
 
-        env.execute("ClickStream Stats");
+        new WikiSimOutputWriter<Tuple2<Integer, Integer>>("ClickStream Stats")
+                .setParallelism(1)
+                .write(env, output, outputFilename);
+
     }
 }

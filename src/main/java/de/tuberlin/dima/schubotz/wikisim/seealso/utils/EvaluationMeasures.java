@@ -5,6 +5,13 @@ import org.apache.commons.collections.ListUtils;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Implementation of several performance measures used by "See Also"-based evaluation.
+ * <p/>
+ * MAP: Mean Average Precision
+ * MRR: Mean Reciprocal Rank
+ * HRR: Harmonic Reciprocal Rank (harmonic modification of MRR)
+ */
 public class EvaluationMeasures {
 
     public static double getTopKScore(List<String> recommendedResults, List<String> correctResponseList) {

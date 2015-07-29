@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Created by malteschwarzer on 28.02.15.
  */
+@Deprecated
 public class CPAInputFormat extends GenericCsvDelimitedInputFormat<Tuple3<String, String, Double>> {
 
     // 01101

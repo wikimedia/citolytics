@@ -26,6 +26,9 @@ import org.apache.flink.util.Collector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Extracts links from Wikipedia documents, generates result records.
+ */
 public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult> {
 
     // WikiDump of 2006 does not contain namespace tags

@@ -16,6 +16,7 @@
  */
 package de.tuberlin.dima.schubotz.wikisim.cpa.utils;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
@@ -38,8 +39,8 @@ public class StringUtils {
     public static String unescapeEntities(String text) {
         CharSequenceTranslator iso = new LookupTranslator(EntityArrays.ISO8859_1_UNESCAPE());
         CharSequenceTranslator basic = new LookupTranslator(EntityArrays.BASIC_UNESCAPE());
-        CharSequenceTranslator html4 = new LookupTranslator(EntityArrays.HTML40_EXTENDED_UNESCAPE());
-        return html4.translate(iso.translate(basic.translate(text)));
+        //CharSequenceTranslator html4 = new LookupTranslator(EntityArrays.HTML40_EXTENDED_UNESCAPE());
+        return StringEscapeUtils.unescapeHtml4(iso.translate(basic.translate(text)));
     }
 
     public static String addCsvEnclosures(String value) {

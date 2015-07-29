@@ -1,16 +1,14 @@
 package de.tuberlin.dima.schubotz.wikisim.seealso;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple4;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.List;
@@ -33,7 +31,7 @@ public class SeeAlsoExtractor {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("Usage: [INPUT] [OUTPUT]");
             System.exit(1);
         }
 
@@ -61,13 +59,9 @@ public class SeeAlsoExtractor {
             }
         });
 
-        if (outputFilename.equals("print")) {
-            output.print();
-        } else {
-            output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
-        }
+        new WikiSimOutputWriter<Tuple4<String, String, Integer, Integer>>("SeeAlso extractor")
+                .write(env, output, outputFilename);
 
-        env.execute("WikiSeeAlsoExtractor");
     }
 
 

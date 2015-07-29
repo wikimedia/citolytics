@@ -5,7 +5,8 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
-import de.tuberlin.dima.schubotz.wikisim.redirects.WikiSimRedirects;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
+import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -13,7 +14,6 @@ import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.Collection;
@@ -25,6 +25,8 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 /**
+ * Extracts detailed link graph of link pairs (LinkTuples) from Wikipedia.
+ *
  * Input: List of LinkTuples
  * Output CSV: Article; LinkTuple; Distance
  */
@@ -110,13 +112,9 @@ public class LinkGraph {
             }
         }).withBroadcastSet(linkTupleList, "linkTupleList");
 
-        if (outputFilename.equals("print")) {
-            result.print()
-            ;
-        } else {
-            result.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
-        }
-        env.execute("LinkGraph");
+        new WikiSimOutputWriter<Tuple4<String, String, String, Integer>>("LinkGraph")
+                .setParallelism(1)
+                .write(env, result, "outputFilename");
 
     }
 

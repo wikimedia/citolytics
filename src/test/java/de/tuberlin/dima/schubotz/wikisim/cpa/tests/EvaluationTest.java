@@ -5,7 +5,6 @@ import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamStats;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.StringListValue;
-import de.tuberlin.dima.schubotz.wikisim.histogram.EvaluationHistogram;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.ResultCoGrouper;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
@@ -63,18 +62,6 @@ public class EvaluationTest {
     }
 
     @Test
-    public void HistogramTest() throws Exception {
-
-        EvaluationHistogram.main(new String[]{
-                "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
-                "print",
-                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath()
-
-//                ,"y"
-        });
-    }
-
-    @Test
     public void EvalCPATest() throws Exception {
 
         SeeAlsoEvaluation.main(new String[]{
@@ -83,6 +70,9 @@ public class EvaluationTest {
                 "print",
                 "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
                 "nofilter"
+                , "5"
+                , "1"
+                , "2"
 //                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
 //                ,"y"
         });
@@ -97,31 +87,11 @@ public class EvaluationTest {
                 "print",
                 "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
-                , "2"
                 , "0"
-                , "1"
-//                ,"y"
+                , "0"
+                , "0"
+                , "y"
         });
-    }
-
-    @Test
-    public void TestCSVInput2() throws Exception {
-        String inputCsvFilename = "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath();
-
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
-
-        DataSet<Tuple2<String, String>> res = env.readCsvFile(inputCsvFilename)
-                .fieldDelimiter('|')
-
-                        //.includeFields("0110001000")
-                .types(String.class, String.class);
-
-        res.print();
-
-        env.execute("CSV Input test");
-
     }
 
     @Deprecated

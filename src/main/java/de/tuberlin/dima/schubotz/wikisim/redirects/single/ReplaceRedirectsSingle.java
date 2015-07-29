@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.redirects;
+package de.tuberlin.dima.schubotz.wikisim.redirects.single;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import org.apache.flink.api.common.functions.CoGroupFunction;
@@ -7,7 +7,7 @@ import org.apache.flink.util.Collector;
 
 import java.util.Iterator;
 
-public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsResult2, Tuple2<String, String>, WikiSimRedirectsResult2> {
+public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsResult, Tuple2<String, String>, WikiSimRedirectsResult> {
     public int replaceField = 0;
     public int hashField = 0;
     public int pageAField = 1;
@@ -19,8 +19,8 @@ public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsR
     }
 
     @Override
-    public void coGroup(Iterable<WikiSimRedirectsResult2> a, Iterable<Tuple2<String, String>> redirect, Collector<WikiSimRedirectsResult2> out) throws Exception {
-        Iterator<WikiSimRedirectsResult2> iteratorA = a.iterator();
+    public void coGroup(Iterable<WikiSimRedirectsResult> a, Iterable<Tuple2<String, String>> redirect, Collector<WikiSimRedirectsResult> out) throws Exception {
+        Iterator<WikiSimRedirectsResult> iteratorA = a.iterator();
         Iterator<Tuple2<String, String>> iteratorRedirect = redirect.iterator();
         Tuple2<String, String> recordRedirect = null;
 
@@ -31,7 +31,7 @@ public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsR
 
         // Loop original records
         while (iteratorA.hasNext()) {
-            WikiSimRedirectsResult2 recordA = iteratorA.next();
+            WikiSimRedirectsResult recordA = iteratorA.next();
 
             if (recordRedirect != null) {
 

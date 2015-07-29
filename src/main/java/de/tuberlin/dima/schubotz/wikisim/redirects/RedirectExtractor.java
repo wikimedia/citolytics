@@ -1,6 +1,7 @@
-package de.tuberlin.dima.schubotz.wikisim.stats;
+package de.tuberlin.dima.schubotz.wikisim.redirects;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
+import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiOutputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.StringUtils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
@@ -15,7 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Extracts all redirects: Source | Target
+ * Extracts all redirects from Wikipedia XML Dump. Redirects are taken from <redirect>-tag.
+ * <p/>
+ * Output CSV: Source | Target
  */
 public class RedirectExtractor {
     public static void main(String[] args) throws Exception {
@@ -64,12 +67,14 @@ public class RedirectExtractor {
             }
         });
 
+
         if (outputListFilename.equals("print")) {
             res.print();
         } else {
-            res.writeAsCsv(outputListFilename, "\n", "|", FileSystem.WriteMode.OVERWRITE);
+            res.write(new WikiOutputFormat<Tuple2<String, String>>(outputListFilename), outputListFilename, FileSystem.WriteMode.OVERWRITE)
+                    .setParallelism(1);
+            env.execute("RedirectionExtractor");
         }
-        env.execute("RedirectionExtractor");
 
     }
 }

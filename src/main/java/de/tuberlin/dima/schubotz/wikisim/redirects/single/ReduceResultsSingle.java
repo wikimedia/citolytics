@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.redirects;
+package de.tuberlin.dima.schubotz.wikisim.redirects.single;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 //@RichGroupReduceFunction.Combinable
-public class ReduceResultsSingle extends RichGroupReduceFunction<WikiSimRedirectsResult2, WikiSimRedirectsResult2> {
+public class ReduceResultsSingle extends RichGroupReduceFunction<WikiSimRedirectsResult, WikiSimRedirectsResult> {
     public static final String delimiterPattern = Pattern.quote("|");
 
 //    @Override
@@ -19,20 +19,20 @@ public class ReduceResultsSingle extends RichGroupReduceFunction<WikiSimRedirect
 //    }
 
     @Override
-    public void reduce(Iterable<WikiSimRedirectsResult2> in, Collector<WikiSimRedirectsResult2> out) throws Exception {
+    public void reduce(Iterable<WikiSimRedirectsResult> in, Collector<WikiSimRedirectsResult> out) throws Exception {
         internalReduce(in, out);
     }
 
-    public void internalReduce(Iterable<WikiSimRedirectsResult2> in, Collector<WikiSimRedirectsResult2> out) throws Exception {
-        Iterator<WikiSimRedirectsResult2> iterator = in.iterator();
-        WikiSimRedirectsResult2 reducedRecord = null;
+    public void internalReduce(Iterable<WikiSimRedirectsResult> in, Collector<WikiSimRedirectsResult> out) throws Exception {
+        Iterator<WikiSimRedirectsResult> iterator = in.iterator();
+        WikiSimRedirectsResult reducedRecord = null;
 
         List<String> delimitedStrings = new ArrayList<>();
 
         // Build values
         while (iterator.hasNext()) {
 
-            WikiSimRedirectsResult2 currentRecord = iterator.next();
+            WikiSimRedirectsResult currentRecord = iterator.next();
 
 
             delimitedStrings.add(currentRecord.f3);

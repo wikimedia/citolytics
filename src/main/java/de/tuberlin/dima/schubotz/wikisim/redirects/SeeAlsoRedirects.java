@@ -1,6 +1,7 @@
 package de.tuberlin.dima.schubotz.wikisim.redirects;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
+import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiOutputFormat;
+import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
@@ -106,9 +107,9 @@ public class SeeAlsoRedirects {
         if (outputFilename.equals("print")) {
             seeAlso.print();
         } else {
-            seeAlso.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
-        }
+            seeAlso.write(new WikiOutputFormat(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
 
-        env.execute("SeeAlsoRedirects");
+            env.execute("SeeAlsoRedirects");
+        }
     }
 }

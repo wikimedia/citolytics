@@ -1,11 +1,7 @@
 package de.tuberlin.dima.schubotz.wikisim.seealso;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
-import de.tuberlin.dima.schubotz.wikisim.seealso.better.ResultCoGrouper;
-import de.tuberlin.dima.schubotz.wikisim.seealso.better.SeeAlsoInputMapper;
-import de.tuberlin.dima.schubotz.wikisim.seealso.better.WikiSimGroupReducer;
-import de.tuberlin.dima.schubotz.wikisim.seealso.better.WikiSimInputMapper;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
+import de.tuberlin.dima.schubotz.wikisim.seealso.better.*;
 import de.tuberlin.dima.schubotz.wikisim.seealso.operators.BetterLinkExistsFilter;
 import de.tuberlin.dima.schubotz.wikisim.seealso.operators.BetterSeeAlsoLinkExistsFilter;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResultList;
@@ -17,7 +13,6 @@ import org.apache.flink.api.java.tuple.Tuple11;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.fs.FileSystem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +45,7 @@ public class SeeAlsoEvaluation {
 
         if (args.length <= 3) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links>] [<score-field>] [<page-a-field>] [<page-b-field>] [<mlt-result>]");
             System.exit(1);
         }
 
@@ -63,6 +58,7 @@ public class SeeAlsoEvaluation {
         int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
         int fieldPageB = (args.length > 6 ? Integer.valueOf(args[6]) : 2);
 
+        boolean mltResultSet = (args.length > 7 && args[7].equalsIgnoreCase("y") ? true : false);
 
         Configuration config = new Configuration();
 
@@ -74,29 +70,39 @@ public class SeeAlsoEvaluation {
         DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
                 .map(new SeeAlsoInputMapper());
 
-        // WikiSim
-        DataSet<Tuple3<String, String, Double>> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
-                .flatMap(new WikiSimInputMapper())
-                .withParameters(config);
+        // Read result set
+        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimGroupedDataSet;
 
-        // LinkFilter
-        if (!linksInputFilename.isEmpty() && !linksInputFilename.equals("nofilter")) {
-            wikiSimDataSet = wikiSimDataSet
-                    .coGroup(getLinkDataSet(env, linksInputFilename))
-                    .where(0)
-                    .equalTo(0)
-                    .with(new BetterLinkExistsFilter());
+        // Are results MLT or CPA?
+        if (mltResultSet) {
 
-            seeAlsoDataSet = seeAlsoDataSet
-                    .coGroup(getLinkDataSet(env, linksInputFilename))
-                    .where(0)
-                    .equalTo(0)
-                    .with(new BetterSeeAlsoLinkExistsFilter());
+            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
+                    .flatMap(new MLTInputMapper());
+        } else {
+            // WikiSim
+            DataSet<Tuple3<String, String, Double>> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
+                    .flatMap(new WikiSimInputMapper())
+                    .withParameters(config);
+
+            // LinkFilter
+            if (!linksInputFilename.isEmpty() && !linksInputFilename.equals("nofilter")) {
+                wikiSimDataSet = wikiSimDataSet
+                        .coGroup(getLinkDataSet(env, linksInputFilename))
+                        .where(0)
+                        .equalTo(0)
+                        .with(new BetterLinkExistsFilter());
+
+                seeAlsoDataSet = seeAlsoDataSet
+                        .coGroup(getLinkDataSet(env, linksInputFilename))
+                        .where(0)
+                        .equalTo(0)
+                        .with(new BetterSeeAlsoLinkExistsFilter());
+            }
+
+            wikiSimGroupedDataSet = wikiSimDataSet
+                    .groupBy(0)
+                    .reduceGroup(new WikiSimGroupReducer());
         }
-
-        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimGroupedDataSet = wikiSimDataSet
-                .groupBy(0)
-                .reduceGroup(new WikiSimGroupReducer());
 
         // Evaluation
         DataSet<Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer>> output = seeAlsoDataSet
@@ -105,13 +111,9 @@ public class SeeAlsoEvaluation {
                 .equalTo(0)
                 .with(new ResultCoGrouper());
 
-        if (outputFilename.equals("print")) {
-            output.print();
-        } else {
-            output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
-        }
+        new WikiSimOutputWriter<Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer>>("SeeAlso evaluation (Fields: Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]")
+                .write(env, output, outputFilename);
 
-        env.execute("BetterEvaluation (Fields: Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]");
     }
 
 

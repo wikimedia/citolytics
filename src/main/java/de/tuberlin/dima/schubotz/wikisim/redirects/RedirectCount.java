@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.stats;
+package de.tuberlin.dima.schubotz.wikisim.redirects;
 
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -9,6 +9,9 @@ import org.apache.flink.core.fs.FileSystem;
 
 import java.util.regex.Pattern;
 
+/**
+ * Count redirects in redirects.out (RedirectExtractor)
+ */
 public class RedirectCount {
     public static void main(String[] args) throws Exception {
 
@@ -52,9 +55,10 @@ public class RedirectCount {
             res.print();
         } else {
             res.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
+
+            env.execute("RedirectCount");
         }
 
-        env.execute();
 
     }
 }

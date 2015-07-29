@@ -10,6 +10,8 @@ import org.apache.flink.api.java.tuple.Tuple3;
  * 3<String, String, SORT
  * 3<String, String, SORT>
  */
+
+@Deprecated
 public class ListMapper<SORT extends Comparable> implements MapFunction<Tuple3<String, String, SORT>, ResultRecord<SORT>> {
 
     @Override

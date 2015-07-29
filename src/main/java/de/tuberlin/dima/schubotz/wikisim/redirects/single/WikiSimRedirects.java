@@ -1,19 +1,22 @@
-package de.tuberlin.dima.schubotz.wikisim.redirects;
+package de.tuberlin.dima.schubotz.wikisim.redirects.single;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.core.fs.FileSystem;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-
+/**
+ * Resolves redirects in WikiSim output for debug and testing purpose.
+ * <p/>
+ * INFO: Use WikiSim with redirects on the fly. (wikisim.cpa.WikiSim)
+ */
 public class WikiSimRedirects {
     public static boolean debug = false;
-    public static DataSet<WikiSimRedirectsResult2> wikiSimDataSet = null;
+    public static DataSet<WikiSimRedirectsResult> wikiSimDataSet = null;
 
     // set up the execution environment
     public static void main(String[] args) throws Exception {
@@ -36,7 +39,7 @@ public class WikiSimRedirects {
 
         DataSet<Tuple2<String, String>> redirects = getRedirectsDataSet(env, args[1]);
 
-        DataSet<WikiSimRedirectsResult2> res = getWikiSimDataSet(env, args[0])
+        DataSet<WikiSimRedirectsResult> res = getWikiSimDataSet(env, args[0])
                 // replace page names with redirect target
                 // page A
                 .coGroup(redirects)
@@ -53,24 +56,20 @@ public class WikiSimRedirects {
                 .groupBy(hash)
                 .reduceGroup(new ReduceResultsSingle());
 
-        if (outputFilename.equals("print")) {
-            res.print();
-        } else {
-            res.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
-        }
+        new WikiSimOutputWriter<WikiSimRedirectsResult>("WikiSimRedirects (single)")
+                .write(env, res, outputFilename);
 
-        env.execute("WikiSimRedirects");
     }
 
-    public static DataSet<WikiSimRedirectsResult2> getWikiSimDataSet(ExecutionEnvironment env, String filename) {
+    public static DataSet<WikiSimRedirectsResult> getWikiSimDataSet(ExecutionEnvironment env, String filename) {
         if (debug && filename.equals("dataset") && wikiSimDataSet != null) {
             return wikiSimDataSet;
         } else {
             return env.readTextFile(filename)
-                    .map(new MapFunction<String, WikiSimRedirectsResult2>() {
+                    .map(new MapFunction<String, WikiSimRedirectsResult>() {
                         @Override
-                        public WikiSimRedirectsResult2 map(String s) throws Exception {
-                            return new WikiSimRedirectsResult2(s);
+                        public WikiSimRedirectsResult map(String s) throws Exception {
+                            return new WikiSimRedirectsResult(s);
                         }
                     });
         }

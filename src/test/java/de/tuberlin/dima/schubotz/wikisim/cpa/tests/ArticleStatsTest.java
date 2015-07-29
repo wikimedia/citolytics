@@ -3,8 +3,6 @@ package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStats;
-import de.tuberlin.dima.schubotz.wikisim.stats.RedirectCount;
-import de.tuberlin.dima.schubotz.wikisim.stats.RedirectExtractor;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -25,27 +23,6 @@ public class ArticleStatsTest {
         });
     }
 
-    @Test
-    public void RedirectionExecution() throws Exception {
-
-
-        RedirectExtractor.main(new String[]{
-                "file://" + getClass().getClassLoader().getResources("wikiRedirect.xml").nextElement().getPath(),
-                "print" //outputFilename
-        });
-    }
-
-    @Test
-    public void RedirectionCount() throws Exception {
-
-
-        RedirectCount.main(new String[]{
-                "file://" + getClass().getClassLoader().getResources("linkGraphInput.csv").nextElement().getPath(),
-                "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath(),
-
-                "print" //outputFilename
-        });
-    }
 
     @Test
     public void HeadlineTest() {

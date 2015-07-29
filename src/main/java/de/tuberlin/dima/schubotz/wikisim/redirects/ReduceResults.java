@@ -8,6 +8,9 @@ import org.apache.flink.util.Collector;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+/**
+ * Merge duplicates created by resolved redirects
+ */
 public class ReduceResults implements GroupReduceFunction<WikiSimResult, WikiSimResult> {
     public static final String delimiterPattern = Pattern.quote("|");
 

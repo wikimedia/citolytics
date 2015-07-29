@@ -1,6 +1,5 @@
 package de.tuberlin.dima.schubotz.wikisim.histogram;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.StringListValue;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import org.apache.flink.api.common.functions.CoGroupFunction;
@@ -21,6 +20,11 @@ import org.apache.flink.util.Collector;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+/**
+ * Performance Test for evaluation job.
+ */
+
+@Deprecated
 public class EvaluationHistogram {
     public static void main(String[] args) throws Exception {
 
@@ -29,7 +33,7 @@ public class EvaluationHistogram {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
-            System.err.println(new WikiSim().getDescription());
+            System.err.println("USAGE: <input> <output> <seealso-set>");
             System.exit(1);
         }
 

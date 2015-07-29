@@ -31,6 +31,10 @@ public class WikiSimInputMapper extends RichFlatMapFunction<String, Tuple3<Strin
 
 //        cols[fieldScore] = String.valueOf(100 * Math.random()).substring(0, 6);
 //        System.out.println(cols[fieldScore]);
+
+        if (cols.length < fieldScore)
+            return;
+
         try {
             String scoreString = cols[fieldScore];
 //            int maxLength = (scoreString.length() < MAX_SCORE_LENGTH) ? scoreString.length() : MAX_SCORE_LENGTH;
@@ -39,6 +43,9 @@ public class WikiSimInputMapper extends RichFlatMapFunction<String, Tuple3<Strin
 
             out.collect(new Tuple3<>(cols[fieldPageA], cols[fieldPageB], score));
             out.collect(new Tuple3<>(cols[fieldPageB], cols[fieldPageA], score));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // nothing
+            return;
         } catch (Exception e) {
             throw new Exception(fieldScore + "; " + cols.length + " === " + s + "\n" + Arrays.toString(cols) + "\n" + e.getMessage());
         }

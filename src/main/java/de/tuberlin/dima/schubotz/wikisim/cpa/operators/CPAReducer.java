@@ -17,16 +17,16 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.operators;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
-import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResultList;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.types.IntValue;
 import org.apache.flink.util.Collector;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
+/**
+ * Calculates CPA values, CoCit strength, distance, min. distance, max. distance for each result record.
+ */
 @Combinable
 public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
 
@@ -34,7 +34,6 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
     private int combinerThreshold;
 
     private double[] alpha;
-    private boolean calculateMedian = false;
 
     @Override
     public void open(Configuration parameter) throws Exception {
@@ -48,7 +47,6 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
 
         reducerThreshold = parameter.getInteger("reducerThreshold", 1);
         combinerThreshold = parameter.getInteger("combinerThreshold", 1);
-        calculateMedian = parameter.getBoolean("median", false);
     }
 
     @Override
@@ -71,9 +69,7 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
         long min = Long.MAX_VALUE;
         long max = 0;
         long distSquared = 0;
-        //WikiSimBigDecimal recDistα = new WikiSimBigDecimal(); //new BigDecimal(0);
         double[] recDistα = new double[alpha.length];
-        //DataTypes.ResultList distList = new DataTypes.ResultList();
 
         // Loop all record that belong to the given input key
         while (iterator.hasNext()) {
@@ -87,9 +83,6 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
             distance += d;
             cnt += c;
 
-            // Set min/max of distance
-            //DataTypes.ResultList currentRl = res.getField(7);
-
             // Record already reduced?
             if (res.getCount() > 1) {
                 distSquared += res.getDistSquared(); //(Long) res.getField(3);
@@ -100,8 +93,6 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
                 //recDistα.add(res.getCPA());
                 min = Math.min(min, res.getMin()); //(Integer) res.getField(5));
                 max = Math.max(max, res.getMax()); //(Integer) res.getField(6));
-
-                //distList = currentRl; //rec.getField(7, IntListValue.class); // Use existing distList
             } else {
                 min = Math.min(min, d);
                 max = Math.max(max, d);
@@ -110,10 +101,7 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
                 for (int i = 0; i < alpha.length; i++) {
                     recDistα[i] += Math.pow(d, -alpha[i]);
                 }
-                // Add distance to list
-                //distList.add(new IntValue(d));
             }
-
         }
 
         // Total count greater than threshold
@@ -128,39 +116,8 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
             res.setMin(min);
             res.setMax(max);
 
-            if (calculateMedian) {
-                //res.setField(distList, 7);
-                //res.setField(getMedian(distList), 8);
-            }
-
             resultCollector.collect(res);
         }
 
-    }
-
-    public static double getMedian(WikiSimResultList listv) {
-        //listv.toArray(v); // NOT WORKING - Bug?
-        Integer[] v = new Integer[listv.size()];
-        int i = 0;
-
-        for (IntValue vv : listv) {
-            v[i] = vv.getValue();
-            i++;
-        }
-
-        Arrays.sort(v);
-
-        if (v.length == 0) {
-            return 0;
-        } else if (v.length == 1) {
-            return v[0];
-        } else {
-            int middle = v.length / 2;
-            if (v.length % 2 == 1) {
-                return v[middle];
-            } else {
-                return (v[middle - 1] + v[middle]) / 2.0;
-            }
-        }
     }
 }

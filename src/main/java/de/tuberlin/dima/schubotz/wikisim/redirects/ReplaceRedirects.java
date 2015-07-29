@@ -39,10 +39,13 @@ public class ReplaceRedirects implements CoGroupFunction<WikiSimResult, Tuple2<S
                 // replace page in original record
                 recordA.setField(recordRedirect.getField(redirectTargetField), replaceField);
 
-                // check for alphabetic order
-                int order = ((String) recordA.getField(pageBField)).compareTo((String) recordA.getField(pageAField));
-                if (order < 0) {
-                    // correct order
+                // check for alphabetical order (A before B)
+                int order = ((String) recordA.getField(pageAField)).compareTo(
+                        (String) recordA.getField(pageBField));
+
+                // order is wrong (negative)
+                if (order > 0) {
+                    // set correct order
                     String tmp = recordA.getField(pageBField);
 
                     recordA.setField(recordA.getField(pageAField), pageBField);
@@ -51,6 +54,8 @@ public class ReplaceRedirects implements CoGroupFunction<WikiSimResult, Tuple2<S
                 // update hash
                 recordA.setField(LinkTuple.getHash((String) recordA.getField(pageAField), (String) recordA.getField(pageBField)), hashField);
             }
+
+            System.out.println(recordA.f1 + " -- " + recordA.f2 + " = " + recordA.f1.compareTo(recordA.f2));
 
             // Collect original record (independent of redirect)
             out.collect(recordA);

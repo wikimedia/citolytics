@@ -22,6 +22,7 @@ import java.util.List;
  * @param <SORT> input format (Tuple)
  */
 
+@Deprecated
 @Combinable
 public class ListBuilder<SORT extends Comparable> extends RichGroupReduceFunction<ResultRecord<SORT>, ListResult> {
     int maxListLength;

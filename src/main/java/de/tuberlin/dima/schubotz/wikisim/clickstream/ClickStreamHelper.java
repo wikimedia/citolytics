@@ -1,6 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.SeeAlsoInputMapper;
 import de.tuberlin.dima.schubotz.wikisim.seealso.operators.BetterSeeAlsoLinkExistsFilter;
@@ -10,7 +10,6 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.shaded.com.google.common.collect.Sets;
 import org.apache.flink.util.Collector;
 
@@ -121,12 +120,7 @@ public class ClickStreamHelper {
                 });
 
 
-        if (outputFilename.equals("print")) {
-            res.print();
-        } else {
-            res.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
-        }
-
-        env.execute("ClickStream Evaluation");
+        new WikiSimOutputWriter<Tuple3<String, String, Integer>>("ClickStream evaluation")
+                .write(env, res, outputFilename);
     }
 }
