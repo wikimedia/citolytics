@@ -74,7 +74,9 @@ public abstract class WikiSimJob<T extends Tuple> {
      */
     public void writeOutput() throws Exception {
 
-        if (outputFilename.equalsIgnoreCase("print")) {
+        if (outputFilename == null) {
+            throw new Exception("Output filename is not set.");
+        } else if (outputFilename.equalsIgnoreCase("print")) {
             result.print();
         } else {
             if (outputFilename.equalsIgnoreCase("local")) {

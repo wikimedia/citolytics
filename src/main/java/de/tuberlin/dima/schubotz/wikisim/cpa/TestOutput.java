@@ -18,6 +18,7 @@ public class TestOutput extends WikiSimJob<Tuple3<String, String, Integer>> {
     }
 
     public void plan() {
+        outputFilename = args[1];
         result = env
                 .readTextFile(args[0])
                 .flatMap(new FlatMapFunction<String, Tuple3<String, String, Integer>>() {

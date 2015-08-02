@@ -19,6 +19,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.shaded.com.google.common.collect.Ordering;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -94,7 +95,7 @@ public class EvaluationTest {
         });
     }
 
-    @Deprecated
+    @Ignore
     public void ListTest() {
 
 
@@ -107,7 +108,7 @@ public class EvaluationTest {
 
     }
 
-    @Deprecated
+    @Ignore
     public void SortFirstTest() throws Exception {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
@@ -124,7 +125,7 @@ public class EvaluationTest {
         env.execute("sort");
     }
 
-    @Deprecated
+    @Ignore
     public void MRRTest() {
         List<String> seealso = Arrays.asList(new String[]{"A", "B", "C", "D"});
         List<String> cpa = Arrays.asList(new String[]{"E", "B"});
@@ -349,7 +350,7 @@ public class EvaluationTest {
         env.execute("CSV Input test");
     }
 
-    @Deprecated
+    @Ignore
     public void doubleTest() {
         int a = 1;
         int b = 8;
@@ -359,7 +360,7 @@ public class EvaluationTest {
 
     }
 
-    @Deprecated
+    @Ignore
     public void parseDoublePerformanceTest2() {
 
         int runs = 999999;
@@ -379,7 +380,7 @@ public class EvaluationTest {
 
     }
 
-    @Test
+    @Ignore
     public void parseDoublePerformanceTest() {
 
         int runs = 100000;
@@ -430,7 +431,7 @@ public class EvaluationTest {
             throw new Exception("Hash not the same.");
     }
 
-    @Test
+    @Ignore
     public void MinMaxQueuePerformanceTest() {
 
         int listlength = 100000;
