@@ -55,8 +55,6 @@ public class ReplaceRedirects implements CoGroupFunction<WikiSimResult, Tuple2<S
                 recordA.setField(LinkTuple.getHash((String) recordA.getField(pageAField), (String) recordA.getField(pageBField)), hashField);
             }
 
-            System.out.println(recordA.f1 + " -- " + recordA.f2 + " = " + recordA.f1.compareTo(recordA.f2));
-
             // Collect original record (independent of redirect)
             out.collect(recordA);
         }

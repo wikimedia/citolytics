@@ -1,15 +1,14 @@
 package de.tuberlin.dima.schubotz.wikisim.linkgraph;
 
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
@@ -26,16 +25,17 @@ import static java.lang.Math.max;
 
 /**
  * Extracts detailed link graph of link pairs (LinkTuples) from Wikipedia.
- *
+ * <p/>
  * Input: List of LinkTuples
  * Output CSV: Article; LinkTuple; Distance
  */
-public class LinkGraph {
+public class LinkGraph extends WikiSimJob<Tuple4<String, String, String, Integer>> {
 
     public static void main(String[] args) throws Exception {
+        new LinkGraph().enableSingleOutputFile().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+    public void plan() {
 
         if (args.length <= 3) {
             System.err.println("Input/output parameters missing!");
@@ -46,7 +46,7 @@ public class LinkGraph {
         String inputWikiFilename = args[0];
         String inputLinkTuplesFilename = args[2];
 
-        String outputFilename = args[3];
+        outputFilename = args[3];
 
         DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
 
@@ -64,7 +64,7 @@ public class LinkGraph {
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputWikiFilename);
 
-        DataSet<Tuple4<String, String, String, Integer>> result = text.flatMap(new RichFlatMapFunction<String, Tuple4<String, String, String, Integer>>() {
+        result = text.flatMap(new RichFlatMapFunction<String, Tuple4<String, String, String, Integer>>() {
             Collection<Tuple2<String, String>> linkTupleList;
 
             @Override
@@ -111,11 +111,6 @@ public class LinkGraph {
 
             }
         }).withBroadcastSet(linkTupleList, "linkTupleList");
-
-        new WikiSimOutputWriter<Tuple4<String, String, String, Integer>>("LinkGraph")
-                .setParallelism(1)
-                .write(env, result, "outputFilename");
-
     }
 
     public static String getDescription() {

@@ -1,12 +1,10 @@
 package de.tuberlin.dima.schubotz.wikisim.seealso;
 
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.util.Collector;
@@ -21,13 +19,14 @@ import java.util.Map;
  * <p/>
  * table structure: article (primary key), "see also"-link target, position, total count of "see also"-links,
  */
-public class SeeAlsoExtractor {
+public class SeeAlsoExtractor extends WikiSimJob<Tuple4<String, String, Integer, Integer>> {
 
 
     public static void main(String[] args) throws Exception {
+        new SeeAlsoExtractor().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+    public void plan() {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
@@ -36,12 +35,12 @@ public class SeeAlsoExtractor {
         }
 
         String inputFilename = args[0];
-        String outputFilename = args[1];
+        outputFilename = args[1];
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // ArticleCounter, Links (, AvgDistance
-        DataSet<Tuple4<String, String, Integer, Integer>> output = text.flatMap(new FlatMapFunction<String, Tuple4<String, String, Integer, Integer>>() {
+        result = text.flatMap(new FlatMapFunction<String, Tuple4<String, String, Integer, Integer>>() {
             public void flatMap(String content, Collector out) {
 
                 WikiDocument doc = new DocumentProcessor().processDoc(content, true);
@@ -59,10 +58,6 @@ public class SeeAlsoExtractor {
             }
         });
 
-        new WikiSimOutputWriter<Tuple4<String, String, Integer, Integer>>("SeeAlso extractor")
-                .write(env, output, outputFilename);
-
     }
-
 
 }

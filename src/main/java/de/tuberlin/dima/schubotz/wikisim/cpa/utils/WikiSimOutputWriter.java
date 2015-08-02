@@ -7,9 +7,7 @@ import org.apache.flink.api.java.operators.DataSink;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.core.fs.FileSystem;
 
-/**
- * Created by malteschwarzer on 29/07/15.
- */
+@Deprecated
 public class WikiSimOutputWriter<T extends Tuple> {
     private String jobName = null;
     private boolean writeAsText = false;

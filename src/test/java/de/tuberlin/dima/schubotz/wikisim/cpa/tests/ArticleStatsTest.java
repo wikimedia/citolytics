@@ -1,24 +1,23 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
+import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStats;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Scanner;
 
 
-public class ArticleStatsTest {
+public class ArticleStatsTest extends Tester {
+    @Ignore
     @Test
     public void LocalExecution() throws Exception {
-        String inputWikiFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso2.xml").nextElement().getPath();
-
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("articlestats.out").nextElement().getPath();
-
 
         ArticleStats.main(new String[]{
-                "file://" + getClass().getClassLoader().getResources("wikiSeeAlso2.xml").nextElement().getPath(),
+                resource("wikiSeeAlso2.xml"),
                 "print" //outputFilename
         });
     }

@@ -3,34 +3,52 @@ package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 import de.tuberlin.dima.schubotz.wikisim.cpa.TestOutput;
 import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.TestUtils;
+import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.wikisim.histogram.Histogram;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class CalculationTest {
+public class CalculationTest extends Tester {
+    @Ignore
     @Test
     public void TestLocalExecution() throws Exception {
 
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath();
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-        outputFilename = "print";
-
-        WikiSim.main(new String[]{inputFilename, outputFilename, "1.5,1.25,1,0.5,0", "1"});
+        WikiSim.main(new String[]{
+                resource("wikiSeeAlso.xml"),
+                "print",
+                "1.5,1.25,1,0.5,0",
+                "1"});
     }
 
     @Test
+    public void TestResultCount() throws Exception {
+        WikiSim job = new WikiSim();
+
+        job.start(new String[]{
+                "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath(),
+                "local"
+        });
+
+        // if == 34202
+        System.out.println(job.output.size());
+
+    }
+
+    @Ignore
+    @Test
     public void ValidateWikiSimOutput() throws Exception {
 
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath();
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-        outputFilename = "print";
-
-        TestOutput.main(new String[]{inputFilename, outputFilename});
+        TestOutput.main(new String[]{
+                resource("testresult2.csv"),
+                "print"
+        });
     }
 
 
+    @Ignore
     @Test
     public void TestWiki2006() throws Exception {
 
@@ -42,6 +60,7 @@ public class CalculationTest {
         WikiSim.main(new String[]{inputFilename, outputFilename, "0.81,1.5,1.25", "0", "0"});
     }
 
+    @Ignore
     @Test
     public void TestRedirectedExecution() throws Exception {
 
@@ -56,6 +75,7 @@ public class CalculationTest {
         WikiSim.main(new String[]{inputFilename, outputFilename, "1.5,1.75", "0", "0", "n", "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath()});
     }
 
+    @Ignore
     @Test
     public void TestHistogram() throws Exception {
 
@@ -70,6 +90,7 @@ public class CalculationTest {
     }
 
 
+    @Ignore
     @Test
     public void TestLinkExtractor() throws Exception {
 

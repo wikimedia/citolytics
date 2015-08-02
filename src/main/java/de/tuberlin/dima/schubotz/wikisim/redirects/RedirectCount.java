@@ -1,24 +1,27 @@
 package de.tuberlin.dima.schubotz.wikisim.redirects;
 
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
-import org.apache.flink.core.fs.FileSystem;
 
 import java.util.regex.Pattern;
 
 /**
  * Count redirects in redirects.out (RedirectExtractor)
  */
-public class RedirectCount {
+public class RedirectCount extends WikiSimJob<Tuple1<Integer>> {
     public static void main(String[] args) throws Exception {
+        new RedirectCount()
+                .enableSingleOutputFile()
+                .enableTextOutput()
+                .start(args);
+    }
 
-        String outputFilename = args[2];
+    public void plan() {
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+        outputFilename = args[2];
 
         // article|link target
         DataSet<Tuple1<String>> links = env.readTextFile(args[0])
@@ -40,7 +43,7 @@ public class RedirectCount {
                     }
                 });
 
-        DataSet<Tuple1<Integer>> res = links.join(redirects)
+        result = links.join(redirects)
                 .where(0)
                 .equalTo(0)
                 .with(new JoinFunction<Tuple1<String>, Tuple1<String>, Tuple1<Integer>>() {
@@ -50,15 +53,5 @@ public class RedirectCount {
                     }
                 })
                 .sum(0);
-
-        if (outputFilename.equals("print")) {
-            res.print();
-        } else {
-            res.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
-
-            env.execute("RedirectCount");
-        }
-
-
     }
 }

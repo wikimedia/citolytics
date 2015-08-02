@@ -1,15 +1,13 @@
 package de.tuberlin.dima.schubotz.wikisim.redirects;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiOutputFormat;
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.Arrays;
@@ -17,18 +15,18 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 
-public class SeeAlsoRedirects {
+public class SeeAlsoRedirects extends WikiSimJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
+        new SeeAlsoRedirects().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
+    public void plan() {
         if (args.length <= 2) {
             System.err.print("Error: Parameter missing! Required: SEEALSO REDIRECTS OUTPUT, Current: " + Arrays.toString(args));
             System.exit(1);
         }
 
-        String outputFilename = args[2];
+        outputFilename = args[2];
 
         int pageA = 1;
         int pageB = 2;
@@ -36,7 +34,8 @@ public class SeeAlsoRedirects {
         int redirectTarget = 1;
 
         DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
-        DataSet<Tuple3<String, String, Integer>> seeAlso = env.readTextFile(args[0])
+
+        result = env.readTextFile(args[0])
                 // read and map to tuple2 structure
                 .flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
                     @Override
@@ -103,13 +102,5 @@ public class SeeAlsoRedirects {
                         out.collect(new Tuple3<>(article, seeAlsoLinks, counter));
                     }
                 });
-
-        if (outputFilename.equals("print")) {
-            seeAlso.print();
-        } else {
-            seeAlso.write(new WikiOutputFormat(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
-
-            env.execute("SeeAlsoRedirects");
-        }
     }
 }

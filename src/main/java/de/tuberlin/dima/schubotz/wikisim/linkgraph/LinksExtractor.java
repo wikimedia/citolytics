@@ -1,15 +1,12 @@
 package de.tuberlin.dima.schubotz.wikisim.linkgraph;
 
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.List;
@@ -20,12 +17,13 @@ import java.util.Map;
  * <p/>
  * table structure: article (primary key), link target
  */
-public class LinksExtractor {
+public class LinksExtractor extends WikiSimJob<Tuple2<String, String>> {
 
     public static void main(String[] args) throws Exception {
+        new LinksExtractor().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+    public void plan() {
 
         if (args.length <= 1) {
             System.err.println("Input/output parameters missing!");
@@ -34,12 +32,12 @@ public class LinksExtractor {
         }
 
         String inputFilename = args[0];
-        String outputFilename = args[1];
+        outputFilename = args[1];
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // ArticleCounter, Links (, AvgDistance
-        DataSet<Tuple2<String, String>> output = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
+        result = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
             public void flatMap(String content, Collector out) {
 
                 WikiDocument doc = new DocumentProcessor().processDoc(content);
@@ -57,12 +55,5 @@ public class LinksExtractor {
                 }
             }
         }).distinct();
-
-        //output.print();
-        output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
-
-        env.execute("WikiLinksExtractor");
     }
-
-
 }

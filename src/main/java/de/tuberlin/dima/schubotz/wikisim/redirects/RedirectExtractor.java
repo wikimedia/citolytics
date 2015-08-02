@@ -1,15 +1,12 @@
 package de.tuberlin.dima.schubotz.wikisim.redirects;
 
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
-import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiOutputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.StringUtils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.regex.Matcher;
@@ -20,11 +17,12 @@ import java.util.regex.Pattern;
  * <p/>
  * Output CSV: Source | Target
  */
-public class RedirectExtractor {
+public class RedirectExtractor extends WikiSimJob<Tuple2<String, String>> {
     public static void main(String[] args) throws Exception {
+        new RedirectExtractor().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+    public void plan() {
 
         if (args.length < 2) {
             System.err.println("Input/output parameters missing!");
@@ -33,11 +31,11 @@ public class RedirectExtractor {
         }
 
         String inputWikiSet = args[0];
-        String outputListFilename = args[1];
+        outputFilename = args[1];
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputWikiSet);
 
-        DataSet<Tuple2<String, String>> res = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
+        result = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
             @Override
             public void flatMap(String content, Collector<Tuple2<String, String>> out) throws Exception {
                 Pattern pattern = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
@@ -66,15 +64,5 @@ public class RedirectExtractor {
                 ));
             }
         });
-
-
-        if (outputListFilename.equals("print")) {
-            res.print();
-        } else {
-            res.write(new WikiOutputFormat<Tuple2<String, String>>(outputListFilename), outputListFilename, FileSystem.WriteMode.OVERWRITE)
-                    .setParallelism(1);
-            env.execute("RedirectionExtractor");
-        }
-
     }
 }

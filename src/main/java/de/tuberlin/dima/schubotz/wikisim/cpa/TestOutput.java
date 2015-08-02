@@ -1,10 +1,8 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
 
@@ -12,15 +10,15 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
- * Created by malteschwarzer on 28/07/15.
+ * Check alphabetical order of WikiSim results.
  */
-public class TestOutput {
+public class TestOutput extends WikiSimJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
+        new TestOutput().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
-        DataSet<Tuple3<String, String, Integer>> res = env
+    public void plan() {
+        result = env
                 .readTextFile(args[0])
                 .flatMap(new FlatMapFunction<String, Tuple3<String, String, Integer>>() {
                     @Override
@@ -55,8 +53,5 @@ public class TestOutput {
                             out.collect(rec);
                     }
                 });
-
-        new WikiSimOutputWriter<Tuple3<String, String, Integer>>("Validate WikiSim")
-                .write(env, res, args[1]);
     }
 }

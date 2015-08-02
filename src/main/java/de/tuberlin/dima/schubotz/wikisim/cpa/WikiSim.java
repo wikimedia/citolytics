@@ -16,8 +16,8 @@
 */
 package de.tuberlin.dima.schubotz.wikisim.cpa;
 
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
-import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiOutputFormat;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.CPAReducer;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
@@ -31,7 +31,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.ConfigConstants;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.GlobalConfiguration;
-import org.apache.flink.core.fs.FileSystem;
 
 /**
  * Flink job for computing CPA results depended on CPI alpha values.
@@ -45,8 +44,7 @@ import org.apache.flink.core.fs.FileSystem;
  * 5 = Format of Wikipedia XML Dump (default: 2013; set to "2006" for older dumps)
  * 6 = Resolve redirects? Set path to redirects set (default: n)
  */
-public class WikiSim {
-    public static String jobName = "WikiSim";
+public class WikiSim extends WikiSimJob<WikiSimResult> {
 
     public static String getUsage() {
         return "Usage: [DATASET] [OUTPUT] [ALPHA1, ALPHA2, ...] [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] [WIKI-VERSION] [REDIRECTS-DATESET]";
@@ -59,9 +57,11 @@ public class WikiSim {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+        new WikiSim().start(args);
+    }
 
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+    public void plan() {
+        jobName = "WikiSim";
 
         // Bug fix (heartbeat bug)
         // https://issues.apache.org/jira/browse/FLINK-2299
@@ -80,7 +80,7 @@ public class WikiSim {
 
         // Read arguments
         String inputFilename = args[0];
-        String outputFilename = args[1];
+        outputFilename = args[1];
 
         boolean redirected = ((args.length > 6 && !args[6].equalsIgnoreCase("n")) ? true : false);
 
@@ -97,44 +97,38 @@ public class WikiSim {
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Calculate results
-        DataSet<WikiSimResult> wikiSimResults = text.flatMap(new DocumentProcessor())
+        result = text.flatMap(new DocumentProcessor())
                 .withParameters(config)
                 .groupBy(0) // Group by LinkTuple.hash()
                 .reduceGroup(new CPAReducer())
                 .withParameters(config);
 
-        // Resolve redirects
+
+        // Resolve redirects if requested
         if (redirected) {
             jobName += " with redirects";
-
-            writeOutput(env, resolveRedirects(env, wikiSimResults, args[6]), outputFilename, jobName);
-        } else {
-            // Write undirected output
-            writeOutput(env, wikiSimResults, outputFilename, jobName);
-//            new WikiSimOutputWriter<WikiSimResult>()
-//                    .setJobName(jobName)
-//                    .write(env, wikiSimResults, outputFilename);
+            result = resolveRedirects(env, result, args[6]);
         }
     }
 
-    /**
-     * Write output to CSV file or print to console.
-     *
-     * @param env
-     * @param dataSet
-     * @param outputFilename
-     * @param jobName
-     * @throws Exception
-     */
-    public static void writeOutput(ExecutionEnvironment env, DataSet dataSet, String outputFilename, String jobName) throws Exception {
-        if (outputFilename.equals("print")) {
-            dataSet.print();
-        } else {
-            //dataSet.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
-            dataSet.write(new WikiOutputFormat<WikiSimResult>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
-            env.execute(jobName);
-        }
-    }
+//    /**
+//     * Write output to CSV file or print to console.
+//     *
+//     * @param env
+//     * @param dataSet
+//     * @param outputFilename
+//     * @param jobName
+//     * @throws Exception
+//     */
+//    public static void writeOutput(ExecutionEnvironment env, DataSet dataSet, String outputFilename, String jobName) throws Exception {
+//        if (outputFilename.equals("print")) {
+//            dataSet.print();
+//        } else {
+//            //dataSet.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
+//            dataSet.write(new WikiOutputFormat<WikiSimResult>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
+//            env.execute(jobName);
+//        }
+//    }
 
     /**
      * Resolve Wikipedia redirects in results
