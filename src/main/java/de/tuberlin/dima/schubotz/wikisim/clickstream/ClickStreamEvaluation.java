@@ -1,96 +1,88 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimConfiguration;
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
+import de.tuberlin.dima.schubotz.wikisim.seealso.better.MLTInputMapper;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.WikiSimGroupReducer;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.WikiSimInputMapper;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResultList;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.tuple.Tuple10;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.apache.flink.util.Collector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
-public class ClickStreamEvaluation {
-    public static String outputFilename;
+public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
     public static String clickStreamInputFilename;
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
     public static String outputAggregateFilename;
 
+    private boolean mltResults = false;
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
     public static void main(String[] args) throws Exception {
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+        new ClickStreamEvaluation().start(args);
+    }
 
-        if (args.length <= 3) {
-            System.err.println("Input/output parameters missing!");
-            System.exit(1);
-        }
-
+    public void plan() {
         wikiSimInputFilename = args[0];
         clickStreamInputFilename = args[1];
         outputFilename = args[2];
-        outputAggregateFilename = args[3];
-        linksInputFilename = args[4];
 
-        int scoreField = (args.length > 5 ? Integer.valueOf(args[5]) : 6);
-        int fieldPageA = (args.length > 6 ? Integer.valueOf(args[6]) : 1);
-        int fieldPageB = (args.length > 7 ? Integer.valueOf(args[7]) : 2);
+        int scoreField = (args.length > 3 ? Integer.valueOf(args[3]) : 6);
+        int fieldPageA = (args.length > 4 ? Integer.valueOf(args[4]) : 1);
+        int fieldPageB = (args.length > 5 ? Integer.valueOf(args[5]) : 2);
 
-
-        Configuration config = new Configuration();
-
-        config.setInteger("fieldPageA", fieldPageA);
-        config.setInteger("fieldPageB", fieldPageB);
-        config.setInteger("fieldScore", scoreField);
+        // Name
+        setJobName("ClickStreamEvaluation");
 
         // Gold standard
-        DataSet<Tuple3<String, String, Integer>> clickStreamDataSet = ClickStreamHelper.getClickStreamDataSet(env, clickStreamInputFilename);
+        DataSet<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamDataSet = ClickStreamHelper.getRichClickStreamDataSet(env, clickStreamInputFilename);
 
         // WikiSim
-        DataSet<Tuple3<String, String, Double>> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
-                .flatMap(new WikiSimInputMapper())
-                .withParameters(config);
+        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimGroupedDataSet;
 
-        // LinkFilter
-//        if (!linksInputFilename.isEmpty() && !linksInputFilename.equals("nofilter")) {
-//            wikiSimDataSet = wikiSimDataSet
-//                    .coGroup(BetterEvaluation.getLinkDataSet(env, linksInputFilename))
-//                    .where(0)
-//                    .equalTo(0)
-//                    .with(new BetterLinkExistsFilter());
-//        }
+        // CPA or MLT results?
+        if (scoreField >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
+            // CPA
+            jobName += " CPA Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
 
-        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimGroupedDataSet = wikiSimDataSet
-                .groupBy(0)
-                .reduceGroup(new WikiSimGroupReducer(10));
+            Configuration config = new Configuration();
+
+            config.setInteger("fieldPageA", fieldPageA);
+            config.setInteger("fieldPageB", fieldPageB);
+            config.setInteger("fieldScore", scoreField);
+
+            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
+                    .flatMap(new WikiSimInputMapper())
+                    .withParameters(config)
+                    .groupBy(0)
+                    .reduceGroup(new WikiSimGroupReducer(10));
+        } else {
+            // MLT
+            jobName += " MLT";
+
+            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
+                    .flatMap(new MLTInputMapper());
+        }
 
         // Evaluation
-        /*
-        Article | Retrieved documents | Number of retrieved documents | sum rel. clicks
-                  - Doc A | score | clicks | rel. clicks
-         */
-        // article | retrieved documents | number of ret. documents | counter | k=10 rel clicks | k=10 clicks | k=5 rel clicks | k=5 clicks | k=1 rel clicks | k=1 clicks
-        DataSet<Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>>
-                output = wikiSimGroupedDataSet
+        result = wikiSimGroupedDataSet
                 .coGroup(clickStreamDataSet)
                 .where(0)
                 .equalTo(0)
-                .with(new CoGroupFunction<Tuple2<String, WikiSimComparableResultList<Double>>, Tuple3<String, String, Integer>, Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>>() {
+                .with(new CoGroupFunction<Tuple2<String, WikiSimComparableResultList<Double>>, Tuple3<String, Integer, HashMap<String, Integer>>, ClickStreamResult>() {
                     @Override
-                    public void coGroup(Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimRecords, Iterable<Tuple3<String, String, Integer>> clickStreams, Collector<Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>> out) throws Exception {
+                    public void coGroup(Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimRecords, Iterable<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamRecords, Collector<ClickStreamResult> out) throws Exception {
                         Iterator<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimIterator = wikiSimRecords.iterator();
-                        Iterator<Tuple3<String, String, Integer>> clickStreamIterator = clickStreams.iterator();
+                        Iterator<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamIterator = clickStreamRecords.iterator();
 
                         if (!wikiSimIterator.hasNext()) {
                             return;
@@ -98,83 +90,63 @@ public class ClickStreamEvaluation {
 
                         Tuple2<String, WikiSimComparableResultList<Double>> wikiSimRecord = wikiSimIterator.next();
 
-                        HashMap<String, Integer> clickStream = new HashMap<>();
-                        int maxClicks = 0;
-                        while (clickStreamIterator.hasNext()) {
-                            Tuple3<String, String, Integer> clickStreamRecord = clickStreamIterator.next();
+                        WikiSimComparableResultList<Double> retrievedDocuments = wikiSimRecord.f1;
 
-                            String article = clickStreamRecord.getField(1);
-                            int clicks = clickStreamRecord.getField(2);
 
-                            clickStream.put(article, clicks);
-
-                            if (clicks > maxClicks)
-                                maxClicks = clicks;
-                        }
-
-                        // Skip if no ClickStream data is found
-                        if (maxClicks == 0)
-                            return;
-
-                        // k = {10, 5, 1}
+                        ArrayList<Tuple3<String, Double, Integer>> results = new ArrayList<>();
+                        int impressions = 0;
+                        int outClicks = 0;
                         int[] k = new int[]{10, 5, 1};
-                        double[] totalRelClicks = new double[]{0, 0, 0};
                         int[] totalClicks = new int[]{0, 0, 0};
 
-                        List<WikiSimComparableResult<Double>> retrievedDocuments = Ordering.natural().greatestOf(
-                                (WikiSimComparableResultList<Double>) wikiSimRecord.getField(1), k[0]);
-                        ArrayList<Tuple4<String, Double, Integer, Double>> results = new ArrayList<>();
+                        if (clickStreamIterator.hasNext()) {
+                            Tuple3<String, Integer, HashMap<String, Integer>> clickStreamRecord = clickStreamIterator.next();
 
-                        int rank = 1;
-                        for (WikiSimComparableResult doc : retrievedDocuments) {
-                            int clicks = clickStream.containsKey(doc.getName()) ? clickStream.get(doc.getName()) : 0;
-                            double relClicks = maxClicks > 0 ? ((double) clicks) / ((double) maxClicks) : 0;
+                            HashMap<String, Integer> clickStream = clickStreamRecord.f2;
+                            impressions = clickStreamRecord.f1;
 
-                            results.add(new Tuple4<>(
-                                    doc.getName(),
-                                    (Double) doc.getSortField1(),
-                                    clicks,
-                                    relClicks
-                            ));
+                            int rank = 1;
 
-                            // loop k's
-                            for (int i = 0; i < k.length; i++) {
-                                if (rank <= k[i]) {
-                                    totalClicks[i] += clicks;
-                                    totalRelClicks[i] += relClicks;
+                            // Clicks on retrieved docs
+                            for (WikiSimComparableResult doc : retrievedDocuments) {
+                                int clicks = clickStream.containsKey(doc.getName()) ? clickStream.get(doc.getName()) : 0;
+
+                                results.add(new Tuple3<>(
+                                        doc.getName(),
+                                        (Double) doc.getSortField1(),
+                                        clicks
+                                ));
+
+                                // loop k's
+                                for (int i = 0; i < k.length; i++) {
+                                    if (rank <= k[i]) {
+                                        totalClicks[i] += clicks;
+                                    }
                                 }
+                                rank++;
                             }
-                            rank++;
+                            // All out clicks
+                            for (Integer c : clickStream.values())
+                                outClicks += c;
+
                         }
 
-                        out.collect(new Tuple10<>(
-                                (String) wikiSimRecord.getField(0),
-                                results,
-                                results.size(),
-                                1,
-                                totalClicks[0],
-                                totalRelClicks[0],
-                                totalClicks[1],
-                                totalRelClicks[1],
-                                totalClicks[2],
-                                totalRelClicks[2]
-                        ));
+                        ClickStreamResult res = new ClickStreamResult();
+
+                        res.f0 = wikiSimRecord.f0;
+                        res.f1 = results;
+                        res.f2 = results.size();
+                        res.f3 = impressions;
+                        res.f4 = outClicks;
+                        res.f5 = totalClicks[0];
+                        res.f6 = totalClicks[1];
+                        res.f7 = totalClicks[2];
+
+                        out.collect(
+                                res
+                        );
 
                     }
                 });
-
-        if (outputFilename.equals("print")) {
-            output.print();
-            // aggregate
-            output.reduce(new ClickStreamAggregateOutput()).print();
-        } else {
-            output.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
-            output.reduce(new ClickStreamAggregateOutput()).writeAsCsv(outputAggregateFilename, WikiSimConfiguration.csvRowDelimiter, String.valueOf(WikiSimConfiguration.csvFieldDelimiter), FileSystem.WriteMode.OVERWRITE);
-
-            env.execute("ClickStreamEvaluation (Fields: Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]");
-
-        }
-
     }
-
 }

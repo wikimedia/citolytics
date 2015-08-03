@@ -3,14 +3,13 @@ package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamStats;
+import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
-import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.StringListValue;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.ResultCoGrouper;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.utils.EvaluationMeasures;
 import junit.framework.Assert;
-import org.apache.commons.collections.ListUtils;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
@@ -24,9 +23,9 @@ import org.junit.Test;
 
 import java.util.*;
 
-public class EvaluationTest {
+public class EvaluationTest extends Tester {
 
-    @Test
+    @Deprecated
     public void TestClickStream() throws Exception {
         ClickStreamHelper.main(
                 new String[]{
@@ -39,29 +38,43 @@ public class EvaluationTest {
         );
     }
 
+    @Ignore
     @Test
-    public void TestClickStreamEvaluation() throws Exception {
+    public void TestClickStreamEvaluationCPA() throws Exception {
         ClickStreamEvaluation.main(
                 new String[]{
-                        "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
-                        "file://" + getClass().getClassLoader().getResources("2015_02_clickstream_preview.tsv").nextElement().getPath(),
-                        "print",
-                        "print",
-                        "nofilter"
-                }
-        );
-    }
-
-    @Test
-    public void TestClickStreamStats() throws Exception {
-        ClickStreamStats.main(
-                new String[]{
-                        "file://" + getClass().getClassLoader().getResources("2015_02_clickstream_preview.tsv").nextElement().getPath(),
+                        resource("testresult2.csv"),
+                        resource("2015_02_clickstream_preview.tsv"),
                         "print"
                 }
         );
     }
 
+    @Ignore
+    @Test
+    public void TestClickStreamEvaluationMLT() throws Exception {
+        ClickStreamEvaluation.main(
+                new String[]{
+                        resource("evaluation_mlt.csv"),
+                        resource("2015_02_clickstream_preview.tsv"),
+                        "print",
+                        "-1"
+                }
+        );
+    }
+
+    @Ignore
+    @Test
+    public void TestClickStreamStats() throws Exception {
+        ClickStreamStats.main(
+                new String[]{
+                        resource("2015_02_clickstream_preview.tsv"),
+                        "print"
+                }
+        );
+    }
+
+    @Ignore
     @Test
     public void EvalCPATest() throws Exception {
 
@@ -79,6 +92,7 @@ public class EvaluationTest {
         });
     }
 
+    @Ignore
     @Test
     public void EvalMLTTest() throws Exception {
 
@@ -88,25 +102,10 @@ public class EvaluationTest {
                 "print",
                 "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
                 "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
-                , "0"
-                , "0"
-                , "0"
-                , "y"
+                , "-1"
         });
     }
 
-    @Ignore
-    public void ListTest() {
-
-
-        StringListValue listA = StringListValue.valueOf(new String[]{"x", "w"});
-        StringListValue listB = StringListValue.valueOf(new String[]{"v", "w", "x", "y", "z"});
-
-        for (int i = 0; i < 50; i++) {
-            System.out.println(ListUtils.intersection(listA, listB));
-        }
-
-    }
 
     @Ignore
     public void SortFirstTest() throws Exception {
@@ -344,83 +343,11 @@ public class EvaluationTest {
 
         );
 
-
         res.print();
 
         env.execute("CSV Input test");
     }
 
-    @Ignore
-    public void doubleTest() {
-        int a = 1;
-        int b = 8;
-
-        double d = ((double) a) / ((double) b);
-        System.out.println(d);
-
-    }
-
-    @Ignore
-    public void parseDoublePerformanceTest2() {
-
-        int runs = 999999;
-        long start = System.nanoTime();
-        for (int i = 0; i < runs; i++) {
-            Double.valueOf("3.3489451534507196E-104");
-        }
-        long time = System.nanoTime() - start;
-        System.out.printf("DD to double took an average of %.1f us%n", time / runs / 1000.0);
-
-        long startB = System.nanoTime();
-        for (int i = 0; i < runs; i++) {
-            Double.valueOf("3.348");
-        }
-        long timeB = System.nanoTime() - startB;
-        System.out.printf("II to double took an average of %.1f us%n", timeB / runs / 1000.0);
-
-    }
-
-    @Ignore
-    public void parseDoublePerformanceTest() {
-
-        int runs = 100000;
-
-        String[] ints = new String[runs];
-        String[] doubles = new String[runs];
-
-        // 3.3489451534507196E-104
-
-        for (int i = 0; i < runs; i++) {
-
-            double doub = Math.random();
-            int inte = (int) (doub * 100);
-
-            doubles[i] = String.valueOf(doub);
-            ints[i] = String.valueOf(inte);
-        }
-
-        long start = System.nanoTime();
-        for (int x = 0; x < 100; x++) {
-            for (String s : ints) {
-                Double d = Double.valueOf(s);
-            }
-        }
-
-        long time = System.nanoTime() - start;
-        System.out.printf("Integer to double took an average of %.1f us%n", time / runs / 1000.0);
-
-
-        long startB = System.nanoTime();
-        for (int x = 0; x < 100; x++) {
-            for (String s : doubles) {
-                Double dd = Double.valueOf(s);
-            }
-        }
-
-        long timeB = System.nanoTime() - startB;
-        System.out.printf("Double to double took an average of %.1f us%n", timeB / runs / 1000.0);
-
-    }
 
     @Test
     public void HashTest() throws Exception {
@@ -431,47 +358,4 @@ public class EvaluationTest {
             throw new Exception("Hash not the same.");
     }
 
-    @Ignore
-    public void MinMaxQueuePerformanceTest() {
-
-        int listlength = 100000;
-        int runs = 1000;
-
-        double[] ints = new double[listlength];
-        double[] doubles = new double[listlength];
-
-
-        for (int i = 0; i < listlength; i++) {
-
-            double doub = Math.random();
-            int inte = (int) (doub * 100);
-
-            doubles[i] = doub;
-            ints[i] = (double) inte;
-        }
-
-        MinMaxPriorityQueue<Double> queue = MinMaxPriorityQueue.maximumSize(10).create();
-        long start = System.nanoTime();
-        for (int x = 0; x < runs; x++) {
-            for (double s : ints) {
-                queue.add(Double.valueOf(s));
-            }
-        }
-
-        long time = System.nanoTime() - start;
-        System.out.printf("Adding Integer to MinMaxQueue took an average of %.1f us%n", time / (runs * listlength) / 1000.0);
-
-        queue = MinMaxPriorityQueue.maximumSize(10).create();
-
-        long startB = System.nanoTime();
-        for (int x = 0; x < runs; x++) {
-            for (double s : doubles) {
-                queue.add(Double.valueOf(s));
-            }
-        }
-
-        long timeB = System.nanoTime() - startB;
-        System.out.printf("Adding Double to MinMaxQueue took an average of %.1f us%n", timeB / (runs * listlength) / 1000.0);
-
-    }
 }

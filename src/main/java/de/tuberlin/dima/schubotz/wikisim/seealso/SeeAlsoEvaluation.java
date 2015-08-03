@@ -27,9 +27,12 @@ import java.util.regex.Pattern;
  * 1 = OUTPUT: filename of results (HDFS or print)
  * 2 = SEEALSO: path to extracted "See also"-links (output of wikisim.seealso.SeeAlsoExtractor)
  * 3 = LINKS-SET: path to extracted wiki links for filtering existing links (output of wikisim.linkgraph.LinksExtractor)
- * 4 = SCORE-FIELD: column of score field in result set (default: 8)
+ * 4 = SCORE-FIELD: column of score field in result set (default: 6)
  * 5 = PAGE-A-FIELD: column of page A in result set (default: 1)
  * 6 = PAGE-B-FIELD: column of page B in result set (default: 2)
+ *
+ * Set SCORE-FIELD = -1 for MLT result data set.
+ *
  */
 public class SeeAlsoEvaluation {
     public static String outputFilename;
@@ -45,7 +48,7 @@ public class SeeAlsoEvaluation {
 
         if (args.length <= 3) {
             System.err.println("Input/output parameters missing!");
-            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links>] [<score-field>] [<page-a-field>] [<page-b-field>] [<mlt-result>]");
+            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links>] [<score-field>] [<page-a-field>] [<page-b-field>]");
             System.exit(1);
         }
 
@@ -54,17 +57,9 @@ public class SeeAlsoEvaluation {
         seeAlsoInputFilename = args[2];
         linksInputFilename = args[3];
 
-        int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 8);
+        int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 6);
         int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
         int fieldPageB = (args.length > 6 ? Integer.valueOf(args[6]) : 2);
-
-        boolean mltResultSet = (args.length > 7 && args[7].equalsIgnoreCase("y") ? true : false);
-
-        Configuration config = new Configuration();
-
-        config.setInteger("fieldPageA", fieldPageA);
-        config.setInteger("fieldPageB", fieldPageB);
-        config.setInteger("fieldScore", scoreField);
 
         // See also
         DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
@@ -73,13 +68,15 @@ public class SeeAlsoEvaluation {
         // Read result set
         DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimGroupedDataSet;
 
-        // Are results MLT or CPA?
-        if (mltResultSet) {
+        // CPA or MLT results?
+        if (scoreField >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
+            // CPA
+            Configuration config = new Configuration();
 
-            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
-                    .flatMap(new MLTInputMapper());
-        } else {
-            // WikiSim
+            config.setInteger("fieldPageA", fieldPageA);
+            config.setInteger("fieldPageB", fieldPageB);
+            config.setInteger("fieldScore", scoreField);
+
             DataSet<Tuple3<String, String, Double>> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new WikiSimInputMapper())
                     .withParameters(config);
@@ -102,6 +99,10 @@ public class SeeAlsoEvaluation {
             wikiSimGroupedDataSet = wikiSimDataSet
                     .groupBy(0)
                     .reduceGroup(new WikiSimGroupReducer());
+        } else {
+            // CPA
+            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
+                    .flatMap(new MLTInputMapper());
         }
 
         // Evaluation

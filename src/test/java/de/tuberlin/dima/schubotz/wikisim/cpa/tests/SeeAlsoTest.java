@@ -1,22 +1,49 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
+import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor;
+import org.apache.flink.api.java.tuple.Tuple4;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
 
-public class SeeAlsoTest {
+public class SeeAlsoTest extends Tester {
 
+    @Ignore
     @Test
     public void LocalExecution() throws Exception {
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso2.xml").nextElement().getPath();
 
-        SeeAlsoExtractor.main(new String[]{inputFilename, "print"});
+        SeeAlsoExtractor.main(new String[]{resource("wikiSeeAlso2.xml"), "print"});
     }
+
+    @Test
+    public void ExtractSeeAlso() throws Exception {
+        SeeAlsoExtractor job = new SeeAlsoExtractor();
+
+        job.start(new String[]{resource("wikiSeeAlso2.xml"), "local"});
+
+        System.out.println(job.output);
+
+        // Needles
+        ArrayList<Tuple4<String, String, Integer, Integer>> needles = new ArrayList<>();
+
+        needles.add(new Tuple4<>("ASCII", "ASCII art", 2, 5));
+        needles.add(new Tuple4<>("NFL on NBC", "List of AFC Championship Game broadcasters", 4, 8));
+
+        assertTrue("Needles not found", job.output.containsAll(needles));
+
+        // Size
+        assertEquals("SeeAlso output count wrong.", 251, job.output.size());
+
+        System.out.println();
+    }
+
 
     @Test
     public void seeAlsoNotExists() {
