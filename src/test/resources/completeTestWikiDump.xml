@@ -1,0 +1,272 @@
+<page>
+    <title>Article A</title>
+    <ns>0</ns>
+    <id>358</id>
+    <revision>
+        <id>625906990</id>
+        <parentid>625773078</parentid>
+        <timestamp>2014-09-17T05:10:48Z</timestamp>
+        <contributor>
+            <ip>114.77.20.119</ip>
+        </contributor>
+        <comment>/* Religion */</comment>
+        <text xml:space="preserve">
+            [[Article B]]
+
+            Today [[SeeAlso Article 1]] Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French. [[Article C]]
+
+            Today Algeria contains, [[SeeAlso Article 2]] in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in [[Article E]] Arabic and French.
+            [[Article D]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+        </text>
+    </revision>
+</page>
+
+<page>
+<title>Article B</title>
+<ns>0</ns>
+<id>358</id>
+<revision>
+    <id>625906990</id>
+    <parentid>625773078</parentid>
+    <timestamp>2014-09-17T05:10:48Z</timestamp>
+    <contributor>
+        <ip>114.77.20.119</ip>
+    </contributor>
+    <comment>/* Religion */</comment>
+    <text xml:space="preserve">
+
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French. [[Article C]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, [[SeeAlso Article 1]]but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in [[Article E]] Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+        </text>
+</revision>
+</page>
+
+<page>
+<title>Article C</title>
+<ns>0</ns>
+<id>358</id>
+<revision>
+    <id>625906990</id>
+    <parentid>625773078</parentid>
+    <timestamp>2014-09-17T05:10:48Z</timestamp>
+    <contributor>
+        <ip>114.77.20.119</ip>
+    </contributor>
+    <comment>/* Religion */</comment>
+    <text xml:space="preserve">
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French. [[SeeAlso Article 1]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in [[Article A]] Arabic and French.
+            [[Article D]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+        </text>
+</revision>
+</page>
+
+<page>
+<title>Article D</title>
+<ns>0</ns>
+<id>358</id>
+<revision>
+    <id>625906990</id>
+    <parentid>625773078</parentid>
+    <timestamp>2014-09-17T05:10:48Z</timestamp>
+    <contributor>
+        <ip>114.77.20.119</ip>
+    </contributor>
+    <comment>/* Religion */</comment>
+    <text xml:space="preserve">
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in [[Article E]] Arabic and French.
+            [[Article B]]
+
+            Today Algeria contains, in its literary landscape, big names [[Article a]] having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+        </text>
+</revision>
+</page>
+
+<page>
+<title>Article E</title>
+<ns>0</ns>
+<id>358</id>
+<revision>
+    <id>625906990</id>
+    <parentid>625773078</parentid>
+    <timestamp>2014-09-17T05:10:48Z</timestamp>
+    <contributor>
+        <ip>114.77.20.119</ip>
+    </contributor>
+    <comment>/* Religion */</comment>
+    <text xml:space="preserve">
+
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French. [[Article C]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+            [[Article A]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French. [[Article b]]
+
+        </text>
+</revision>
+</page>
+
+<page>
+<title>SeeAlso Article 1</title>
+<ns>0</ns>
+<id>358</id>
+<revision>
+    <id>625906990</id>
+    <parentid>625773078</parentid>
+    <timestamp>2014-09-17T05:10:48Z</timestamp>
+    <contributor>
+        <ip>114.77.20.119</ip>
+    </contributor>
+    <comment>/* Religion */</comment>
+    <text xml:space="preserve">
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature,[[SeeAlso Article 2]] but also the universal literary heritage in Arabic and French. [[Article C]]
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage [[Article A]] in [[Article B]] Arabic and French.
+
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            ==See also==
+            {{Contains Tifinagh text|compact=yes}}
+            * [[Article A]]
+            * [[Article B]]
+
+            ==Foo==
+        </text>
+</revision>
+</page>
+
+<page>
+<title>SeeAlso Article 2</title>
+<ns>0</ns>
+<id>358</id>
+<revision>
+    <id>625906990</id>
+    <parentid>625773078</parentid>
+    <timestamp>2014-09-17T05:10:48Z</timestamp>
+    <contributor>
+        <ip>114.77.20.119</ip>
+    </contributor>
+    <comment>/* Religion */</comment>
+    <text xml:space="preserve">
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage [[Article E]] in [[Article B]] Arabic and French.
+
+
+            Today Algeria contains, in its literary landscape, big names having not only marked the Algerian
+            literature, but also the universal literary heritage in Arabic and French.
+
+            ==See also==
+            {{Contains Tifinagh text|compact=yes}}
+            * [[Article D]]
+            * [[Article b]]
+
+            ==Foo==
+        </text>
+</revision>
+</page>
+
+
+<page>
+<title>Article a</title>
+<ns>0</ns>
+<id>11858</id>
+<redirect title="Article A"/>
+<revision>
+    <id>518833992</id>
+    <parentid>511689418</parentid>
+    <timestamp>2012-10-20T06:12:35Z</timestamp>
+    <contributor>
+        <username>M0rphzone</username>
+        <id>14664094</id>
+    </contributor>
+    <comment>Redirected to main topic</comment>
+    <text xml:space="preserve">#REDIRECT [[Article A]]</text>
+    <sha1>k77e50uxik162v2pjys615dq2kjyehb</sha1>
+    <model>wikitext</model>
+    <format>text/x-wiki</format>
+</revision>
+</page>
+
+
+<page>
+<title>Article b</title>
+<ns>0</ns>
+<id>11858</id>
+<redirect title="Article B"/>
+<revision>
+    <id>518833992</id>
+    <parentid>511689418</parentid>
+    <timestamp>2012-10-20T06:12:35Z</timestamp>
+    <contributor>
+        <username>M0rphzone</username>
+        <id>14664094</id>
+    </contributor>
+    <comment>Redirected to main topic</comment>
+    <text xml:space="preserve">#REDIRECT [[Article B]]</text>
+    <sha1>k77e50uxik162v2pjys615dq2kjyehb</sha1>
+    <model>wikitext</model>
+    <format>text/x-wiki</format>
+</revision>
+</page>

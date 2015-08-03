@@ -69,8 +69,12 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
             // MLT
             jobName += " MLT";
 
+            Configuration config = new Configuration();
+            config.setInteger("topK", 10);
+
             wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
-                    .flatMap(new MLTInputMapper());
+                    .flatMap(new MLTInputMapper())
+                    .withParameters(config);
         }
 
         // Evaluation
@@ -84,7 +88,8 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
                         Iterator<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimIterator = wikiSimRecords.iterator();
                         Iterator<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamIterator = clickStreamRecords.iterator();
 
-                        if (!wikiSimIterator.hasNext()) {
+                        // Proceed only when both records exist
+                        if (!wikiSimIterator.hasNext() || !clickStreamIterator.hasNext()) {
                             return;
                         }
 
@@ -92,44 +97,42 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
 
                         WikiSimComparableResultList<Double> retrievedDocuments = wikiSimRecord.f1;
 
-
                         ArrayList<Tuple3<String, Double, Integer>> results = new ArrayList<>();
                         int impressions = 0;
                         int outClicks = 0;
                         int[] k = new int[]{10, 5, 1};
                         int[] totalClicks = new int[]{0, 0, 0};
 
-                        if (clickStreamIterator.hasNext()) {
-                            Tuple3<String, Integer, HashMap<String, Integer>> clickStreamRecord = clickStreamIterator.next();
+                        Tuple3<String, Integer, HashMap<String, Integer>> clickStreamRecord = clickStreamIterator.next();
 
-                            HashMap<String, Integer> clickStream = clickStreamRecord.f2;
-                            impressions = clickStreamRecord.f1;
+                        HashMap<String, Integer> clickStream = clickStreamRecord.f2;
+                        impressions = clickStreamRecord.f1;
 
-                            int rank = 1;
+                        int rank = 1;
 
-                            // Clicks on retrieved docs
-                            for (WikiSimComparableResult doc : retrievedDocuments) {
-                                int clicks = clickStream.containsKey(doc.getName()) ? clickStream.get(doc.getName()) : 0;
+                        // Clicks on retrieved docs
+                        for (WikiSimComparableResult doc : retrievedDocuments) {
+                            int clicks = clickStream.containsKey(doc.getName()) ? clickStream.get(doc.getName()) : 0;
 
-                                results.add(new Tuple3<>(
-                                        doc.getName(),
-                                        (Double) doc.getSortField1(),
-                                        clicks
-                                ));
+                            results.add(new Tuple3<>(
+                                    doc.getName(),
+                                    (Double) doc.getSortField1(),
+                                    clicks
+                            ));
 
-                                // loop k's
-                                for (int i = 0; i < k.length; i++) {
-                                    if (rank <= k[i]) {
-                                        totalClicks[i] += clicks;
-                                    }
+                            // loop k's
+                            for (int i = 0; i < k.length; i++) {
+                                if (rank <= k[i]) {
+                                    totalClicks[i] += clicks;
                                 }
-                                rank++;
                             }
-                            // All out clicks
-                            for (Integer c : clickStream.values())
-                                outClicks += c;
-
+                            rank++;
                         }
+
+                        // All out clicks
+                        for (Integer c : clickStream.values())
+                            outClicks += c;
+
 
                         ClickStreamResult res = new ClickStreamResult();
 

@@ -1,15 +1,15 @@
 package de.tuberlin.dima.schubotz.wikisim.seealso;
 
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
+import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.*;
 import de.tuberlin.dima.schubotz.wikisim.seealso.operators.BetterLinkExistsFilter;
 import de.tuberlin.dima.schubotz.wikisim.seealso.operators.BetterSeeAlsoLinkExistsFilter;
+import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResultList;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.tuple.Tuple11;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
@@ -34,8 +34,7 @@ import java.util.regex.Pattern;
  * Set SCORE-FIELD = -1 for MLT result data set.
  *
  */
-public class SeeAlsoEvaluation {
-    public static String outputFilename;
+public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
     public static String seeAlsoInputFilename;
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
@@ -43,10 +42,11 @@ public class SeeAlsoEvaluation {
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
     public static void main(String[] args) throws Exception {
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+        new SeeAlsoEvaluation().start(args);
+    }
 
-        if (args.length <= 3) {
+    public void plan() {
+        if (args.length < 3) {
             System.err.println("Input/output parameters missing!");
             System.err.println("USAGE: <result-set> <output> <seealso-set> [<links>] [<score-field>] [<page-a-field>] [<page-b-field>]");
             System.exit(1);
@@ -55,7 +55,7 @@ public class SeeAlsoEvaluation {
         wikiSimInputFilename = args[0];
         outputFilename = args[1];
         seeAlsoInputFilename = args[2];
-        linksInputFilename = args[3];
+        linksInputFilename = (args.length > 3 ? args[3] : "nofilter");
 
         int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 6);
         int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
@@ -100,21 +100,21 @@ public class SeeAlsoEvaluation {
                     .groupBy(0)
                     .reduceGroup(new WikiSimGroupReducer());
         } else {
-            // CPA
+            // MLT
+            Configuration config = new Configuration();
+            config.setInteger("topK", 10);
+
             wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
-                    .flatMap(new MLTInputMapper());
+                    .flatMap(new MLTInputMapper())
+                    .withParameters(config);
         }
 
         // Evaluation
-        DataSet<Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer>> output = seeAlsoDataSet
+        result = seeAlsoDataSet
                 .coGroup(wikiSimGroupedDataSet)
                 .where(0)
                 .equalTo(0)
                 .with(new ResultCoGrouper());
-
-        new WikiSimOutputWriter<Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer>>("SeeAlso evaluation (Fields: Score=" + scoreField + "; Page=[" + fieldPageA + ";" + fieldPageB + "]")
-                .write(env, output, outputFilename);
-
     }
 
 

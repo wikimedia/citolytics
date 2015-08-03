@@ -1,10 +1,10 @@
 package de.tuberlin.dima.schubotz.wikisim.seealso.better;
 
+import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResultList;
 import de.tuberlin.dima.schubotz.wikisim.seealso.utils.EvaluationMeasures;
 import org.apache.flink.api.common.functions.CoGroupFunction;
-import org.apache.flink.api.java.tuple.Tuple11;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.apache.flink.util.Collector;
@@ -16,11 +16,11 @@ import java.util.List;
 public class ResultCoGrouper implements CoGroupFunction<
         Tuple2<String, ArrayList<String>>,
         Tuple2<String, WikiSimComparableResultList<Double>>,
-        Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer>
+        SeeAlsoEvaluationResult
         > {
 
     @Override
-    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> b, Collector<Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer>> out) throws Exception {
+    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
         Iterator<Tuple2<String, ArrayList<String>>> iteratorA = a.iterator();
         Iterator<Tuple2<String, WikiSimComparableResultList<Double>>> iteratorB = b.iterator();
 
@@ -51,7 +51,7 @@ public class ResultCoGrouper implements CoGroupFunction<
                 matches = EvaluationMeasures.getMatchesCount(resultList, seeAlsoList);
             }
 
-            out.collect(new Tuple11<>(
+            out.collect(new SeeAlsoEvaluationResult(
                     (String) recordA.getField(0),
                     (ArrayList<String>) recordA.getField(1),
                     ((ArrayList<String>) recordA.getField(1)).size(),

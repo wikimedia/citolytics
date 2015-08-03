@@ -5,10 +5,6 @@ import org.apache.flink.api.java.tuple.Tuple8;
 
 import java.util.ArrayList;
 
-/*
-*
-*  */
-
 /**
  * article | retrieved documents | number of ret. documents | impressions | sum out clicks | k=10 clicks | k=5 clicks | k=1 clicks
  * <p/>

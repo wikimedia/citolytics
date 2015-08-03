@@ -8,10 +8,81 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.wikisim.histogram.Histogram;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
+import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor;
+import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
+import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class CalculationTest extends Tester {
+
+    /**
+     * Tests complete functionality of WikiSim application.
+     * <p/>
+     * Input:
+     * a) Wikipedia XML Dump (including SeeAlso links, redirects, ..)
+     * b) ClickStream DataSet
+     * <p/>
+     * Prepare:
+     * 1. Extract redirects
+     * 2. WikiSim with redirects
+     * 3. Extract SeeAlso links
+     * 4. Resolve redirects in SeeAlso links
+     * Evaluation:
+     * 5. SeeAlso
+     * 6. ClickStreams
+     * ====
+     * Test evaluation results
+     *
+     * @throws Exception
+     */
+    @Test
+    public void CompleteTest() throws Exception {
+        // TODO
+
+        String inputA = resource("completeTestWikiDump.xml");
+        String inputB = resource("completeTestClickStreamDataSet.tsv");
+
+        RedirectExtractor job1 = new RedirectExtractor();
+        job1.start(new String[]{
+                inputA,
+                resource("completeTestRedirects.out")
+        });
+
+        WikiSim job2 = new WikiSim();
+        job2.start(new String[]{
+                inputA,
+                resource("completeTestWikiSim.out"),
+                "2", "0", "0", "n",
+                resource("completeTestRedirects.out")
+        });
+
+        SeeAlsoExtractor job3 = new SeeAlsoExtractor();
+        job3.start(new String[]{
+                inputA,
+                resource("completeTestSeeAlso.out")
+        });
+
+//        SeeAlsoRedirects job4 = new SeeAlsoRedirects();
+//        job4.start(new String[]{
+//                resource("completeTestSeeAlso.out"),
+//                resource("completeTestRedirects.out"),
+//                resource("completeTestSeeAlso.out")
+//        });
+
+        SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
+        job5.start(new String[]{
+                resource("completeTestWikiSim.out"),
+                "local",
+                resource("completeTestSeeAlso.out")
+        });
+
+
+        System.out.println(job5.output);
+
+
+    }
+
     @Ignore
     @Test
     public void TestLocalExecution() throws Exception {
