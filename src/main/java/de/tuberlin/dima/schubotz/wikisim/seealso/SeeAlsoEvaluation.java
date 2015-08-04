@@ -48,16 +48,17 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
     public void plan() {
         if (args.length < 3) {
             System.err.println("Input/output parameters missing!");
-            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links>] [<score-field>] [<page-a-field>] [<page-b-field>]");
+            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links (=nofilter)>] [<score-field>] [<page-a-field>] [<page-b-field>]");
             System.exit(1);
         }
+        setJobName("SeeAlso Evaluation");
 
         wikiSimInputFilename = args[0];
         outputFilename = args[1];
         seeAlsoInputFilename = args[2];
         linksInputFilename = (args.length > 3 ? args[3] : "nofilter");
 
-        int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 6);
+        int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 5);
         int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
         int fieldPageB = (args.length > 6 ? Integer.valueOf(args[6]) : 2);
 
@@ -71,6 +72,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
         // CPA or MLT results?
         if (scoreField >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
             // CPA
+            jobName += " CPA score = " + scoreField + "; pages = " + fieldPageA + "; " + fieldPageB;
             Configuration config = new Configuration();
 
             config.setInteger("fieldPageA", fieldPageA);
@@ -99,8 +101,14 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
             wikiSimGroupedDataSet = wikiSimDataSet
                     .groupBy(0)
                     .reduceGroup(new WikiSimGroupReducer());
+
+            try {
+                wikiSimDataSet.print();
+            } catch (Exception e) {
+            }
         } else {
             // MLT
+            jobName += " MLT";
             Configuration config = new Configuration();
             config.setInteger("topK", 10);
 

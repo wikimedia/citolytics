@@ -43,11 +43,11 @@ public class WikiSimInputMapper extends RichFlatMapFunction<String, Tuple3<Strin
 
             out.collect(new Tuple3<>(cols[fieldPageA], cols[fieldPageB], score));
             out.collect(new Tuple3<>(cols[fieldPageB], cols[fieldPageA], score));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // nothing
-            return;
+//        } catch (ArrayIndexOutOfBoundsException e) {
+//            // nothing
+//            return;
         } catch (Exception e) {
-            throw new Exception(fieldScore + "; " + cols.length + " === " + s + "\n" + Arrays.toString(cols) + "\n" + e.getMessage());
+            throw new Exception("Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols) + "\n" + e.getMessage());
         }
     }
 }

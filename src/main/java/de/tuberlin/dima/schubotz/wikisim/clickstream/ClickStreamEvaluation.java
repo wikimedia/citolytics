@@ -36,7 +36,7 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
         clickStreamInputFilename = args[1];
         outputFilename = args[2];
 
-        int scoreField = (args.length > 3 ? Integer.valueOf(args[3]) : 6);
+        int scoreField = (args.length > 3 ? Integer.valueOf(args[3]) : 5);
         int fieldPageA = (args.length > 4 ? Integer.valueOf(args[4]) : 1);
         int fieldPageB = (args.length > 5 ? Integer.valueOf(args[5]) : 2);
 

@@ -1,5 +1,7 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
+import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation;
+import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamResult;
 import de.tuberlin.dima.schubotz.wikisim.cpa.TestOutput;
 import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.TestUtils;
@@ -9,10 +11,14 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.wikisim.histogram.Histogram;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor;
+import de.tuberlin.dima.schubotz.wikisim.redirects.SeeAlsoRedirects;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor;
+import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class CalculationTest extends Tester {
 
@@ -44,12 +50,14 @@ public class CalculationTest extends Tester {
         String inputB = resource("completeTestClickStreamDataSet.tsv");
 
         RedirectExtractor job1 = new RedirectExtractor();
+        job1.enableSingleOutputFile();
         job1.start(new String[]{
                 inputA,
                 resource("completeTestRedirects.out")
         });
 
         WikiSim job2 = new WikiSim();
+        job2.enableSingleOutputFile();
         job2.start(new String[]{
                 inputA,
                 resource("completeTestWikiSim.out"),
@@ -58,17 +66,19 @@ public class CalculationTest extends Tester {
         });
 
         SeeAlsoExtractor job3 = new SeeAlsoExtractor();
+        job3.enableSingleOutputFile();
         job3.start(new String[]{
                 inputA,
                 resource("completeTestSeeAlso.out")
         });
 
-//        SeeAlsoRedirects job4 = new SeeAlsoRedirects();
-//        job4.start(new String[]{
-//                resource("completeTestSeeAlso.out"),
-//                resource("completeTestRedirects.out"),
-//                resource("completeTestSeeAlso.out")
-//        });
+        SeeAlsoRedirects job4 = new SeeAlsoRedirects();
+        job4.enableSingleOutputFile();
+        job4.start(new String[]{
+                resource("completeTestSeeAlso.out"),
+                resource("completeTestRedirects.out"),
+                resource("completeTestSeeAlso.out")
+        });
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
         job5.start(new String[]{
@@ -77,21 +87,68 @@ public class CalculationTest extends Tester {
                 resource("completeTestSeeAlso.out")
         });
 
+        ClickStreamEvaluation job6 = new ClickStreamEvaluation();
+        job6.start(new String[]{
+                resource("completeTestWikiSim.out"),
+                inputB,
+                "local"
+        });
 
-        System.out.println(job5.output);
+        // Test SeeAlso evaluation
+        int found = 0;
+
+        for (SeeAlsoEvaluationResult r : job5.output) {
+            if (r.f0.equals("SeeAlso Article 1")) {
+                if (r.f4 != 6 || r.f5 != 1.0 || r.f6 != 0.5) {
+                    throw new Exception("Invalid scores for SeeAlso Article 1");
+                }
+                found++;
+            }
+
+            if (r.f0.equals("SeeAlso Article 2")) {
+
+                if (r.f4 != 6 || r.f5 != 1.0 || r.f6 != 0.5 || r.f7 != 0.45 || r.f8 != 2) {
+                    throw new Exception("Invalid scores for SeeAlso Article 2");
+                }
+                found++;
+            }
+
+        }
+
+        if (found != 2) {
+            throw new Exception("SeeAlso evaluation output size is invalid.");
+        }
+
+        // Test ClickStream
+        found = 0;
+
+        for (ClickStreamResult r : job6.output) {
+            if (r.f0.equals("Article C")) {
+                if (r.f2 != 6 || r.f3 != 99 || r.f4 != 0 || r.f5 != 0 || r.f6 != 0 || r.f7 != 0) {
+                    throw new Exception("Invalid clicks for Article C");
+                }
+                found++;
+            }
 
 
-    }
+            if (r.f0.equals("Article A")) {
+                if (r.f2 != 6 || r.f3 != 0 || r.f4 != 20 || r.f5 != 20 || r.f6 != 20 || r.f7 != 20) {
+                    throw new Exception("Invalid clicks for Article C");
+                }
+                found++;
+            }
+        }
 
-    @Ignore
-    @Test
-    public void TestLocalExecution() throws Exception {
+        if (found != 2) {
+            throw new Exception("ClickStream evaluation output is invalid.");
+        }
 
-        WikiSim.main(new String[]{
-                resource("wikiSeeAlso.xml"),
-                "print",
-                "1.5,1.25,1,0.5,0",
-                "1"});
+//        System.out.println(job6.output);
+
+
+//        System.out.println(job5.output);
+
+
     }
 
     @Test
@@ -104,8 +161,19 @@ public class CalculationTest extends Tester {
         });
 
         // if == 34202
-        System.out.println(job.output.size());
+        assertEquals("WikiSim result count is wrong", 34202, job.output.size());
 
+    }
+
+    @Ignore
+    @Test
+    public void TestLocalExecution() throws Exception {
+
+        WikiSim.main(new String[]{
+                resource("wikiSeeAlso.xml"),
+                "print",
+                "1.5,1.25,1,0.5,0",
+                "1"});
     }
 
     @Ignore
@@ -171,6 +239,7 @@ public class CalculationTest extends Tester {
         LinksExtractor.main(new String[]{inputFilename, outputFilename});
     }
 
+    @Ignore
     @Test
     public void IntermediateResultSize() throws Exception {
         String str = "ABC";
