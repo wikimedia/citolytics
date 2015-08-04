@@ -6,7 +6,11 @@ You run Flink jobs from this repository by using the following commands. Degree 
 ## WikiSim (no redirects)
 
 ```
-flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim /home/mschwarzer/wikisim/cpa.jar hdfs:///datasets/enwiki-latest-pages-meta-current.xml hdfs:///user/mschwarzer/v2/results/a01 0.5,0.8,0.9,1,1.5,2 0 0 n
+./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
+    ./cpa.jar \
+    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
+    hdfs:///user/mschwarzer/v2/results/a01 \
+    0.5,0.8,0.9,1,1.5,2 0 0 n
 ```
 
 ## WikiSim (redirects)
@@ -33,8 +37,12 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRed
 
 ## Extract Redirects (from WikiDump)
 
-flink run -p 120 -c de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor /home/mschwarzer/wikisim/cpa.jar hdfs:///datasets/enwiki-latest-pages-meta-current.xml hdfs:///user/mschwarzer/v2/intermediate/redirects2
-
+```
+./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor \
+    /home/mschwarzer/wikisim/cpa.jar \
+    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
+    hdfs:///user/mschwarzer/v2/intermediate/redirects2 \
+```
 
 ## Replace redirects in "See Also" links
 
