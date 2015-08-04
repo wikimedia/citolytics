@@ -31,6 +31,10 @@ import java.util.regex.Pattern;
  */
 public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult> {
 
+    public static String seeAlsoTitle = "==see also==";
+    public static String seeAlsoRegex = "(^|\\W)" + seeAlsoTitle + "$";
+    public static int seeAlsoRegexFlags = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE;
+
     // WikiDump of 2006 does not contain namespace tags
     private boolean enableWiki2006 = false;
 
@@ -85,7 +89,6 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
             // skip docs from namespaces other than
             if (doc.getNS() != 0) return null;
 
-
             if (processSeeAlsoOnly) {
                 doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(4))));
             } else {
@@ -127,8 +130,8 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     public static String getSeeAlsoSection(String wikiText) {
         int seeAlsoStart = -1;
         String seeAlsoText = "";
-        String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile("^" + seeAlsoTitle + "$", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
+
+        Pattern seeAlsoPattern = Pattern.compile(seeAlsoRegex, seeAlsoRegexFlags);
         Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
 
         if (seeAlsoMatcher.find()) {

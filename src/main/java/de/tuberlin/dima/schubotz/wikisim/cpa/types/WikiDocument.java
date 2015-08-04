@@ -16,6 +16,7 @@
  */
 package de.tuberlin.dima.schubotz.wikisim.cpa.types;
 
+import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import org.apache.flink.util.Collector;
 
 import java.util.*;
@@ -184,8 +185,7 @@ public class WikiDocument {
      */
     public String stripSeeAlsoSection(String wikiText) {
         int seeAlsoStart = -1;
-        String seeAlsoTitle = "==see also==";
-        Pattern seeAlsoPattern = Pattern.compile("^" + seeAlsoTitle, Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
+        Pattern seeAlsoPattern = Pattern.compile(DocumentProcessor.seeAlsoRegex, DocumentProcessor.seeAlsoRegexFlags);
         Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
 
         if (seeAlsoMatcher.find()) {
@@ -194,8 +194,8 @@ public class WikiDocument {
 
         // See also section exists
         if (seeAlsoStart > 0) {
-            int seeAlsoEnd = seeAlsoStart + seeAlsoTitle.length();
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
+            int seeAlsoEnd = seeAlsoStart + DocumentProcessor.seeAlsoTitle.length();
+            int nextHeadlineStart = wikiText.substring(seeAlsoStart + DocumentProcessor.seeAlsoTitle.length()).indexOf("==");
 
             String strippedWikiText = wikiText.substring(0, seeAlsoStart);
 

@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
+import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor;
@@ -36,12 +37,13 @@ public class SeeAlsoTest extends Tester {
         needles.add(new Tuple4<>("ASCII", "ASCII art", 2, 5));
         needles.add(new Tuple4<>("NFL on NBC", "List of AFC Championship Game broadcasters", 4, 8));
 
+        needles.add(new Tuple4<>("Africa Squadron", "Lyndhurst Way", 2, 2)); // indent line
+
         assertTrue("Needles not found", job.output.containsAll(needles));
 
         // Size
-        assertEquals("SeeAlso output count wrong.", 251, job.output.size());
+        assertEquals("SeeAlso output count wrong.", 253, job.output.size());
 
-        System.out.println();
     }
 
 
@@ -122,15 +124,11 @@ public class SeeAlsoTest extends Tester {
     }
 
     @Test
-    public void beginningOfLine() {
+    public void beginningOfLine() throws Exception {
         String content =
                 "===2010s===\n" +
                         "As of the [[2014 NFL season|2014 season]], ''Football Night in America'' is hosted by [[Bob Costas]], who hosts from the game site, with [[Dan Patrick]] emceeing from the [[Stamford, Connecticut]] studio. [[Tony Dungy]] and [[Rodney Harrison]] are studio analysts. ''[[Sports Illustrated]]'' reporter [[Peter King (sportswriter)|Peter King]] serves as a feature reporter.  ''FNIA'' was broadcast from Studio 8G (and then from Studio 8H) from the GE (now Comcast) Building at 30 Rockefeller Plaza in New York from 2006-2013 before its own relocation to Stamford in September 2014, joining all of NBC Sports' other operations and [[NBCSN]].\n" +
-                        "\n" +
-                        "The NFL also has a strict policy prohibiting networks to run ads during the Super Bowl from the gambling industry, and has rejected ads from the [[Las Vegas Convention and Visitors Authority]]. It had been reported that if the television program ''[[Las Vegas (TV series)|Las Vegas]]'' was still on the air when [[NBC]] televised [[Super Bowl XLIII]] in 2009, they likely would not have be allowed to promote the series during the entire block of programming.<ref>{{cite news| url=http://www.usatoday.com/sports/football/nfl/2005-08-04-las-vegas-ads_x.htm | work=USA Today | first=Steve | last=Friess | title=NFL may ban 'Vegas' promos during games | date=August 4, 2005}}</ref> As ''Vegas'' ended during the 2007–2008 television season, this was no longer an issue for NBC.\n" +
-                        "\n" +
-                        "With an average U.S. audience of 98.7 million viewers, Super Bowl XLIII was the most-watched Super Bowl in history, and at that point the second-most-watched U.S. television program of any kind (trailing only the [[Goodbye, Farewell, and Amen|final episode of ''M*A*S*H'']] in 1983; both would be broken by [[Super Bowl XLIV]] the following year). However, the [[Nielsen rating]] of 42.1, was lower than the 43.3 rating for the previous year's [[Super Bowl XLII|game]].\n" +
-                        "\n" +
+
                         "On December 14, 2011, the NFL, along with Fox, NBC and CBS, announced the league's rights deal with all three networks was extended to the end of the 2022 season. The three network rights deal includes the continued rotation of the Super Bowl yearly among the three, meaning NBC will air Super Bowls [[Super Bowl XLIX|XLIX]] (2015), [[Super Bowl LII|LII]] (2018), and LV (2021).<ref>{{cite news|url=http://blog.chron.com/ultimatetexans/2011/12/nfl-extends-broadcast-agreements-through-2022-generating-billions/|title=NFL extends broadcast agreements through 2022, generating billions|last=Barron|first=David|date=December 14, 2011|work=Houston Chronicle|accessdate=December 19, 2011}}</ref> The new rights deal also includes NBC receiving the primetime game of the Thanksgiving tripleheader previously carried by NFL Network, along with a division playoff game and one wild card game rather than the full Wild Card Saturday package.\n" +
                         "\n" +
                         "NBC's broadcast of [[Super Bowl XLVI]] at the end of the [[2011 NFL season|2011 season]] became the most-watched program in the history of [[Television in the United States|United States television]], with 111.3 million US viewers, according to [[Nielsen Company|Nielsen]].<ref>{{cite web|first=David |last=Bauder |url=http://www.huffingtonpost.com/2012/02/06/super-bowl-ratings-record-tv-giants-patriots_n_1258107.html |title=Super Bowl Ratings Record: Giants-Patriots Game Is Highest-Rated TV Show In US History |work=Huffington Post |date=February 6, 2012 |accessdate=February 7, 2012}}</ref>\n" +
@@ -150,7 +148,7 @@ public class SeeAlsoTest extends Tester {
                         "==Commentators==\n" +
                         "{{main|Football Night in America|NBC Sunday Night Football|List of NFL on NBC announcers|List of NFL on NBC pregame show panelists}}\n" +
                         "\n" +
-                        "==See also==\n" +
+                        "   ==See also==\n" +
                         "*[[List of NFL on NBC commentator pairings]]\n" +
                         "*[[List of AFL Championship Game broadcasters]]\n" +
                         "*[[List of NFL Championship Game broadcasters]]\n" +
@@ -170,39 +168,14 @@ public class SeeAlsoTest extends Tester {
                         "\n" +
                         "{{Navboxes|list1=\n" +
                         "{{s-start}}\n" +
-                        "{{succession box|before=[[NFL on DuMont|DuMont]]| title=[[National Football League]] broadcaster (with [[NFL on CBS|CBS]])| years=[[1955 NFL season|1955]]–[[1963 NFL season|63]]| after=[[NFL on CBS|CBS]]}}\n" +
-                        "{{succession box|before=[[American Football League on ABC|ABC]]| title=[[American Football League]] broadcaster| years=[[1965 American Football League season|1965]]–[[1969 American Football League season|1969]]| after=[[AFL-NFL Merger]]}}\n" +
-                        "{{succession box|before=[[AFL-NFL Merger]]| title=[[American Football Conference]] broadcaster| years=[[1970 NFL Season|1970]]–[[1997 NFL Season|1997]]| after=[[NFL on CBS|CBS]]}}\n" +
-                        "{{succession box|before=[[ESPN Sunday Night Football|ESPN]] and [[NFL on TNT|TNT]]| title=NFL [[NBC Sunday Night Football|Sunday Night Football]] broadcaster| years=[[2006 NFL season|2006]]–present| after=incumbent}}\n" +
-                        "{{succession box|before=[[Monday Night Football|ABC]]| title=NFL Saturday Wild Card Playoff broadcaster| years=[[2006 NFL season|2006]]–present| after=incumbent}}\n" +
-                        "{{succession box|before=[[Monday Night Football|ABC]]| title=[[National Football League Kickoff game|NFL kickoff game]] broadcaster| years=[[2006 NFL season|2006]]–present| after=incumbent}}\n" +
-                        "{{s-end}}\n" +
-                        "{{NBC Sports}}\n" +
-                        "{{NFL on NBC}}\n" +
-                        "{{NFL on NBC Radio}}\n" +
-                        "{{National Football League on television and radio}}\n" +
-                        "{{AFL (1960 - 1969)}}\n" +
-                        "{{NBCNetwork Shows (current and upcoming)}}\n" +
-                        "}}\n" +
-                        "\n" +
-                        "{{DEFAULTSORT:Nfl On Nbc}}\n" +
-                        "[[Category:NBC network shows]]\n" +
-                        "[[Category:NBC Sports]]\n" +
-                        "[[Category:American Football League]]\n" +
-                        "[[Category:Canadian Football League on television]]\n" +
-                        "[[Category:1955 American television series debuts]]\n" +
-                        "[[Category:1998 American television series endings]]\n" +
-                        "[[Category:2006 American television series debuts]]\n" +
-                        "[[Category:1950s American television series]]\n" +
-                        "[[Category:1960s American television series]]\n" +
-                        "[[Category:1970s American television series]]\n" +
-                        "[[Category:1980s American television series]]\n" +
-                        "[[Category:1990s American television series]]\n" +
-                        "[[Category:2000s American television series]]\n" +
                         "[[Category:2010s American television series]]\n" +
                         "[[Category:National Football League television series|NBC]]\n" +
                         "[[Category:Television series revived after cancellation]]\n";
 
-        System.out.println(Pattern.compile("^==See also==$", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE).matcher(content).find());
+        if (Pattern.compile(DocumentProcessor.seeAlsoRegex, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE).matcher(content).find()) {
+            System.out.println("See also section found.");
+        } else {
+            throw new Exception("See also not found if not in beginning of line.");
+        }
     }
 }
