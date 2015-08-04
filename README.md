@@ -1,17 +1,17 @@
-Co-Citation Proximity Analysis (CPA) for Wikipedia
-================================
+# Co-Citation Proximity Analysis (CPA) for Wikipedia
+
 [![Build Status](https://drone.io/github.com/TU-Berlin/cpa-demo/status.png)](https://drone.io/github.com/TU-Berlin/cpa-demo/latest)
-## Contents
+### Contents
 * CPA and Co-Citation computation on Wikipedia text corpus
 * Extraction of "See also" link as gold standard
 * Performance evaluation with Mean Average Precision, TopK, ... 
 * LinkGraph extraction for result pairs
 
-## Run
+### Run
 * Compile the Maven project
 * Run Apache Flink jobs separately from jar-file with -c parameter.
 
-## Available Flink Jobs (Classes)
+### Available Flink Jobs (Classes)
 * **CPA/CoCit Computation**: de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
     * Parameters: <DATASET> <OUTPUT> <ALPHA1, ALPHA2, ...> [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
     * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
@@ -36,8 +36,8 @@ Co-Citation Proximity Analysis (CPA) for Wikipedia
 
 ...
 
-## Evaluation
-To evaluate and generate the data used in our publication, you need to run the following Flink jobs in the order below.
+### Evaluation Example
+To evaluate and generate the data used in our publication, you need to run the following Flink jobs in the order below. Paths to JAR and HDFS need to be adjusted depending on your setup. 
 
 #### 1. Extract Redirects from Wikipedia
 ```
