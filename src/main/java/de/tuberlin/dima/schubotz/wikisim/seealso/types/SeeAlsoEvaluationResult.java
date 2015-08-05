@@ -4,9 +4,6 @@ import org.apache.flink.api.java.tuple.Tuple11;
 
 import java.util.ArrayList;
 
-/**
- * Created by malteschwarzer on 03/08/15.
- */
 public class SeeAlsoEvaluationResult extends Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer> {
     public SeeAlsoEvaluationResult() {
     }

@@ -21,8 +21,8 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.CPAReducer;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
-import de.tuberlin.dima.schubotz.wikisim.redirects.ReduceResults;
-import de.tuberlin.dima.schubotz.wikisim.redirects.ReplaceRedirects;
+import de.tuberlin.dima.schubotz.wikisim.redirects.operators.ReduceResults;
+import de.tuberlin.dima.schubotz.wikisim.redirects.operators.ReplaceRedirects;
 import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;

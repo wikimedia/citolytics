@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.cpa;
+package de.tuberlin.dima.schubotz.wikisim.cpa.utils;
 
 import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import org.apache.flink.api.common.functions.FlatMapFunction;

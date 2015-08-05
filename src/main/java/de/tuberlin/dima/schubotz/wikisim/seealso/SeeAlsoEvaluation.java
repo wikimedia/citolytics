@@ -30,9 +30,8 @@ import java.util.regex.Pattern;
  * 4 = SCORE-FIELD: column of score field in result set (default: 6)
  * 5 = PAGE-A-FIELD: column of page A in result set (default: 1)
  * 6 = PAGE-B-FIELD: column of page B in result set (default: 2)
- *
+ * <p/>
  * Set SCORE-FIELD = -1 for MLT result data set.
- *
  */
 public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
     public static String seeAlsoInputFilename;
@@ -102,10 +101,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
                     .groupBy(0)
                     .reduceGroup(new WikiSimGroupReducer());
 
-            try {
-                wikiSimDataSet.print();
-            } catch (Exception e) {
-            }
+
         } else {
             // MLT
             jobName += " MLT";

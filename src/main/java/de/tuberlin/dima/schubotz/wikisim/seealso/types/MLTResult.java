@@ -9,5 +9,6 @@ import org.apache.flink.api.java.tuple.Tuple3;
  * 1: Target
  * 2: Score
  */
+@Deprecated
 public class MLTResult extends Tuple3<String, String, Float> {
 }

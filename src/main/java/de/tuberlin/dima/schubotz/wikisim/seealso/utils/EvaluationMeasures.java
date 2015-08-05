@@ -113,7 +113,7 @@ public class EvaluationMeasures {
 
             // If matchesCount is already 0, avoid intersection
             if (i > 0 && matches[i - 1] == 0) {
-
+                // do nothing
             } else {
                 matches[i] = ListUtils.intersection(relevantDocuments, retrievedDocuments.subList(0, matchesLength)).size();
             }

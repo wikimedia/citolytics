@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.clickstream;
+package de.tuberlin.dima.schubotz.wikisim.clickstream.operators;
 
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple10;
@@ -6,7 +6,8 @@ import org.apache.flink.api.java.tuple.Tuple4;
 
 import java.util.ArrayList;
 
-public class ClickStreamAggregateOutput implements ReduceFunction<Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>> {
+@Deprecated
+public class AggregateOutput implements ReduceFunction<Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>> {
     @Override
     public Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double> reduce(Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double> a, Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double> b) throws Exception {
         return new Tuple10<>(

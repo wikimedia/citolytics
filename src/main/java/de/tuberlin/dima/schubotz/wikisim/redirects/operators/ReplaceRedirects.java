@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.redirects;
+package de.tuberlin.dima.schubotz.wikisim.redirects.operators;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;

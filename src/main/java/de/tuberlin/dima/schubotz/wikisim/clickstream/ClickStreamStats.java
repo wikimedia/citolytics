@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream;
 
+import de.tuberlin.dima.schubotz.wikisim.clickstream.utils.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;

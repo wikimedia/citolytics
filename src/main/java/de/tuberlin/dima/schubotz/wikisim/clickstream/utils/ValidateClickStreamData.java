@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.clickstream;
+package de.tuberlin.dima.schubotz.wikisim.clickstream.utils;
 
 import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import org.apache.flink.api.common.functions.FilterFunction;

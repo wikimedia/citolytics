@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.clickstream;
+package de.tuberlin.dima.schubotz.wikisim.clickstream.utils;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;

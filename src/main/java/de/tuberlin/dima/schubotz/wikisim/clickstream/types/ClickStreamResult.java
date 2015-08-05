@@ -1,4 +1,4 @@
-package de.tuberlin.dima.schubotz.wikisim.clickstream;
+package de.tuberlin.dima.schubotz.wikisim.clickstream.types;
 
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple8;
