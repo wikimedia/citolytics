@@ -4,7 +4,7 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor;
-import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -24,26 +24,49 @@ public class SeeAlsoTest extends Tester {
     }
 
     @Test
-    public void ExtractSeeAlso() throws Exception {
+    public void ExtractSeeAlsoNoRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
         job.start(new String[]{resource("wikiSeeAlso2.xml"), "local"});
 
-        System.out.println(job.output);
+//        System.out.println(job.output);
+//        System.out.println(job.output.size());
 
         // Needles
-        ArrayList<Tuple4<String, String, Integer, Integer>> needles = new ArrayList<>();
+        ArrayList<Tuple3<String, String, Integer>> needles = new ArrayList<>();
 
-        needles.add(new Tuple4<>("ASCII", "ASCII art", 2, 5));
-        needles.add(new Tuple4<>("NFL on NBC", "List of AFC Championship Game broadcasters", 4, 8));
-
-        needles.add(new Tuple4<>("Africa Squadron", "Lyndhurst Way", 2, 2)); // indent line
+        needles.add(new Tuple3<>("ASCII", "3568 ASCII#ASCII art#ASCII Ribbon Campaign#Extended ASCII#HTML decimal character rendering", 5));
+        needles.add(new Tuple3<>("Algeria", "Index of Algeria-related articles#Outline of Algeria", 2));
+        needles.add(new Tuple3<>("NFL on NBC", "List of NFL on NBC commentator pairings#List of AFL Championship Game broadcasters#List of NFL Championship Game broadcasters#List of AFC Championship Game broadcasters#List of NFC Championship Game broadcasters#List of Super Bowl broadcasters#NFL on NBC Radio#NFL on NBC music", 8));
+        needles.add(new Tuple3<>("Africa Squadron", "Artist collective#Lyndhurst Way", 2)); // indent line
 
         assertTrue("Needles not found", job.output.containsAll(needles));
 
         // Size
-        assertEquals("SeeAlso output count wrong.", 253, job.output.size());
+        assertEquals("SeeAlso output count wrong.", 7, job.output.size());
+    }
 
+    @Test
+    public void ExtractSeeAlsoWithRedirects() throws Exception {
+        SeeAlsoExtractor job = new SeeAlsoExtractor();
+
+        job.start(new String[]{resource("wikiSeeAlso2.xml"), "local", resource("redirects.csv")});
+
+        // Needles (random link order)
+        // ASCII art -> ASCII Art
+        int found = 0;
+        for (Tuple3<String, String, Integer> r : job.output) {
+            if (r.f0.equals("ASCII")) {
+                if (r.f2 == 5 && r.f1.indexOf("ASCII Art") > -1) {
+                    found++;
+                }
+            }
+        }
+
+        assertEquals("Needles not found", 1, found);
+
+        // Size
+        assertEquals("SeeAlso output count wrong.", 7, job.output.size());
     }
 
 
@@ -79,7 +102,7 @@ public class SeeAlsoTest extends Tester {
         assertTrue("Reference not found", text.indexOf("Reference") > 0);
         assertNotSame("Text not changed", input, text);
 
-        System.out.println(text);
+        //System.out.println(text);
     }
 
     @Test
@@ -120,7 +143,7 @@ public class SeeAlsoTest extends Tester {
         assertTrue("Notes and references not found", text.indexOf("Notes and references") > 0);
         assertNotSame("Text not changed", input, text);
 
-        System.out.println(text);
+//        System.out.println(text);
     }
 
     @Test
@@ -173,7 +196,7 @@ public class SeeAlsoTest extends Tester {
                         "[[Category:Television series revived after cancellation]]\n";
 
         if (Pattern.compile(DocumentProcessor.seeAlsoRegex, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE).matcher(content).find()) {
-            System.out.println("See also section found.");
+            //System.out.println("See also section found.");
         } else {
             throw new Exception("See also not found if not in beginning of line.");
         }

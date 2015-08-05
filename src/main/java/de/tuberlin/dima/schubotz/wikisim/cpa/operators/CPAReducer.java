@@ -45,8 +45,8 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
             alpha[i] = Double.parseDouble(arr[i]);
         }
 
-        reducerThreshold = parameter.getInteger("reducerThreshold", 1);
-        combinerThreshold = parameter.getInteger("combinerThreshold", 1);
+        reducerThreshold = parameter.getInteger("reducerThreshold", 0);
+        combinerThreshold = parameter.getInteger("combinerThreshold", 0);
     }
 
     @Override

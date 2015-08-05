@@ -87,8 +87,8 @@ public class WikiSim extends WikiSimJob<WikiSimResult> {
         // Configuration for 2nd order functions
         Configuration config = new Configuration();
         config.setString("alpha", ((args.length > 2) ? args[2] : "1.5"));
-        config.setInteger("reducerThreshold", (args.length > 3) ? Integer.valueOf(args[3]) : 1);
-        config.setInteger("combinerThreshold", (args.length > 4) ? Integer.valueOf(args[4]) : 1);
+        config.setInteger("reducerThreshold", (args.length > 3) ? Integer.valueOf(args[3]) : 0);
+        config.setInteger("combinerThreshold", (args.length > 4) ? Integer.valueOf(args[4]) : 0);
 
         config.setBoolean("median", true);
         config.setBoolean("wiki2006", (args.length > 5 && args[5].equals("2006") ? true : false));

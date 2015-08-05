@@ -1,17 +1,16 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation;
-import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamResult;
-import de.tuberlin.dima.schubotz.wikisim.cpa.TestOutput;
+import de.tuberlin.dima.schubotz.wikisim.clickstream.types.ClickStreamResult;
 import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.TestUtils;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.TestOutput;
 import de.tuberlin.dima.schubotz.wikisim.histogram.Histogram;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor;
-import de.tuberlin.dima.schubotz.wikisim.redirects.SeeAlsoRedirects;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
@@ -33,7 +32,7 @@ public class CalculationTest extends Tester {
      * 1. Extract redirects
      * 2. WikiSim with redirects
      * 3. Extract SeeAlso links
-     * 4. Resolve redirects in SeeAlso links
+     * (4. Resolve redirects in SeeAlso links)
      * Evaluation:
      * 5. SeeAlso
      * 6. ClickStreams
@@ -69,15 +68,8 @@ public class CalculationTest extends Tester {
         job3.enableSingleOutputFile();
         job3.start(new String[]{
                 inputA,
-                resource("completeTestSeeAlso.out")
-        });
-
-        SeeAlsoRedirects job4 = new SeeAlsoRedirects();
-        job4.enableSingleOutputFile();
-        job4.start(new String[]{
                 resource("completeTestSeeAlso.out"),
-                resource("completeTestRedirects.out"),
-                resource("completeTestSeeAlso.out")
+                resource("completeTestRedirects.out") // job4
         });
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
@@ -156,12 +148,12 @@ public class CalculationTest extends Tester {
         WikiSim job = new WikiSim();
 
         job.start(new String[]{
-                "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath(),
+                resource("wikiSeeAlso.xml"),
                 "local"
         });
 
-        // if == 34202
-        assertEquals("WikiSim result count is wrong", 34202, job.output.size());
+        // If threshold is greater than 0, result count varies
+        assertEquals("WikiSim result count is wrong", 126253, job.output.size());
 
     }
 
@@ -181,7 +173,7 @@ public class CalculationTest extends Tester {
     public void ValidateWikiSimOutput() throws Exception {
 
         TestOutput.main(new String[]{
-                resource("testresult2.csv"),
+                resource("wikisim_output.csv"),
                 "print"
         });
     }
@@ -191,27 +183,25 @@ public class CalculationTest extends Tester {
     @Test
     public void TestWiki2006() throws Exception {
 
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("wiki2006.xml").nextElement().getPath();
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
+        WikiSim job = new WikiSim();
+        job.start(new String[]{
+                resource("wiki2006.xml"),
+                "local", "0.81,1.5,1.25", "0", "0", "2006"});
 
-        outputFilename = "print";
-
-        WikiSim.main(new String[]{inputFilename, outputFilename, "0.81,1.5,1.25", "0", "0"});
+        assertEquals("Result count wrong", 87632, job.output.size());
     }
 
     @Ignore
     @Test
     public void TestRedirectedExecution() throws Exception {
 
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiRedirectedLinks.xml").nextElement().getPath();
-
-//        inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso.xml").nextElement().getPath();
-
-
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-//        String outputFilename = "print";
-
-        WikiSim.main(new String[]{inputFilename, outputFilename, "1.5,1.75", "0", "0", "n", "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath()});
+        // TODO resource conflicts
+        WikiSim.main(new String[]{
+                resource("wikiRedirectedLinks.xml"),
+                resource("test.out"),
+                "1.5,1.75", "0", "0", "n",
+                resource("redirects.out")
+        });
     }
 
     @Ignore

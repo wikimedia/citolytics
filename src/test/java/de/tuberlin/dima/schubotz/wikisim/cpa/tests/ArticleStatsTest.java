@@ -3,12 +3,10 @@ package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
+import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinkGraph;
 import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStats;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.util.Scanner;
 
 
 public class ArticleStatsTest extends Tester {
@@ -46,14 +44,16 @@ public class ArticleStatsTest extends Tester {
         System.out.println("AvgLinkDistance: " + doc.getAvgLinkDistance());
 
     }
-    // Utilities
 
-    private String getFileContents(String fname) {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(fname);
-        Scanner s = new Scanner(is, "UTF-8");
-        s.useDelimiter("\\A");
-        String out = s.hasNext() ? s.next() : "";
-        s.close();
-        return out;
+    @Ignore
+    @Test
+    public void TestLinkGraph() throws Exception {
+
+        LinkGraph.main(new String[]{
+                resource("wikiSeeAlso2.xml"),
+                resource("redirects.out"),
+                resource("linkGraphInput.csv"),
+                "print"
+        });
     }
 }

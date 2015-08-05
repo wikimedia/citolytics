@@ -1,8 +1,8 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation;
-import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamStats;
+import de.tuberlin.dima.schubotz.wikisim.clickstream.utils.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
@@ -43,7 +43,7 @@ public class EvaluationTest extends Tester {
     public void TestClickStreamEvaluationCPA() throws Exception {
         ClickStreamEvaluation.main(
                 new String[]{
-                        resource("testresult2.csv"),
+                        resource("wikisim_output.csv"),
                         resource("2015_02_clickstream_preview.tsv"),
                         "print"
                 }
@@ -79,12 +79,12 @@ public class EvaluationTest extends Tester {
     public void EvalCPATest() throws Exception {
 
         SeeAlsoEvaluation.main(new String[]{
-                "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
+                resource("wikisim_output.csv"),
 //                "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
                 "print",
-                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
+                resource("evaluation_seealso.csv"),
                 "nofilter"
-                , "5"
+                , "4"
                 , "1"
                 , "2"
 //                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
@@ -98,10 +98,10 @@ public class EvaluationTest extends Tester {
 
         SeeAlsoEvaluation.main(new String[]{
 //                "file://" + getClass().getClassLoader().getResources("testresult2.csv").nextElement().getPath(),
-                "file://" + getClass().getClassLoader().getResources("evaluation_mlt.csv").nextElement().getPath(),
+                resource("evaluation_mlt.csv"),
                 "print",
-                "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
-                "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath()
+                resource("evaluation_seealso.csv"),
+                resource("evaluation_links.csv")
                 , "-1"
         });
     }

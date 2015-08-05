@@ -1,7 +1,6 @@
-package de.tuberlin.dima.schubotz.wikisim.redirects;
+package de.tuberlin.dima.schubotz.wikisim.redirects.single;
 
 import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
-import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
-
 public class SeeAlsoRedirects extends WikiSimJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
         new SeeAlsoRedirects().start(args);
@@ -22,7 +20,7 @@ public class SeeAlsoRedirects extends WikiSimJob<Tuple3<String, String, Integer>
 
     public void plan() {
         if (args.length <= 2) {
-            System.err.print("Error: Parameter missing! Required: SEEALSO REDIRECTS OUTPUT, Current: " + Arrays.toString(args));
+            System.err.print("Error: Parameter missing! Required: <SEEALSO> <REDIRECTS> <OUTPUT>, Current: " + Arrays.toString(args));
             System.exit(1);
         }
 

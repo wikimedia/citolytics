@@ -8,7 +8,7 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.DoubleListValue;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.StringUtils;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectCount;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor;
-import de.tuberlin.dima.schubotz.wikisim.redirects.SeeAlsoRedirects;
+import de.tuberlin.dima.schubotz.wikisim.redirects.single.SeeAlsoRedirects;
 import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirectsResult;
 import org.apache.flink.types.DoubleValue;
@@ -24,7 +24,7 @@ public class RedirectTest extends Tester {
         WikiSimRedirects.main(
                 new String[]{
 //                        "dataset",
-                        resource("testresult2.csv"),
+                        resource("wikisim_output.csv"),
                         resource("redirects.out"),
                         "print"
                 }
@@ -44,7 +44,7 @@ public class RedirectTest extends Tester {
     }
 
     @Ignore
-    @Test
+//    @Test
     public void RedirectEncoding() throws Exception {
         RedirectExtractor.main(new String[]{
                 "/Users/malteschwarzer/Desktop/wikitest.xml",
@@ -77,6 +77,7 @@ public class RedirectTest extends Tester {
         });
     }
 
+    @Ignore
     @Test
     public void TestResultConstructor() {
         WikiSimResult r1 = new WikiSimResult(new LinkTuple("Page A", "Page B"), 99);
