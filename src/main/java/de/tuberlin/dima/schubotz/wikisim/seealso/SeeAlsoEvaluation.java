@@ -38,6 +38,8 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
 
+    public final int topK = 10;
+
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
     public static void main(String[] args) throws Exception {
@@ -99,14 +101,14 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
 
             wikiSimGroupedDataSet = wikiSimDataSet
                     .groupBy(0)
-                    .reduceGroup(new WikiSimGroupReducer());
+                    .reduceGroup(new WikiSimGroupReducer(topK));
 
 
         } else {
             // MLT
             jobName += " MLT";
             Configuration config = new Configuration();
-            config.setInteger("topK", 10);
+            config.setInteger("topK", topK);
 
             wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new MLTInputMapper())
@@ -118,7 +120,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
                 .coGroup(wikiSimGroupedDataSet)
                 .where(0)
                 .equalTo(0)
-                .with(new ResultCoGrouper());
+                .with(new ResultCoGrouper(topK));
     }
 
 

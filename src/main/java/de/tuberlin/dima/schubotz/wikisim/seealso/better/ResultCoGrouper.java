@@ -19,6 +19,12 @@ public class ResultCoGrouper implements CoGroupFunction<
         SeeAlsoEvaluationResult
         > {
 
+    private int topK = 10;
+
+    public ResultCoGrouper(int topK) {
+        this.topK = topK;
+    }
+
     @Override
     public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
         Iterator<Tuple2<String, ArrayList<String>>> iteratorA = a.iterator();
@@ -30,7 +36,7 @@ public class ResultCoGrouper implements CoGroupFunction<
 
             List<WikiSimComparableResult<Double>> sortedList = new ArrayList<>();
 
-            double topK = 0;
+            double topKScore = 0;
             double hrr = 0;
             double mar = 0;
 
@@ -39,12 +45,11 @@ public class ResultCoGrouper implements CoGroupFunction<
             if (iteratorB.hasNext()) {
                 Tuple2<String, WikiSimComparableResultList<Double>> recordB = iteratorB.next();
 
-                sortedList = Ordering.natural().greatestOf(
-                        (WikiSimComparableResultList<Double>) recordB.getField(1), 20);
+                sortedList = Ordering.natural().greatestOf((WikiSimComparableResultList<Double>) recordB.getField(1), topK);
 
                 List<String> resultList = getResultNamesAsList(sortedList);
 
-                topK = EvaluationMeasures.getTopKScore(resultList, seeAlsoList);
+                topKScore = EvaluationMeasures.getTopKScore(resultList, seeAlsoList);
                 hrr = EvaluationMeasures.getHarmonicReciprocalRank(resultList, seeAlsoList);
                 mar = EvaluationMeasures.getMeanAveragePrecision(resultList, seeAlsoList);
 
@@ -58,7 +63,7 @@ public class ResultCoGrouper implements CoGroupFunction<
                     new WikiSimComparableResultList<Double>(sortedList),
                     sortedList.size(),
                     hrr,
-                    topK,
+                    topKScore,
                     mar,
                     matches[0],
                     matches[1],
