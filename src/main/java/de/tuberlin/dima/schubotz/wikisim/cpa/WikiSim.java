@@ -103,32 +103,12 @@ public class WikiSim extends WikiSimJob<WikiSimResult> {
                 .reduceGroup(new CPAReducer())
                 .withParameters(config);
 
-
         // Resolve redirects if requested
         if (redirected) {
             jobName += " with redirects";
             result = resolveRedirects(env, result, args[6]);
         }
     }
-
-//    /**
-//     * Write output to CSV file or print to console.
-//     *
-//     * @param env
-//     * @param dataSet
-//     * @param outputFilename
-//     * @param jobName
-//     * @throws Exception
-//     */
-//    public static void writeOutput(ExecutionEnvironment env, DataSet dataSet, String outputFilename, String jobName) throws Exception {
-//        if (outputFilename.equals("print")) {
-//            dataSet.print();
-//        } else {
-//            //dataSet.writeAsCsv(outputFilename, WikiSimConfiguration.csvRowDelimiter, WikiSimConfiguration.csvFieldDelimiter, FileSystem.WriteMode.OVERWRITE);
-//            dataSet.write(new WikiOutputFormat<WikiSimResult>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
-//            env.execute(jobName);
-//        }
-//    }
 
     /**
      * Resolve Wikipedia redirects in results
