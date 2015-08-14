@@ -7,7 +7,8 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.TestUtils;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
-import de.tuberlin.dima.schubotz.wikisim.cpa.utils.TestOutput;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegrity;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.ValidateOrderInOutput;
 import de.tuberlin.dima.schubotz.wikisim.histogram.Histogram;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor;
@@ -17,7 +18,11 @@ import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CalculationTest extends Tester {
 
@@ -172,8 +177,18 @@ public class CalculationTest extends Tester {
     @Test
     public void ValidateWikiSimOutput() throws Exception {
 
-        TestOutput.main(new String[]{
+        ValidateOrderInOutput.main(new String[]{
                 resource("wikisim_output.csv"),
+                "print"
+        });
+    }
+
+    @Test
+    public void ValidateWikiSimOutputIntegrity() throws Exception {
+
+        CheckOutputIntegrity.main(new String[]{
+                resource("wikisim_output.csv"),
+                resource("wikisim_output_b.csv"),
                 "print"
         });
     }
@@ -191,17 +206,29 @@ public class CalculationTest extends Tester {
         assertEquals("Result count wrong", 87632, job.output.size());
     }
 
-    @Ignore
     @Test
     public void TestRedirectedExecution() throws Exception {
 
-        // TODO resource conflicts
-        WikiSim.main(new String[]{
+        WikiSim job = new WikiSim();
+
+        job.start(new String[]{
                 resource("wikiRedirectedLinks.xml"),
-                resource("test.out"),
+                "local",
                 "1.5,1.75", "0", "0", "n",
                 resource("redirects.out")
         });
+
+        assertEquals("Result count wrong", 3, job.output.size());
+
+        List<WikiSimResult> needles = new ArrayList<>();
+
+        needles.add(new WikiSimResult("Foo", "Redirect target", 17, 2, new double[]{0.08123121086119625, 0.047661356279998054}));
+        needles.add(new WikiSimResult("Bar", "Foo", 9, 2, new double[]{0.40754831530887764, 0.33049721878532895}));
+        needles.add(new WikiSimResult("Bar", "Redirect target", 8, 2, new double[]{0.4215947723372509, 0.3407763504193827}));
+
+        assertTrue("Needles not found.", job.output.containsAll(needles));
+
+//        System.out.println(job.output);
     }
 
     @Ignore

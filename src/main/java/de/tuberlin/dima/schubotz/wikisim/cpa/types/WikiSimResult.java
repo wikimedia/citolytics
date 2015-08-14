@@ -64,6 +64,17 @@ public class WikiSimResult extends Tuple6<
         init();
     }
 
+    public WikiSimResult(String pageA, String pageB, int distance, int count, double[] cpa) {
+
+        setField(LinkTuple.getHash(pageA, pageB), 0);
+        setField(pageA, 1);
+        setField(pageB, 2);
+
+        setDistance(distance);
+        setCount(count);
+        setCPA(cpa);
+    }
+
     public void init() {
         setCount(1);
         setDistSquared(0);

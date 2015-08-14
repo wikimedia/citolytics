@@ -7,7 +7,11 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import java.util.HashMap;
 
 /**
- * Check if impressions >= in-clicks. Outputs all invalid records.
+ * Check if
+ * a) impressions >= sum(in-clicks)
+ * b) impressions >= in-clicks
+ * <p/>
+ * Outputs all invalid records.
  */
 public class ValidateClickStreamData extends WikiSimJob<Tuple3<String, Integer, HashMap<String, Integer>>> {
 

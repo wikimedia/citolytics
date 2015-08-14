@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 /**
  * Check alphabetical order of WikiSim results.
  */
-public class TestOutput extends WikiSimJob<Tuple3<String, String, Integer>> {
+public class ValidateOrderInOutput extends WikiSimJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
-        new TestOutput().start(args);
+        new ValidateOrderInOutput().start(args);
     }
 
     public void plan() {
