@@ -99,7 +99,9 @@ public class WikiSim extends WikiSimJob<WikiSimResult> {
         // Calculate results
         result = text.flatMap(new DocumentProcessor())
                 .withParameters(config)
+//                .groupBy(1, 2) // Group by Page A, Page B
                 .groupBy(0) // Group by LinkTuple.hash()
+
                 .reduceGroup(new CPAReducer())
                 .withParameters(config);
 
@@ -144,7 +146,7 @@ public class WikiSim extends WikiSimJob<WikiSimResult> {
                 .equalTo(redirectSource)
                 .with(new ReplaceRedirects(pageB))
                         // sum duplicated tuples
-                .groupBy(hash)
+                .groupBy(hash) // Page A, Page B (hash)
                 .reduceGroup(new ReduceResults());
     }
 

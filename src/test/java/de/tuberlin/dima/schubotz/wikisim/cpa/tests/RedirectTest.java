@@ -1,10 +1,12 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
 
+import de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.DoubleListValue;
+import de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegrity;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.StringUtils;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectCount;
 import de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor;
@@ -15,7 +17,69 @@ import org.apache.flink.types.DoubleValue;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class RedirectTest extends Tester {
+
+    @Test
+    public void TestRedirectedExecution() throws Exception {
+
+        WikiSim job = new WikiSim();
+
+        job.start(new String[]{
+                resource("wikiRedirectedLinks.xml"),
+                "print",
+                "1.5,1.75", "0", "0", "n",
+                resource("redirects.csv")
+        });
+
+//        assertEquals("Result count wrong", 3, job.output.size());
+//
+//        List<WikiSimResult> needles = new ArrayList<>();
+//
+//        needles.add(new WikiSimResult("Foo", "Redirect target", 17, 2, new double[]{0.08123121086119625, 0.047661356279998054}));
+//        needles.add(new WikiSimResult("Bar", "Foo", 9, 2, new double[]{0.40754831530887764, 0.33049721878532895}));
+//        needles.add(new WikiSimResult("Bar", "Redirect target", 8, 2, new double[]{0.4215947723372509, 0.3407763504193827}));
+//
+//        assertTrue("Needles not found.", job.output.containsAll(needles));
+
+//        System.out.println(job.output);
+    }
+
+
+    @Test
+    public void TestIntegrity() throws Exception {
+
+        WikiSim job = new WikiSim();
+
+        job.start(new String[]{
+                input("completeTestWikiDump.xml"),
+                output("wikisim_integrity_a.out"),
+                "1.5,1.75", "0", "0", "n",
+                input("redirects.csv")
+        });
+
+
+        job.start(new String[]{
+                input("completeTestWikiDump.xml"),
+                output("wikisim_integrity_b.out"),
+                "1.5,1.75", "0", "0", "n",
+                input("redirects.csv")
+        });
+
+
+        CheckOutputIntegrity test = new CheckOutputIntegrity();
+
+        test.start(new String[]{
+                resource("wikisim_integrity_a.out"),
+                resource("wikisim_integrity_b.out"),
+                "local"
+        });
+
+        assertEquals("CheckOutputIntegrity results should be empty.", 0, test.output.size());
+
+    }
+
 
     @Ignore
     @Test
@@ -25,7 +89,7 @@ public class RedirectTest extends Tester {
                 new String[]{
 //                        "dataset",
                         resource("wikisim_output.csv"),
-                        resource("redirects.out"),
+                        resource("redirects.csv"),
                         "print"
                 }
         );

@@ -18,11 +18,7 @@ import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CalculationTest extends Tester {
 
@@ -186,11 +182,16 @@ public class CalculationTest extends Tester {
     @Test
     public void ValidateWikiSimOutputIntegrity() throws Exception {
 
-        CheckOutputIntegrity.main(new String[]{
+        CheckOutputIntegrity job = new CheckOutputIntegrity();
+
+        job.start(new String[]{
                 resource("wikisim_output.csv"),
                 resource("wikisim_output_b.csv"),
                 "print"
         });
+
+//        System.out.println(job.output);
+//        assertEquals("CheckOutputIntegrity should return errors.", 2, job.output.size());
     }
 
 
@@ -204,31 +205,6 @@ public class CalculationTest extends Tester {
                 "local", "0.81,1.5,1.25", "0", "0", "2006"});
 
         assertEquals("Result count wrong", 87632, job.output.size());
-    }
-
-    @Test
-    public void TestRedirectedExecution() throws Exception {
-
-        WikiSim job = new WikiSim();
-
-        job.start(new String[]{
-                resource("wikiRedirectedLinks.xml"),
-                "local",
-                "1.5,1.75", "0", "0", "n",
-                resource("redirects.out")
-        });
-
-        assertEquals("Result count wrong", 3, job.output.size());
-
-        List<WikiSimResult> needles = new ArrayList<>();
-
-        needles.add(new WikiSimResult("Foo", "Redirect target", 17, 2, new double[]{0.08123121086119625, 0.047661356279998054}));
-        needles.add(new WikiSimResult("Bar", "Foo", 9, 2, new double[]{0.40754831530887764, 0.33049721878532895}));
-        needles.add(new WikiSimResult("Bar", "Redirect target", 8, 2, new double[]{0.4215947723372509, 0.3407763504193827}));
-
-        assertTrue("Needles not found.", job.output.containsAll(needles));
-
-//        System.out.println(job.output);
     }
 
     @Ignore
@@ -267,6 +243,16 @@ public class CalculationTest extends Tester {
 
         System.out.println("String = " + TestUtils.sizeof(str));
         System.out.println("WikiSimResult = " + TestUtils.sizeof(result));
+
+    }
+
+    @Test
+    public void HashCollisionTest() throws Exception {
+        if (LinkTuple.getHash("NPR", "The Church of Jesus Christ of Latter-day Saints")
+                == LinkTuple.getHash("Mp3", "The Church of Jesus Christ of Latter-day Saints")) {
+            throw new Exception("Hashcodes are equal.");
+        }
+
 
     }
 }

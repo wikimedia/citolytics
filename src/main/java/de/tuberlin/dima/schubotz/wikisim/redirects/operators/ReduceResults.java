@@ -5,7 +5,9 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.DoubleListValue;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.util.Collector;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -21,32 +23,66 @@ public class ReduceResults implements GroupReduceFunction<WikiSimResult, WikiSim
 
     @Override
     public void reduce(Iterable<WikiSimResult> in, Collector<WikiSimResult> out) throws Exception {
-        internalReduce(in, out);
-    }
 
-    public void internalReduce(Iterable<WikiSimResult> in, Collector<WikiSimResult> out) throws Exception {
         Iterator<WikiSimResult> iterator = in.iterator();
-        WikiSimResult reducedRecord = null;
 
-        // Build values
+        List<WikiSimResult> records = new ArrayList<>();
+
+        String log = "";
+
+        // Read records
         while (iterator.hasNext()) {
-
-            WikiSimResult currentRecord = iterator.next();
-            // init
-            if (reducedRecord == null) {
-                reducedRecord = currentRecord;
-            } else {
-                // Count
-                reducedRecord.setCount(reducedRecord.getCount() + currentRecord.getCount());
-
-                // Distance
-                reducedRecord.setDistance(reducedRecord.getDistance() + currentRecord.getDistance());
-
-                // CPA
-                reducedRecord.setCPA(DoubleListValue.sum(reducedRecord.getCPA(), currentRecord.getCPA()));
-            }
+            records.add(iterator.next());
         }
 
-        out.collect(reducedRecord);
+        // Build values
+        if (records.size() > 1) {
+            WikiSimResult reducedRecord = mergeResults(records);
+
+            if (!validResult(records, reducedRecord)) {
+                throw new Exception("ERROR in reduce redirected results. RecordsLength = " + records.size() + "; Count = " + reducedRecord.getCount() + "; Result = " + reducedRecord.toString() + ";\nRecords = " + records.toString() + "; \n\n" + log);
+            }
+
+            out.collect(reducedRecord);
+        } else {
+            out.collect(records.get(0));
+        }
+    }
+
+
+    private WikiSimResult mergeResults(List<WikiSimResult> records) throws Exception {
+        WikiSimResult res = null;
+
+        int count = 0;
+        int distance = 0;
+        DoubleListValue cpa = new DoubleListValue();
+
+        for (WikiSimResult r : records) {
+            if (res == null) {
+                res = new WikiSimResult(r.getPageA(), r.getPageB(), 0);
+            }
+
+            count += r.getCount();
+            distance += r.getDistance();
+            cpa = DoubleListValue.sum(cpa, r.getCPA());
+        }
+
+        res.setCount(count);
+        res.setDistance(distance);
+        res.setCPA(cpa);
+
+        return res;
+    }
+
+    private boolean validResult(List<WikiSimResult> records, WikiSimResult result) {
+        int count = 0;
+        int distance = 0;
+
+        for (WikiSimResult r : records) {
+            count += r.getCount();
+            distance += r.getDistance();
+        }
+
+        return count == result.getCount() && distance == result.getDistance();
     }
 }

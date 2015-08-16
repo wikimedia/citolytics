@@ -7,6 +7,17 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Tester {
+
+    public String input(String filename) throws FileNotFoundException {
+        // TODO Check if not empty
+        return resource(filename);
+    }
+
+    public String output(String filename) throws FileNotFoundException {
+        // TODO Check if empty
+        return resource(filename);
+    }
+
     public String resource(String filename) throws FileNotFoundException {
         try {
             return "file://" + getClass().getClassLoader().getResources(filename).nextElement().getPath();

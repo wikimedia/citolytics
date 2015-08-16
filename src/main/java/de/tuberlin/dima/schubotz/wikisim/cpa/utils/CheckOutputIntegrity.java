@@ -4,10 +4,10 @@ import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -26,10 +26,12 @@ public class CheckOutputIntegrity extends WikiSimJob<Tuple3<Long, String, String
 
         outputFilename = args[2];
 
-        DataSet<Tuple2<Long, String>> inputA = env.readTextFile(args[0])
+        enableSingleOutputFile();
+
+        DataSet<Tuple3<Long, Integer, String>> inputA = env.readTextFile(args[0])
                 .flatMap(new ReadWikiSimResult());
 
-        DataSet<Tuple2<Long, String>> inputB = env.readTextFile(args[1])
+        DataSet<Tuple3<Long, Integer, String>> inputB = env.readTextFile(args[1])
                 .flatMap(new ReadWikiSimResult());
 
 
@@ -37,42 +39,48 @@ public class CheckOutputIntegrity extends WikiSimJob<Tuple3<Long, String, String
                 .coGroup(inputB)
                 .where(0)
                 .equalTo(0)
-                .with(new CoGroupFunction<Tuple2<Long, String>, Tuple2<Long, String>, Tuple3<Long, String, String>>() {
+                .with(new CoGroupFunction<Tuple3<Long, Integer, String>, Tuple3<Long, Integer, String>, Tuple3<Long, String, String>>() {
                     @Override
-                    public void coGroup(Iterable<Tuple2<Long, String>> inA, Iterable<Tuple2<Long, String>> inB, Collector<Tuple3<Long, String, String>> out) throws Exception {
+                    public void coGroup(Iterable<Tuple3<Long, Integer, String>> inA, Iterable<Tuple3<Long, Integer, String>> inB, Collector<Tuple3<Long, String, String>> out) throws Exception {
                         long hash;
-                        String vA = "-NULL-";
-                        String vB = "-NULL-";
 
-                        Iterator<Tuple2<Long, String>> iteratorA = inA.iterator();
-                        Iterator<Tuple2<Long, String>> iteratorB = inB.iterator();
+                        String vA = "-NULL-",
+                                vB = "-NULL-";
 
-                        Tuple2<Long, String> a, b = null;
+                        int countA = -1,
+                                countB = -1;
+
+                        Iterator<Tuple3<Long, Integer, String>> iteratorA = inA.iterator();
+                        Iterator<Tuple3<Long, Integer, String>> iteratorB = inB.iterator();
+
+                        Tuple3<Long, Integer, String> a, b = null;
 
                         if (iteratorA.hasNext() && iteratorB.hasNext()) {
                             a = iteratorA.next();
                             b = iteratorB.next();
 
-                            System.out.println(a);
-
                             hash = a.f0;
-                            vA = a.f1;
-                            vB = b.f1;
+                            vA = a.f2;
+                            vB = b.f2;
+
+                            countA = a.f1;
+                            countB = b.f1;
 
                         } else if (iteratorA.hasNext() && !iteratorB.hasNext()) {
                             a = iteratorA.next();
                             hash = a.f0;
-                            vA = a.f1;
+                            vA = a.f2;
                         } else if (!iteratorA.hasNext() && iteratorB.hasNext()) {
                             b = iteratorB.next();
                             hash = b.f0;
-                            vB = b.f1;
+                            vB = b.f2;
                         } else {
                             throw new Exception("Both iterators empty.");
                         }
 
 
-                        if (!vA.equals(vB)) {
+//                        if (!vA.equals(vB)) {
+                        if (countA != countB) {
                             out.collect(new Tuple3<>(
                                     hash, vA, vB
                             ));
@@ -82,16 +90,18 @@ public class CheckOutputIntegrity extends WikiSimJob<Tuple3<Long, String, String
 
     }
 
-    class ReadWikiSimResult implements FlatMapFunction<String, Tuple2<Long, String>> {
+    class ReadWikiSimResult implements FlatMapFunction<String, Tuple3<Long, Integer, String>> {
         @Override
-        public void flatMap(String s, Collector<Tuple2<Long, String>> out) throws Exception {
-            String[] cols = Pattern.compile(Pattern.quote("|")).split(s, 2);
+        public void flatMap(String s, Collector<Tuple3<Long, Integer, String>> out) throws Exception {
+            String[] cols = Pattern.compile(Pattern.quote("|")).split(s);
 
             if (cols.length < 2 || cols[0].isEmpty() || cols[1].isEmpty())
                 return;
 
-            out.collect(new Tuple2<>(
-                    Long.valueOf(cols[0]), cols[1]
+            out.collect(new Tuple3<>(
+                    Long.valueOf(cols[0]),
+                    Integer.valueOf(cols[4]),
+                    Arrays.toString(Arrays.copyOfRange(cols, 1, cols.length))
             ));
         }
     }

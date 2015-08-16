@@ -132,6 +132,14 @@ public class WikiSimResult extends Tuple6<
 //        return getField(1);
 //    }
 
+    public String getPageA() {
+        return this.f1;
+    }
+
+    public String getPageB() {
+        return this.f2;
+    }
+
     public long getDistance() {
         return getField(DISTANCE_KEY);
     }
