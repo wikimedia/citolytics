@@ -13,28 +13,27 @@
 
 ### Available Flink Jobs (Classes)
 * **CPA/CoCit Computation**: de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
-    * Parameters: <DATASET> <OUTPUT> <ALPHA1, ALPHA2, ...> [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
+    * Parameters: <WIKI-XML-DUMP> <OUTPUT> <ALPHA1, ALPHA2, ...> [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
     * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
 
 * **SeeAlsoEvaluation**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation
-    * Parameters: [OUTPUT] [SEEALSO-DATASET] [WIKISIM-DATASET] [MLT-DATASET] [LINKS/NOFILTER] [TOP-K1, TOP-K2, ...] [CPA-FIELD]
-    * e.g.: hdfs://cluster/eval.out hdfs://cluster/seealso.csv hdfs://cluster/results.out hdfs://cluster/mlt.csv nofilter 10,5,1 8
+    * Parameters: <WIKISIM-DATASET> <EVAL-OUTPUT> <SEEALSO-DATASET> [LINKS/NOFILTER] [SCORE-FIELD]
+    * e.g.: hdfs://cluster/results.out hdfs://cluster/eval.out hdfs://cluster/seealso.out nofilter 8
 
 * **SeeAlsoExtractor**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor
-    * Parameters: -
-    * e.g.: -
+    * Parameters: <WIKI-XML-DUMP> <SEEALSO-OUTPUT> <REDIRECTS>
+    * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/seealso.out hdfs://cluster/redirects.out
     
     
 * **Extract Redirects**: de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor
-    * Parameters: -
-    * e.g.: -
+    * Parameters: <WIKI-XML-DUMP> <REDIRECTS>
+    * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/redirects.out
     
 * **ClickStreamEvaluation**: de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation
-    * Parameters: -
-    * e.g.: -
+    * Parameters: <WIKISIM-DATASET> <CLICKSTREAM-DATASET> <EVAL-OUTPUT> [SCORE-FIELD]
+    * e.g.: hdfs://cluster/results.out hdfs://cluster/wiki-clickstream.tsv hdfs://cluster/eval.out 6
     
-
-...
+* For more Flink jobs see /support/flink-jobs.md
 
 ### Evaluation Example
 To evaluate and generate the data used in our publication, you need to run the following Flink jobs in the order below. Paths to JAR and HDFS need to be adjusted depending on your setup. 
@@ -64,12 +63,22 @@ To evaluate and generate the data used in our publication, you need to run the f
     0.5,1.5 0 0 n \
     hdfs:///wikisim/intermediate/redirects
 ```
-#### 4. SeeAlso Evaluation of CPA results with alpha=1.5
+#### 4a. SeeAlso Evaluation of CPA results with alpha=1.5
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation
+./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
     /cpa.jar \
     hdfs:///wikisim/results/cpa \
     hdfs:///wikisim/results/evaluation \
     hdfs:///wikisim/intermediate/seealso \
     6
-``
+```
+
+#### 4b. ClickStream Evaluation of CPA results with alpha=0.5
+```
+./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation \
+    /cpa.jar \
+    hdfs:///wikisim/results/cpa \
+    hdfs:///datasets/enwiki_2015_02_clickstream.tsv \
+    hdfs:///wikisim/results/clickstream_cpa_c \
+    5
+```
