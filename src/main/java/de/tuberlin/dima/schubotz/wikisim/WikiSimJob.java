@@ -57,7 +57,7 @@ public abstract class WikiSimJob<T extends Tuple> {
         execute();
     }
 
-    abstract public void plan();
+    abstract public void plan() throws Exception;
 
     public void init() {
 
@@ -74,27 +74,33 @@ public abstract class WikiSimJob<T extends Tuple> {
      */
     public void writeOutput() throws Exception {
 
-        if (outputFilename == null) {
-            throw new Exception("Output filename is not set.");
-        } else if (outputFilename.equalsIgnoreCase("print")) {
-            result.print();
-        } else {
-            if (outputFilename.equalsIgnoreCase("local")) {
-                result.output(new LocalCollectionOutputFormat<>(output));
-            } else {
-                DataSink sink;
+        if (result == null) {
+            System.err.println("Result data set is not set.");
 
-                if (writeAsText) {
-                    sink = result.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
+        } else {
+
+            if (outputFilename == null) {
+                throw new Exception("Output filename is not set.");
+            } else if (outputFilename.equalsIgnoreCase("print")) {
+                result.print();
+            } else {
+                if (outputFilename.equalsIgnoreCase("local")) {
+                    result.output(new LocalCollectionOutputFormat<>(output));
                 } else {
-                    sink = result.write(new WikiOutputFormat<T>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
+                    DataSink sink;
+
+                    if (writeAsText) {
+                        sink = result.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
+                    } else {
+                        sink = result.write(new WikiOutputFormat<T>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
+                    }
+
+                    if (outputParallelism > 0)
+                        sink.setParallelism(outputParallelism);
                 }
 
-                if (outputParallelism > 0)
-                    sink.setParallelism(outputParallelism);
+                env.execute(getJobName());
             }
-
-            env.execute(getJobName());
         }
     }
 }

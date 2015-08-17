@@ -5,7 +5,6 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat
 import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 
@@ -34,26 +33,27 @@ public class LinksExtractor extends WikiSimJob<Tuple2<String, String>> {
         String inputFilename = args[0];
         outputFilename = args[1];
 
-        DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
+        result = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
+                .flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
+                    public void flatMap(String content, Collector out) {
+                        collectLinks(content, out);
+                    }
+                })
+                .distinct();
+    }
 
-        // ArticleCounter, Links (, AvgDistance
-        result = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
-            public void flatMap(String content, Collector out) {
+    public static void collectLinks(String content, Collector<Tuple2<String, String>> out) {
+        WikiDocument doc = new DocumentProcessor().processDoc(content);
+        if (doc == null) return;
 
-                WikiDocument doc = new DocumentProcessor().processDoc(content);
-                if (doc == null) return;
+        List<Map.Entry<String, Integer>> links = doc.getOutLinks();
 
-                List<Map.Entry<String, Integer>> links = doc.getOutLinks();
+        for (Map.Entry<String, Integer> outLink : links) {
 
-                for (Map.Entry<String, Integer> outLink : links) {
-
-                    out.collect(new Tuple2<>(
-                            doc.getTitle(),
-                            outLink.getKey()
-                    ));
-                    //System.out.println(outLink.getKey());
-                }
-            }
-        }).distinct();
+            out.collect(new Tuple2<>(
+                    doc.getTitle(),
+                    outLink.getKey()
+            ));
+        }
     }
 }

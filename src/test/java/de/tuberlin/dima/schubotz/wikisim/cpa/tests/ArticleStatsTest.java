@@ -5,6 +5,7 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinkGraph;
 import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStats;
+import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,6 +21,15 @@ public class ArticleStatsTest extends Tester {
         });
     }
 
+    @Ignore
+    @Test
+    public void LocalExecutionWithInboundLinks() throws Exception {
+
+        ArticleStatsWithInboundLinks.main(new String[]{
+                input("completeTestWikiDump.xml"),
+                "print" //outputFilename
+        });
+    }
 
     @Test
     public void HeadlineTest() {
