@@ -3,7 +3,7 @@ Flink Jobs
 
 You run Flink jobs from this repository by using the following commands. Degree of parallelism (-p) depends on cluster setup.
 
-## WikiSim (no redirects)
+### WikiSim (no redirects)
 
 ```
 ./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
@@ -13,7 +13,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
     0.5,0.8,0.9,1,1.5,2 0 0 n
 ```
 
-## WikiSim (with redirects; alpha = {0.5,0.8,0.9,1,1.5,2}; no thresholds)
+### WikiSim (with redirects; alpha = {0.5,0.8,0.9,1,1.5,2}; no thresholds)
 
 ```
 flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
@@ -24,9 +24,9 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
     hdfs:///user/mschwarzer/v2/intermediate/redirects
 ```
 
-## SeeAlsoEvaluation
+### SeeAlsoEvaluation
 
-### CPA
+#### CPA
 ```
 flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
@@ -36,7 +36,7 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
     nofilter 8
 ```
 
-### MLT
+#### MLT
 ```
 flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
@@ -46,9 +46,9 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
     nofilter 0 0 0 y
 ```
 
-## ClickStreamEvaluation
+### ClickStreamEvaluation
 
-### CPA
+#### CPA
 ```
 flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
@@ -58,7 +58,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEval
     5
 ```
 
-### MLT
+#### MLT
 ```
 flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
@@ -68,9 +68,9 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEval
     -1
 ```
 
-## Redirects
+### Redirects
 
-### Resolve Redirects (from WikiSim output)
+#### Resolve Redirects (from WikiSim output)
 
 ```
 flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects \
@@ -80,7 +80,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRed
     hdfs:///user/mschwarzer/v2/results/a01_redirected
 ```
 
-### Extract Redirects (from WikiDump)
+#### Extract Redirects (from WikiDump)
 
 ```
 ./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor \
@@ -89,7 +89,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRed
     hdfs:///user/mschwarzer/v2/intermediate/redirects2 \
 ```
 
-### Replace redirects in "See Also" links
+#### Replace redirects in "See Also" links
 ```
 flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.SeeAlsoRedirects \
     /home/mschwarzer/wikisim/cpa.jar \
@@ -98,9 +98,9 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.SeeAlsoRed
     hdfs:///user/mschwarzer/v2/intermediate/seealso_redirects
 ```
 
-## Misc
+### Misc
 
-### Test WikiSim Output Integrity (Debugging)
+#### Test WikiSim Output Integrity (Debugging)
 ```
 flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegrity \
     /home/mschwarzer/wikisim/cpa.jar \
@@ -109,7 +109,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegr
     hdfs:///user/mschwarzer/v2/tests/integrity \
 ```
 
-### Stats (words, headlines, outLinks, avgLinkDistance, outLinksPerWords, inLinks)
+#### Stats (words, headlines, outLinks, avgLinkDistance, outLinksPerWords, inLinks)
 ```
 flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks \
     /home/mschwarzer/wikisim/cpa.jar \
