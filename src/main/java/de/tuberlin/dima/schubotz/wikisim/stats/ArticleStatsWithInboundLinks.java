@@ -8,7 +8,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple7;
+import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.util.Collector;
 
 import java.util.Iterator;
@@ -17,7 +17,7 @@ import java.util.Iterator;
 /**
  * Combine output of ArticleStats and LinksExtractor to add inbound link stats.
  */
-public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple7<String, Integer, Integer, Integer, Double, Double, Integer>> {
+public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple6<String, Integer, Integer, Integer, Double, Integer>> {
     public static void main(String[] args) throws Exception {
         new ArticleStatsWithInboundLinks().start(args);
     }
@@ -69,9 +69,9 @@ public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple7<String, Inte
                 .coGroup(links)
                 .where(0)
                 .equalTo(0)
-                .with(new CoGroupFunction<ArticleTuple, Tuple2<String, Integer>, Tuple7<String, Integer, Integer, Integer, Double, Double, Integer>>() {
+                .with(new CoGroupFunction<ArticleTuple, Tuple2<String, Integer>, Tuple6<String, Integer, Integer, Integer, Double, Integer>>() {
                     @Override
-                    public void coGroup(Iterable<ArticleTuple> statsIn, Iterable<Tuple2<String, Integer>> linksIn, Collector<Tuple7<String, Integer, Integer, Integer, Double, Double, Integer>> out) throws Exception {
+                    public void coGroup(Iterable<ArticleTuple> statsIn, Iterable<Tuple2<String, Integer>> linksIn, Collector<Tuple6<String, Integer, Integer, Integer, Double, Integer>> out) throws Exception {
                         Iterator<ArticleTuple> iterator = statsIn.iterator();
                         Iterator<Tuple2<String, Integer>> linksIterator = linksIn.iterator();
 
@@ -85,13 +85,12 @@ public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple7<String, Inte
                                 inboundLinks = links.f1;
                             }
 
-                            out.collect(new Tuple7<>(
+                            out.collect(new Tuple6<>(
                                     stats.f0,
                                     stats.f1,
                                     stats.f2,
                                     stats.f3,
                                     stats.f4,
-                                    stats.f5,
                                     inboundLinks
                             ));
                         }

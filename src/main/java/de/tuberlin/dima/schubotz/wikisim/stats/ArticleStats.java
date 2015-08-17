@@ -10,7 +10,7 @@ import org.apache.flink.util.Collector;
 /**
  * Collect following values for each article in Wikipedia XML Dump:
  *
- * words, headlines, outLinks, avgLinkDistance, outLinksPerWords
+ * words, headlines, outLinks, avgLinkDistance
  */
 public class ArticleStats extends WikiSimJob<ArticleTuple> {
 
@@ -47,15 +47,13 @@ public class ArticleStats extends WikiSimJob<ArticleTuple> {
         int outLinks = doc.getOutLinks().size();
         int headlines = doc.getHeadlines().size();
         double avgLinkDistance = doc.getAvgLinkDistance();
-        double outLinksPerWords = ((double) outLinks) / ((double) words);
 
         out.collect(new ArticleTuple(
                         doc.getTitle(),
                         words,
                         headlines,
                         outLinks,
-                        avgLinkDistance,
-                        outLinksPerWords
+                        avgLinkDistance
                 )
 
         );
