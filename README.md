@@ -13,27 +13,27 @@
 
 ### Available Flink Jobs (Classes)
 * **CPA/CoCit Computation**: de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
-    * Parameters: <WIKI-XML-DUMP> <OUTPUT> <ALPHA1, ALPHA2, ...> [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
+    * Parameters: WIKI-XML-DUMP OUTPUT ALPHA1,ALPHA2,... [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
     * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
 
 * **SeeAlsoEvaluation**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation
-    * Parameters: <WIKISIM-DATASET> <EVAL-OUTPUT> <SEEALSO-DATASET> [LINKS/NOFILTER] [SCORE-FIELD]
+    * Parameters: WIKISIM-DATASET EVAL-OUTPUT SEEALSO-DATASET [LINKS/NOFILTER] [SCORE-FIELD]
     * e.g.: hdfs://cluster/results.out hdfs://cluster/eval.out hdfs://cluster/seealso.out nofilter 8
 
 * **SeeAlsoExtractor**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor
-    * Parameters: <WIKI-XML-DUMP> <SEEALSO-OUTPUT> <REDIRECTS>
+    * Parameters: WIKI-XML-DUMP SEEALSO-OUTPUT REDIRECTS
     * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/seealso.out hdfs://cluster/redirects.out
     
     
 * **Extract Redirects**: de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor
-    * Parameters: <WIKI-XML-DUMP> <REDIRECTS>
+    * Parameters: WIKI-XML-DUMP REDIRECTS
     * e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/redirects.out
     
 * **ClickStreamEvaluation**: de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation
-    * Parameters: <WIKISIM-DATASET> <CLICKSTREAM-DATASET> <EVAL-OUTPUT> [SCORE-FIELD]
+    * Parameters: WIKISIM-DATASET CLICKSTREAM-DATASET EVAL-OUTPUT [SCORE-FIELD]
     * e.g.: hdfs://cluster/results.out hdfs://cluster/wiki-clickstream.tsv hdfs://cluster/eval.out 6
     
-* For more Flink jobs see /support/flink-jobs.md
+* For more Flink jobs see [/support/flink-jobs.md](https://github.com/TU-Berlin/cpa-demo/blob/master/support/flink-jobs.md)
 
 ### Evaluation Example
 To evaluate and generate the data used in our publication, you need to run the following Flink jobs in the order below. Paths to JAR and HDFS need to be adjusted depending on your setup. 
