@@ -1,4 +1,4 @@
-# Co-Citation Proximity Analysis (CPA) for Wikipedia
+## Co-Citation Proximity Analysis (CPA) for Wikipedia with Apache Flink
 
 [![Build Status](https://drone.io/github.com/TU-Berlin/cpa-demo/status.png)](https://drone.io/github.com/TU-Berlin/cpa-demo/latest)
 ### Contents

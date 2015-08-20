@@ -14,22 +14,45 @@ import java.util.regex.Pattern;
 public class PerformanceTests {
 
     @Ignore
+    @Test
     public void parseDoublePerformanceTest2() {
+        String testA = "3.3489451534507196E-104";
+        String testB = "3.348";
+        String testC = "0.3277649298999224";
+        String testD = Float.valueOf(testC).toString();
 
-        int runs = 999999;
+        int runs = 9999999;
         long start = System.nanoTime();
         for (int i = 0; i < runs; i++) {
-            Double.valueOf("3.3489451534507196E-104");
+            Double.valueOf(testA);
         }
         long time = System.nanoTime() - start;
-        System.out.printf("DD to double took an average of %.1f us%n", time / runs / 1000.0);
+        System.out.printf(testA + " to Double took an average of %.1f us%n", time / runs / 1000.0);
 
         long startB = System.nanoTime();
         for (int i = 0; i < runs; i++) {
-            Double.valueOf("3.348");
+            Double.valueOf(testB);
         }
         long timeB = System.nanoTime() - startB;
-        System.out.printf("II to double took an average of %.1f us%n", timeB / runs / 1000.0);
+
+        System.out.printf(testB + " to Double took an average of %.1f us%n", timeB / runs / 1000.0);
+
+        long startC = System.nanoTime();
+        for (int i = 0; i < runs; i++) {
+            Double.valueOf(testC);
+        }
+        long timeC = System.nanoTime() - startC;
+
+        System.out.printf(testC + " to Double took an average of %.1f us%n", timeC / runs / 1000.0);
+
+
+        long startD = System.nanoTime();
+        for (int i = 0; i < runs; i++) {
+            Float.valueOf(testD);
+        }
+        long timeD = System.nanoTime() - startD;
+
+        System.out.printf(testD + " to Float took an average of %.1f us%n", timeD / runs / 1000.0);
 
     }
 

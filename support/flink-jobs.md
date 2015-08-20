@@ -38,12 +38,12 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
 
 #### MLT
 ```
-flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
+flink run -p 82 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/intermediate/mlt_results \
     hdfs:///user/mschwarzer/v2/results/seealso_mlt \
-    hdfs:///user/mschwarzer/v2/intermediate/seealso_redirects \
-    nofilter 0 0 0 y
+    hdfs:///user/mschwarzer/v2/intermediate/seealso2_redirected \
+    nofilter -1
 ```
 
 ### ClickStreamEvaluation

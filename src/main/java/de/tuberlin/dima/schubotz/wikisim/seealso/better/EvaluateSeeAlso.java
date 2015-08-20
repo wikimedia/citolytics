@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ResultCoGrouper implements CoGroupFunction<
+public class EvaluateSeeAlso implements CoGroupFunction<
         Tuple2<String, ArrayList<String>>,
         Tuple2<String, WikiSimComparableResultList<Double>>,
         SeeAlsoEvaluationResult
@@ -21,7 +21,7 @@ public class ResultCoGrouper implements CoGroupFunction<
 
     private int topK = 10;
 
-    public ResultCoGrouper(int topK) {
+    public EvaluateSeeAlso(int topK) {
         this.topK = topK;
     }
 

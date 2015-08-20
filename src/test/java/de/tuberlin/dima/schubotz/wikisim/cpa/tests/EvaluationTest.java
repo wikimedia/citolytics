@@ -6,7 +6,7 @@ import de.tuberlin.dima.schubotz.wikisim.clickstream.utils.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.LinkTuple;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
-import de.tuberlin.dima.schubotz.wikisim.seealso.better.ResultCoGrouper;
+import de.tuberlin.dima.schubotz.wikisim.seealso.better.EvaluateSeeAlso;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.utils.EvaluationMeasures;
 import junit.framework.Assert;
@@ -45,7 +45,8 @@ public class EvaluationTest extends Tester {
                 new String[]{
                         resource("wikisim_output.csv"),
                         resource("2015_02_clickstream_preview.tsv"),
-                        "print"
+                        "print",
+                        "4"
                 }
         );
     }
@@ -191,8 +192,8 @@ public class EvaluationTest extends Tester {
         unsortedList.add(testItemLow);
         unsortedList.add(new WikiSimComparableResult<>("A", 2.0));
         unsortedList.add(testItemHigh);
-        unsortedList.add(new WikiSimComparableResult<>("A", 3.0));
         unsortedList.add(new WikiSimComparableResult<>("A", 4.0));
+        unsortedList.add(new WikiSimComparableResult<>("A", 3.0));
 
 
         List<WikiSimComparableResult<Double>> sortedList = Ordering.natural().greatestOf(unsortedList, 4);
@@ -207,6 +208,16 @@ public class EvaluationTest extends Tester {
 
         if (sortedList.contains(testItemLow)) {
             throw new Exception("testItemLow should not be in sortedList: " + testItemLow);
+        }
+
+        // check order
+        WikiSimComparableResult<Double> prev = null;
+        for (WikiSimComparableResult<Double> current : sortedList) {
+            if (prev == null) {
+                prev = current;
+            } else if (current.compareTo(prev) > 0) {
+                throw new Exception("SortedList in wrong order. Prev = " + prev.toString() + "; Current = " + current.toString());
+            }
         }
 
     }
@@ -246,9 +257,9 @@ public class EvaluationTest extends Tester {
         // 8 retrieved
         System.out.println("Retrieved = " + retrieved.size() + " : " + retrieved);
 
-        double hrr = EvaluationMeasures.getHarmonicReciprocalRank(ResultCoGrouper.getResultNamesAsList(retrieved), relevant);
-        double map = EvaluationMeasures.getMeanAveragePrecision(ResultCoGrouper.getResultNamesAsList(retrieved), relevant);
-        int[] matches = EvaluationMeasures.getMatchesCount(ResultCoGrouper.getResultNamesAsList(retrieved), relevant);
+        double hrr = EvaluationMeasures.getHarmonicReciprocalRank(EvaluateSeeAlso.getResultNamesAsList(retrieved), relevant);
+        double map = EvaluationMeasures.getMeanAveragePrecision(EvaluateSeeAlso.getResultNamesAsList(retrieved), relevant);
+        int[] matches = EvaluationMeasures.getMatchesCount(EvaluateSeeAlso.getResultNamesAsList(retrieved), relevant);
 
         System.out.println("HRR = " + hrr);
         System.out.println("MAP = " + map);

@@ -6,19 +6,29 @@ import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResultLi
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.apache.flink.util.Collector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Calculates CTR, total clicks, impressions for each article in result set.
  */
 public class EvaluateClicks implements CoGroupFunction<Tuple2<String, WikiSimComparableResultList<Double>>, Tuple3<String, Integer, HashMap<String, Integer>>, ClickStreamResult> {
-    private int outClicks = 0;
-    private int[] k = new int[]{10, 5, 1};
-    private int[] totalClicks = new int[]{0, 0, 0};
+
+    private static int[] k = new int[]{10, 5, 1};
+    private static int topK = 10;
+
+    public EvaluateClicks() {
+    }
+
+    public EvaluateClicks(int topK) {
+        this.topK = topK;
+    }
+
 
     @Override
     public void coGroup(Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimRecords, Iterable<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamRecords, Collector<ClickStreamResult> out) throws Exception {
@@ -30,20 +40,26 @@ public class EvaluateClicks implements CoGroupFunction<Tuple2<String, WikiSimCom
             return;
         }
 
+
+        // Fetch from iterators
         Tuple2<String, WikiSimComparableResultList<Double>> wikiSimRecord = wikiSimIterator.next();
-
-        WikiSimComparableResultList<Double> retrievedDocuments = wikiSimRecord.f1;
-
-        ArrayList<Tuple3<String, Double, Integer>> results = new ArrayList<>();
-
         Tuple3<String, Integer, HashMap<String, Integer>> clickStreamRecord = clickStreamIterator.next();
+
+        // Sort and get top-k results
+        List<WikiSimComparableResult<Double>> retrievedDocuments = Ordering.natural().greatestOf(wikiSimRecord.f1, topK);
+
 
         HashMap<String, Integer> clickStream = clickStreamRecord.f2;
         int impressions = clickStreamRecord.f1;
 
-        int rank = 1;
+
+        // Initialize output vars
+        int[] clicksK = new int[]{0, 0, 0};
+        int totalClicks = 0;
+        ArrayList<Tuple3<String, Double, Integer>> results = new ArrayList<>();
 
         // Clicks on retrieved docs
+        int rank = 1;
         for (WikiSimComparableResult doc : retrievedDocuments) {
             int clicks = clickStream.containsKey(doc.getName()) ? clickStream.get(doc.getName()) : 0;
 
@@ -53,13 +69,13 @@ public class EvaluateClicks implements CoGroupFunction<Tuple2<String, WikiSimCom
                     clicks
             ));
 
-            calculateTotalClicks(rank, clicks);
+            clicksK = calculateTotalClicks(clicksK, rank, clicks);
             rank++;
         }
 
-        // All out clicks
+        // Count all out clicks
         for (Integer c : clickStream.values())
-            outClicks += c;
+            totalClicks += c;
 
 
         ClickStreamResult res = new ClickStreamResult();
@@ -68,22 +84,23 @@ public class EvaluateClicks implements CoGroupFunction<Tuple2<String, WikiSimCom
         res.f1 = results;
         res.f2 = results.size();
         res.f3 = impressions;
-        res.f4 = outClicks;
-        res.f5 = totalClicks[0];
-        res.f6 = totalClicks[1];
-        res.f7 = totalClicks[2];
+        res.f4 = totalClicks;
+        res.f5 = clicksK[0];
+        res.f6 = clicksK[1];
+        res.f7 = clicksK[2];
 
         out.collect(
                 res
         );
     }
 
-    private void calculateTotalClicks(int rank, int clicks) {
+    private int[] calculateTotalClicks(int[] clicksK, int rank, int clicks) {
         // loop k's
         for (int i = 0; i < k.length; i++) {
             if (rank <= k[i]) {
-                totalClicks[i] += clicks;
+                clicksK[i] += clicks;
             }
         }
+        return clicksK;
     }
 }

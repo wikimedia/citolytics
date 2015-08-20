@@ -120,7 +120,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
                 .coGroup(wikiSimGroupedDataSet)
                 .where(0)
                 .equalTo(0)
-                .with(new ResultCoGrouper(topK));
+                .with(new EvaluateSeeAlso(topK));
     }
 
 

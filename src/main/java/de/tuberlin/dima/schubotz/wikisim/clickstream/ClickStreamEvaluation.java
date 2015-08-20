@@ -22,6 +22,7 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
     public static String linksInputFilename;
     public static String outputAggregateFilename;
 
+    private final int topK = 10;
     private boolean mltResults = false;
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
@@ -62,13 +63,13 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
                     .flatMap(new WikiSimInputMapper())
                     .withParameters(config)
                     .groupBy(0)
-                    .reduceGroup(new WikiSimGroupReducer(10));
+                    .reduceGroup(new WikiSimGroupReducer(topK));
         } else {
             // MLT
             jobName += " MLT";
 
             Configuration config = new Configuration();
-            config.setInteger("topK", 10);
+            config.setInteger("topK", topK);
 
             wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new MLTInputMapper())
@@ -80,6 +81,6 @@ public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
                 .coGroup(clickStreamDataSet)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluateClicks());
+                .with(new EvaluateClicks(topK));
     }
 }
