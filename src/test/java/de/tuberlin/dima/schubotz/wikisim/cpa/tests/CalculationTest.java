@@ -53,44 +53,44 @@ public class CalculationTest extends Tester {
         job1.enableSingleOutputFile()
                 .verbose()
                 .start(new String[]{
-                    inputA,
-                    resource("completeTestRedirects.out")
-            });
+                        inputA,
+                        resource("completeTestRedirects.out")
+                });
 
         WikiSim job2 = new WikiSim();
         job2.enableSingleOutputFile()
                 .verbose()
                 .start(new String[]{
-                    inputA,
-                    resource("completeTestWikiSim.out"),
-                    "2", "0", "0", "n",
-                    resource("completeTestRedirects.out")
-            });
+                        inputA,
+                        resource("completeTestWikiSim.out"),
+                        "2", "0", "0", "n",
+                        resource("completeTestRedirects.out")
+                });
 
         SeeAlsoExtractor job3 = new SeeAlsoExtractor();
         job3.enableSingleOutputFile()
                 .verbose()
                 .start(new String[]{
-                    inputA,
-                    resource("completeTestSeeAlso.out"),
-                    resource("completeTestRedirects.out") // job4
-            });
+                        inputA,
+                        resource("completeTestSeeAlso.out"),
+                        resource("completeTestRedirects.out") // job4
+                });
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
         job5.verbose()
                 .start(new String[]{
-                    resource("completeTestWikiSim.out"),
-                    "local",
-                    resource("completeTestSeeAlso.out")
-            });
+                        resource("completeTestWikiSim.out"),
+                        "local",
+                        resource("completeTestSeeAlso.out")
+                });
 
         ClickStreamEvaluation job6 = new ClickStreamEvaluation();
         job6.verbose()
                 .start(new String[]{
-                    resource("completeTestWikiSim.out"),
-                    inputB,
-                    "local"
-            });
+                        resource("completeTestWikiSim.out"),
+                        inputB,
+                        "local"
+                });
 
         // Test SeeAlso evaluation
         int found = 0;
@@ -153,7 +153,7 @@ public class CalculationTest extends Tester {
     public void TestResultCount() throws Exception {
         WikiSim job = new WikiSim();
 
-        job.start(new String[]{
+        job.verbose().start(new String[]{
                 resource("wikiSeeAlso.xml"),
                 "local"
         });
@@ -189,7 +189,7 @@ public class CalculationTest extends Tester {
 
         CheckOutputIntegrity job = new CheckOutputIntegrity();
 
-        job.start(new String[]{
+        job.verbose().start(new String[]{
                 resource("wikisim_output.csv"),
                 resource("wikisim_output_b.csv"),
                 "print"
@@ -205,7 +205,7 @@ public class CalculationTest extends Tester {
     public void TestWiki2006() throws Exception {
 
         WikiSim job = new WikiSim();
-        job.start(new String[]{
+        job.verbose().start(new String[]{
                 resource("wiki2006.xml"),
                 "local", "0.81,1.5,1.25", "0", "0", "2006"});
 

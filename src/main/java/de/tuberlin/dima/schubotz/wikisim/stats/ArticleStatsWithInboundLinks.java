@@ -3,10 +3,12 @@ package de.tuberlin.dima.schubotz.wikisim.stats;
 import de.tuberlin.dima.schubotz.wikisim.WikiSimJob;
 import de.tuberlin.dima.schubotz.wikisim.cpa.io.WikiDocumentDelimitedInputFormat;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
+import de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.util.Collector;
@@ -26,7 +28,7 @@ public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple6<String, Inte
 
         if (args.length < 2) {
             System.err.println("Input/output parameters missing!");
-            System.err.println("Arguments: <WIKI-XML> <OUTPUT-FILE>");
+            System.err.println("Arguments: <WIKI-XML> <OUTPUT-FILE> [REDIRECTS-FILE]");
             System.exit(1);
         }
 
@@ -64,6 +66,40 @@ public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple6<String, Inte
                                 out.collect(new Tuple2<>(current.f1, inboundLinks));
                             }
                         });
+
+        // Resolve redirects in inbound links
+        if (args.length > 2) {
+            DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[2]);
+
+            links = links
+                    .coGroup(redirects)
+                    .where(0)
+                    .equalTo(0)
+                            // Replace redirects
+                    .with(new CoGroupFunction<Tuple2<String, Integer>, Tuple2<String, String>, Tuple2<String, Integer>>() {
+                        @Override
+                        public void coGroup(Iterable<Tuple2<String, Integer>> links, Iterable<Tuple2<String, String>> redirects, Collector<Tuple2<String, Integer>> out) throws Exception {
+                            Iterator<Tuple2<String, Integer>> iteratorLinks = links.iterator();
+                            Iterator<Tuple2<String, String>> iteratorRedirects = redirects.iterator();
+
+                            if (iteratorLinks.hasNext()) {
+                                Tuple2<String, Integer> link = iteratorLinks.next();
+
+                                if (iteratorRedirects.hasNext()) {
+                                    Tuple2<String, String> redirect = iteratorRedirects.next();
+
+                                    link.f0 = redirect.f1;
+                                }
+
+                                out.collect(link);
+                            }
+                        }
+                    })
+                            // Merge duplicates
+                    .groupBy(0)
+                    .aggregate(Aggregations.SUM, 1)
+            ;
+        }
 
         result = stats
                 .coGroup(links)

@@ -27,10 +27,17 @@ public class ArticleStatsTest extends Tester {
     @Ignore
     @Test
     public void LocalExecutionWithInboundLinks() throws Exception {
+        /**
+         * Article A ---> 3 inbound links
+         *           ---> 4 inbound links (with redirects)
+         */
 
-        ArticleStatsWithInboundLinks.main(new String[]{
+        new ArticleStatsWithInboundLinks()
+                .verbose()
+                .start(new String[]{
                 input("completeTestWikiDump.xml"),
                 "print" //outputFilename
+                        , input("redirects.csv")
         });
     }
 
