@@ -15,10 +15,13 @@ public class ArticleStatsTest extends Tester {
     @Test
     public void LocalExecution() throws Exception {
 
-        ArticleStats.main(new String[]{
-                resource("wikiSeeAlso2.xml"),
-                "print" //outputFilename
-        });
+        new ArticleStats()
+                .verbose()
+                .start(
+                        new String[]{
+                                resource("wikiSeeAlso2.xml"),
+                                "print" //outputFilename
+                        });
     }
 
     @Ignore

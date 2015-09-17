@@ -50,42 +50,47 @@ public class CalculationTest extends Tester {
         String inputB = resource("completeTestClickStreamDataSet.tsv");
 
         RedirectExtractor job1 = new RedirectExtractor();
-        job1.enableSingleOutputFile();
-        job1.start(new String[]{
-                inputA,
-                resource("completeTestRedirects.out")
-        });
+        job1.enableSingleOutputFile()
+                .verbose()
+                .start(new String[]{
+                    inputA,
+                    resource("completeTestRedirects.out")
+            });
 
         WikiSim job2 = new WikiSim();
-        job2.enableSingleOutputFile();
-        job2.start(new String[]{
-                inputA,
-                resource("completeTestWikiSim.out"),
-                "2", "0", "0", "n",
-                resource("completeTestRedirects.out")
-        });
+        job2.enableSingleOutputFile()
+                .verbose()
+                .start(new String[]{
+                    inputA,
+                    resource("completeTestWikiSim.out"),
+                    "2", "0", "0", "n",
+                    resource("completeTestRedirects.out")
+            });
 
         SeeAlsoExtractor job3 = new SeeAlsoExtractor();
-        job3.enableSingleOutputFile();
-        job3.start(new String[]{
-                inputA,
-                resource("completeTestSeeAlso.out"),
-                resource("completeTestRedirects.out") // job4
-        });
+        job3.enableSingleOutputFile()
+                .verbose()
+                .start(new String[]{
+                    inputA,
+                    resource("completeTestSeeAlso.out"),
+                    resource("completeTestRedirects.out") // job4
+            });
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
-        job5.start(new String[]{
-                resource("completeTestWikiSim.out"),
-                "local",
-                resource("completeTestSeeAlso.out")
-        });
+        job5.verbose()
+                .start(new String[]{
+                    resource("completeTestWikiSim.out"),
+                    "local",
+                    resource("completeTestSeeAlso.out")
+            });
 
         ClickStreamEvaluation job6 = new ClickStreamEvaluation();
-        job6.start(new String[]{
-                resource("completeTestWikiSim.out"),
-                inputB,
-                "local"
-        });
+        job6.verbose()
+                .start(new String[]{
+                    resource("completeTestWikiSim.out"),
+                    inputB,
+                    "local"
+            });
 
         // Test SeeAlso evaluation
         int found = 0;

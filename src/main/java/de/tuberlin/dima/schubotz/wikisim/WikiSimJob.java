@@ -40,6 +40,11 @@ public abstract class WikiSimJob<T extends Tuple> {
             return jobName;
     }
 
+    public WikiSimJob verbose() {
+        env.getConfig().disableSysoutLogging();
+        return this;
+    }
+
     public WikiSimJob enableTextOutput() {
         writeAsText = true;
         return this;
