@@ -1,6 +1,6 @@
 # Evaluation
 
-The evaluation results can be downloaded aggregated as [Excel file](#missingLink) or raw as MySQL dump:
+The evaluation results can be downloaded aggregated as [Excel file](Evaluation.xlsx) or raw as MySQL dump:
 
  - Full MySQL dump (4GB / .tar-file)
  - Single tables (.sql-files)
