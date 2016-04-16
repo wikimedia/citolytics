@@ -114,8 +114,32 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegr
 flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
-    hdfs:///user/mschwarzer/v2/results/stats
+    hdfs:///user/mschwarzer/v2/results/stats2
 ```
+
+With resolved redirects for inLinks:
+
+```
+flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks \
+    /home/mschwarzer/wikisim/cpa.jar \
+    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
+    hdfs:///user/mschwarzer/v2/results/stats2
+    hdfs:///user/mschwarzer/v2/intermediate/redirects
+```
+
+#### Get detailed link graph (debugging cpa rankings)
+
+[WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]
+
+```
+flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.linkgraph.LinkGraph \
+    /home/mschwarzer/wikisim/cpa.jar \
+    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
+    hdfs:///user/mschwarzer/v2/intermediate/redirects \
+    file:///share/flink/mschwarzer/linkgraph.in \
+    hdfs:///user/mschwarzer/v2/linkgraph.out
+```    
     
+
     
   

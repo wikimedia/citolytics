@@ -1,0 +1,955 @@
+<page>
+    <title>Sbiw</title>
+    <ns>0</ns>
+    <id>358</id>
+    <revision>
+        <id>625906990</id>
+        <parentid>625773078</parentid>
+        <timestamp>2014-09-17T05:10:48Z</timestamp>
+        <contributor>
+            <ip>114.77.20.119</ip>
+        </contributor>
+        <comment>/* Religion */</comment>
+        <text xml:space="preserve">
+            {{Redirect|Snowfall||Snow (disambiguation)|and|Snowfall (disambiguation)}}
+        {{pp-protected|expiry=2016-12-16 04:48:51|small=yes}}{{pp-move-indef}}
+        {{Weather}}
+        [[File:Snow on the mountains of Southern California.jpg|thumb|right|Snow on the mountains of Southern California]]
+
+        '''Snow''' is [[precipitation (meteorology)|precipitation]] in the form of flakes of [[crystal]]line [[water]] [[ice]] that falls from [[cloud]]s. Since snow is composed of small ice particles, it is a [[granular material]]. It has an open and therefore soft, white, and fluffy structure, unless subjected to external [[pressure]]. [[Snowflake]]s come in a variety of sizes and shapes. Types that fall in the form of a ball due to melting and refreezing, rather than a flake, are known as [[hail]], [[ice pellets]] or [[snow grains]].
+
+        The process of precipitating snow is called '''snowfall'''. Snowfall tends to form within regions of upward movement of air around a type of [[low-pressure system]] known as an [[extratropical cyclone]]. Snow can fall poleward of these systems' associated [[warm front]]s and within their comma head precipitation patterns (called such due to the comma-like shape of the cloud and precipitation pattern around the poleward and west sides of extratropical cyclones). Where relatively warm water bodies are present, for example because of water evaporation from lakes, [[lake-effect snow]]fall becomes a concern downwind of the warm lakes within the cold cyclonic flow around the backside of extratropical cyclones. Lake-effect [[snowfall]] can be heavy locally. [[Thundersnow]] is possible within a cyclone's comma head and within lake effect precipitation bands. In mountainous areas, heavy snow is possible where upslope flow is maximized within [[windward]] sides of the terrain at elevation, if the atmosphere is cold enough. Snowfall amount and its related liquid equivalent precipitation amount are measured using a variety of different [[rain gauge]]s.
+
+        ==Forms==
+        [[File:Snow Clouds in Korea.jpg|thumb|Satellite photo of sea-effect snow bands near the [[Korean Peninsula]]]]
+        Once on the ground, snow can be categorized as powdery when light and fluffy, fresh when recent but heavier, granular when it begins the cycle of melting and refreezing, and eventually [[ice]] once it comes down, after multiple melting and refreezing cycles, into a dense mass called [[snow pack]]. When powdery, snow moves with the [[wind]] from the location where it originally landed, forming deposits called [[snowdrift]]s that may have a depth of several meters. After attaching itself to hillsides, blown snow can evolve into a snow slab—an [[avalanche]] hazard on steep slopes. The existence of a snowpack keeps temperatures lower than they would be otherwise, as the whiteness of the snow reflects most sunlight, and any absorbed heat goes into melting the snow rather than increasing its temperature. The water equivalent of snowfall is measured to monitor how much liquid is available to flood [[river]]s from [[meltwater]] that will occur during the following [[spring (season)|spring]]. Snow cover can protect crops from extreme cold. If snowfall stays on the ground for a series of years uninterrupted, the snowpack develops into a mass of ice called [[glacier]]. Fresh snow absorbs sound, lowering ambient noise over a [[landscape]] because the trapped air between snowflakes attenuates vibration. These acoustic qualities quickly minimize and reverse, once a layer of [[freezing rain]] falls on top of snow cover. Walking across snowfall produces a squeaking sound at low temperatures.
+
+            <!--Not sure where this para belongs-->The energy balance of the snowpack itself is dictated by several heat exchange processes. The snowpack absorbs solar shortwave radiation that is partially blocked by cloud cover and reflected by snow surface. A long-wave heat exchange takes place between the snowpack and its surrounding environment that includes overlying air mass, tree cover and clouds. Heat exchange takes place by [[convection]] between the snowpack and the overlaying air mass, and it is governed by the temperature gradient and wind speed. Moisture exchange between the snowpack and the overlying air mass is accompanied by latent heat transfer that is influenced by vapor pressure gradient and air wind. Rain on snow can add significant amounts of thermal energy to the snowpack. A generally insignificant heat exchange takes place by [[Heat conduction|conduction]] between the snowpack and the ground. The small temperature change from before to after a snowfall is a result of the heat transfer between the snowpack and the air.<ref>{{Cite journal|url=http://www.scientificjournals.org/journals2007/articles/1118.pdf|journal=Journal of Engineering, Computing and Architecture|issn=1934-7197|volume=1|issue=1|year=2007|title=Development of an Energy-budget Snowmelt Updating Model for Incorporating Feedback from Snow Course Survey Measurements|author=Hamed Assaf}}</ref> As snow degrades, its surface can develop characteristic ablation textures such as [[Suncup (snow)|suncups]] or [[penitentes]].
+
+        The term ''[[Snow-storm|snow storm]]'' can describe a heavy snowfall, while a ''[[blizzard]]'' involves snow and wind, obscuring visibility. ''Snow shower'' is a term for an intermittent snowfall, while ''[[snow flurry|flurry]]'' is used for very light, brief snowfalls. Snow can fall more than a meter at a time during a single storm in flat areas, and meters at a time in rugged terrain, such as [[mountain]]s. When snow falls in significant quantities, travel by foot, car, airplane and other means becomes severely restricted, but other methods of mobility become possible, such as the use of [[snowmobile]]s, [[snowshoe]]s and [[ski]]s. When heavy snow occurs early in the [[fall]] (or, on rarer occasions, late in the [[spring (season)|spring]]), significant damage can occur to trees still in leaf. Areas with significant snow each year can store the winter snow within an [[ice house (building)|ice house]], which can be used to cool structures during the following [[summer]]. A variation on snow has been observed on [[Venus]], though composed of metallic compounds and occurring at a substantially higher temperature.{{Citation needed|date=November 2011}}
+
+<gallery style="margin:auto;" widths=235px heights=165px>
+        File:BrockenSnowedTrees.jpg|Snow on trees, [[Germany]].
+        File:Duluth blizzard, December 2007.jpg|Snowdrifts in [[Duluth, Minnesota]], March 2007
+        File:Fresh snow.JPG|Fresh snow on a thin twig in [[Poland]].
+        </gallery>
+
+        ==Cause==
+        {{See also|Extratropical cyclone|Lake-effect snow|Rainband}}
+        [[File:Snowcsi.gif|thumb|350px|left|Preferred region of heavy snowfall ("Banded Snowfall") around the comma head
+        of a wintertime low pressure area, shaded in green in the [[United States]].]]
+        [[Extratropical cyclone]]s can bring cold and dangerous conditions with heavy rain and snow with winds exceeding
+        {{convert|119|km/h|mph|abbr=on}},
+        <ref name="MarinersWeatherLog">{{Cite journal|journal = Mariners Weather Log| volume=49| issue=1|author = Joan
+            Von Ahn; Joe Sienkiewicz; Greggory McFadden|title=Hurricane Force Extratropical Cyclones Observed Using
+            QuikSCAT Near Real Time Winds|publisher = Voluntary Observing Ship Program|date = April 2005|url =
+            http://www.vos.noaa.gov/MWL/april_05/cyclones.shtml|accessdate = 2009-07-07}}
+        </ref>
+        (sometimes referred to as [[European windstorm|windstorms]] in Europe). The band of [[precipitation
+        (meteorology)|precipitation]] that is associated with their [[warm front]] is often extensive, forced by weak
+        upward vertical motion of air over the frontal boundary, which [[condensation|condenses]] as it cools off and
+        produces precipitation within an elongated band,
+        <ref>{{Cite journal|version=PhD thesis|author=Owen
+            Hertzman|year=1988|bibcode=1988PhDT.......110H|title=Three-Dimensional Kinematics of Rainbands in
+            Midlatitude Cyclones Abstract|publisher=[[University of Washington]]}}
+        </ref>
+        which is wide and [[Precipitation types (meteorology)#Stratiform|stratiform]], meaning falling out of
+        [[nimbostratus]] clouds.
+        <ref>{{Cite book|author=Yuh-Lang Lin |year =2007|url=http://books.google.com/?id=4KXtnQ3bDeEC&pg=PA405|
+            page=405| title= Mesoscale Dynamics|publisher =Cambridge University
+            Press|isbn=978-0-521-80875-0|accessdate=2009-07-07}}
+        </ref>
+        When moist air tries to dislodge an arctic air mass, overrunning snow can result within the poleward side of the
+        elongated [[rainband|precipitation band]]. In the [[Northern Hemisphere]], poleward is towards the [[North
+        Pole]], or north. Within the [[Southern Hemisphere]], poleward is towards the [[South Pole]], or south.
+
+        Within the ''cold sector'', poleward and west of the cyclone center, [[microscale meteorology|small scale]] or
+        [[mesoscale meteorology|mesoscale]] bands of heavy snow can occur within a cyclone's comma head pattern. The
+        cyclone's comma head pattern is a comma-shaped area of clouds and precipitation found around mature
+        extratropical cyclones. These snow bands typically have a width of {{convert|20|to|50|mi|km|abbr=off|sp=us}}.
+        <ref>{{Cite news|accessdate=2009-07-07|author=K.
+            Heidbreder|date=2007-10-16|publisher=TheWeatherPrediction.com|url=http://www.theweatherprediction.com/weatherpapers/023/index.html|title=
+            Mesoscale snow banding}}
+        </ref>
+        These bands in the comma head are associated with areas of [[frontogenesis]], or zones of strengthening
+        temperature contrast.
+        <ref>{{Cite news|author=David R. Novak, Lance F. Bosart, Daniel Keyser, and Jeff S. Waldstreicher
+            |year=2002|url=http://cstar.cestm.albany.edu/CAP_Projects/Project4/Banded%20Precip/novakWAF.pdf |title=A
+            climatological and composite study of cold season banded precipitation in the Northeast United
+            States|accessdate= 2008-12-26}}
+        </ref>
+
+        [[File:Uncovering Winter's Mystery.ogv|thumb|400px|The science of falling snow, how [[NASA]] observes snow from
+        [[space]], and the factors that led to the [[February 5–6, 2010 North American blizzard|2010 "Snowmageddon".]]]]
+        Southwest of extratropical cyclones, curved cyclonic flow bringing cold air across the relatively warm water
+        bodies can lead to narrow [[lake-effect snow]] bands. Those bands bring strong localized snowfall, which can be
+        understood as follows: Large water bodies such as lakes efficiently store heat that results in significant
+        temperature differences (larger than 13&nbsp;°C [23&nbsp;°F]) between the water surface and the air above.
+        <ref>{{Cite news|author=B. Geerts
+            |year=1998|url=http://www-das.uwyo.edu/~geerts/cwx/notes/chap10/lake_effect_snow.html |title=Lake Effect
+            Snow.| accessdate= 2008-12-24|publisher=[[University of Wyoming]]}}
+        </ref>
+        Because of this temperature difference, warmth and moisture are transported upward, condensing into vertically
+        oriented clouds (see satellite picture) that produce snow showers. The temperature decrease with height and
+        cloud depth are directly affected by both the water temperature and the large-scale environment. The stronger
+        the temperature decrease with height, the deeper the clouds get, and the greater the precipitation rate becomes.
+        <ref>{{cite web|url=http://www.comet.ucar.edu/class/smfaculty/byrd/sld010.htm|publisher=[[University Corporation
+            for Atmospheric Research]]|title=Lake Effect Snow|date=1998-06-03|accessdate=2009-07-12|author=Greg Byrd}}
+        </ref>
+
+        In mountainous areas, heavy snowfall accumulates when air is forced to ascend the mountains and squeeze out
+        precipitation along their windward slopes, which in cold conditions, falls in the form of snow. Because of the
+        ruggedness of terrain, forecasting the location of heavy snowfall remains a significant challenge.
+        <ref>{{Cite
+            journal|url=http://wayback.archive.org/web/*/http://www.avalanche.org/~nac/NAC/techPages/articles/96_MRD.pdf|title=Atmospheric
+            Circulation Patterns Associated With Heavy Snowfall Events, Bridger Bowl, Montana, USA|author=Karl W.
+            Birkeland and Cary J. Mock|year=1996|pages=281–286|journal=Mountain Research and
+            Development|volume=16|doi=10.2307/3673951|issue=3|jstor=3673951}}
+        </ref>
+
+        ==Snowflakes==
+        {{Main|Snowflake}}
+        [[File:Schneeflocken in Deutschland - 20100102.jpg|thumb|Snowflakes]]
+        Snow crystals form when tiny [[supercool]]ed cloud droplets (about 10 [[μm]] in diameter) [[freezing|freeze]].
+        These droplets are able to remain liquid at temperatures lower than {{convert|-18|°C|°F|0|lk=on}}, because to
+        freeze, a few [[molecules]] in the droplet need to get together by chance to form an arrangement similar to that
+        in an ice lattice. Then the droplet freezes around this "nucleus". Experiments show that this "homogeneous"
+        nucleation of cloud droplets only occurs at temperatures lower than {{convert|-35|°C|°F}}.
+        <ref name= Mason>{{Cite book
+            |author = Basil John Mason
+            | publisher= Clarendon
+            | isbn= 0-19-851603-7
+            |year = 1971
+            |title = Physics of Clouds}}
+        </ref>
+        In warmer clouds an aerosol particle or "ice nucleus" must be present in (or in contact with) the droplet to act
+        as a nucleus. Ice nuclei are very rare compared to that cloud condensation nuclei on which liquid droplets form.
+        Clays, desert dust and biological particles may be effective,
+        <ref name= Christner2008>{{Cite journal
+            |author = Brent Q Christner
+            |author2=Cindy E Morris |author3=Christine M Foreman |author4=Rongman Cai |author5=David C Sands
+            |year = 2008
+            |title = Ubiquity of Biological Ice Nucleators in Snowfall
+            |journal = Science
+            |volume = 319
+            |issue = 5867
+            |page = 1214
+            |doi = 10.1126/science.1149757
+            |pmid = 18309078
+            |bibcode=2008Sci...319.1214C}}
+        </ref>
+        although to what extent is unclear. Artificial nuclei include particles of [[silver iodide]] and [[dry ice]],
+        and these are used to stimulate precipitation in [[cloud seeding]].
+        <ref>{{cite web|url=http://amsglossary.allenpress.com/glossary/search?p=1&query=cloud+seeding&
+            submit=Search|title=Cloud seeding|author=Glossary of
+            Meteorology|year=2009|accessdate=2009-06-28|publisher=[[American Meteorological Society]]}}
+        </ref>
+
+        Once a droplet has frozen, it grows in the supersaturated environment—one where air is saturated with respect to
+        ice when the temperature is below the freezing point. The droplet then grows by diffusion of water molecules in
+        the air (vapor) onto the ice crystal surface where they are collected. Because water droplets are so much more
+        numerous than the ice crystals due to their sheer abundance, the crystals are able to grow to hundreds of
+        [[micrometer]]s or millimeters in size at the expense of the water droplets by a process known as the
+        Wegner-Bergeron-Findeison process. The corresponding depletion of water vapor causes the ice crystals to grow at
+        the droplets' expense. These large crystals are an efficient source of precipitation, since they fall through
+        the atmosphere due to their mass, and may collide and stick together in clusters, or aggregates. These
+        aggregates are snowflakes, and are usually the type of ice particle that falls to the ground.
+        <ref name="natgeojan07">{{Cite journal|author=M. Klesius| title=The Mystery of Snowflakes| journal=National
+            Geographic| volume=211| issue=1| year=2007| id=ISSN 0027-9358|page=20}}
+        </ref>
+        Guinness World Records list the world's largest snowflakes as those of January 1887 at Fort Keogh, Montana;
+        allegedly one measured {{convert|38|cm|in|abbr=on}} wide.
+        <ref>{{cite news|url=http://www.nytimes.com/2007/03/20/science/20snow.html |title=Giant Snowflakes as Big as
+            Frisbees? Could Be |publisher= New York Times |author=William J. Broad|
+            date=2007-03-20|accessdate=2009-07-12}}
+        </ref>
+        Although the ice is clear, scattering of light by the crystal facets and hollows/imperfections mean that the
+        crystals often appear white in color due to [[diffuse reflection]] of the whole [[spectrum]] of [[light]] by the
+        small ice particles.
+        <ref>{{Cite book|url=http://books.google.com/?id=4T-aXFsMhAgC&pg=PA39&lpg=PA39|title=Hands-on Science: Light,
+            Physical Science (matter) – Chapter 5: The Colors of Light|page=39|author=Jennifer E.
+            Lawson|isbn=978-1-894110-63-1|year=2001|accessdate=2009-06-28|publisher=Portage & Main Press}}
+        </ref>
+
+        The shape of the snowflake is determined broadly by the temperature and humidity at which it is formed.
+        <ref name="natgeojan07"/>
+        The most common snow particles are visibly irregular. Planar crystals (thin and flat) grow in air between
+        {{convert|0|C|F|0}} and {{convert|-3|C|F|0}}. Between {{convert|-3|C|F|0}} and {{convert|-8|C|F|0}}, the
+        crystals will form needles or hollow columns or prisms (long thin pencil-like shapes). From {{convert|-8|C|F|0}}
+        to {{convert|-22|C|F|0}} the shape reverts to plate-like, often with branched or dendritic features. At
+        temperatures below {{convert|-22|C|F|0}}, the crystal development becomes column-like, although many more
+        complex growth patterns also form such as side-planes, bullet-rosettes and also planar types depending on the
+        conditions and ice nuclei.
+        <ref name= BaileyHallett>{{Cite journal
+            |author = Matthew Bailey
+            |author2=John Hallett
+            |year = 2004
+            |title = Growth rates and habits of ice crystals between −20 and −70C
+            |journal = Journal of the Atmospheric Sciences
+            |volume = 61
+            |issue = 5
+            |page = 514
+            |doi = 10.1175/1520-0469(2004)061<0514:GRAHOI>2.0.CO;2
+            |bibcode = 2004JAtS...61..514B}}
+        </ref>
+        <ref>{{cite web|author= Kenneth G.
+            Libbrecht|url=http://www.its.caltech.edu/~atomic/snowcrystals/primer/primer.htm|title=A Snowflake
+            Primer|date=2006-10-23|publisher=[[California Institute of Technology]]|accessdate=2009-06-28}}
+        </ref>
+        <ref>{{Cite journal|author=Kenneth G. Libbrecht|title=The Formation of Snow Crystals|journal=American
+            Scientist|volume=95|issue=1|pages=52–59|date=January–February 2007|doi=10.1511/2007.63.52}}
+        </ref>
+        If a crystal has started forming in a column growth regime, at around {{convert|-5|C|F|0}}, and then falls into
+        the warmer plate-like regime, then plate or dendritic crystals sprout at the end of the column, producing so
+        called "capped columns".
+        <ref name="natgeojan07"/>
+
+        A snowflake consists of roughly 10
+        <sup>19</sup>
+        water molecules, which are added to its core at different rates and in different patterns, depending on the
+        changing temperature and humidity within the atmosphere that the snowflake falls through on its way to the
+        ground. As a result, it is extremely difficult to encounter two identical snowflakes.
+        <ref>{{cite web|url=http://news.nationalgeographic.com/news/2007/02/070213-snowflake.html|title="No Two
+            Snowflakes the Same" Likely True, Research Reveals|author=John
+            Roach|date=2007-02-13|accessdate=2009-07-14|publisher=[[National Geographic Society|National Geographic]]
+            News}}
+        </ref>
+        <ref>{{cite journal|url=http://atmos-chem-phys.org/8/5669/2008/acp-8-5669-2008.pdf|title=Origin of diversity in
+            falling snow|author=Jon Nelson|journal=Atmospheric Chemistry and
+            Physics|date=2008-09-26|accessdate=2011-08-30}}
+        </ref>
+        <ref>{{Cite
+            journal|url=http://www.aft.org/pubs-reports/american_educator/issues/winter04-05/Snowflake.pdf|title=Snowflake
+            Science|author=Kenneth Libbrecht|journal=American Educator|date=Winter 2004–2005|accessdate=2009-07-14}}
+        </ref>
+        Initial attempts to find identical snowflakes by [[photography|photographing]] thousands their images under a
+        [[microscope]] from 1885 onward by [[Wilson Bentley|Wilson Alwyn Bentley]] found the wide variety of snowflakes
+        we know about today.
+        <ref>{{cite web|url=http://www.digitaljournal.com/article/263168|title=No two snowflakes are
+            alike|date=2008-12-07|author=Chris V. Thangham|accessdate=2009-07-14|publisher=Digital Journal}}
+        </ref>
+        It is more likely that two snowflakes could become virtually identical if their environments were similar
+        enough. Matching snow crystals were discovered in Wisconsin in 1988. The crystals were not flakes in the usual
+        sense but rather hollow [[hexagon]]al [[prism (geometry)|prisms]].
+        <ref name="identical_crystals">
+            {{Cite news
+            |author= Randolph E. Schmid
+            |title= Identical snowflakes cause flurry
+            |agency= Associated Press
+            |publisher= The Boston Globe
+            |date= 1988-06-15
+            |accessdate=27 November 2008
+            |quote= But there the two crystals were, side by side, on a glass slide exposed in a cloud on a research
+            flight over Wausau, Wis.
+            |url= http://www.highbeam.com/doc/1P2-8066647.html}}
+        </ref>
+
+        ==Types==
+        {{Main|Types of snow}}
+        [[File:Skiing Christmas '05 034.jpg|thumb|right|[[Hoar frost]] that grows on the snow surface due to water vapor
+        moving up through the snow on cold, clear nights]]
+        [[File:Lawine.jpg|thumb|left|A snow [[avalanche]]]]
+        <!-- [[File:Up240.com snowflakes wiki.jpg|thumb|left|Vector graphic image of stylized snowflakes]] -->
+        [[Types of snow]] can be designated by the shape of the flakes, the rate of accumulation, and the way the snow
+        collects on the ground. Types that fall in the form of a ball due to melting and refreezing cycles, rather than
+        a flake, are known as graupel, with ice pellets and [[snow pellet]]s as types of graupel associated with wintry
+        precipitation.
+        <ref>{{cite web|url=http://amsglossary.allenpress.com/glossary/search?id=ice-pellets1|author=Glossary of
+            Meteorology|year=2009|accessdate=2009-06-30|publisher=[[American Meteorological Society]]|title=Ice
+            pellets}}
+        </ref>
+        <ref>{{cite web|url=http://amsglossary.allenpress.com/glossary/search?p=1&query=snow+pellet&
+            submit=Search|author=Glossary of Meteorology|year=2009|accessdate=2009-06-30|publisher=[[American
+            Meteorological Society]]|title=Snow pellets}}
+        </ref>
+        Once on the ground, snow can be categorized as ''powdery'' when fluffy, ''granular'' when it begins the cycle of
+        melting and refreezing, and eventually ''[[ice]]'' once it packs down into a dense drift after multiple melting
+        and refreezing cycles. When powdery, snow drifts with the [[wind]] from the location where it originally fell,
+        <ref>{{cite web|url=http://www.cocorahs.org/media/docs/KS/CoCoRaHS%20Snow.PDF|title=CoCoRaHS in the Cold –
+            Measuring in Snowy Weather|publisher=Colorado Climate Center|author=Joy
+            Haden|date=2005-02-08|accessdate=2009-07-12}}
+        </ref>
+        forming deposits with a depth of several meters in isolated locations.
+        <ref>{{cite
+            web|url=http://www.telegraph.co.uk/topics/weather/4434935/Snow-Britain-Snow-drifts-and-blizzards-of-the-past.html|title=Snow
+            Britain: Snow drifts and blizzards of the past|author=Caroline
+            Gammel|date=2009-02-02|accessdate=2009-07-12|publisher=Telegraph Media Group}}
+        </ref>
+        [[Snow fence]]s are constructed in order to help control snow drifting in the vicinity of roads, to improve
+        [[highway]] safety.
+        <ref>{{Cite journal|url=http://www.sciencedaily.com/releases/2009/01/090129113327.htm|title='SnowMan' Software
+            Helps Keep Snow Drifts Off The Road|date=2009-02-06|author=ScienceDaily|accessdate=2009-07-12}}
+        </ref>
+        After attaching to hillsides, blown snow can evolve into a snow slab, which is an avalanche hazard on steep
+        slopes. A frozen equivalent of [[dew]] known as [[hoar frost]] forms on a snow pack when winds are light and
+        there is ample low-level moisture over the snow pack.
+        <ref>{{Cite book|url=http://books.google.com/?id=0Bpscs7Gqb8C&pg=PA71|title=The Avalanche Handbook|author=David
+            McClung and Peter Schaerer|pages=49–51|isbn=978-0-89886-809-8|publisher=The Mountaineers
+            Books|year=2006|accessdate=2009-07-07}}
+        </ref>
+
+        Snowfall's intensity is determined by [[visibility]]. When the visibility is over {{convert|sp=us|1|km|mi}},
+        snow is considered light. Moderate snow describes snowfall with visibility restrictions between 0.5 and 1&nbsp;km.
+        Heavy snowfall describes conditions when visibility is less than 0.5&nbsp;km.
+        <ref>{{cite web|title=Snow|author=Glossary of
+            Meteorology|url=http://amsglossary.allenpress.com/glossary/search?id=snow1|publisher=[[American
+            Meteorological Society]]|year=2009|accessdate=2009-06-28}}
+        </ref>
+        Steady snows of significant intensity are often referred to as "snowstorms".
+        <ref>{{cite web|url=http://www.nws.noaa.gov/om/brochures/wntrstm.htm|title=Winter Storms...the Deceptive
+            Killers|publisher=United States [[Department of Commerce]]|date=November
+            1991|accessdate=2009-06-28|author=National Oceanic and Atmospheric Administration|authorlink=National
+            Oceanic and Atmospheric Administration}}{{dead link|date=August 2014}}
+        </ref>
+        When snow is of variable intensity and short duration, it is described as a "snow shower".
+        <ref>{{cite web|url=http://amsglossary.allenpress.com/glossary/search?p=1&query=snow+shower|author=Glossary of
+            Meteorology|year=2009|accessdate=2009-06-28|publisher=[[American Meteorological Society]]|title=Snow
+            shower}}
+        </ref>
+        The term [[snow flurry]] is used to describe the lightest form of a snow shower.
+        <ref>{{cite web|url=http://amsglossary.allenpress.com/glossary/search?id=snow-flurry1|author=Glossary of
+            Meteorology|year=2009|accessdate=2009-06-28|publisher=[[American Meteorological Society]]|title=Snow
+            flurry}}
+        </ref>
+
+        A [[blizzard]] is a weather condition involving snow and has varying definitions in different parts of the
+        world. In the [[United States]], a blizzard occurs when two conditions are met for a period of three hours or
+        more: A sustained wind or frequent gusts to {{convert|sp=us|35|mph|km/h}}, and sufficient snow in the air to
+        reduce visibility to less than {{convert|sp=us|0.4|km|mi}}.
+        <ref>{{cite web|title = National Weather Service Glossary |url =
+            http://www.nws.noaa.gov/glossary/index.php?letter=b |publisher= [[National Weather Service]] |year = 2009
+            |accessdate = July 12, 2009}}
+        </ref>
+        In [[Canada]] and the [[United Kingdom]], the criteria are similar.
+        <ref>{{cite web|title = Blizzards |url= http://www.mb.ec.gc.ca/air/wintersevere/blizzards.en.html |work =
+            [http://www.mb.ec.gc.ca/air/wintersevere/index.en.html Winter Severe Weather] |publisher = [[Environment
+            Canada]] |date= 2002-09-04 |accessdate = July 12, 2009}}
+        </ref>
+        <ref>{{cite web|title= Key to flash warning criteria |url=
+            http://www.metoffice.gov.uk/weather/uk/guide/key_warnings.html |archiveurl=
+            http://web.archive.org/web/20101229172227/http://www.metoffice.gov.uk/weather/uk/guide/key_warnings.html
+            |archivedate= 2010-12-29 |author= Met Office |date=2008-11-19|accessdate= July 12, 2009|authorlink= Met
+            Office}}
+        </ref>
+        While heavy snowfall often occurs during blizzard conditions, falling snow is not a requirement, as [[blowing
+        snow]] can create a [[ground blizzard]].
+        <ref>{{cite web|title = Blizzards |url = http://www.wrh.noaa.gov/fgz/science/blizzard.php?wfo=fgz |author=
+            [[National Weather Service]] Forecast Office, [[Flagstaff, Arizona]] |publisher=[[National Weather Service]]
+            Western Region Headquarters|accessdate = 2009-07-12|date=2007-05-24}}
+        </ref>
+
+        [[File:Earth-satellite-seasons.gif|thumb|An animation (satellite images) showing seasonal snow changes]]
+
+        ==Density==
+        [[File:United states average annual snowfall.jpg|thumb|Annual average snowfall of the United States, based on
+        the National Climatic Data Center 1961–1990 dataset.]]
+        [[File:Firn field on the top of Säuleck.jpg|thumb|right|[[Firn]]]]
+        <!--[[File:Countries receiving snowfall.png|thumb|Snowfall map. {{fontcolor|cyan|Cyan}}: snow below 1&nbsp;km over sea level. {{fontcolor|blue|Blue}}: snow below 1&nbsp;km over sea level, but rarely. {{fontcolor|magenta|Magenta}}: snow only above 1&nbsp;km over sea level. {{fontcolor|gray|Gray}}: no snow]]-->
+        Snow remains on the ground until it [[melting|melts]] or [[sublimation (chemistry)|sublimates]]. Sublimation of
+        snow directly into [[water vapor]] is most likely to occur on a dry and windy day such as when a strong
+        downslope wind, such as a [[Chinook wind]], exists.
+        <ref>{{cite web|url=http://ga.water.usgs.gov/edu/watercyclesublimation.html|title=The Water Cycle:
+            Sublimation|publisher=[[United States Geological Survey]] |author=Howard
+            Perlman|date=2009-05-13|accessdate=2009-07-14}}
+        </ref>
+
+        Once the snow is on the ground, it will settle under its own weight (largely due to differential evaporation)
+        until its density is approximately 30% of water. Increases in density above this initial compression occur
+        primarily by melting and refreezing, caused by temperatures above freezing or by direct solar radiation. In
+        colder climates, snow lies on the ground all winter. By late spring, snow densities typically reach a maximum of
+        50% of water.
+        <ref>{{cite web|url=http://cdec.water.ca.gov/snow/misc/density.html|author=California Data Exchange
+            Center|publisher=Department of Water Resources California|title=Depth and
+            Density|year=2007|accessdate=2009-07-08}}
+        </ref>
+        When the snow does not all melt in the summer it evolves into [[firn]], where individual granules become more
+        spherical in nature,
+        <ref>{{cite web|author=Glossary of
+            Meteorology|title=Firn|url=http://amsglossary.allenpress.com/glossary/search?id=firn1|year=2009|accessdate=2009-06-30|publisher=[[American
+            Meteorological Society]]}}
+        </ref>
+        evolving into a glacier as the ice flows downhill.
+        <ref>{{cite web|author=Glossary of
+            Meteorology|title=Glacier|url=http://amsglossary.allenpress.com/glossary/search?id=glacier1|year=2009|accessdate=2009-06-30|publisher=[[American
+            Meteorological Society]]}}
+        </ref>
+
+        ===Snow Water Equivalent (SWE)===
+        {{split section|snow water equivalent|date=October 2013}}
+        The ''snow water equivalent'' is the product of snow depth and the snow [[bulk density]]. It is a quantity of
+        type [[columnar mass density]], having units of [[area density]] (kg/m<sup>2</sup>), though it is usually
+        reported normalized by the [[volumetric density]] of [[liquid water]] (units kg/m<sup>3</sup>), thus being
+        expressed in units of length (e.g., millimeter or inches). It corresponds to the depth of a layer of water that
+        would accumulate in an area, if all the snow and ice were melted in that given area. For example, if the snow
+        covering a given area has a water equivalent of {{Convert|sp=us|50|cm|in|0.00}}, then it will melt into a pool
+        of water {{Convert|sp=us|50|cm|in|0.00}} deep covering the same area.
+        <ref>{{cite web|author=Glossary of Meteorology|title=Water
+            Equivalent|url=http://amsglossary.allenpress.com/glossary/search?p=1&query=water+equivalent&
+            submit=Search|year=2009|accessdate=2009-06-30|publisher=[[American Meteorological Society]]}}
+        </ref>
+        This is a much more useful measurement to [[hydrology|hydrologists]] than snow ''depth'', as the density of cool
+        freshly fallen snow widely varies. New snow commonly has a density of around 8% of water. This means that
+        {{Convert|sp=us|33|cm|in|0.00}} of snow melts down to {{Convert|sp=us|2.5|cm|in|0.00}} of water.
+        <ref name="SLR">{{Cite journal|author=Martin A. Baxter, Charles E. Graves, and James T.
+            Moore|url=http://ams.allenpress.com/perlserv/?request=get-abstract&doi=10.1175%2FWAF856.1|journal=Weather
+            and Forecasting|volume=20|issue=5|date=October 2005|pages=729–744|title=A Climatology of Snow-to-Liquid
+            Ratio for the Contiguous United States|accessdate=2009-06-30|doi=10.1175/WAF856.1|bibcode =
+            2005WtFor..20..729B}}
+        </ref>
+        Cloud temperatures and physical processes in the cloud affect the shape of individual snow crystals. Highly
+        branched or dendritic crystals tend to have more space between the arms of ice that form the snowflake and this
+        snow will therefore have a lower density, often referred to as "dry" snow. Conditions that create columnar or
+        plate-like crystals will have much less air space within the crystal and will therefore be denser and feel
+        "wetter".
+        <ref>{{Cite book|url=http://books.google.com/?id=0Bpscs7Gqb8C&pg=PA71|title=The Avalanche Handbook|author=David
+            McClung and Peter Schaerer|pages=69–72|isbn=978-0-89886-809-8|publisher=The Mountaineers
+            Books|year=2006|accessdate=2009-07-07}}
+        </ref>
+
+        ==Acoustic properties==
+        Newly fallen snow acts as a sound-absorbing material, which minimizes sound over its surface.
+        <ref>{{Cite journal|doi=10.1121/1.1917020|title=Acoustic Properties of Snow|journal=J. Acoust. Soc.
+            Am.|volume=20|issue=4|page=597|date=July 1948|accessdate=2009-07-14|author=R. B. Watson|bibcode =
+            1948ASAJ...20..597W}}
+        </ref>
+        This is due to the trapped air between the individual crystalline flakes, trapping sound waves and dampening
+        vibrations. Once it is blown around by the wind and exposed to sunshine, snow hardens and its sound-softening
+        quality diminishes.
+        <ref name="soundnews"/>
+        Snow cover as thin as {{convert|2|cm|in|sp=us}} thick changes the acoustic properties of a landscape. Studies
+        concerning the [[acoustics|acoustic]] properties of snow have revealed that loud sounds, such as from a
+        [[handgun|pistol]], can be used to measure snow cover permeability and depth.
+        <ref>{{Cite journal|doi=10.1016/j.coldregions.2007.05.009|title=Snow cover effects on acoustic sensors
+            |author=Donald G. Albert, Stephen N. Decato, and David L.
+            Carbee|date=2007-05-29|accessdate=2009-07-14|journal=Cold Regions Science and
+            Technology|issue=2|pages=132–145|volume=52}}
+        </ref>
+        Within motion pictures, the sound of walking through snow is simulated using cornstarch, salt, or cat litter.
+        <ref>{{Cite book|url=http://books.google.com/?id=uAKgHoH5CHEC&pg=PA317&lpg=PA317&
+            dq=walking+through+snow+sounds|title=Practical art of motion picture sound|author=David Lewis
+            Yewdall|page=317|publisher=Vocal Press|year=2003|isbn=978-0-240-80525-2|accessdate=2009-07-15}}
+        </ref>
+        <ref>{{Cite book|url=http://books.google.co.jp/books?id=wBlRtAlKPFsC&pg=PA181|title=Sound for film and
+            television|author=Tomlinson Holman|page=181|publisher=Focal
+            Press|isbn=978-0-240-80453-8|year=2001|accessdate=2009-07-15}}
+        </ref>
+        <ref>{{Cite book|url=http://books.google.com/?id=TvKMgHXr_1wC&pg=PA282&lpg=PA282&
+            dq=walking+through+snow+sounds|title=Digital Videos For Dummies|author=Keith
+            Underdahl|page=282|publisher=For Dummies|year=2006|isbn=978-0-471-78278-0|accessdate=2009-07-15}}
+        </ref>
+        When the temperature falls below {{convert|-10|C|F}}, snow will squeak when walked upon due to the crushing of
+        the ice crystals within the snow.
+        <ref>{{cite web|url=http://www.madison.com/wsj/home/local/wonder/justask/435578|title=Ask the Weather Guys: Why
+            does snow sometimes squeak when you walk on it? |accessdate=2009-07-15|date=2009-01-29|author=Steven A.
+            Ackerman and Jonathan Martin|publisher=[[Wisconsin State Journal]]}}
+        </ref>
+        If covered by a layer of [[freezing rain]], the hardened frozen surface acts to echo sounds, similar to
+        [[concrete]].
+        <ref name="soundnews">{{cite
+            web|url=http://www.mysanantonio.com/business/MYSA030705_6R_snow_1117a1184_html.html|title=Scientists
+            studying the sound of snow|date=2008-03-06|author=San Antonio
+            Express-News|accessdate=2009-07-14|authorlink=San Antonio Express-News}}{{Dead link|date=December 2011}}
+        </ref>
+
+        From under water, snowfall has a unique sound when compared to other forms of precipitation, and the sound
+        varies little with differences in the snowflakes' size and shape.
+        <ref>{{Cite journal|doi=10.1121/1.427925|title=The underwater sounds produced by impacting snowflakes|journal=J.
+            Acoust. Soc. Am.|volume=106|issue=4|pages=1765–1770|date=October 1999|accessdate=2009-07-14|author= Lawrence
+            A Crum, Hugh C Pumphrey, Ronald A Roy, Andrea Prosperetti|bibcode = 1999ASAJ..106.1765C}}
+        </ref>
+
+        [[File:2013-10-14 12 27 14 National Weather Service snow board and snow measuring stick.JPG|thumb|left|250px|A
+        [[National Weather Service]] snowboard and snow measuring stick.]]
+
+        ==Snowfall measurement==
+        {{See also|Snow hydrology#Equipment and Testing|Disdrometer}}
+        [[File:Snow depth sensor.jpg|thumb|An ultrasonic snow depth sensor]]
+        [[File:MOD10C1 M SNOW.ogv|thumb|These snow cover maps are made from observations collected by the Moderate
+        Resolution Imaging Spectroradiometer (MODIS) on NASA’s Terra satellite. Snow cover values range from medium blue
+        (greater than 0 percent) to white (100 percent). Landmasses that do not sustain snow cover and places where
+        MODIS did not collect data are gray. Because MODIS relies on visible light to assess snow cover, the sensor
+        cannot collect data over the highest latitudes of the Northern Hemisphere during winter when no sunlight reaches
+        those regions. Snow and ice cover most of the Earth’s polar regions throughout the year, but the coverage at
+        lower latitudes depends on season and elevation. High-altitude landscapes such as the Tibetan Plateau and the
+        Andes and Rocky Mountains maintain some amount of snow cover almost year round. Land area is larger and snow
+        cover is more variable in the Northern Hemisphere than in the Southern Hemisphere.]]
+        [[File:North America Snow Cover 2009-2012.ogv|thumb|Visualization of North America Snow Cover Map for the period
+        of July 1, 2009 – March 11, 2012.]]
+
+        Snowfall is defined by the U.S. National Weather Service as a being the maximum depth of snow on a [[snowboard
+        (meteorology)|snowboard]] (typically a piece of plywood painted white) observed during a six-hour period. At the
+        end of the six-hour period, all snow is cleared from the measuring surface. For a daily total snowfall, four
+        six-hour snowfall measurements are summed. Snowfall can be very difficult to measure due to melting, compacting,
+        blowing and drifting.
+        <ref>{{cite web|url=http://www.crh.noaa.gov/iwx/program_areas/snow_spotters/SnowMeasurement.pdf|title=Snow
+            Measurement Guidelines for National Weather Service Snow Spotters|author=[[National Weather Service]]
+            Forecast Office Northern Indiana|publisher=National Weather ServiceCentral Region Headquarters|date=October
+            2004}}
+        </ref>
+
+        The liquid equivalent of snowfall may be evaluated using a [[snow gauge]]
+        <ref>{{cite web|url=http://www.on.ec.gc.ca/skywatchers/ontario/wx_office_tour/compound/snow_e.html |title=Nipher
+            Snow Gauge |publisher=On.ec.gc.ca |date=2007-08-27 |accessdate=2011-08-16}}
+        </ref>
+        or with a standard [[rain gauge]] having a diameter of 100&nbsp;mm (4&nbsp;in; plastic) or 200&nbsp;mm (8&nbsp;in;
+        metal).
+        <ref>{{Cite news|author=[[National Weather Service]] Office, Northern Indiana |publisher=[[National Weather
+            Service]] Central Region Headquarters|url=http://www.crh.noaa.gov/iwx/program_areas/coop/8inch.php |title=8
+            Inch Non-Recording Standard Rain Gage|accessdate= 2009-01-02|date=2009-04-13}}
+        </ref>
+        Rain gauges are adjusted to winter by removing the funnel and inner cylinder and allowing the snow/freezing rain
+        to collect inside the outer cylinder. [[Antifreeze]] liquid may be added to melt the snow or ice that falls into
+        the gauge.
+        <ref>{{Cite news|author=Chris Lehmann |year=2009|url=http://nadp.sws.uiuc.edu/CAL/2000_reminders-4thQ.htm
+            |title=Central Analytical Laboratory|publisher=National Atmospheric Deposition Program|accessdate=
+            2009-07-07}}
+        </ref>
+        In both types of gauges once the snowfall/ice is finished accumulating, or as its height in the gauge approaches
+        {{convert|300|mm|in|abbr=on}}, the snow is melted and the water amount recorded.
+        <ref>[[National Weather Service]] Office [[Binghamton, New York]] (2009).
+            [http://www.erh.noaa.gov/bgm/spotters_skywarn/precip4.shtml Raingauge Information.] Retrieved on 2009-01-02.
+        </ref>
+
+        Another type of gauge used to measure the liquid equivalent of snowfall is the weighing [[precipitation gauge]].
+        <ref>{{cite web|publisher=[[National Weather Service]]
+            |year=2009|url=http://www.weather.gov/glossary/index.php?letter=w |title=Glossary: W.| accessdate=
+            2009-01-01}}
+        </ref>
+        The wedge and tipping bucket gauges will have problems with snow measurement. Attempts to compensate for
+        snow/ice by warming the tipping bucket meet with limited success, since snow may sublimate if the gauge is kept
+        much above the freezing temperature. Weighing gauges with antifreeze should do fine with snow, but again, the
+        funnel needs to be removed before the event begins.
+        <ref>{{cite web|publisher=Discovery Education
+            |year=2009|url=http://school.discovery.com/lessonplans/activities/weatherstation/itsrainingitspouring.html
+            |title=Build Your Own Weather
+            Station|accessdate=2009-01-02|archiveurl=http://web.archive.org/web/20081226022910/http://school.discovery.com/lessonplans/activities/weatherstation/itsrainingitspouring.html <!--Added by H3llBot-->
+            |archivedate=2008-12-26}}
+        </ref>
+        At some [[automatic weather station]]s an ultrasonic snow depth sensor may be used to augment the precipitation
+        gauge.
+        <ref>{{cite web|url=http://www.on.ec.gc.ca/skywatchers/ontario/wx_office_tour/compound/geonor_e.html
+            |title=All-Weather Precipitation Gauge |publisher=On.ec.gc.ca |date=2007-08-27 |accessdate=2011-08-16}}
+        </ref>
+
+        Spring snow melt is a major source of water supply to areas in temperate zones near mountains that catch and
+        hold winter snow, especially those with a [[Mediterranean climate|prolonged dry summer]]. In such places, water
+        equivalent is of great interest to water managers wishing to predict spring [[surface runoff|runoff]] and the
+        [[water supply]] of cities downstream. Measurements are made manually at marked locations known as ''snow
+        courses'', and remotely using special scales called [[Snow pillow|''snow pillows'']].
+        <ref>{{cite web|url =
+            http://www.sommer.at/no_cache/en/products/sensors-devices/snow/sommer/own/snow-pillow.html|title = Snow
+            pillow – sensor to measure snow water equivalent (SWE)|publisher = Sommer Mess-Systemtechnik|accessdate =
+            2008-10-06}}
+        </ref>
+
+        When a snow measurement is made, various networks exist across the United States and elsewhere where rainfall
+        measurements can be submitted through the Internet, such as [[Community Collaborative Rain, Hail and Snow
+        Network|CoCoRAHS]] or GLOBE.
+        <ref>{{cite web|url=http://cocorahs.org |title=Community Collaborative Rain, Hail & Snow Network Main
+            Page|publisher=Colorado Climate Center|year=2009|accessdate=2009-01-02}}
+        </ref>
+        <ref>{{cite web|title=Global Learning and Observations to Benefit the Environment Program
+            |url=http://www.globe.gov/fsl/welcome/welcomeobject.pl |author=The Globe
+            Program|year=2009|accessdate=2009-01-02}}{{dead link|date=August 2014}}
+        </ref>
+        If a network is not available in the area where one lives, the nearest local weather office will likely be
+        interested in the measurement.
+        <ref>{{cite web|author=National Weather Service|year=2009|url=http://www.nws.noaa.gov|title=NOAA's National
+            Weather Service Main Page|accessdate=2009-01-01|authorlink=National Weather Service}}
+        </ref>
+
+        ==Records==
+        The world record for the highest seasonal total snowfall was measured in the [[United States]] at [[Mount Baker
+        Ski Area]], outside of the town [[Bellingham, Washington|Bellingham]], [[Washington (state)|Washington]] during
+        the 1998–1999 season. Mount Baker received {{convert|2896|cm|ft|abbr=on}} of snow,
+        <ref>{{cite web|url=http://www.usatoday.com/weather/news/1999/wsnorcrd.htm|title=NOAA: Mt. Baker snowfall record
+            sticks|author=USA Today|date=1999-08-03|accessdate=2009-06-30|authorlink=USA Today}}
+        </ref>
+        thus surpassing the previous record holder, [[Mount Rainier]], Washington, which during the 1971–1972 season
+        received {{convert|2850|cm|ft|abbr=on}} of snow.
+        <ref>{{cite
+            web|url=http://web.archive.org/web/20070221204740rn_1/www.nps.gov/archive/mora/interp/faq.htm|title=Frequently
+            Asked Questions|author=Mount Rainier National Park|publisher=[[National Park
+            Service]]|date=2006-04-14|accessdate=2009-06-30|authorlink=Mount Rainier National Park}}
+        </ref>
+
+        The world record for the highest average yearly snowfall is {{convert|1764|cm|ft|abbr=on}},
+        <ref>{{cite web
+            | url = http://www.data.jma.go.jp/obd/stats/etrn/view/nml_amd_ym.php?prec_no=31&block_no=1079&year=&month=&
+            day=&view=
+            | title = JMA | accessdate = November 12, 2012 | publisher = JMA
+            }}
+        </ref>
+        measured in [[Sukayu Onsen]], Japan for the period of 1981-2010.
+
+        The North American record for the highest average yearly snowfall is {{convert|1630|cm|ft|abbr=on}},
+        <ref>{{cite web|url=http://www.nps.gov/mora/planyourvisit/upload/annual-snowfall-totals-sep11.pdf|title=Annual
+            Snowfall Totals at Paradise, 1920 to 2011|publisher=[[National Park Service]]}}{{dead link|date=August
+            2014}}
+        </ref>
+        measured on Mount Rainier, Washington.
+
+        The world record for snow depth is {{convert|1182|cm|ft|abbr=on}}. It was measured on the slope of [[Mount
+        Ibuki|Mt. Ibuki]] in Shiga Prefecture, Japan at altitude of {{convert|1200|m|foot|abbr=on}} on February 14,
+        1927.
+        <ref name="WU">{{cite
+            web|url=http://www.wunderground.com/blog/weatherhistorian/comment.html?entrynum=127|title=Record Snow Depth
+            (for an official site) Measured in Japan|author=Christopher C. Burt|publisher = [[Weather Underground
+            (weather service)|Weather Underground]]}}
+        </ref>
+
+        The North American record for snow depth is {{convert|1150|cm|ft|abbr=on}}. It was measured at [[Tamarack,
+        California]] at altitude of {{convert|7000|foot|m|abbr=on|disp=flip}} in March 1911.
+        <ref name="WU"/>
+
+        The world's snowiest city with a population over one million is [[Sapporo]], Japan, with an average yearly
+        snowfall of {{convert|595|cm|ft|abbr=on}}.
+
+        ==Snow blindness==
+        [[File:Inuit Goggles.jpg|right|thumb|Traditional [[Inuit]] goggles used to combat snow blindness]]
+        {{Main|Snow blindness}}
+        Fresh snow reflects 90% or more of [[ultraviolet]] radiation,
+        <ref>{{Cite book|url=http://books.google.com/?id=bBjIuXHEgZ4C&pg=PA104|title=The Climate of the
+            Earth|author=Paul E. Lydolph|page=104|year=1985|accessdate=2009-07-04|publisher=Rowman and
+            Littlefield|isbn=978-0-86598-119-5}}
+        </ref>
+        which causes [[snow blindness]], also reducing absorption of sunlight by the ground. [[Snow blindness]] (also
+        known as ultraviolet [[keratitis]], photokeratitis or niphablepsia) is a painful eye condition, caused by
+        exposure of unprotected [[Human eye|eye]]s to the [[ultraviolet]] (UV) rays in bright [[sunlight]] [[Reflection
+        (physics)|reflected]] from snow or [[ice]].
+        <ref name="gpn">{{cite web|url=http://www.gpnotebook.co.uk/simplepage.cfm?ID=-268042203|title=Snow
+            blindness|author=General Practice Notebook|year=2009|accessdate=2009-07-12}}
+        </ref>
+        This condition is a problem in [[polar regions]] and at high altitudes,
+        <ref name="eMedicine">{{cite web|url=http://www.emedicine.com/emerg/topic759.htm|title=Ultraviolet
+            Keratitis|author=Reed Brozen, Christian Fromm|date=February 4, 2008|publisher=eMedicine|accessdate=November
+            19, 2008}}
+        </ref>
+        as with every {{convert|sp=us|300|m|ft}} of elevation (above sea level), the intensity of [[UV rays]] increases
+        by 4%.
+        <ref name="berkeley">{{cite web|url=http://www.uhs.berkeley.edu/home/healthtopics/sunsafety.shtml|title=Sun
+            Safety|date=April 2005 (last reviewed)|publisher=University of California, Berkeley|accessdate=November 19,
+            2008}}
+        </ref>
+        Snow's large reflection of light makes night skies much brighter, since reflected light is directed back up into
+        the sky.
+        <ref>{{cite web|url=http://www.dtic.mil/cgi-bin/GetTRDoc?AD=ADA497505&Location=U2&doc=GetTRDoc.pdf|title=A Model
+            for Nighttime Urban Illumination|page=7|author=Richard C. Shirkey|publisher=Defence Technical Information
+            Center|date=2008-12-09|accessdate=2009-07-08}}
+        </ref>
+        However, when there is also [[cloud]] cover, light is then reflected back to the ground. This greatly amplifies
+        light emitted from city lights, causing the 'bright night' effect. A similar brightening effect occurs when no
+        snow is falling and there is a full moon and a large amount of snow.
+        <ref>{{Cite
+            journal|url=http://www.scientificamerican.com/article.cfm?id=detecting-quothotquot-clo|title=Detecting "Hot"
+            Clouds|author=Shawn Carlson|date=April 1999|journal=[[Scientific American]]|accessdate=2009-07-08}}
+        </ref>
+
+        ==Relation to river flow==
+        <!--[[File:Windbuchencom.jpg|thumb|left|Tree in snow]]
+        [[File:Tree covered with snow.jpg|thumb|A tree covered with snow]]
+        [[File:Snow in Colarado in the United States of America.jpeg|thumb|right|Snow in Colorado, US]]-->
+        Many rivers originating in mountainous or high-latitude regions receive a significant portion of their flow from
+        snowmelt. This often makes the river's flow highly seasonal resulting in periodic [[flooding]]
+        <ref>{{cite web|url=http://ga.water.usgs.gov/edu/watercyclesnowmelt.html|title=The Water Cycle: Snowmelt
+            Runoff|author=Howard Perlman|publisher=[[United States Geological
+            Survey]]|date=2009-05-13|accessdate=2009-07-07}}
+        </ref>
+        during the spring months and at least in dry mountainous regions like the mountain West of the US or most of
+        [[Iran]] and [[Afghanistan]], very low flow for the rest of the year. In contrast, if much of the melt is from
+        [[glaciated]] or nearly glaciated areas, the melt continues through the warm season, with peak flows occurring
+        in mid to late summer.
+        <ref>{{cite web|url=http://watershed.ucdavis.edu/copper_river/background/data/BowersoxCopper.pdf|title=Hydrology
+            of a Glacial Dominated System, Copper River, Alaska|author=Randy
+            Bowersox|page=2|accessdate=2009-07-08|date=2002-06-20|publisher=[[University of California]]-Davis}}
+        </ref>
+
+        ==Effects on human society==
+        [[File:Train stuck in snow.jpg|thumb|left|upright|A snow blockade in southern [[Minnesota]], US in 1881]]
+        [[File:Cars in snowstorm.JPG|thumb|Driving in a blinding snowstorm can be dangerous and risky.]]
+        Substantial snowfall can disrupt public infrastructure and services, slowing human activity even in regions that
+        are accustomed to such weather. Air and ground transport may be greatly inhibited or shut down entirely.
+        Populations living in snow-prone areas have developed various ways to travel across the snow, such as [[ski]]s,
+        [[snowshoe]]s, and [[sled]]s pulled by horses, dogs, or other animals and later,
+        [[snowmobile]]s.<!-- Nation states, or Americans states? And source for this claim? -- Northern states maintain a fleet of [[snow removal]] equipment to keep roads accessible through winter, but this is not done in the south.-->
+        Basic utilities such as [[electricity distribution|electricity]], [[telephone line]]s, and [[Natural
+        gas#Uses|gas supply]] can also fail. In addition, snow can make roads much harder to travel and vehicles
+        attempting to use them can easily become stuck.
+        <ref>{{cite web|url=http://nsidc.org/snow/shovel.html|title=Have Snow Shovel, Will Travel|author=Laura
+            Cheshire|year=1997|accessdate=2009-07-08|publisher=National Snow and Ice Data Center}}{{dead
+            link|date=August 2014}}
+        </ref>
+        Snowfall can have a small negative effect on yearly yield from [[solar photovoltaic]] systems.
+        <ref>Rob Andrews and Joshua M. Pearce, “[http://www.ieee-pvsc.org/ePVSC/manuscripts/MePVSC566_0521131900.pdf
+            Prediction of Energy Effects on Photovoltaic Systems due to Snowfall Events]{{dead link|date=August 2014}}”
+            in: ''2012 38th IEEE Photovoltaic Specialists Conference (PVSC)''. Presented at the 2012 38th IEEE
+            Photovoltaic Specialists Conference (PVSC), pp. 003386 –003391. Available:
+            [http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6318297 DOI]{{dead link|date=August 2014}}
+            [http://mtu.academia.edu/JoshuaPearce/Papers/1990041/Prediction_of_Energy_Effects_on_Photovoltaic_Systems_due_to_Snowfall_Events
+            open access]
+        </ref>
+
+        The combined effects can lead to a "[[Weather-related cancellation|snow day]]" on which gatherings such as
+        school or work are officially canceled. In areas that normally have very little or no snow, a snow day may occur
+        when there is only light accumulation or even the threat of snowfall, since those areas are unprepared to handle
+        any amount of snow. In some areas, such as some states in the United States, schools are given a yearly quota of
+        snow days (or "calamity days"). Once the quota is exceeded, the snow days must be made up.
+        <ref name="DDN Larsen">{{Cite news|title=School districts are using up calamity days|author=Dave
+            Larsen|work=[[Dayton Daily News]]|location=[[Dayton, Ohio]]|publisher=[[Cox
+            Enterprises]]|date=2009-01-27|accessdate=2009-02-05|url=http://www.daytondailynews.com/n/content/oh/story/news/local/2009/01/27/ddn012709calamityweb.html|quote=Ohio
+            school districts can use five calamity days before they must start adding extra days to the school
+            calendar.}} {{Dead link|date=April 2012|bot=H3llBot}}
+        </ref>
+        <ref name="WCMH Willis">{{Cite news|title=Districts Consider Calamity Options|author=Donna
+            Willis|work=[[WCMH-TV]]|location=[[Columbus, Ohio]]|publisher=[[Media
+            General]]|date=2009-01-30|accessdate=2009-02-05|url=http://www.nbc4i.com/cmh/news/local/education/article/districts_consider_calamity_options/12343/}}{{dead
+            link|date=August 2014}}
+        </ref>
+        <ref name="WKTV Ferris">{{Cite news|title=Decision for city schools to stay open prompts calls from irate
+            parents|author=Joleen Ferris|work=[[WKTV]]|location=[[Utica, New York]]|publisher=[[Smith
+            Media]]|date=2009-01-28|accessdate=2009-02-05|url=http://www.wktv.com/news/local/38543532.html}}
+        </ref>
+        In other states, all snow days must be made up.
+        <ref name="Enquirer Wolff">{{Cite news|title=Snow may stretch out school year|author=Christine Wolff, Tanya
+            Albert|work=[[The Cincinnati Enquirer]]|location=[[Cincinnati, Ohio]]|publisher=[[Gannett
+            Company]]|date=1999-03-09|accessdate=2009-02-05|url=http://www.enquirer.com/editions/1999/03/10/loc_snow_may_stretch_out.html}}
+        </ref>
+        For example, schools may extend the remaining school days later into the afternoon, shorten [[spring break]], or
+        delay the start of [[summer vacation]].
+
+        Accumulated snow is [[Snow removal|removed]] to make travel easier and safer, and to decrease the long-term
+        impact of a heavy snowfall. This process utilizes [[shovel]]s, [[snowplow]]s and [[snow blower]]s and is often
+        assisted by sprinkling [[salt]] or other chloride-based chemicals, which reduce the melting temperature of snow.
+        <ref>{{Cite book|url=http://books.google.com/?id=I3gxuwTE5_MC&pg=PA10|title=Managing roadway snow and ice
+            control operations|author=David A. Kuemmel|page=10|isbn=978-0-309-05666-3|publisher=Transportation Research
+            Board|year=1994|accessdate=2009-07-08}}
+        </ref>
+        In some areas with abundant snowfall, such as [[Yamagata Prefecture]], [[Japan]], people harvest snow and store
+        it surrounded by [[Thermal insulation|insulation]] in ice houses. This allows the snow to be used through the
+        summer for refrigeration and air conditioning, which requires far less electricity than traditional cooling
+        methods.
+        <ref>{{Cite journal|url=http://www.unep.or.jp/ietc/Publications/INSIGHT/Win-96/9.asp|title=Using Snow For Cool,
+            Innovative Solutions|journal=Insight|date=Winter 1996|accessdate=2009-07-08|author=[[United Nations]]
+            Environment Programme}}
+        </ref>
+
+        ===Agriculture===
+        Snowfall can be beneficial to agriculture by serving as a [[thermal insulation|thermal insulator]], conserving
+        the heat of the Earth and protecting [[agriculture|crops]] from subfreezing weather. Some agricultural areas
+        depend on an accumulation of snow during winter that will melt gradually in spring, providing water for crop
+        growth. If it melts into water and refreezes upon sensitive crops, such as oranges, the resulting ice will
+        protect the fruit from exposure to lower temperatures.
+        <ref>{{cite web|author=M. Baldwin|url=http://www.newton.dep.anl.gov/askasci/gen01/gen01243.htm|title=How Cold
+            Can Water Get?|publisher=[[Argonne National Laboratory]] |date=2002-09-08 |accessdate=2009-04-16}}
+        </ref>
+
+        ===Recreation===
+        [[File:Giant snowball Oxford.jpg|thumb|Making a giant [[snowball]]]]
+        Many [[winter sports]], such as [[skiing]],
+        <ref>{{cite
+            news|url=http://www.nytimes.com/1998/02/01/sports/nagano-98-building-a-better-snowman-through-science.html?pagewanted=1|title=NAGANO
+            '98; Building a Better Snowman Through Science|date=1998-02-01|accessdate=2009-07-08|author=Christopher
+            Clarey|publisher=New York Times}}
+        </ref>
+        [[snowboarding]],
+        <ref>{{cite web|author=Sam Baldwin|date=January
+            2006|url=http://www.snowsphere.com/special-features/snowboarding-vs-skiing-the-dying-feud|title=Skiers vs
+            Snowboaders: The Dying Feud|publisher=SnowSphere.com|accessdate=2009-07-08}}
+        </ref>
+        [[snowmobiling]],
+        <ref name="ISMA-stat">{{cite web
+            |url=http://www.snowmobile.org/facts_snfcts.asp
+            |title=Snowmobiling Facts
+            |publisher=International Snowmobile Manufacturers Associations
+            |accessdate=2007-04-23
+            |year=2006}}
+        </ref>
+        and [[snowshoe]]ing depend upon snow. Where snow is scarce but the temperature is low enough, [[snow cannon]]s
+        may be used to produce an adequate amount for such sports.
+        <ref>{{cite web|url=http://query.nytimes.com/gst/fullpage.html?res=9900EEDA1631F93BA35751C0A9679C8B63&sec=&spon=
+            &pagewanted=all|title=Machines Let Resorts Please Skiers When Nature Won't|publisher=New York
+            Times|date=2001-02-08|author=Jeffrey Selingo|accessdate=2009-07-08}}
+        </ref>
+        Children and adults can play on a [[sled]] or ride in a [[sleigh]]. Although a person's footsteps remain a
+        visible [[wikt:lifeline|lifeline]] within a snow-covered landscape, snow cover is considered a general danger to
+        hiking since the snow obscures landmarks and makes the landscape itself appear uniform.
+        <ref>{{cite web|url=http://www.wta.org/trail-news/news/winter-hiking-and-avalanche-danger|title=Winter Hiking
+            and Avalanche Danger |date=2007-12-05|accessdate=2009-07-10|author=Washington Trails Association}}{{dead
+            link|date=August 2014}}
+        </ref>
+        [[File:SnowAngel-5644.jpg|thumb|Making a [[snow angel]]]]
+
+        One of the recognizable recreational uses of snow is in building snowmen. A [[snowman]] is created by making a
+        man shaped figure out of snow&nbsp;– often using a large, shaped snowball for the body and a smaller snowball
+        for the head which is often decorated with simple household items&nbsp;– traditionally including a [[carrot]]
+        for a nose, and coal for eyes, nose and mouth; occasionally including old clothes such as a [[top hat]] or
+        scarf.
+
+        Snow can be used to make [[snow cone]]s, also known as snowballs, which are usually eaten in the summer months.
+        <ref name="MDsnoball">{{cite web|title=Cold Comfort: On the Cultural Significance of the Snowball in
+            Baltimore|publisher=The City Paper|author=Michelle
+            Geinow|date=1996-09-18|url=http://www.citypaper.com/bob/story.asp?id=8153|accessdate=2009-07-10}}{{dead
+            link|date=August 2014}}
+        </ref>
+        Flat areas of snow can be used to make [[snow angel]]s, a popular pastime for children.
+
+        [[File:Flickr - DVIDSHUB - TF Gold Geronimo soldiers, Paktya PRT wage epic snow fight at Gardez (Image 9 of
+        10).jpg|left|thumb|Man launches a snow ball in a snow fight.]]
+        Snow can be used to alter the format of outdoor games such as [[Capture the flag]],
+        <ref>{{Cite book|url=http://books.google.com/?id=_KNNAAAAMAAJ&pg=PA241&lpg=PA241|title=St. Nicholas|author=Mary
+            Mapes Dodge|page=241|year=1907|publisher=[[University of
+            Michigan]]|accessdate=2009-07-10|isbn=0-217-84993-8}}
+        </ref>
+        or for snowball fights. The world's biggest snowcastle, the [[SnowCastle of Kemi]], is built in [[Kemi]],
+        [[Finland]] every winter.
+        <ref>{{Cite
+            news|url=http://sunday-herald.vlex.co.uk/vid/sundayherald-briefing-66094199|accessdate=2009-07-07|title=Snow
+            sundayherald briefing |publisher=The Sunday Herald|date=January 6, 2008 |author=Adam Forrest}}
+        </ref>
+        Since 1928 [[Michigan Technological University]] in [[Houghton, Michigan]] has held an annual [[Michigan
+        Technological University's Winter Carnival|Winter Carnival]] in mid-February, during which a large [[snow
+        sculpture|Snow Sculpture Contest]] takes place between various clubs, fraternities, and organizations in the
+        community and the university. Each year there is a central theme, and prizes are awarded based on creativity.
+        <ref>{{cite web|url=http://www.mtu.edu/carnival/|title=A Frigid Place Gets a Blast From Space|author=Michigan
+            Technological University|date=2009-05-27|accessdate=2009-07-10|authorlink=Michigan Technological
+            University}}
+        </ref>
+        Snowball softball tournaments are held in snowy areas, usually using a bright orange softball for visibility,
+        and burlap sacks filled with snow for the bases.
+        <ref>{{cite web|url=http://www.auburnpub.com/articles/2008/02/24/local_news/news04.txt|title=Snow softball a
+            slippery sport|author=Jason Gabak|date=2008-02-23|accessdate=2009-07-10|publisher=The Citizen}}{{dead
+            link|date=August 2014}}
+        </ref>
+
+        {{clear}}
+        ==Damage==
+        {{See also|Category:Blizzards}}
+        [[File:Buffalo snow storm3.jpg|thumb|Damage caused by [[Lake Storm "Aphid"]] in October 2006]]
+        When heavy, wet snow with a snow-water equivalent (SWE) ratio of between 6:1 and 12:1 (in extreme cases, as
+        heavy as 4:1) and a weight in excess of 10 pounds per square foot (~40&nbsp;kg/m<sup>2</sup>)
+        <ref name="Historic snowfall for the Niagara Frontier">{{cite web
+            |url=http://www.weather.com/blog/weather/8_10843.html
+            |title=Historic snowfall for the Niagara Frontier
+            |author=Stu Ostro
+            |publisher=Weather Channel blog
+            |date=2006-10-12
+            |accessdate=2009-07-07
+            }}
+        </ref>
+        piles onto trees or electricity lines&nbsp;– particularly if the trees have full leaves or are not adapted to
+        snow&nbsp;– significant damage may occur on a scale usually associated with [[hurricane]]s.
+        <ref name="Historic Lake Effect Snow Storm of October 12–13, 2006">{{cite web
+            |url=http://www.erh.noaa.gov/buf/storm101206.html|title=Historic Lake Effect Snow Storm of October 12–13,
+            2006|publisher=[[National Weather Service]] Forecast Office in [[Buffalo, New
+            York]]|date=2006-10-21|accessdate=2009-07-08}}
+        </ref>
+        An avalanche can occur upon a sudden thermal or mechanical impact upon snow that has accumulated on a mountain,
+        which causes the snow to rush downhill en masse. Preceding an avalanche is a phenomenon known as an avalanche
+        wind caused by the approaching avalanche itself, which adds to its destructive potential.
+        <ref>{{cite web|url=http://amsglossary.allenpress.com/glossary/search?p=1&query=avalanche&
+            submit=Search|title=Avalanche|author=Glossary of Meteorology|publisher=[[American Meteorological
+            Society]]|year=2009|accessdate=2009-06-30}}
+        </ref>
+        Large amounts of snow which accumulate on top of man-made structures can lead to structural failure.
+        <ref>{{cite web|author=Gershon Fishbein |title=A Winter's Tale of Tragedy
+            |url=http://www.washingtonpost.com/wp-dyn/content/article/2009/01/21/AR2009012101298.html|publisher=Washington
+            Post|date=2009-01-22 |accessdate=2009-01-24}}
+        </ref>
+        During snowmelt, acidic precipitation which previously fell into the snow pack is released, which harms marine
+        life.
+        <ref>{{Cite
+            journal|url=http://www.avalanche.org/~moonstone/TAR/avi%20review%20articles/Of%20Wet%20Snow,%20Slush%20&
+            %20Snowballs.htm|title=Of Wet Snow, Slush, and Snow Balls|accessdate=2009-07-12|date=March
+            1995|volume=13|issue=5|journal=The Avalanche Review|author=Samuel C. Colbeck |archiveurl =
+            http://web.archive.org/web/20080511051858/http://www.avalanche.org/~moonstone/TAR/avi+review+articles/Of+Wet+Snow,+Slush+
+            &+Snowballs.htm |archivedate = May 11, 2008}}
+        </ref>
+
+        There is a popular misconception that snow becomes heavier when it starts to melt, so many people take risks by
+        climbing on roofs to remove snow when the weather starts to get warmer, for fear that the roofs will collapse.
+        In fact, when snow starts to melt, its volume decreases as the ice crystals and meltwater move into the spaces
+        between the crystals, which makes the ''density'' of wet, melting snow greater than that of freshly-fallen snow.
+        This makes it feel heavier to shovel, but its mass does not increase. In fact, it decreases when meltwater runs
+        off the roof, so the weight of snow on a roof actually decreases when it starts to melt.
+
+        ==Design of structures considering snow load==
+        The designs of all structures and buildings use the ground snow [[Structural load|load]]
+        <ref name="groundsnowbyzip.com">{{Cite news|url=http://www.groundsnowbyzip.com|title=Ground Snow By Zip (US)}}
+        </ref>
+        determined by professional engineers and designers. Data on ground snow in the U.S.A. are provided by the
+        American Society of Civil Engineers (ASCE7-latest edition) for most jurisdictions. This load is typically the
+        governing design factor on roofs and structural elements exposed to the effects of snow in the northern United
+        States. Closer to the [[Equator]], the snow load becomes less important and may or may not be the governing
+        factor.
+
+        ==Extraterrestrial snow==
+        Very light snow is known to occur at high latitudes on [[Mars]].
+        <ref>{{cite web|url=http://news.nationalgeographic.com/news/2009/07/090702-snow-mars-phoenix.html|title="Diamond
+            Dust" Snow Falls Nightly on Mars|author=Anne Minard|date=2009-07-02|publisher=[[National Geographic News]]}}
+        </ref>
+        A "snow" of [[hydrocarbon]]s is also theorized to occur on [[Saturn]]'s moon [[Titan (moon)|Titan]].
+        <ref>{{cite web|url=http://www.nasa.gov/mission_pages/cassini/media/cassini-20061212.html|title=Massive Mountain
+            Range Imaged on Saturn's Moon Titan|publisher=[[NASA]]|author=Carolina Martinez|date=2006-12-12}}
+        </ref>
+
+        While there is little or no water on [[Venus]], there is a phenomenon which is quite similar to snow. The
+        [[Magellan probe]] imaged a highly reflective substance at the tops of Venus's highest mountain peaks which bore
+        a strong resemblance to terrestrial snow. This substance arguably formed from a similar process to snow, albeit
+        at a far higher temperature. Too volatile to condense on the surface, it rose in gas form to cooler higher
+        elevations, where it then fell as precipitation. The identity of this substance is not known with certainty, but
+        speculation has ranged from elemental [[tellurium]] to lead sulfide ([[galena]]).
+        <ref>{{cite web
+            |title='Heavy metal' snow on Venus is lead sulfide
+            |author=Carolyn Jones Otten
+            |publisher=Washington University in St
+            Louis|url=http://news-info.wustl.edu/news/page/normal/633.html|year=2004
+            |accessdate=2007-08-21}}
+        </ref>
+
+        ==See also==
+        {{colbegin|3}}
+        *[[2007 Siberian orange snow]]
+        *[[Alberta clipper]]
+        *[[Animal tracks]]
+        *[[Black ice]]
+        *[[Cold wave]]
+        *[[Eskimo words for snow]]
+        *[[Frost]]
+        *[[Grit bin]]
+        *[[Heikki Lunta]]
+        *[[Igloo]]
+        *[[Knickerbocker Storm]]
+        *[[Quinzhee]]
+        *[[Snow cave]]
+        *[[Snow farming]]
+        *[[Snowbelt]]
+        *[[The wrong type of snow]]
+        *[[Timeline of snowflake research]]
+        *[[Ukichiro Nakaya]]
+        {{colend}}
+
+        ==References==
+        {{Reflist|30em}}
+
+        ==External links==
+        {{Sister project links|Snow}}
+        *[http://www.sciencebits.com/SnowAboveFreezing Snow at above freezing temperatures]
+        *[http://www.scientificjournals.org/journals2007/articles/1118.pdf Snowpack energy and mass balance] An article
+        that contains detailed analysis of snowpack energy and mass balance.
+        *[http://www.unep.org/geo/geo%5Fice/ United Nations Environment Programme: Global Outlook for Ice and Snow]
+        * {{cite journal | author=Dietz, A. |author2=Kuenzer, C. |author3=Gessner, U. |author4= Dech, S. | year=2012
+        |title=Remote Sensing of Snow – a Review of available methods |journal=International Journal of Remote Sensing
+        |doi=10.1080/01431161.2011.640964|bibcode = 2012IJRS...33.4094D }}
+        {{Good article}}
+
+        [[Category:Snow| ]]
+        [[Category:Precipitation]]
+        [[Category:Forms of water]]
+
+        {{Link GA|de}}
+        {{Link FA|fi}}
+        {{Link FA|la}}
+        {{Link FA|nn}}
+    </text>
+</revision>
+        </page>

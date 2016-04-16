@@ -4,6 +4,7 @@ import de.tuberlin.dima.schubotz.wikisim.cpa.operators.DocumentProcessor;
 import de.tuberlin.dima.schubotz.wikisim.cpa.tests.utils.Tester;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiDocument;
 import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinkGraph;
+import de.tuberlin.dima.schubotz.wikisim.linkgraph.LinksExtractor;
 import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStats;
 import de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks;
 import org.junit.Ignore;
@@ -75,5 +76,23 @@ public class ArticleStatsTest extends Tester {
                 resource("linkGraphInput.csv"),
                 "print"
         });
+    }
+
+    @Ignore
+    @Test
+    public void RedirectsInLinkGraph() throws Exception {
+        new LinkGraph()
+                .start(new String[]{
+                        input("completeTestWikiDump.xml"),
+                        input("redirects.csv"),
+                        input("linkGraphInput.csv"),
+                        "print"
+                });
+    }
+
+    @Test
+    public void extractLinks() throws Exception {
+        new LinksExtractor()
+                .start(new String[]{input("linkParserTest.xml"), "print"});
     }
 }

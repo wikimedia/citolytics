@@ -199,6 +199,18 @@ public class CalculationTest extends Tester {
 //        assertEquals("CheckOutputIntegrity should return errors.", 2, job.output.size());
     }
 
+    @Ignore
+    @Test
+    public void NegativeAlphaCPI() throws Exception {
+        WikiSim job = new WikiSim();
+        job.start(new String[]{
+                resource("completeTestWikiDump.xml"),
+                "print",
+
+                "1,-1"
+
+        });
+    }
 
     @Ignore
     @Test

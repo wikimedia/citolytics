@@ -53,6 +53,27 @@
 
     <build>
         <plugins>
+            <!-- testing
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <argLine>-Dlog4j.configuration=log4j-test.properties</argLine>
+                    <excludes>
+                        <exclude>de.tuberlin.dima.schubotz.wikisim.cpa.tests</exclude>
+                    </excludes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.18.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+-->
+
             <!-- build as single jar with all dependencies -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -65,9 +86,10 @@
                     </descriptorRefs>
                     <archive>
                         <manifestEntries>
-                            <Pact-Assembler-Class>de.tuberlin.dima.schubotz.cpa.RelationFinder</Pact-Assembler-Class>
+                            <Pact-Assembler-Class>de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim</Pact-Assembler-Class>
                         </manifestEntries>
                     </archive>
+
                 </configuration>
                 <executions>
                     <execution>
