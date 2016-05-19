@@ -22,9 +22,9 @@ The evaluation was performed on the English Wikipedia XML dump from [September 2
 
 See Also Evaluation | Clickstream Evaluation
 :-------------------------:|:-------------------------:
-![MAP Evaluation](evaluation/figure5_map-overall_s_.png) | ![CTR Evaluation](evaluation/figure6_ctr-overall_s.png)
+![MAP Evaluation](evaluation/figure5_map-overall_s.png) | ![CTR Evaluation](evaluation/figure6_ctr-overall_s.png)
 
-We performed several evaluations on the recommendation quality of CPA, CoCit and MLT. Additional plots and raw and aggregated results can be found [here](evaluations).
+We performed several evaluations on the recommendation quality of CPA, CoCit and MLT. Additional plots and raw and aggregated results can be found [here](evaluation).
 
 ### Run
 - Compile the Maven project
