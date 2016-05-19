@@ -1,6 +1,6 @@
 # Evaluation
 
-The evaluation results can be downloaded aggregated as [Excel file](Evaluation.xlsx) or raw as MySQL dump:
+The evaluation results can be downloaded aggregated as [Excel file](Evaluation.xlsx) or raw as [MySQL dump](https://github.com/wikimedia/citolytics/releases/download/v0.0.2/results.tar.gz):
 
  - Full MySQL dump (4GB / .tar-file)
  - Single tables (.sql-files)
