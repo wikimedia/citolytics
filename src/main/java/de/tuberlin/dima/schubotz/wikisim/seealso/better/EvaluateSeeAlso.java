@@ -20,9 +20,15 @@ public class EvaluateSeeAlso implements CoGroupFunction<
         > {
 
     private int topK = 10;
+    private boolean enableMRR = false; // If true, MRR is used instead of MAP
 
     public EvaluateSeeAlso(int topK) {
         this.topK = topK;
+    }
+
+    public EvaluateSeeAlso(int topK, boolean enableMRR) {
+        this.topK = topK;
+        this.enableMRR = enableMRR;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class EvaluateSeeAlso implements CoGroupFunction<
 
             double topKScore = 0;
             double hrr = 0;
-            double mar = 0;
+            double performance = 0;
 
             int[] matches = new int[]{0, 0, 0};
 
@@ -51,7 +57,12 @@ public class EvaluateSeeAlso implements CoGroupFunction<
 
                 topKScore = EvaluationMeasures.getTopKScore(resultList, seeAlsoList);
                 hrr = EvaluationMeasures.getHarmonicReciprocalRank(resultList, seeAlsoList);
-                mar = EvaluationMeasures.getMeanAveragePrecision(resultList, seeAlsoList);
+
+                if (enableMRR) {
+                    performance = EvaluationMeasures.getMeanReciprocalRank(resultList, seeAlsoList);
+                } else {
+                    performance = EvaluationMeasures.getMeanAveragePrecision(resultList, seeAlsoList);
+                }
 
                 matches = EvaluationMeasures.getMatchesCount(resultList, seeAlsoList);
             }
@@ -64,7 +75,7 @@ public class EvaluateSeeAlso implements CoGroupFunction<
                     sortedList.size(),
                     hrr,
                     topKScore,
-                    mar,
+                    performance,
                     matches[0],
                     matches[1],
                     matches[2]

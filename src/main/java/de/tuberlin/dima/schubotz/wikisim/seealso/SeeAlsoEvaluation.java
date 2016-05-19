@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
  * 4 = SCORE-FIELD: column of score field in result set (default: 6)
  * 5 = PAGE-A-FIELD: column of page A in result set (default: 1)
  * 6 = PAGE-B-FIELD: column of page B in result set (default: 2)
+ * 7 = ENABLE-MRR: if set, performance measure is MRR (default: MAP)
  * <p/>
  * Set SCORE-FIELD = -1 for MLT result data set.
  */
@@ -49,7 +50,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
     public void plan() {
         if (args.length < 3) {
             System.err.println("Input/output parameters missing!");
-            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links (=nofilter)>] [<score-field>] [<page-a-field>] [<page-b-field>]");
+            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links (=nofilter)>] [<score-field>] [<page-a-field>] [<page-b-field>] [enable-mrr]");
             System.exit(1);
         }
         setJobName("SeeAlso Evaluation");
@@ -62,6 +63,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
         int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 5);
         int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
         int fieldPageB = (args.length > 6 ? Integer.valueOf(args[6]) : 2);
+        boolean enableMRR = (args.length > 7 && args[7] != "" ? true : false);
 
         // See also
         DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
@@ -120,7 +122,7 @@ public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
                 .coGroup(wikiSimGroupedDataSet)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluateSeeAlso(topK));
+                .with(new EvaluateSeeAlso(topK, enableMRR));
     }
 
 

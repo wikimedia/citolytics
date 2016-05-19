@@ -1,20 +1,30 @@
 # Citolytics - Citation Analysis for Wikipedia with Apache Flink
 
-This repository contains all resources used in the research paper [Evaluating Link-based Recommendations for Wikipedia](#missingLink) including the [Apache Flink](https://flink.apache.org/) based implementation of [Co-Citation](https://en.wikipedia.org/wiki/Co-citation) (CoCit) and [Co-Citation Proximity Analysis](https://en.wikipedia.org/wiki/Co-citation_Proximity_Analysis) (CPA) for Wikipedia, the evaluation application with several performance measures, the final and intermediate result data sets and additional tools for testing and debugging. Resources regarding the [Apache Lucence MoreLikeThis](https://lucene.apache.org/) baseline can be found in a [separate repository](https://github.com/mschwarzer/Wikipedia2Lucene).
+This repository contains all resources used in the research paper [Evaluating Link-based Recommendations for Wikipedia](https://github.com/wikimedia/citolytics/releases/download/v0.0.2/paper.pdf) including the [Apache Flink](https://flink.apache.org/) based implementation of [Co-Citation](https://en.wikipedia.org/wiki/Co-citation) (CoCit) and [Co-Citation Proximity Analysis](https://en.wikipedia.org/wiki/Co-citation_Proximity_Analysis) (CPA) for Wikipedia, the evaluation application with several performance measures, the final and intermediate result data sets and additional tools for testing and debugging.
+
+The evaluation was performed on the English Wikipedia XML dump from [September 2014](https://archive.org/details/wikimedia-mediatar). Resources regarding the [Apache Lucence MoreLikeThis](https://lucene.apache.org/) baseline can be found in a [separate repository](https://github.com/mschwarzer/Wikipedia2Lucene).
 
 [![Build Status](https://drone.io/github.com/TU-Berlin/cpa-demo/status.png)](https://drone.io/github.com/TU-Berlin/cpa-demo/latest)
 ### Contents
 
 - CPA and CoCit computation on Wikipedia text corpus
 - Extraction of "See also" link as gold standard
-- "See also" and clickstream based evaluation
-- Performance evaluation with Mean Average Precision, Mean Reciprocal Rank, Top-K, ...
+- "See also" and click stream based evaluation
+- Performance evaluation with several measures
+    - Mean Average Precision (default)
+    - Top-K (always included)
+    - Mean Reciprocal Rank (set [ENABLE-MRR] parameter)
+    - Click Through Rate (default for click streams)
 - Link graph extraction for result pairs
-- Wikipedia article statistics
+- Wikipedia article statistics generator
 
 ### Evaluation
 
-![MAP Evaluation](evaluation/figure5_map-overall.png)![CTR Evaluation](evaluation/figure6_ctr-overall.png)
+See Also Evaluation | Clickstream Evaluation
+:-------------------------:|:-------------------------:
+![MAP Evaluation](evaluation/figure5_map-overall_s_.png) | ![CTR Evaluation](evaluation/figure6_ctr-overall_s.png)
+
+We performed several evaluations on the recommendation quality of CPA, CoCit and MLT. Additional plots and raw and aggregated results can be found [here](evaluations).
 
 ### Run
 - Compile the Maven project
@@ -26,7 +36,7 @@ This repository contains all resources used in the research paper [Evaluating Li
     - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
 
 - **SeeAlsoEvaluation**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation
-    - Parameters: WIKISIM-DATASET EVAL-OUTPUT SEEALSO-DATASET [LINKS/NOFILTER] [SCORE-FIELD]
+    - Parameters: WIKISIM-DATASET EVAL-OUTPUT SEEALSO-DATASET [LINKS/NOFILTER] [SCORE-FIELD] [PAGE1-FIELD] [PAGE2-FIELD] [ENABLE-MRR]
     - e.g.: hdfs://cluster/results.out hdfs://cluster/eval.out hdfs://cluster/seealso.out nofilter 8
 
 - **SeeAlsoExtractor**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor
