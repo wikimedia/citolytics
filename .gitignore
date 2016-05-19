@@ -1,5 +1,6 @@
 /target/
 nbactions.xml
 .project
+.idea
 .classpath
 /mlp.iml
