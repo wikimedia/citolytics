@@ -104,3 +104,8 @@ To evaluate and generate the data used in our publication, you need to run the f
 
 ### Evaluation Notes
 - When importing CSV outputs to a database (e.g. mysql) use a case sensitive collation (utf8_bin) for Wikipedia article names.
+
+
+### Licence
+
+MIT
