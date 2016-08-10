@@ -8,7 +8,7 @@ import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
@@ -19,7 +19,7 @@ import java.util.Iterator;
 /**
  * Combine output of ArticleStats and LinksExtractor to add inbound link stats.
  */
-public class ArticleStatsWithInboundLinks extends WikiSimJob<Tuple6<String, Integer, Integer, Integer, Double, Integer>> {
+public class ArticleStatsWithInboundLinks extends WikiSimAbstractJob<Tuple6<String, Integer, Integer, Integer, Double, Integer>> {
     public static void main(String[] args) throws Exception {
         new ArticleStatsWithInboundLinks().start(args);
     }

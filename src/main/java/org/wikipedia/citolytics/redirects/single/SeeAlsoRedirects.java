@@ -7,13 +7,13 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
-public class SeeAlsoRedirects extends WikiSimJob<Tuple3<String, String, Integer>> {
+public class SeeAlsoRedirects extends WikiSimAbstractJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
         new SeeAlsoRedirects().start(args);
     }

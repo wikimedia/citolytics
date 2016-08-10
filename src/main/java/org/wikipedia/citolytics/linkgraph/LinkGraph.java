@@ -7,13 +7,13 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
+import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +29,7 @@ import static java.lang.Math.max;
  * Input: List of LinkTuples
  * Output CSV: Article; LinkTuple; Distance
  */
-public class LinkGraph extends WikiSimJob<Tuple4<String, String, String, Integer>> {
+public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String, Integer>> {
 
     public static void main(String[] args) throws Exception {
         new LinkGraph().enableSingleOutputFile().start(args);

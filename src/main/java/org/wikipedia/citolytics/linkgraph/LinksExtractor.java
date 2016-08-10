@@ -3,10 +3,10 @@ package org.wikipedia.citolytics.linkgraph;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
+import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
  * <p/>
  * table structure: article (primary key), link target
  */
-public class LinksExtractor extends WikiSimJob<Tuple2<String, String>> {
+public class LinksExtractor extends WikiSimAbstractJob<Tuple2<String, String>> {
 
     public static void main(String[] args) throws Exception {
         new LinksExtractor().start(args);

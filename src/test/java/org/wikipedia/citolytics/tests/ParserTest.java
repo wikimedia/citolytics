@@ -1,9 +1,9 @@
 package org.wikipedia.citolytics.tests;
 
 import org.junit.Test;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.tests.utils.Tester;
+import org.wikipedia.processing.DocumentProcessor;
 
 import static org.junit.Assert.assertEquals;
 

@@ -4,7 +4,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.clickstream.operators.EvaluateClicks;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
@@ -16,7 +16,7 @@ import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class ClickStreamEvaluation extends WikiSimJob<ClickStreamResult> {
+public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult> {
     public static String clickStreamInputFilename;
     public static String wikiSimInputFilename;
     public static String linksInputFilename;

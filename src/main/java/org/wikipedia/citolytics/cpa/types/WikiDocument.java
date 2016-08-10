@@ -17,7 +17,7 @@
 package org.wikipedia.citolytics.cpa.types;
 
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
+import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.*;
 import java.util.regex.Matcher;

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Parent job class
  */
-public abstract class WikiSimJob<T extends Tuple> {
+public abstract class WikiSimAbstractJob<T extends Tuple> {
     private int outputParallelism = -1;
     public String[] args;
     public String jobName;
@@ -25,10 +25,10 @@ public abstract class WikiSimJob<T extends Tuple> {
 
     private boolean writeAsText = false;
 
-    public WikiSimJob() {
+    public WikiSimAbstractJob() {
     }
 
-    public WikiSimJob setJobName(String name) {
+    public WikiSimAbstractJob setJobName(String name) {
         jobName = name;
         return this;
     }
@@ -40,17 +40,17 @@ public abstract class WikiSimJob<T extends Tuple> {
             return jobName;
     }
 
-    public WikiSimJob verbose() {
+    public WikiSimAbstractJob verbose() {
         env.getConfig().disableSysoutLogging();
         return this;
     }
 
-    public WikiSimJob enableTextOutput() {
+    public WikiSimAbstractJob enableTextOutput() {
         writeAsText = true;
         return this;
     }
 
-    public WikiSimJob enableSingleOutputFile() {
+    public WikiSimAbstractJob enableSingleOutputFile() {
         outputParallelism = 1;
         return this;
     }

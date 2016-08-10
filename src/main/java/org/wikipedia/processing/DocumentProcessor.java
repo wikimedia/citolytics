@@ -14,7 +14,7 @@
  * this stuff is worth it, you can buy me a beer in return.
  * ----------------------------------------------------------------------------
  */
-package org.wikipedia.citolytics.cpa.operators;
+package org.wikipedia.processing;
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;

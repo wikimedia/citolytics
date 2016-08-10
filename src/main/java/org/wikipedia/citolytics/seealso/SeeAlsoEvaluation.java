@@ -7,7 +7,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.seealso.better.*;
 import org.wikipedia.citolytics.seealso.operators.BetterLinkExistsFilter;
 import org.wikipedia.citolytics.seealso.operators.BetterSeeAlsoLinkExistsFilter;
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * <p/>
  * Set SCORE-FIELD = -1 for MLT result data set.
  */
-public class SeeAlsoEvaluation extends WikiSimJob<SeeAlsoEvaluationResult> {
+public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResult> {
     public static String seeAlsoInputFilename;
     public static String wikiSimInputFilename;
     public static String linksInputFilename;

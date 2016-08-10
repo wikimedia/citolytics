@@ -1,13 +1,13 @@
 package org.wikipedia.citolytics.histogram;
 
 import org.apache.flink.api.java.operators.DataSource;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 
 /**
  * Generate statistic from Wikipedia XML Dump. Counts links & link pairs
  */
-public class Histogram extends WikiSimJob<HistogramResult> {
+public class Histogram extends WikiSimAbstractJob<HistogramResult> {
 
     public static void main(String[] args) throws Exception {
         new Histogram()

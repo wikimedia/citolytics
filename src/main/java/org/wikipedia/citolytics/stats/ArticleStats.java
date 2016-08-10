@@ -2,17 +2,17 @@ package org.wikipedia.citolytics.stats;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
+import org.wikipedia.processing.DocumentProcessor;
 
 /**
  * Collect following values for each article in Wikipedia XML Dump:
  *
  * words, headlines, outLinks, avgLinkDistance
  */
-public class ArticleStats extends WikiSimJob<ArticleTuple> {
+public class ArticleStats extends WikiSimAbstractJob<ArticleTuple> {
 
     public static void main(String[] args) throws Exception {
         new ArticleStats().start(args);

@@ -4,14 +4,14 @@ import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple1;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.regex.Pattern;
 
 /**
  * Count redirects in redirects.out (RedirectExtractor)
  */
-public class RedirectCount extends WikiSimJob<Tuple1<Integer>> {
+public class RedirectCount extends WikiSimAbstractJob<Tuple1<Integer>> {
     public static void main(String[] args) throws Exception {
         new RedirectCount()
                 .enableSingleOutputFile()

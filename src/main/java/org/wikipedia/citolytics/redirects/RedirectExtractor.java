@@ -4,7 +4,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.StringUtils;
@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * <p/>
  * Output CSV: Source | Target
  */
-public class RedirectExtractor extends WikiSimJob<Tuple2<String, String>> {
+public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>> {
     public static void main(String[] args) throws Exception {
         new RedirectExtractor().start(args);
     }

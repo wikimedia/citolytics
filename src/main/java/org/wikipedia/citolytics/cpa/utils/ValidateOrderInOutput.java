@@ -4,7 +4,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Check alphabetical order of WikiSim results.
  */
-public class ValidateOrderInOutput extends WikiSimJob<Tuple3<String, String, Integer>> {
+public class ValidateOrderInOutput extends WikiSimAbstractJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
         new ValidateOrderInOutput().start(args);
     }

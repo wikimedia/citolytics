@@ -5,7 +5,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * <p/>
  * USAGE: <test-input-a> <test-input-b> <output>
  */
-public class CheckOutputIntegrity extends WikiSimJob<Tuple3<Long, String, String>> {
+public class CheckOutputIntegrity extends WikiSimAbstractJob<Tuple3<Long, String, String>> {
     public static void main(String[] args) throws Exception {
         new CheckOutputIntegrity().start(args);
     }

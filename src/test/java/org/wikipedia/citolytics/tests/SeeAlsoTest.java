@@ -3,10 +3,10 @@ package org.wikipedia.citolytics.tests;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
 import org.wikipedia.citolytics.tests.utils.Tester;
+import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;

@@ -2,7 +2,7 @@ package org.wikipedia.citolytics.clickstream.utils;
 
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
  * <p/>
  * Outputs all invalid records.
  */
-public class ValidateClickStreamData extends WikiSimJob<Tuple3<String, Integer, HashMap<String, Integer>>> {
+public class ValidateClickStreamData extends WikiSimAbstractJob<Tuple3<String, Integer, HashMap<String, Integer>>> {
 
     public static void main(String[] args) throws Exception {
         new ValidateClickStreamData().start(args);

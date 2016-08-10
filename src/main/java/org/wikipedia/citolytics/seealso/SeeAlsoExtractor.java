@@ -8,11 +8,11 @@ import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimJob;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.operators.DocumentProcessor;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
+import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.Map;
  * <p/>
  * Output format: article name | SeeAlso link 1#SeeAlso link2#... | number of SeeAlso links
  */
-public class SeeAlsoExtractor extends WikiSimJob<Tuple3<String, String, Integer>> {
+public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, Integer>> {
     private final String linkDelimiter = "#";
 
     public static void main(String[] args) throws Exception {
