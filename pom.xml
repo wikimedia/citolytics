@@ -4,14 +4,15 @@
 
     <groupId>de.tuberlin.dima.schubotz</groupId>
     <artifactId>cpa</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.5</version>
+
     <packaging>jar</packaging>
-    <name>CPA-Flink demo</name>
+    <name>Citolytics</name>
 
     <licenses>
         <license>
-            <name>Beerware License</name>
-            <url>http://en.wikipedia.org/wiki/Beerware</url>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
 
@@ -24,19 +25,28 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-java</artifactId>
-            <version>0.9.0</version>
+            <version>1.1.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients</artifactId>
-            <version>0.9.0</version>
+            <artifactId>flink-clients_2.10</artifactId>
+            <version>1.1.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
+        </dependency>
+
         <!-- <dependency>
              <groupId>org.fusesource.wikitext</groupId>
              <artifactId>mediawiki-core</artifactId>

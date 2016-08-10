@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.histogram;
 
+import com.google.common.collect.MinMaxPriorityQueue;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.StringListValue;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import org.apache.flink.api.common.functions.CoGroupFunction;
@@ -13,7 +14,6 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.types.StringValue;
 import org.apache.flink.util.Collector;
 

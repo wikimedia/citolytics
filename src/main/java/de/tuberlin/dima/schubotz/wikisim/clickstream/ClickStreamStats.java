@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream;
 
+import com.google.common.collect.Iterators;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.utils.ClickStreamHelper;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
@@ -8,7 +9,6 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.shaded.com.google.common.collect.Iterators;
 import org.apache.flink.util.Collector;
 
 /**

@@ -1,11 +1,11 @@
 package de.tuberlin.dima.schubotz.wikisim.histogram;
 
 
-import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
+//import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
 import org.apache.flink.api.common.functions.RichReduceFunction;
 
 
-@Combinable
+//@Combinable
 public class HistogramReducer extends RichReduceFunction<HistogramResult> {
 
     public HistogramResult internalReduce(HistogramResult a, HistogramResult b) throws Exception {

@@ -1,12 +1,12 @@
 package de.tuberlin.dima.schubotz.wikisim.seealso.better;
 
+import com.google.common.collect.Ordering;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.SeeAlsoEvaluationResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResult;
 import de.tuberlin.dima.schubotz.wikisim.seealso.types.WikiSimComparableResultList;
 import de.tuberlin.dima.schubotz.wikisim.seealso.utils.EvaluationMeasures;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.apache.flink.util.Collector;
 
 import java.util.ArrayList;

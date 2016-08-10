@@ -1,5 +1,6 @@
 package de.tuberlin.dima.schubotz.wikisim.clickstream.utils;
 
+import com.google.common.collect.Sets;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.WikiSimOutputWriter;
 import de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.seealso.better.SeeAlsoInputMapper;
@@ -11,7 +12,6 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.shaded.com.google.common.collect.Sets;
 import org.apache.flink.util.Collector;
 
 import java.util.*;

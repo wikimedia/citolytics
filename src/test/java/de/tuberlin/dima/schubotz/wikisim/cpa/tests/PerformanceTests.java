@@ -1,8 +1,8 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
+import com.google.common.collect.MinMaxPriorityQueue;
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.list.DoubleListValue;
 import de.tuberlin.dima.schubotz.wikisim.cpa.utils.StringUtils;
-import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.junit.Ignore;
 import org.junit.Test;
 

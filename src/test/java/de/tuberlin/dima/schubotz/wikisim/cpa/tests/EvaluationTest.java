@@ -1,5 +1,7 @@
 package de.tuberlin.dima.schubotz.wikisim.cpa.tests;
 
+import com.google.common.collect.MinMaxPriorityQueue;
+import com.google.common.collect.Ordering;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamStats;
 import de.tuberlin.dima.schubotz.wikisim.clickstream.utils.ClickStreamHelper;
@@ -16,8 +18,6 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
-import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.junit.Ignore;
 import org.junit.Test;
 

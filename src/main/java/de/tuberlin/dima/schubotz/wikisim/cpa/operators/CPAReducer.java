@@ -18,16 +18,18 @@ package de.tuberlin.dima.schubotz.wikisim.cpa.operators;
 
 import de.tuberlin.dima.schubotz.wikisim.cpa.types.WikiSimResult;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
-import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
 import java.util.Iterator;
 
+//import org.apache.flink.api.common.functions.RichGroupReduceFunction.Combinable;
+
 /**
  * Calculates CPA values, CoCit strength, distance, min. distance, max. distance for each result record.
  */
-@Combinable
+//@Combinable
+// GroupCombineFunction ?
 public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
 
     private int reducerThreshold;
@@ -54,7 +56,7 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
         internalReduce(results, resultCollector, reducerThreshold);
     }
 
-    @Override
+    //    @Override
     public void combine(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector) throws Exception {
         internalReduce(results, resultCollector, combinerThreshold);
     }
