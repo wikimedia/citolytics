@@ -6,7 +6,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
 ### WikiSim (no redirects)
 
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
+./bin/flink run -c WikiSim \
     ./cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///user/mschwarzer/v2/results/a01 \
@@ -16,7 +16,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
 ### WikiSim (with redirects; alpha = {0.5,0.8,0.9,1,1.5,2}; no thresholds)
 
 ```
-flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
+flink run -p 64 -c WikiSim \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///user/mschwarzer/v2/results/a01_redirected \
@@ -28,7 +28,7 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim \
 
 #### CPA
 ```
-flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
+flink run -p 64 -c SeeAlsoEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/results/a01_redirected \
     hdfs:///user/mschwarzer/v2/results/seealso_cpa_1_0 \
@@ -38,7 +38,7 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
 
 #### MLT
 ```
-flink run -p 82 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
+flink run -p 82 -c SeeAlsoEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/intermediate/mlt_results \
     hdfs:///user/mschwarzer/v2/results/seealso_mlt \
@@ -50,7 +50,7 @@ flink run -p 82 -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
 
 #### CPA
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation \
+flink run -p 96 -c ClickStreamEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/results/a01_redirected \
     hdfs:///datasets/enwiki_2015_02_clickstream.tsv \
@@ -60,7 +60,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEval
 
 #### MLT
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation \
+flink run -p 96 -c ClickStreamEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/intermediate/mlt_results \
     hdfs:///datasets/enwiki_2015_02_clickstream.tsv \
@@ -73,7 +73,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEval
 #### Resolve Redirects (from WikiSim output)
 
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRedirects \
+flink run -p 96 -c WikiSimRedirects \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/results/a01 \
     hdfs:///user/mschwarzer/v2/intermediate/redirects \
@@ -83,7 +83,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRed
 #### Extract Redirects (from WikiDump)
 
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor \
+./bin/flink run -c RedirectExtractor \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///user/mschwarzer/v2/intermediate/redirects2 \
@@ -91,7 +91,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.WikiSimRed
 
 #### Replace redirects in "See Also" links
 ```
-flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.SeeAlsoRedirects \
+flink run -p 64 -c SeeAlsoRedirects \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/intermediate/seealso6e.csv \
     hdfs:///user/mschwarzer/v2/intermediate/redirects \
@@ -102,7 +102,7 @@ flink run -p 64 -c de.tuberlin.dima.schubotz.wikisim.redirects.single.SeeAlsoRed
 
 #### Test WikiSim Output Integrity (Debugging)
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegrity \
+flink run -p 96 -c CheckOutputIntegrity \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///user/mschwarzer/v2/tests/a01_redirected \
     hdfs:///user/mschwarzer/v2/tests/a01b_redirected \
@@ -111,7 +111,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.cpa.utils.CheckOutputIntegr
 
 #### Stats (words, headlines, outLinks, avgLinkDistance, outLinksPerWords, inLinks)
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks \
+flink run -p 96 -c ArticleStatsWithInboundLinks \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///user/mschwarzer/v2/results/stats2
@@ -120,7 +120,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInbou
 With resolved redirects for inLinks:
 
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInboundLinks \
+flink run -p 96 -c ArticleStatsWithInboundLinks \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///user/mschwarzer/v2/results/stats2
@@ -132,7 +132,7 @@ flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.stats.ArticleStatsWithInbou
 [WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]
 
 ```
-flink run -p 96 -c de.tuberlin.dima.schubotz.wikisim.linkgraph.LinkGraph \
+flink run -p 96 -c LinkGraph \
     /home/mschwarzer/wikisim/cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///user/mschwarzer/v2/intermediate/redirects \

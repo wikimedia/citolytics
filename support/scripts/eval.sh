@@ -32,7 +32,7 @@ current/bin/flink run -p 100 -c de.tuberlin.dima.schubotz.wikisim.cpa.evaluation
 
 # CoCit
 
-#current/bin/flink run -p 150 -c de.tuberlin.dima.schubotz.wikisim.histogram.EvaluationHistogram $JAR_PATH $HDFS_URL/$WIKISIM_DATASET $HDFS_URL/user/mschwarzer/wikisim/evalperformance y
+#current/bin/flink run -p 150 -c EvaluationHistogram $JAR_PATH $HDFS_URL/$WIKISIM_DATASET $HDFS_URL/user/mschwarzer/wikisim/evalperformance y
 #/home/mschwarzer/wikisim/cpa.jar hdfs://ibm-power-1.dima.tu-berlin.de:8020
 
 #current/bin/flink run -p $PARALLELISM -c $MAIN_CLASS $JAR_PATH $HDFS_URL/$OUTPUT_FILENAME $HDFS_URL/$SEEALSO_DATASET $HDFS_URL/$WIKISIM_DATASET $HDFS_URL/$MLT_DATASET $LINKFILTER_DATASET $TOPK $CPA_KEY $AGGREGATE

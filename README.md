@@ -31,24 +31,24 @@ We performed several evaluations on the recommendation quality of CPA, CoCit and
 - Run Apache Flink jobs separately from jar-file with -c parameter.
 
 ### Available Flink Jobs (Classes)
-- **CPA/CoCit Computation**: de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
+- **CPA/CoCit Computation**: WikiSim
     - Parameters: WIKI-XML-DUMP OUTPUT ALPHA1,ALPHA2,... [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
     - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
 
-- **SeeAlsoEvaluation**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation
+- **SeeAlsoEvaluation**: SeeAlsoEvaluation
     - Parameters: WIKISIM-DATASET EVAL-OUTPUT SEEALSO-DATASET [LINKS/NOFILTER] [SCORE-FIELD] [PAGE1-FIELD] [PAGE2-FIELD] [ENABLE-MRR]
     - e.g.: hdfs://cluster/results.out hdfs://cluster/eval.out hdfs://cluster/seealso.out nofilter 8
 
-- **SeeAlsoExtractor**: de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor
+- **SeeAlsoExtractor**: SeeAlsoExtractor
     - Parameters: WIKI-XML-DUMP SEEALSO-OUTPUT REDIRECTS
     - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/seealso.out hdfs://cluster/redirects.out
 
 
-- **Extract Redirects**: de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor
+- **Extract Redirects**: RedirectExtractor
     - Parameters: WIKI-XML-DUMP REDIRECTS
     - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/redirects.out
 
-- **ClickStreamEvaluation**: de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation
+- **ClickStreamEvaluation**: ClickStreamEvaluation
     - Parameters: WIKISIM-DATASET CLICKSTREAM-DATASET EVAL-OUTPUT [SCORE-FIELD]
     - e.g.: hdfs://cluster/results.out hdfs://cluster/wiki-clickstream.tsv hdfs://cluster/eval.out 6
 
@@ -59,7 +59,7 @@ To evaluate and generate the data used in our publication, you need to run the f
 
 #### 1. Extract Redirects from Wikipedia
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.redirects.RedirectExtractor \
+./bin/flink run -c RedirectExtractor \
     /cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///wikisim/intermediate/redirects \
@@ -67,7 +67,7 @@ To evaluate and generate the data used in our publication, you need to run the f
 
 #### 2. Extract SeeAlso links from Wikipedia
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoExtractor \
+./bin/flink run -c SeeAlsoExtractor \
     /cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///wikisim/intermediate/seealso \
@@ -75,7 +75,7 @@ To evaluate and generate the data used in our publication, you need to run the f
 ```
 #### 3. Compute CPA results with alpha={0.5,1.5}
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
+./bin/flink run -c WikiSim
     /cpa.jar \
     hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
     hdfs:///wikisim/results/cpa \
@@ -84,7 +84,7 @@ To evaluate and generate the data used in our publication, you need to run the f
 ```
 #### 4a. SeeAlso Evaluation of CPA results with alpha=1.5
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.seealso.SeeAlsoEvaluation \
+./bin/flink run -c SeeAlsoEvaluation \
     /cpa.jar \
     hdfs:///wikisim/results/cpa \
     hdfs:///wikisim/results/evaluation \
@@ -94,7 +94,7 @@ To evaluate and generate the data used in our publication, you need to run the f
 
 #### 4b. ClickStream Evaluation of CPA results with alpha=0.5
 ```
-./bin/flink run -c de.tuberlin.dima.schubotz.wikisim.clickstream.ClickStreamEvaluation \
+./bin/flink run -c ClickStreamEvaluation \
     /cpa.jar \
     hdfs:///wikisim/results/cpa \
     hdfs:///datasets/enwiki_2015_02_clickstream.tsv \

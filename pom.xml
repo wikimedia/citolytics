@@ -96,7 +96,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifestEntries>
-                            <Pact-Assembler-Class>de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim</Pact-Assembler-Class>
+                            <Pact-Assembler-Class>org.wikipedia.citolytics.cpa.WikiSim</Pact-Assembler-Class>
                         </manifestEntries>
                     </archive>
 

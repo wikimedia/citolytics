@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
-program-class: de.tuberlin.dima.schubotz.wikisim.cpa.WikiSim
