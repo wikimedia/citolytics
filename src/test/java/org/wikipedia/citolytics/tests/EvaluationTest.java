@@ -41,13 +41,8 @@ public class EvaluationTest extends Tester {
     @Ignore
     @Test
     public void TestClickStreamEvaluationCPA() throws Exception {
-        ClickStreamEvaluation.main(
-                new String[]{
-                        resource("wikisim_output.csv"),
-                        resource("2015_02_clickstream_preview.tsv"),
-                        "print",
-                        "4"
-                }
+        ClickStreamEvaluation.main(("--input " + resource("wikisim_output.csv") + " --clickstream "
+                + resource("2015_02_clickstream_preview.tsv") + " --output print --score 4").split(" ")
         );
     }
 
@@ -55,12 +50,9 @@ public class EvaluationTest extends Tester {
     @Test
     public void TestClickStreamEvaluationMLT() throws Exception {
         ClickStreamEvaluation.main(
-                new String[]{
-                        resource("evaluation_mlt.csv"),
-                        resource("2015_02_clickstream_preview.tsv"),
-                        "print",
-                        "-1"
-                }
+                ("--input " + resource("evaluation_mlt.csv") + " --clickstream "
+                        + resource("2015_02_clickstream_preview.tsv") + " --output print").split(" ")
+
         );
     }
 

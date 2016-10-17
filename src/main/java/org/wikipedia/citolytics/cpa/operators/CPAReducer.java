@@ -16,6 +16,7 @@
  */
 package org.wikipedia.citolytics.cpa.operators;
 
+import org.apache.flink.api.common.functions.GroupCombineFunction;
 import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
@@ -30,7 +31,7 @@ import java.util.Iterator;
  */
 //@Combinable
 // GroupCombineFunction ?
-public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> {
+public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimResult> implements GroupCombineFunction {
 
     private int reducerThreshold;
     private int combinerThreshold;
@@ -56,9 +57,10 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
         internalReduce(results, resultCollector, reducerThreshold);
     }
 
-    //    @Override
-    public void combine(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector) throws Exception {
-        internalReduce(results, resultCollector, combinerThreshold);
+
+    @Override
+    public void combine(Iterable results, Collector collector) throws Exception {
+        internalReduce(results, collector, combinerThreshold);
     }
 
     public void internalReduce(Iterable<WikiSimResult> results, Collector<WikiSimResult> resultCollector, int minOut) throws Exception {
@@ -122,4 +124,5 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
         }
 
     }
+
 }

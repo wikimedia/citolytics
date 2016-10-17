@@ -151,6 +151,12 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
 
         return seeAlsoText;
     }
+
+    public static String removeInfoBox(String wikiText) {
+        // {{Infobox ... }}
+        // Check for multiple infox boxes
+        return wikiText;
+    }
 }
 
 

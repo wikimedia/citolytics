@@ -166,11 +166,7 @@ public class CalculationTest extends Tester {
     @Test
     public void TestLocalExecution() throws Exception {
 
-        WikiSim.main(new String[]{
-                resource("wikiSeeAlso.xml"),
-                "print",
-                "1.5,1.25,1,0.5,0",
-                "1"});
+        WikiSim.main(("--input " + resource("wikiSeeAlso.xml") + " --output print --alpha 1.5,1.25,1,0.5,0").split(" "));
     }
 
     @Ignore
