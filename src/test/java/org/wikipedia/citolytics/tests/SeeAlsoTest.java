@@ -3,7 +3,6 @@ package org.wikipedia.citolytics.tests;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
@@ -73,7 +72,7 @@ public class SeeAlsoTest extends Tester {
     @Test
     public void seeAlsoNotExists() {
         String input = "==Title==\nfooo\nbaaaar\n==Reference==\n* x\n* y";
-        String text = new WikiDocument().stripSeeAlsoSection(input);
+        String text = DocumentProcessor.stripSeeAlsoSection(input);
 
 
         assertEquals("See section found", -1, text.indexOf("See also"));
@@ -84,7 +83,7 @@ public class SeeAlsoTest extends Tester {
     @Test
     public void seeAlsoLastSection() {
         String input = "==Title==\nfooo\nbaaaar\n==Reference==\n* x\n* y\n==See also==\n* [[foo]]\n* [[bar]]";
-        String text = new WikiDocument().stripSeeAlsoSection(input);
+        String text = DocumentProcessor.stripSeeAlsoSection(input);
 
         assertEquals("See section found", -1, text.indexOf("See also"));
         assertNotSame("Text not changed", input, text);
@@ -96,7 +95,7 @@ public class SeeAlsoTest extends Tester {
                 "==Reference==\n" +
                 "* x\n" +
                 "* y";
-        String text = new WikiDocument().stripSeeAlsoSection(input);
+        String text = DocumentProcessor.stripSeeAlsoSection(input);
 
         assertEquals("See section found", -1, text.indexOf("See also"));
         assertTrue("Reference not found", text.indexOf("Reference") > 0);
@@ -137,7 +136,7 @@ public class SeeAlsoTest extends Tester {
                 "[[Category:Artist collectives]]\n" +
                 "[[Category:Peckham]]\n" +
                 "[[Category:Arts in London]]\n";
-        String text = new WikiDocument().stripSeeAlsoSection(input);
+        String text = DocumentProcessor.stripSeeAlsoSection(input);
 
         assertEquals("See section found", -1, text.indexOf("See also"));
         assertTrue("Notes and references not found", text.indexOf("Notes and references") > 0);

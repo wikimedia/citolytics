@@ -177,38 +177,6 @@ public class WikiDocument {
         return true;
     }
 
-    /**
-     * remove links of "See Also" section
-     *
-     * @param wikiText
-     * @return wikiText without "See Also" links
-     */
-    public String stripSeeAlsoSection(String wikiText) {
-        int seeAlsoStart = -1;
-        Pattern seeAlsoPattern = Pattern.compile(DocumentProcessor.seeAlsoRegex, DocumentProcessor.seeAlsoRegexFlags);
-        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
-
-        if (seeAlsoMatcher.find()) {
-            seeAlsoStart = seeAlsoMatcher.start();
-        }
-
-        // See also section exists
-        if (seeAlsoStart > 0) {
-            int seeAlsoEnd = seeAlsoStart + DocumentProcessor.seeAlsoTitle.length();
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + DocumentProcessor.seeAlsoTitle.length()).indexOf("==");
-
-            String strippedWikiText = wikiText.substring(0, seeAlsoStart);
-
-            // Append content after see also section
-            if (nextHeadlineStart > 0) {
-                strippedWikiText += wikiText.substring(nextHeadlineStart + seeAlsoEnd);
-            }
-
-            return strippedWikiText;
-        }
-
-        return wikiText;
-    }
 
     /**
      * Extract headlines from article content.
@@ -245,9 +213,9 @@ public class WikiDocument {
         String text = raw; //.toLowerCase();
 
         // strip "see also" section
-        text = stripSeeAlsoSection(text);
+        text = DocumentProcessor.stripSeeAlsoSection(text);
 
-        /* Remove all interwiki links */
+        // Remove all interwiki links
         Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
         text = p2.matcher(text).replaceAll("");
         Matcher m = p.matcher(text);
@@ -300,7 +268,8 @@ public class WikiDocument {
                 if (order < 0) {
                     int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
                     int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
-                    int d = max(abs(w1 - w2), 1);
+                    int d = max(abs(w1 - w2), 1); // CPI definition
+
                     //recDistance.setValue(1 / (pow(d, α)));
 
                     if (LinkTuple.isValid(pageA, pageB)) {

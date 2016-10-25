@@ -27,10 +27,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Document Processor
+ *
+ * TODO Strip from CPA to allow general usage (aka WikiFlink)
+ *
  * Extracts links from Wikipedia documents, generates result records.
  */
 public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult> {
-
+    public static final String INFOBOX_TAG = "{{Infobox";
     public static String seeAlsoTitle = "==see also==";
     public static String seeAlsoRegex = "(^|\\W)" + seeAlsoTitle + "$";
     public static int seeAlsoRegexFlags = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE;
@@ -152,10 +156,77 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
         return seeAlsoText;
     }
 
-    public static String removeInfoBox(String wikiText) {
-        // {{Infobox ... }}
-        // Check for multiple infox boxes
+
+    /**
+     * remove links of "See Also" section
+     *
+     * @param wikiText
+     * @return wikiText without "See Also" links
+     */
+    public static String stripSeeAlsoSection(String wikiText) {
+        int seeAlsoStart = -1;
+        Pattern seeAlsoPattern = Pattern.compile(DocumentProcessor.seeAlsoRegex, DocumentProcessor.seeAlsoRegexFlags);
+        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
+
+        if (seeAlsoMatcher.find()) {
+            seeAlsoStart = seeAlsoMatcher.start();
+        }
+
+        // See also section exists
+        if (seeAlsoStart > 0) {
+            int seeAlsoEnd = seeAlsoStart + DocumentProcessor.seeAlsoTitle.length();
+            int nextHeadlineStart = wikiText.substring(seeAlsoStart + DocumentProcessor.seeAlsoTitle.length()).indexOf("==");
+
+            String strippedWikiText = wikiText.substring(0, seeAlsoStart);
+
+            // Append content after see also section
+            if (nextHeadlineStart > 0) {
+                strippedWikiText += wikiText.substring(nextHeadlineStart + seeAlsoEnd);
+            }
+
+            return strippedWikiText;
+        }
+
         return wikiText;
+    }
+
+    /**
+     * Removes info boxes from documents
+     *
+     * @param wikiText Document content in WikiMarkup
+     * @return Document content without info boxes
+     */
+    public String removeInfoBox(String wikiText) {
+        // {{Infobox ... }}
+        // TODO Check for multiple infox boxes
+
+        int startPos = wikiText.indexOf(INFOBOX_TAG);
+        while (startPos >= 0) {
+            int open = 0;
+            char[] text = wikiText.substring(startPos + 2).toCharArray();
+            int closePos = findClosing(text, 0, '{', '}');
+
+            wikiText = wikiText.substring(0, startPos) + wikiText.substring(startPos + closePos);
+
+            // Search again
+            startPos = wikiText.indexOf(INFOBOX_TAG);
+        }
+
+        return wikiText;
+    }
+
+    private int findClosing(char[] text, int openPos, char open, char close) {
+        int closePos = openPos;
+        int counter = 1;
+        while (counter > 0) {
+            char c = text[++closePos];
+            if (c == open) {
+                counter++;
+            } else if (c == close) {
+                counter--;
+            }
+        }
+        return closePos;
     }
 }
 
