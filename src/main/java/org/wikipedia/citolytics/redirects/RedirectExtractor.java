@@ -14,8 +14,11 @@ import java.util.regex.Pattern;
 
 /**
  * Extracts all redirects from Wikipedia XML Dump. Redirects are taken from <redirect>-tag.
- * <p/>
+ *
  * Output CSV: Source | Target
+ *
+ * TODO There is already an extra redirect data set available:
+ * https://dumps.wikimedia.org/enwiki/20160901/enwiki-20160901-redirect.sql.gz
  */
 public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>> {
     public static void main(String[] args) throws Exception {
