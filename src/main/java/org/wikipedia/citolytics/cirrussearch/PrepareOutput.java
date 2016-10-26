@@ -37,30 +37,50 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         int fieldScore = params.getInt("score", 5);
         int fieldPageA = params.getInt("page-a", 1);
         int fieldPageB = params.getInt("page-b", 2);
+        boolean disableScores = params.has("disable-scores");
+
 
         setJobName("Cirrussearch PrepareOutput");
 
         DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimData = ClickStreamEvaluation.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
 
-        result = wikiSimData.map(new MapFunction<Tuple2<String, WikiSimComparableResultList<Double>>, Tuple1<String>>() {
-            @Override
-            public Tuple1<String> map(Tuple2<String, WikiSimComparableResultList<Double>> in) throws Exception {
+        result = wikiSimData.map(new JSONMapper(disableScores));
+    }
 
-                ObjectMapper m = new ObjectMapper();
-                ObjectNode n = m.createObjectNode();
+    class JSONMapper implements MapFunction<Tuple2<String, WikiSimComparableResultList<Double>>, Tuple1<String>> {
+        private boolean disableScores = false;
 
-                n.put("name", in.f0);
-                n.put("namespace", 0);
-                ArrayNode a = n.putArray("related_content");
-                for (WikiSimComparableResult<Double> result : in.f1) {
+        public JSONMapper() {
 
-                    ObjectNode r = a.addObject();
-                    r.put("title", result.getName());
+        }
+
+        /**
+         * @param disableScores Set to true if score should not be included in JSON output
+         */
+        public JSONMapper(boolean disableScores) {
+            this.disableScores = disableScores;
+        }
+
+        @Override
+        public Tuple1<String> map(Tuple2<String, WikiSimComparableResultList<Double>> in) throws Exception {
+
+            ObjectMapper m = new ObjectMapper();
+            ObjectNode n = m.createObjectNode();
+
+            n.put("name", in.f0);
+            n.put("namespace", 0);
+            ArrayNode a = n.putArray("related_content");
+
+            for (WikiSimComparableResult<Double> result : in.f1) {
+
+                ObjectNode r = a.addObject();
+                r.put("title", result.getName());
+
+                if (!disableScores)
                     r.put("score", result.getSortField1());
-                }
-
-                return new Tuple1<>(n.toString()); // TODO Better way to serialize?
             }
-        });
+
+            return new Tuple1<>(n.toString()); // TODO Better way to serialize?
+        }
     }
 }

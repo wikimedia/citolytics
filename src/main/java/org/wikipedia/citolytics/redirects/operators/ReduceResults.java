@@ -64,12 +64,12 @@ public class ReduceResults implements GroupReduceFunction<WikiSimResult, WikiSim
 
             count += r.getCount();
             distance += r.getDistance();
-            cpa = DoubleListValue.sum(cpa, r.getCPA());
+            cpa = DoubleListValue.sum(cpa, r.getCPI());
         }
 
         res.setCount(count);
         res.setDistance(distance);
-        res.setCPA(cpa);
+        res.setCPI(cpa);
 
         return res;
     }

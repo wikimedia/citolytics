@@ -6,6 +6,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.seealso.better.*;
@@ -39,8 +40,6 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
 
-    public final int topK = 10;
-
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
     public static void main(String[] args) throws Exception {
@@ -48,22 +47,25 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
     }
 
     public void plan() {
+        ParameterTool params = ParameterTool.fromArgs(args);
+
         if (args.length < 3) {
             System.err.println("Input/output parameters missing!");
-            System.err.println("USAGE: <result-set> <output> <seealso-set> [<links (=nofilter)>] [<score-field>] [<page-a-field>] [<page-b-field>] [enable-mrr]");
+            System.err.println("USAGE: --wikisim <result-set> --output <output> --gold <seealso-set> [--topk <int>] [--links <links-set)>] [--score <field>] [--page-a <field>] [--page-b <field>] [--enable-mrr]");
             System.exit(1);
         }
         setJobName("SeeAlso Evaluation");
 
-        wikiSimInputFilename = args[0];
-        outputFilename = args[1];
-        seeAlsoInputFilename = args[2];
-        linksInputFilename = (args.length > 3 ? args[3] : "nofilter");
+        wikiSimInputFilename = params.getRequired("wikisim");
+        outputFilename = params.getRequired("output");
+        seeAlsoInputFilename = params.getRequired("gold");
+        linksInputFilename = params.get("links", "nofilter");
 
-        int scoreField = (args.length > 4 ? Integer.valueOf(args[4]) : 5);
-        int fieldPageA = (args.length > 5 ? Integer.valueOf(args[5]) : 1);
-        int fieldPageB = (args.length > 6 ? Integer.valueOf(args[6]) : 2);
-        boolean enableMRR = (args.length > 7 && args[7] != "" ? true : false);
+        int scoreField = params.getInt("score", 5);
+        int fieldPageA = params.getInt("page-a", 1);
+        int fieldPageB = params.getInt("page-b", 2);
+        boolean enableMRR = params.has("enable-mrr");
+        int topK = params.getInt("topk", 10);
 
         // See also
         DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)

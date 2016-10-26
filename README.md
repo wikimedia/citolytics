@@ -36,29 +36,77 @@ We performed several evaluations on the recommendation quality of CPA, CoCit and
 - Run Apache Flink jobs separately from jar-file with -c parameter.
 
 ### Available Flink Jobs (Classes)
-- **CPA/CoCit Computation**: WikiSim
-    - Parameters: WIKI-XML-DUMP OUTPUT ALPHA1,ALPHA2,... [REDUCER-THRESHOLD] [COMBINER-THRESHOLD] []
-    - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/results.out 0.5,1.0,1.5,2.0 10 5
 
-- **SeeAlsoEvaluation**: SeeAlsoEvaluation
-    - Parameters: WIKISIM-DATASET EVAL-OUTPUT SEEALSO-DATASET [LINKS/NOFILTER] [SCORE-FIELD] [PAGE1-FIELD] [PAGE2-FIELD] [ENABLE-MRR]
-    - e.g.: hdfs://cluster/results.out hdfs://cluster/eval.out hdfs://cluster/seealso.out nofilter 8
+- **CPA/CoCit Computation**: org.wikipedia.citolytics.cpa.WikiSim
+```
+# Parameters
+--input <local-or-hdfs-path>    Path to Wikipedia XML Dump (*)
+--output <local-or-hdfs-path>   Write output to this path (*)
+--alpha <double,double,...>     Alpha values for CPI computation (default: 1.5)
+--format <year>                 Year of Wikipedia dump (2013 or 2016, default: 2013)
+--redirects <local-or-hdfs-path>    Path redirects data set (default: none)
+--reducer-threshold <int>       Set for cluster debugging (default: 1)
+--combiner-threshold <int>      Set for cluster debugging (default: 1)
 
-- **SeeAlsoExtractor**: SeeAlsoExtractor
-    - Parameters: WIKI-XML-DUMP SEEALSO-OUTPUT REDIRECTS
-    - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/seealso.out hdfs://cluster/redirects.out
+# Example
+./bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim cpa.jar --input hdfs://cluster/wikidump.xml \
+    --output hdfs://cluster/results.out \
+    --alpha 0.5,1.0,1.5,2.0
+    --redirects hdfs://cluster/redirects.csv
+```
 
+- **SeeAlsoEvaluation**: org.wikipedia.citolytics.seealso.SeeAlsoEvaluation
+```
+# Parameters
+--wikisim <local-or-hdfs-path>    Path to WikiSim output (*)
+--output <local-or-hdfs-path>   Write output to this path (*)
+--gold <local-or-hdfs-path>    Path "See also" data set (*)
+--links <local-or-hdfs-path>    Path links data set (default: none)
+--score <int>   Field id for CPA score (default: 5)
+--page-a <int>  Field id for page A (default: 1)
+--page-b <int>  Field id for page B (default: 2)
+--enable-mrr    Set to enable mean-reciprocal-rank as performance measure
+--topk <int>    Number of top-K results used for evaluation (default: 10)
 
-- **Extract Redirects**: RedirectExtractor
-    - Parameters: WIKI-XML-DUMP REDIRECTS
-    - e.g.: hdfs://cluster/wikidump.xml hdfs://cluster/redirects.out
+# Example
+./bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoEvaluation cpa.jar --input hdfs://cluster/wikisim.out \
+    --output hdfs://cluster/evaluation.out \
+    --gold hdfs://cluster/see-also.csv \
+    --topk 10
+```
 
-- **ClickStreamEvaluation**: ClickStreamEvaluation
-    - Parameters: WIKISIM-DATASET CLICKSTREAM-DATASET EVAL-OUTPUT [SCORE-FIELD]
-    - e.g.: hdfs://cluster/results.out hdfs://cluster/wiki-clickstream.tsv hdfs://cluster/eval.out 6
+- **SeeAlsoExtractor**: org.wikipedia.citolytics.seealso.SeeAlsoExtractor
+```
+# Parameters
+WIKI-XML-DUMP SEEALSO-OUTPUT REDIRECTS
 
+# Example
+hdfs://cluster/wikidump.xml hdfs://cluster/seealso.out hdfs://cluster/redirects.out
+```
+
+- **Extract Redirects**: org.wikipedia.citolytics.redirects.RedirectExtractor
+```
+# Parameters
+WIKI-XML-DUMP REDIRECTS
+
+# Example
+hdfs://cluster/wikidump.xml hdfs://cluster/redirects.out
+```
+
+- **ClickStreamEvaluation**: org.wikipedia.citolytics.clickstream.ClickStreamEvaluation
+```
+# Parameters
+WIKISIM-DATASET CLICKSTREAM-DATASET EVAL-OUTPUT [SCORE-FIELD]
+
+# Example
+
+hdfs://cluster/results.out hdfs://cluster/wiki-clickstream.tsv hdfs://cluster/eval.out 6
+```
+
+- Parameters with * are required.
 - For more Flink jobs see [/support/flink-jobs.md](https://github.com/TU-Berlin/cpa-demo/blob/master/support/flink-jobs.md)
 - For runtime information see [/support/runtimes.md](https://github.com/TU-Berlin/cpa-demo/blob/master/support/runtimes.md)
+
 ### Evaluation Example
 To evaluate and generate the data used in our publication, you need to run the following Flink jobs in the order below. Paths to JAR and HDFS need to be adjusted depending on your setup.
 
@@ -111,6 +159,6 @@ To evaluate and generate the data used in our publication, you need to run the f
 - When importing CSV outputs to a database (e.g. mysql) use a case sensitive collation (utf8_bin) for Wikipedia article names.
 
 
-## Licence
+## License
 
 MIT

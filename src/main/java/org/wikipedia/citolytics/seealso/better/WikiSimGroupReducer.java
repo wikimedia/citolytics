@@ -1,9 +1,9 @@
 package org.wikipedia.citolytics.seealso.better;
 
-import com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
