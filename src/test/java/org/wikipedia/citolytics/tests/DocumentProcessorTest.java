@@ -11,14 +11,25 @@ import static org.junit.Assert.assertEquals;
  * @author malteschwarzer
  */
 public class DocumentProcessorTest extends Tester {
-
-    @Test
-    public void TestInfoBoxRemoval() throws Exception {
-        String wikiText = getFileContents("wikiInfoBox.xml");
+    private void infoBoxRemoval(String filename) throws Exception {
+        String wikiText = getFileContents(filename);
         DocumentProcessor dp = new DocumentProcessor();
 
-        assertEquals("Infobox not removed (test indexOf)", -1, dp.removeInfoBox(wikiText).indexOf(DocumentProcessor.INFOBOX_TAG));
+        assertEquals("Infobox not removed (test indexOf) in " + filename, -1, dp.removeInfoBox(wikiText).indexOf(DocumentProcessor.INFOBOX_TAG));
+    }
+    @Test
+    public void TestInfoBoxRemoval() throws Exception {
+        infoBoxRemoval("wikiInfoBox_1.xml");
+    }
 
+    @Test
+    public void TestInfoBoxRemoval_MultipleInfoBoxes() throws Exception {
+        infoBoxRemoval("wikiInfoBox_2.xml");
+    }
+
+    @Test
+    public void TestInfoBoxRemoval_NotClosingInfoBox() throws Exception {
+        infoBoxRemoval("wikiInfoBox_3.xml");
     }
 
     @Test

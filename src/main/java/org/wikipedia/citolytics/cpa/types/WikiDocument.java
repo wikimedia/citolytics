@@ -221,7 +221,7 @@ public class WikiDocument {
         text = p2.matcher(text).replaceAll("");
 
         // remove info box
-        text = dp.removeInfoBox(text);
+//        text = dp.removeInfoBox(text);
 
         return text;
     }

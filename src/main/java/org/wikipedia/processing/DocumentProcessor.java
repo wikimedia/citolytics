@@ -222,7 +222,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     private int findClosing(char[] text, int openPos, char open, char close) {
         int closePos = openPos;
         int counter = 1;
-        while (counter > 0) {
+        while (counter > 0 && closePos < text.length - 1) { // Check if is closing not exists
             char c = text[++closePos];
             if (c == open) {
                 counter++;
