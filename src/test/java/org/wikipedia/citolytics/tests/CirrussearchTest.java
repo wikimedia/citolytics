@@ -12,11 +12,21 @@ public class CirrussearchTest extends Tester {
 
     @Ignore
     @Test
-    public void TestPrepareOutput() throws Exception {
-        PrepareOutput.main(("--input " + resource("wikisim_output.csv") + " --output print").split(" "));
+    public void TestPrepareOutputPrint() throws Exception {
+        PrepareOutput.main(("--input " + resource("wikisim_output.csv") + " --output print --topk 10").split(" "));
+    }
 
-//        PrepareOutput.main(("--input " + resource("wikisim_output.csv") + " --output " + resource("cirrussearch.json")).split(" "));
 
+    @Ignore
+    @Test
+    public void TestPrepareOutputDisabledScores() throws Exception {
+        PrepareOutput.main(("--input " + resource("wikisim_output.csv") + " --disable-scores --output print --topk 10").split(" "));
+    }
+
+    @Ignore
+    @Test
+    public void TestPrepareOutputSave() throws Exception {
+        PrepareOutput.main(("--input " + resource("wikisim_output.csv") + " --output " + resource("cirrussearch.json")).split(" "));
     }
 
 }

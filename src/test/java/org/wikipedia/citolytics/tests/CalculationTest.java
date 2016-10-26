@@ -251,7 +251,7 @@ public class CalculationTest extends Tester {
         WikiSimResult result = new WikiSimResult(new LinkTuple("Page AAAAA", "Page BBBB"), 999);
 
         result.setDistSquared(9999);
-        result.setCPA(new double[]{1.99, 10.99, 0.995, 1234.5678});
+        result.setCPI(new double[]{1.99, 10.99, 0.995, 1234.5678});
 
         System.out.println("String = " + TestUtils.sizeof(str));
         System.out.println("WikiSimResult = " + TestUtils.sizeof(result));

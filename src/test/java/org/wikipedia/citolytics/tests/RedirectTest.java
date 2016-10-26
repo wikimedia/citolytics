@@ -146,7 +146,7 @@ public class RedirectTest extends Tester {
     @Test
     public void TestResultConstructor() {
         WikiSimResult r1 = new WikiSimResult(new LinkTuple("Page A", "Page B"), 99);
-        r1.setCPA(new double[]{0.1, 0.5, 1.5, 24.5, 88});
+        r1.setCPI(new double[]{0.1, 0.5, 1.5, 24.5, 88});
         r1.setDistSquared(500);
 
         System.out.println("r1 = " + r1);
