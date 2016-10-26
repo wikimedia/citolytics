@@ -32,9 +32,10 @@ public class ArticleStatsWithInboundLinks extends WikiSimAbstractJob<Tuple6<Stri
             System.exit(1);
         }
 
+        String inputFilename = args[0];
         outputFilename = args[1];
 
-        DataSet<ArticleTuple> stats = env.readFile(new WikiDocumentDelimitedInputFormat(), args[0])
+        DataSet<ArticleTuple> stats = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
                 .flatMap(new FlatMapFunction<String, ArticleTuple>() {
                     public void flatMap(String content, Collector out) {
                         ArticleStats.collectStats(content, out);
@@ -42,7 +43,7 @@ public class ArticleStatsWithInboundLinks extends WikiSimAbstractJob<Tuple6<Stri
                 });
 
         DataSet<Tuple2<String, Integer>> links =
-                env.readFile(new WikiDocumentDelimitedInputFormat(), args[0])
+                env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
                         .flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
                             public void flatMap(String content, Collector out) {
                                 LinksExtractor.collectLinks(content, out);

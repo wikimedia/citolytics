@@ -78,29 +78,43 @@ We performed several evaluations on the recommendation quality of CPA, CoCit and
 - **SeeAlsoExtractor**: org.wikipedia.citolytics.seealso.SeeAlsoExtractor
 ```
 # Parameters
-WIKI-XML-DUMP SEEALSO-OUTPUT REDIRECTS
+--input <local-or-hdfs-path>    Path to Wikipedia XML Dump (*)
+--output <local-or-hdfs-path>   Write output to this path (*)
+--redirects <local-or-hdfs-path>    Set to resolve redirects (default: disabled)
 
 # Example
-hdfs://cluster/wikidump.xml hdfs://cluster/seealso.out hdfs://cluster/redirects.out
+./bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtractor --input hdfs://cluster/wikidump.xml \
+    --output hdfs://cluster/seealso.out \
+    --redirects hdfs://cluster/redirects.out
 ```
 
 - **Extract Redirects**: org.wikipedia.citolytics.redirects.RedirectExtractor
 ```
 # Parameters
-WIKI-XML-DUMP REDIRECTS
+--input <local-or-hdfs-path>    Path to Wikipedia XML Dump (*)
+--output <local-or-hdfs-path>   Write output to this path (*)
 
 # Example
-hdfs://cluster/wikidump.xml hdfs://cluster/redirects.out
+./bin/flink run -c org.wikipedia.citolytics.redirects.RedirectExtractor --input hdfs://cluster/wikidump.xml \
+    --output hdfs://cluster/redirects.out
 ```
 
 - **ClickStreamEvaluation**: org.wikipedia.citolytics.clickstream.ClickStreamEvaluation
 ```
 # Parameters
-WIKISIM-DATASET CLICKSTREAM-DATASET EVAL-OUTPUT [SCORE-FIELD]
+--wikisim <local-or-hdfs-path>    Path to WikiSim output (*)
+--output <local-or-hdfs-path>   Write output to this path (*)
+--gold <local-or-hdfs-path>    Path click stream data set (*)
+--score <int>   Field id for CPA score (default: 5)
+--page-a <int>  Field id for page A (default: 1)
+--page-b <int>  Field id for page B (default: 2)
+--topk <int>    Number of top-K results used for evaluation (default: 10)
 
 # Example
-
-hdfs://cluster/results.out hdfs://cluster/wiki-clickstream.tsv hdfs://cluster/eval.out 6
+./bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation cpa.jar --input hdfs://cluster/wikisim.out \
+    --output hdfs://cluster/evaluation.out \
+    --gold hdfs://cluster/wiki-clickstream.tsv \
+    --topk 10
 ```
 
 - Parameters with * are required.

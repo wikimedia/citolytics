@@ -37,8 +37,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
         ParameterTool params = ParameterTool.fromArgs(args);
 
-        wikiSimInputFilename = params.getRequired("input");
-        clickStreamInputFilename = params.getRequired("clickstream");
+        wikiSimInputFilename = params.getRequired("wikisim");
+        clickStreamInputFilename = params.getRequired("gold");
         outputFilename = params.getRequired("output");
         topK = params.getInt("topk", 10);
 

@@ -7,6 +7,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
@@ -31,21 +32,16 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
     }
 
     public void plan() {
+        ParameterTool params = ParameterTool.fromArgs(args);
         jobName = "SeeAlsoExtractor";
 
-        if (args.length <= 1) {
-            System.err.println("Input/output parameters missing!");
-            System.err.println("Usage: <INPUT> <OUTPUT> [REDIRECTS]");
-            System.exit(1);
-        }
-
-        String inputFilename = args[0];
-        outputFilename = args[1];
+        String inputFilename = params.getRequired("input");
+        outputFilename = params.getRequired("output");
 
         // Read Wikipedia XML Dump
         DataSource<String> wikiPages = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
-        if (args.length == 2) {
+        if (!params.has("redirects")) {
             // Extract SeeAlso links (no redirect resolving)
             result = wikiPages.flatMap(new FlatMapFunction<String, Tuple3<String, String, Integer>>() {
                 public void flatMap(String content, Collector out) {
@@ -72,11 +68,11 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
                     out.collect(new Tuple3<>(doc.getTitle(), linkNames, links.size()));
                 }
             });
-        } else if (args.length == 3) {
+        } else {
             // Resolve redirects in SeeAlso links
             jobName += " with redirects";
 
-            DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[2]);
+            DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, params.get("redirects"));
 
             result = wikiPages.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
                 @Override

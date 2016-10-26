@@ -3,6 +3,7 @@ package org.wikipedia.citolytics.redirects;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
@@ -15,6 +16,8 @@ import java.util.regex.Pattern;
 /**
  * Extracts all redirects from Wikipedia XML Dump. Redirects are taken from <redirect>-tag.
  *
+ * Arguments: --input <wiki-xml-dump> --output <out-csv>
+ *
  * Output CSV: Source | Target
  *
  * TODO There is already an extra redirect data set available:
@@ -26,15 +29,10 @@ public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>
     }
 
     public void plan() {
+        ParameterTool params = ParameterTool.fromArgs(args);
 
-        if (args.length < 2) {
-            System.err.println("Input/output parameters missing!");
-            System.err.println("Arguments: [WIKISET] [OUTPUT-LIST] [OUTPUT-STATS]");
-            System.exit(1);
-        }
-
-        String inputWikiSet = args[0];
-        outputFilename = args[1];
+        String inputWikiSet = params.getRequired("input");
+        outputFilename = params.getRequired("output");
 
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputWikiSet);
 

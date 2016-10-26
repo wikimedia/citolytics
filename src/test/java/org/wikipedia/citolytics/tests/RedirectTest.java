@@ -121,12 +121,9 @@ public class RedirectTest extends Tester {
     @Test
     public void RedirectionExecution() throws Exception {
 
-        RedirectExtractor.main(new String[]{
-                resource("wikiRedirect.xml"),
-//               "print" //outputFilename
-                resource("redirects.out")
+//        RedirectExtractor.main(("--input " + resource("wikiRedirect.xml") + " --output " + resource("redirects.out")).split(" "));
+        RedirectExtractor.main(("--input " + resource("wikiRedirect.xml") + " --output print").split(" "));
 
-        });
     }
 
     @Ignore

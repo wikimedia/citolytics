@@ -28,5 +28,5 @@ We used Apache Flink v0.8 and Hadoop v2.0. The text-based similarity measure was
 - Flink 1.1.0
 
 - CPA
-    - WikiSim (result only):
-        - Records sent (before Reduce):
+    - WikiSim (result only): 1h 4m
+        - Records sent (before Reduce, parallelism 200): 3,025,106,250 (194 GB)
