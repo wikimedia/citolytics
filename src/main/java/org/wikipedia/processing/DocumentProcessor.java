@@ -126,7 +126,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
 
 
     /**
-     * get text of "See Also" section
+     * Extract text of "See Also" section
      *
      * @param wikiText
      * @return seeAlsoText
@@ -158,7 +158,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
 
 
     /**
-     * remove links of "See Also" section
+     * Remove links of "See Also" section
      *
      * @param wikiText
      * @return wikiText without "See Also" links
@@ -191,17 +191,21 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     }
 
     /**
-     * Removes info boxes from documents
+     * Removes info boxes (Wikipedia templates) from documents. For template information see:
+     *
+     * https://en.wikipedia.org/wiki/Template:Infobox
+     *
+     * Example info box:
+     *
+     * {{Infobox ... }}
      *
      * @param wikiText Document content in WikiMarkup
      * @return Document content without info boxes
      */
     public String removeInfoBox(String wikiText) {
-        // {{Infobox ... }}
-        // TODO Check for multiple infox boxes
 
         int startPos = wikiText.indexOf(INFOBOX_TAG);
-        while (startPos >= 0) {
+        while (startPos >= 0) {  // Check for multiple infox boxes
             int open = 0;
             char[] text = wikiText.substring(startPos + 2).toCharArray();
             int closePos = findClosing(text, 0, '{', '}');
