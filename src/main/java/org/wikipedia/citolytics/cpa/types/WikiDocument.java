@@ -202,22 +202,40 @@ public class WikiDocument {
         return headlines;
     }
 
+    /**
+     * Removes various elements from text that are not needed for WikiSim.
+     *
+     * @param wikiText
+     * @return Body text without inter-wiki links, info boxes and "See also" section
+     */
+    private String cleanText(String wikiText) {
+        String text = wikiText;
+
+        DocumentProcessor dp = new DocumentProcessor();
+
+        // strip "see also" section
+        text = dp.stripSeeAlsoSection(text);
+
+        // Remove all inter-wiki links
+        Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
+        text = p2.matcher(text).replaceAll("");
+
+        // remove info box
+        text = dp.removeInfoBox(text);
+
+        return text;
+    }
+
     private void extractLinks() {
         outLinks = new ArrayList<>();
 
+        String text = cleanText(raw);
+
+        // Search for links, e.g.
         // [[Zielartikel|alternativer Text]]
         // [[Artikelname]]
         // [[#Wikilink|Wikilink]]
         Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
-
-        String text = raw; //.toLowerCase();
-
-        // strip "see also" section
-        text = DocumentProcessor.stripSeeAlsoSection(text);
-
-        // Remove all interwiki links
-        Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
-        text = p2.matcher(text).replaceAll("");
         Matcher m = p.matcher(text);
 
         while (m.find()) {

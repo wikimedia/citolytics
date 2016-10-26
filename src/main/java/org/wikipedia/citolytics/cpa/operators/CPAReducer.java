@@ -73,7 +73,7 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
         long min = Long.MAX_VALUE;
         long max = 0;
         long distSquared = 0;
-        double[] recDistα = new double[alpha.length];
+        double[] cpi = new double[alpha.length];
 
         // Loop all record that belong to the given input key
         while (iterator.hasNext()) {
@@ -92,9 +92,8 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
                 distSquared += res.getDistSquared(); //(Long) res.getField(3);
 
                 for (int i = 0; i < alpha.length; i++) {
-                    recDistα[i] += res.getCPA(i); //(Double) res.getField(4);
+                    cpi[i] += res.getCPI(i); //(Double) res.getField(4);
                 }
-                //recDistα.add(res.getCPA());
                 min = Math.min(min, res.getMin()); //(Integer) res.getField(5));
                 max = Math.max(max, res.getMax()); //(Integer) res.getField(6));
             } else {
@@ -103,7 +102,7 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
                 distSquared += d * d;
                 //recDistα.add(new WikiSimBigDecimal(new BigDecimal(Math.pow(d, alpha))));
                 for (int i = 0; i < alpha.length; i++) {
-                    recDistα[i] += Math.pow(d, -alpha[i]);
+                    cpi[i] += Math.pow(d, -alpha[i]);
                 }
             }
         }
@@ -116,7 +115,7 @@ public class CPAReducer extends RichGroupReduceFunction<WikiSimResult, WikiSimRe
             res.setDistance(distance);
             res.setCount(cnt);
             res.setDistSquared(distSquared);
-            res.setCPA(recDistα);
+            res.setCPI(cpi);
             res.setMin(min);
             res.setMax(max);
 

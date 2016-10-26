@@ -31,7 +31,7 @@ public class WikiSimResult extends Tuple6<
     private final boolean enableDistSquared = false;
 //    private final boolean enableCount = false;
 
-    private final static int CPA_LIST_KEY = 5;
+    private final static int CPI_LIST_KEY = 5;
     private final static int MAX_KEY = 7; // disabled
     private final static int MIN_KEY = 6; // disabled
     private final static int DISTSQUARED_KEY = 5; // disabled
@@ -72,7 +72,7 @@ public class WikiSimResult extends Tuple6<
 
         setDistance(distance);
         setCount(count);
-        setCPA(cpa);
+        setCPI(cpa);
     }
 
     public void init() {
@@ -81,7 +81,7 @@ public class WikiSimResult extends Tuple6<
         setMin(0);
         setMax(0);
         setMedian(.0);
-        setField(new DoubleListValue(), CPA_LIST_KEY);
+        setField(new DoubleListValue(), CPI_LIST_KEY);
     }
 
     public void setDistance(long distance) {
@@ -102,12 +102,12 @@ public class WikiSimResult extends Tuple6<
             setField(distSquared, DISTSQUARED_KEY);
     }
 
-    public void setCPA(DoubleListValue cpa) {
-        setField(cpa, CPA_LIST_KEY);
+    public void setCPI(DoubleListValue cpa) {
+        setField(cpa, CPI_LIST_KEY);
     }
 
-    public void setCPA(double[] cpa) {
-        setField(DoubleListValue.valueOf(cpa), CPA_LIST_KEY);
+    public void setCPI(double[] cpa) {
+        setField(DoubleListValue.valueOf(cpa), CPI_LIST_KEY);
     }
 
     public void setMin(long min) {
@@ -155,12 +155,12 @@ public class WikiSimResult extends Tuple6<
             return 0;
     }
 
-    public DoubleListValue getCPA() {
-        return getField(CPA_LIST_KEY);
+    public DoubleListValue getCPI() {
+        return getField(CPI_LIST_KEY);
     }
 
-    public double getCPA(int alphaKey) {
-        return ((DoubleListValue) getField(CPA_LIST_KEY)).get(alphaKey).getValue();
+    public double getCPI(int alphaKey) {
+        return ((DoubleListValue) getField(CPI_LIST_KEY)).get(alphaKey).getValue();
     }
 
     public long getMin() {
