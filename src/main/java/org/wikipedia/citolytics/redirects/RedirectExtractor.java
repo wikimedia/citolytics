@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
  *
  * TODO There is already an extra redirect data set available:
  * https://dumps.wikimedia.org/enwiki/20160901/enwiki-20160901-redirect.sql.gz
+ * (redirects.sql dump cannot be used, since it has id->name mappings. We need name->name.)
  */
 public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>> {
     public static void main(String[] args) throws Exception {
