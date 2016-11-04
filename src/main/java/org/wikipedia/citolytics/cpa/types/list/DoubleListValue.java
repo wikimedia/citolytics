@@ -29,7 +29,11 @@ public class DoubleListValue extends ListValue<DoubleValue> {
     }
 
     public static DoubleListValue sum(DoubleListValue firstList, DoubleListValue secondList) throws Exception {
-        if (firstList.size() == 0 && secondList.size() > 0) {
+        if (firstList == null || secondList == null) {
+            throw new Exception("Cannot sum lists if one list NULL.");
+        } else if (firstList.size() == 0 && secondList.size() == 0) {
+            throw new Exception("Cannot sum lists if both lists are empty.");
+        } else if (firstList.size() == 0 && secondList.size() > 0) {
             return secondList;
         } else if (secondList.size() == 0 && firstList.size() > 0) {
             return firstList;

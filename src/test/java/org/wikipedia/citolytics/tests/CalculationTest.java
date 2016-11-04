@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.tests;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
@@ -18,6 +17,8 @@ import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 import org.wikipedia.citolytics.tests.utils.TestUtils;
 import org.wikipedia.citolytics.tests.utils.Tester;
+
+import static org.junit.Assert.assertEquals;
 
 public class CalculationTest extends Tester {
 
@@ -51,73 +52,57 @@ public class CalculationTest extends Tester {
         RedirectExtractor job1 = new RedirectExtractor();
         job1.enableSingleOutputFile()
                 .verbose()
-                .start(new String[]{
-                        inputA,
-                        resource("completeTestRedirects.out")
-                });
+                .start("--input " + inputA + " --output " + resource("completeTestRedirects.out"));
 
         WikiSim job2 = new WikiSim();
         job2.enableSingleOutputFile()
                 .verbose()
-                .start(new String[]{
-                        inputA,
-                        resource("completeTestWikiSim.out"),
-                        "2", "0", "0", "n",
-                        resource("completeTestRedirects.out")
-                });
+                .start("--input " + inputA + " --output " + resource("completeTestWikiSim.out") + "" +
+                        " --alpha 2 --redirects " + resource("completeTestRedirects.out"));
 
         SeeAlsoExtractor job3 = new SeeAlsoExtractor();
         job3.enableSingleOutputFile()
                 .verbose()
-                .start(new String[]{
-                        inputA,
-                        resource("completeTestSeeAlso.out"),
-                        resource("completeTestRedirects.out") // job4
-                });
+                .start("--input " + inputA
+                        + " --output " + resource("completeTestSeeAlso.out")
+                        + " --redirects " + resource("completeTestRedirects.out"));
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
         job5.verbose()
-                .start(new String[]{
-                        resource("completeTestWikiSim.out"),
-                        "local",
-                        resource("completeTestSeeAlso.out")
-                });
+                .start("--wikisim " + resource("completeTestWikiSim.out")
+                        + " --output local"
+                        + " --gold " + resource("completeTestSeeAlso.out"));
 
         ClickStreamEvaluation job6 = new ClickStreamEvaluation();
         job6.verbose()
-                .start(new String[]{
-                        resource("completeTestWikiSim.out"),
-                        inputB,
-                        "local"
-                });
+                .start("--wikisim " + resource("completeTestWikiSim.out")
+                        + " --gold " + inputB
+                        + " --output local");
 
         // Test SeeAlso evaluation
-        int found = 0;
+        System.out.println(job5.output);
 
         for (SeeAlsoEvaluationResult r : job5.output) {
-            if (r.f0.equals("SeeAlso Article 1")) {
-                if (r.f4 != 6 || r.f5 != 1.0 || r.f6 != 0.5) {
-                    throw new Exception("Invalid scores for SeeAlso Article 1");
-                }
-                found++;
+            if (r.getArticle().equals("SeeAlso Article 1")) {
+                assertEquals("Invalid getRetrievedDocsCount", 6, r.getRetrievedDocsCount());
+                assertEquals("Invalid getHRR", 1, r.getHRR(), 0e-10);
+                assertEquals("Invalid getTopKScore", 0.5, r.getTopKScore(), 0e-10);
             }
 
-            if (r.f0.equals("SeeAlso Article 2")) {
-
-                if (r.f4 != 6 || r.f5 != 1.0 || r.f6 != 0.5 || r.f7 != 0.45 || r.f8 != 2) {
-                    throw new Exception("Invalid scores for SeeAlso Article 2");
-                }
-                found++;
+            if (r.getArticle().equals("SeeAlso Article 2")) {
+                assertEquals("Invalid getRetrievedDocsCount", 6, r.getRetrievedDocsCount());
+                assertEquals("Invalid getHRR", 1, r.getHRR(), 0e-10);
+                assertEquals("Invalid getTopKScore", 0.5, r.getTopKScore(), 0e-10);
+                assertEquals("Invalid getPerformanceMeasure", 0.45, r.getPerformanceMeasure(), 0e-10);
+                assertEquals("Invalid getRelevantCount1", 2, r.getRelevantCount1());
             }
 
         }
+        assertEquals("SeeAlso evaluation output size is invalid.", 2, job5.getOutput().size());
 
-        if (found != 2) {
-            throw new Exception("SeeAlso evaluation output size is invalid.");
-        }
 
         // Test ClickStream
-        found = 0;
+        int found = 0;
 
         for (ClickStreamResult r : job6.output) {
             if (r.f0.equals("Article C")) {
@@ -152,10 +137,15 @@ public class CalculationTest extends Tester {
     public void TestResultCount() throws Exception {
         WikiSim job = new WikiSim();
 
-        job.verbose().start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
-
         // If threshold is greater than 0, result count varies
-        Assert.assertEquals("WikiSim result count is wrong", 126253, job.output.size());
+        // without infobox removal= 126253
+        // with infobox removal= 118341
+        job.verbose().start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
+        assertEquals("WikiSim result count is wrong", 126253, job.output.size());
+
+        job.verbose().start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
+        assertEquals("WikiSim result count is wrong", 118341, job.output.size());
+
 
     }
 
@@ -195,13 +185,7 @@ public class CalculationTest extends Tester {
     @Test
     public void NegativeAlphaCPI() throws Exception {
         WikiSim job = new WikiSim();
-        job.start(new String[]{
-                resource("completeTestWikiDump.xml"),
-                "print",
-
-                "1,-1"
-
-        });
+        job.start(("--input " + resource("completeTestWikiDump.xml") + " --output print --alpha 1,-1").split(" "));
     }
 
     @Ignore
@@ -213,7 +197,7 @@ public class CalculationTest extends Tester {
                 resource("wiki2006.xml"),
                 "local", "0.81,1.5,1.25", "0", "0", "2006"});
 
-        Assert.assertEquals("Result count wrong", 87632, job.output.size());
+        assertEquals("Result count wrong", 87632, job.output.size());
     }
 
     @Ignore

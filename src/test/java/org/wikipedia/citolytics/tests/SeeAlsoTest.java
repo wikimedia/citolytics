@@ -26,7 +26,7 @@ public class SeeAlsoTest extends Tester {
     public void ExtractSeeAlsoNoRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
-        job.start(new String[]{resource("wikiSeeAlso2.xml"), "local"});
+        job.start(("--input " + resource("wikiSeeAlso2.xml") + " --output local").split(" "));
 
 //        System.out.println(job.output);
 //        System.out.println(job.output.size());
@@ -49,7 +49,8 @@ public class SeeAlsoTest extends Tester {
     public void ExtractSeeAlsoWithRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
-        job.start(new String[]{resource("wikiSeeAlso2.xml"), "local", resource("redirects.csv")});
+        job.start(("--input " + resource("wikiSeeAlso2.xml") + " --output local --redirects " + resource("redirects.csv")).split(" "));
+
 
         // Needles (random link order)
         // ASCII art -> ASCII Art

@@ -14,22 +14,51 @@ public class SeeAlsoEvaluationResult extends Tuple11<String, ArrayList<String>, 
             int seeAlsoLinksCount,
             WikiSimComparableResultList<Double> retrievedDocs,
             int retrievedDocsCount,
-            double d1,
-            double d2,
-            double d3,
-            int i1,
-            int i2,
-            int i3) {
+            double hrr,
+            double topKScore,
+            double performanceMeasure,
+            int relevantCount1,
+            int relevantCount2,
+            int relevantCount3) {
         f0 = article;
         f1 = seeAlsoLinks;
         f2 = seeAlsoLinksCount;
         f3 = retrievedDocs;
         f4 = retrievedDocsCount;
-        f5 = d1;
-        f6 = d2;
-        f7 = d3;
-        f8 = i1;
-        f9 = i2;
-        f10 = i3;
+        f5 = hrr;
+        f6 = topKScore;
+        f7 = performanceMeasure;
+        f8 = relevantCount1;
+        f9 = relevantCount2;
+        f10 = relevantCount3;
+    }
+
+    public String getArticle() {
+        return f0;
+    }
+
+    public int getRetrievedDocsCount() {
+        return f4;
+    }
+
+    public double getHRR() {
+        return f5;
+    }
+
+    public double getTopKScore() {
+        return f6;
+    }
+
+    public double getPerformanceMeasure() {
+        return f7;
+    }
+
+    public int getRelevantCount1() {
+        return f8;
+    }
+
+    @Override
+    public int hashCode() {
+        return f0.hashCode() + f1.hashCode() + f3.hashCode();
     }
 }

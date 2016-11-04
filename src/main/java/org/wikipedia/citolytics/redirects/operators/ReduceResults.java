@@ -59,7 +59,7 @@ public class ReduceResults implements GroupReduceFunction<WikiSimResult, WikiSim
 
         for (WikiSimResult r : records) {
             if (res == null) {
-                res = new WikiSimResult(r.getPageA(), r.getPageB(), 0);
+                res = new WikiSimResult(r.getPageA(), r.getPageB());
             }
 
             count += r.getCount();

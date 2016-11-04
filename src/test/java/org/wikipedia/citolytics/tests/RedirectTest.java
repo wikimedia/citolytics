@@ -26,53 +26,33 @@ public class RedirectTest extends Tester {
 
         WikiSim job = new WikiSim();
 
-        job.start(new String[]{
-                resource("wikiRedirectedLinks.xml"),
-                "print",
-                "1.5,1.75", "0", "0", "n",
-                resource("redirects.csv")
-        });
+        job.start(("--input " + input("wikiRedirectedLinks.xml")
+                + " --output print"
+                + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
 
-//        assertEquals("Result count wrong", 3, job.output.size());
-//
-//        List<WikiSimResult> needles = new ArrayList<>();
-//
-//        needles.add(new WikiSimResult("Foo", "Redirect target", 17, 2, new double[]{0.08123121086119625, 0.047661356279998054}));
-//        needles.add(new WikiSimResult("Bar", "Foo", 9, 2, new double[]{0.40754831530887764, 0.33049721878532895}));
-//        needles.add(new WikiSimResult("Bar", "Redirect target", 8, 2, new double[]{0.4215947723372509, 0.3407763504193827}));
-//
-//        assertTrue("Needles not found.", job.output.containsAll(needles));
-
-//        System.out.println(job.output);
     }
 
 
     @Test
     public void TestIntegrity() throws Exception {
-
+        String outputA = "wikisim_integrity_a.out";
+        String outputB = "wikisim_integrity_b.out";
         WikiSim job = new WikiSim();
 
-        job.start(new String[]{
-                input("completeTestWikiDump.xml"),
-                output("wikisim_integrity_a.out"),
-                "1.5,1.75", "0", "0", "n",
-                input("redirects.csv")
-        });
+        job.start(("--input " + input("completeTestWikiDump.xml")
+                + " --output " + output(outputA)
+                + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
 
-
-        job.start(new String[]{
-                input("completeTestWikiDump.xml"),
-                output("wikisim_integrity_b.out"),
-                "1.5,1.75", "0", "0", "n",
-                input("redirects.csv")
-        });
+        job.start(("--input " + input("completeTestWikiDump.xml")
+                + " --output " + output(outputB)
+                + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
 
 
         CheckOutputIntegrity test = new CheckOutputIntegrity();
 
         test.start(new String[]{
-                resource("wikisim_integrity_a.out"),
-                resource("wikisim_integrity_b.out"),
+                resource(outputA),
+                resource(outputB),
                 "local"
         });
 

@@ -34,16 +34,13 @@ public class ClickStreamTest extends Tester {
     }
 
     @Ignore
+    @Test
     public void TestClickStreamEvaluation() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.start(
-                new String[]{
-                        resource("wikisim_output.csv"), // TODO check resource conflict with other tests
-                        resource("2015_02_clickstream_preview.tsv"),
-                        "local"
-                }
-        );
+        job.start("--wikisim " + resource("wikisim_output.csv") // TODO check resource conflict with other tests
+                + " --gold " + resource("2015_02_clickstream_preview.tsv")
+                + " --output local");
 
         // Needles
         ArrayList<ClickStreamResult> needles = new ArrayList<>();

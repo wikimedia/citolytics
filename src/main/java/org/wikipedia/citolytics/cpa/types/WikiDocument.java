@@ -32,6 +32,7 @@ import static java.lang.Math.max;
  * @author rob
  */
 public class WikiDocument {
+    private DocumentProcessor processor;
 
     // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
     public final static ArrayList<String> INVALID_NAMESPACES = new ArrayList<String>(Arrays.asList(
@@ -99,6 +100,20 @@ public class WikiDocument {
      * 109	Book talk
      */
     private int ns;
+
+    public WikiDocument() {
+    }
+
+    public WikiDocument(DocumentProcessor processor) {
+        this.processor = processor;
+    }
+
+    private DocumentProcessor getDocumentProcessor() {
+        if (this.processor == null) {
+            this.processor = new DocumentProcessor();
+        }
+        return this.processor;
+    }
 
     /**
      * Returns the document id.
@@ -194,34 +209,11 @@ public class WikiDocument {
         return headlines;
     }
 
-    /**
-     * Removes various elements from text that are not needed for WikiSim.
-     *
-     * @param wikiText
-     * @return Body text without inter-wiki links, info boxes and "See also" section
-     */
-    private String cleanText(String wikiText) {
-        String text = wikiText;
-
-        DocumentProcessor dp = new DocumentProcessor();
-
-        // strip "see also" section
-        text = dp.stripSeeAlsoSection(text);
-
-        // Remove all inter-wiki links
-        Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
-        text = p2.matcher(text).replaceAll("");
-
-        // remove info box
-        text = dp.removeInfoBox(text);
-
-        return text;
-    }
 
     private void extractLinks() {
         outLinks = new ArrayList<>();
 
-        String text = cleanText(raw);
+        String text = getDocumentProcessor().cleanText(raw);
 
         // Search for links, e.g.
         // [[Zielartikel|alternativer Text]]
@@ -259,7 +251,7 @@ public class WikiDocument {
         }
     }
 
-    public void collectLinksAsResult(Collector<WikiSimResult> collector) {
+    public void collectLinksAsResult(Collector<WikiSimResult> collector, double[] alphas) {
         //Skip all namespaces other than main
         if (ns != 0) {
             return;
@@ -283,7 +275,7 @@ public class WikiDocument {
                     //recDistance.setValue(1 / (pow(d, α)));
 
                     if (LinkTuple.isValid(pageA, pageB)) {
-                        collector.collect(new WikiSimResult(pageA, pageB, d));
+                        collector.collect(new WikiSimResult(pageA, pageB, d, alphas));
                     }
 
                 }

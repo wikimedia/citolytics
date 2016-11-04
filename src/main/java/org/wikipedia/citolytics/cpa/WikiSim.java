@@ -30,7 +30,6 @@ import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.operators.CPAGroupReducer;
 import org.wikipedia.citolytics.cpa.operators.CPAReducer;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
-import org.wikipedia.citolytics.redirects.operators.ReduceResults;
 import org.wikipedia.citolytics.redirects.operators.ReplaceRedirects;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.processing.DocumentProcessor;
@@ -98,6 +97,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
         config.setBoolean("median", true);
         config.setBoolean("wiki2006", params.get("format", "2013").equalsIgnoreCase("2006") ? true : false);
+        config.setBoolean("removeInfoBox", !params.has("keep-infobox"));
 
         // Read Wikipedia XML Dump
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
@@ -116,7 +116,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
                     .withParameters(config)
             ;
         } else {
-            result = text.flatMap(new DocumentProcessor())
+            result = text.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
                     .withParameters(config)
                     .groupBy(0) // Group by LinkTuple.hash()
                     .reduce(new CPAReducer())
@@ -142,10 +142,10 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
      *
      * @param env
      * @param wikiSimResults
-     * @param filename
+     * @param pathToRedirects
      * @return Result set with resolved redirects
      */
-    public static DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String filename) {
+    public static DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String pathToRedirects) {
         // fields
         int hash = 0;
         int pageA = 1;
@@ -153,8 +153,9 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         int redirectSource = 0;
         int redirectTarget = 1;
 
-        DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, filename);
+        DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, pathToRedirects);
 
+//        return wikiSimResults;
         return wikiSimResults
                 // replace page names with redirect target
                 // page A
@@ -169,7 +170,9 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
                 .with(new ReplaceRedirects(pageB))
                         // sum duplicated tuples
                 .groupBy(hash) // Page A, Page B (hash)
-                .reduceGroup(new ReduceResults());
+                .reduce(new CPAReducer())
+//                .reduceGroup(new ReduceResults())
+                ;
     }
 
 

@@ -19,7 +19,9 @@ public class ParserTest extends Tester {
         WikiDocument doc = new WikiDocument();
         doc.setText(getFileContents("wikiSeeAlso.xml"));
 
-        assertEquals("Link count wrong in wikiSeeAlso.xml", 618, doc.getOutLinks().size());
+        // With infobox removal = 586
+        // Without infobox removal = 618
+        assertEquals("Link count wrong in wikiSeeAlso.xml", 586, doc.getOutLinks().size());
 
         doc = new WikiDocument();
         doc.setText(getFileContents("wikiTalkPage.xml"));

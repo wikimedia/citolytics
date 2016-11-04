@@ -39,14 +39,22 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     public static String seeAlsoRegex = "(^|\\W)" + seeAlsoTitle + "$";
     public static int seeAlsoRegexFlags = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE;
 
-    // WikiDump of 2006 does not contain namespace tags
-    private boolean enableWiki2006 = false;
+    private double[] alphas = new double[]{1.0};
+    private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
+    private boolean removeInfoBox = true;
 
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
 
         enableWiki2006 = parameter.getBoolean("wiki2006", true);
+        removeInfoBox = parameter.getBoolean("removeInfoBox", true);
+
+        String[] arr = parameter.getString("alpha", "1.0").split(",");
+        alphas = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            alphas[i] = Double.parseDouble(arr[i]);
+        }
     }
 
 
@@ -57,7 +65,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
 
         if (doc == null) return;
 
-        doc.collectLinksAsResult(out);
+        doc.collectLinksAsResult(out, alphas);
     }
 
     public WikiDocument processDoc(String content) {
@@ -77,7 +85,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
         }
 
         // otherwise create a WikiDocument object from the xml
-        WikiDocument doc = new WikiDocument();
+        WikiDocument doc = new WikiDocument(this);
         if (enableWiki2006) {
             doc.setId(Integer.parseInt(m.group(2)));
             doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(1)));
@@ -127,6 +135,30 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
         return pageRegex.matcher(content);
     }
 
+
+    /**
+     * Removes various elements from text that are not needed for WikiSim.
+     *
+     * @param wikiText
+     * @return Body text without inter-wiki links, info boxes and "See also" section
+     */
+    public String cleanText(String wikiText) {
+        String text = wikiText;
+
+        // strip "see also" section
+        text = stripSeeAlsoSection(text);
+
+        // Remove all inter-wiki links
+        Pattern p2 = Pattern.compile("\\[\\[(\\w\\w\\w?|simple)(-[\\w-]*)?:(.*?)\\]\\]");
+        text = p2.matcher(text).replaceAll("");
+
+        // remove info box
+        if (removeInfoBox) {
+            text = removeInfoBox(text);
+        }
+
+        return text;
+    }
 
     /**
      * Extract text of "See Also" section

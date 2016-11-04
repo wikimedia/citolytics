@@ -54,6 +54,10 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
         return this;
     }
 
+    public void start(String args) throws Exception {
+        start(args.split(" "));
+    }
+
     public void start(String[] args) throws Exception {
         this.args = args;
         init();

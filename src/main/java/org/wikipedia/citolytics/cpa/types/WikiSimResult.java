@@ -49,44 +49,43 @@ public class WikiSimResult extends Tuple6<
     }
 
     public WikiSimResult(LinkTuple link, int distance) {
-
-        setField(link.getHash(), HASH_KEY);
-        setField(link.getFirst(), PAGE_A_KEY);
-        setField(link.getSecond(), PAGE_B_KEY);
-
-//        setField(link, 1);
-
-        setDistance(distance);
+        init(link.getFirst(), link.getSecond(), distance, 1);
         init();
     }
 
     public WikiSimResult(String pageA, String pageB) {
-        setField(LinkTuple.getHash(pageA, pageB), HASH_KEY);
-        setField(pageA, PAGE_A_KEY);
-        setField(pageB, PAGE_B_KEY);
-
+        init(pageA, pageB, 0, 1);
         init();
     }
 
-    public WikiSimResult(String pageA, String pageB, int distance) {
+    public WikiSimResult(String pageA, String pageB, int distance, double[] alphas) {
 
-        setField(LinkTuple.getHash(pageA, pageB), HASH_KEY);
-        setField(pageA, PAGE_A_KEY);
-        setField(pageB, PAGE_B_KEY);
-
-        setDistance(distance);
+        init(pageA, pageB, distance, 1);
         init();
+
+        // set CPI for all alpha values
+        for (double alpha : alphas) {
+            getCPI().add(new DoubleValue(computeCPI(distance, alpha)));
+        }
+    }
+
+    public double computeCPI(int distance, double alpha) {
+        return Math.pow(distance, -alpha);
     }
 
     public WikiSimResult(String pageA, String pageB, int distance, int count, double[] cpa) {
 
+        init(pageA, pageB, distance, count);
+        setCPI(cpa);
+    }
+
+    public void init(String pageA, String pageB, int distance, int count) {
         setField(LinkTuple.getHash(pageA, pageB), HASH_KEY);
         setField(pageA, PAGE_A_KEY);
         setField(pageB, PAGE_B_KEY);
 
         setDistance(distance);
         setCount(count);
-        setCPI(cpa);
     }
 
     public void init() {
@@ -233,8 +232,9 @@ public class WikiSimResult extends Tuple6<
     public static WikiSimResult valueOf(String csv, String delimitter) {
         String[] cols = csv.split(Pattern.quote(delimitter));
 
-        WikiSimResult res = new WikiSimResult(cols[PAGE_A_KEY], cols[PAGE_B_KEY], Integer.valueOf(cols[DISTANCE_KEY]));
+        WikiSimResult res = new WikiSimResult(cols[PAGE_A_KEY], cols[PAGE_B_KEY]);
 
+        res.setDistance(Integer.valueOf(cols[DISTANCE_KEY]));
         res.setCount(Integer.valueOf(cols[COUNT_KEY]));
 
         DoubleListValue cpi = new DoubleListValue();

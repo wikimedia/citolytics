@@ -30,6 +30,7 @@ public class EvaluationMeasures {
                 / ((double) correctResponseList.size());
     }
 
+    @Deprecated
     public static double getHarmonicReciprocalRank(List<String> recommendedResults, List<String> correctResponseList) {
         double rank = 0;
 
