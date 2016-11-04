@@ -4,7 +4,9 @@ This repository contains all resources used in the research paper [Evaluating Li
 
 The evaluation was performed on the English Wikipedia XML dump from [September 2014](https://archive.org/details/wikimedia-mediatar). Resources regarding the [Apache Lucence MoreLikeThis](https://lucene.apache.org/) baseline can be found in a [separate repository](https://github.com/mschwarzer/Wikipedia2Lucene).
 
-[![Build Status](https://drone.io/github.com/TU-Berlin/cpa-demo/status.png)](https://drone.io/github.com/TU-Berlin/cpa-demo/latest)
+
+
+[![Build Status](https://travis-ci.org/wikimedia/citolytics.svg?branch=master)](https://travis-ci.org/wikimedia/citolytics)
 
 ### Requirements
 
