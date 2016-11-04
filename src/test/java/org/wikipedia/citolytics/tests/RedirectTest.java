@@ -9,7 +9,7 @@ import org.wikipedia.citolytics.cpa.types.LinkTuple;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
-import org.wikipedia.citolytics.cpa.utils.StringUtils;
+import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.citolytics.redirects.RedirectCount;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.single.SeeAlsoRedirects;
@@ -184,7 +184,7 @@ public class RedirectTest extends Tester {
                 + "\n中部地方"
                 + "\n&amp;";
 
-        String unescaped = StringUtils.unescapeEntities(s);
+        String unescaped = WikiSimStringUtils.unescapeEntities(s);
 
         if (unescaped.indexOf("&amp;") > -1 || unescaped.indexOf("&#039;") > -1 || s.equals(unescaped)) {
             throw new Exception("Unescape failed: " + unescaped);

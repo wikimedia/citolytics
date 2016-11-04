@@ -2,7 +2,6 @@ package org.wikipedia.citolytics;
 
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.io.LocalCollectionOutputFormat;
 import org.apache.flink.api.java.operators.DataSink;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.core.fs.FileSystem;
@@ -88,24 +87,31 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
                 throw new Exception("Output filename is not set.");
             } else if (outputFilename.equalsIgnoreCase("print")) {
                 result.print();
+            } else if (outputFilename.equalsIgnoreCase("local") || outputFilename.equalsIgnoreCase("collect")) {
+//                result.output(new LocalCollectionOutputFormat<>(output));
+                output = result.collect();
             } else {
-                if (outputFilename.equalsIgnoreCase("local")) {
-                    result.output(new LocalCollectionOutputFormat<>(output));
+                DataSink sink;
+
+                if (writeAsText) {
+                    sink = result.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
                 } else {
-                    DataSink sink;
-
-                    if (writeAsText) {
-                        sink = result.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
-                    } else {
-                        sink = result.write(new WikiOutputFormat<T>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
-                    }
-
-                    if (outputParallelism > 0)
-                        sink.setParallelism(outputParallelism);
+                    sink = result.write(new WikiOutputFormat<T>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
                 }
+
+                if (outputParallelism > 0)
+                    sink.setParallelism(outputParallelism);
+
 
                 env.execute(getJobName());
             }
         }
+    }
+
+    public List<T> getOutput() throws Exception {
+        if (output == null) {
+            throw new Exception("No output available (output filename=" + outputFilename + ")");
+        }
+        return this.output;
     }
 }

@@ -8,7 +8,7 @@ import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
-import org.wikipedia.citolytics.cpa.utils.StringUtils;
+import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +49,7 @@ public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>
                 WikiDocument doc = new WikiDocument();
 
                 doc.setId(Integer.parseInt(m.group(3)));
-                doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
+                doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(1)));
                 doc.setNS(Integer.parseInt(m.group(2)));
 
                 if (doc.getNS() != 0) return;
@@ -61,7 +61,7 @@ public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>
 
                 out.collect(new Tuple2<>(
                         doc.getTitle(),
-                        StringUtils.unescapeEntities(mr.group(1))
+                        WikiSimStringUtils.unescapeEntities(mr.group(1))
                 ));
             }
         });

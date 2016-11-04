@@ -21,7 +21,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
-import org.wikipedia.citolytics.cpa.utils.StringUtils;
+import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,38 +65,41 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     }
 
     public WikiDocument processDoc(String content, boolean processSeeAlsoOnly) {
-        // search for redirect -> skip if found
-        if (getRedirectMatcher(content).find()) return null;
+        if (getRedirectMatcher(content).find()) {
+            return null; // search for redirect -> skip if found
+        }
 
         // search for a page-xml entity
         Matcher m = getPageMatcher(content);
-        // if the record does not contain parsable page-xml
-        if (!m.find()) return null;
+
+        if (!m.find()) {
+            return null; // if the record does not contain parsable page-xml
+        }
 
         // otherwise create a WikiDocument object from the xml
         WikiDocument doc = new WikiDocument();
         if (enableWiki2006) {
             doc.setId(Integer.parseInt(m.group(2)));
-            doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
+            doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(1)));
 
             if (processSeeAlsoOnly) {
-                doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(3))));
+                doc.setText(getSeeAlsoSection(WikiSimStringUtils.unescapeEntities(m.group(3))));
             } else {
-                doc.setText(StringUtils.unescapeEntities(m.group(3)));
+                doc.setText(WikiSimStringUtils.unescapeEntities(m.group(3)));
             }
         } else {
             // Default WikiXml
             doc.setId(Integer.parseInt(m.group(3)));
-            doc.setTitle(StringUtils.unescapeEntities(m.group(1)));
+            doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(1)));
             doc.setNS(Integer.parseInt(m.group(2)));
 
             // skip docs from namespaces other than
             if (doc.getNS() != 0) return null;
 
             if (processSeeAlsoOnly) {
-                doc.setText(getSeeAlsoSection(StringUtils.unescapeEntities(m.group(4))));
+                doc.setText(getSeeAlsoSection(WikiSimStringUtils.unescapeEntities(m.group(4))));
             } else {
-                doc.setText(StringUtils.unescapeEntities(m.group(4)));
+                doc.setText(WikiSimStringUtils.unescapeEntities(m.group(4)));
             }
         }
 

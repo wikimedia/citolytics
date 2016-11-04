@@ -4,7 +4,7 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
-import org.wikipedia.citolytics.cpa.utils.StringUtils;
+import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
 import java.util.regex.Pattern;
 
@@ -158,7 +158,7 @@ public class PerformanceTests {
 
         long startB = System.nanoTime();
         for (int i = 0; i < runs; i++) {
-            StringUtils.getDoubleListFromString(testStr, delimiter);
+            WikiSimStringUtils.getDoubleListFromString(testStr, delimiter);
         }
         long timeB = System.nanoTime() - startB;
         System.out.printf("Parse ArrayList<Double> took an average of %.1f us%n", timeB / runs / 1000.0);

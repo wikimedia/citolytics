@@ -152,10 +152,7 @@ public class CalculationTest extends Tester {
     public void TestResultCount() throws Exception {
         WikiSim job = new WikiSim();
 
-        job.verbose().start(new String[]{
-                resource("wikiSeeAlso.xml"),
-                "local"
-        });
+        job.verbose().start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
 
         // If threshold is greater than 0, result count varies
         Assert.assertEquals("WikiSim result count is wrong", 126253, job.output.size());

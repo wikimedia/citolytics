@@ -1,8 +1,8 @@
 package org.wikipedia.citolytics.cpa.types;
 
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.wikipedia.citolytics.cpa.utils.StringUtils;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
+import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
 public class LinkTuple extends Tuple2<String, String> {
     public LinkTuple() {
@@ -54,7 +54,7 @@ public class LinkTuple extends Tuple2<String, String> {
     }
 
     public static long getHash(String first, String second) {
-        return StringUtils.hash(first + WikiSimConfiguration.csvFieldDelimiter + second);
+        return WikiSimStringUtils.hash(first + WikiSimConfiguration.csvFieldDelimiter + second);
     }
 
 

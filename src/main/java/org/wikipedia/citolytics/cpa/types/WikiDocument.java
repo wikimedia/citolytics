@@ -16,7 +16,9 @@
  */
 package org.wikipedia.citolytics.cpa.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.*;
@@ -32,7 +34,7 @@ import static java.lang.Math.max;
 public class WikiDocument {
 
     // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
-    private final ArrayList<String> listOfStopPatterns = new ArrayList<String>(Arrays.asList(
+    public final static ArrayList<String> INVALID_NAMESPACES = new ArrayList<String>(Arrays.asList(
             "media:", "special:", "talk:", "user:", "user talk:", "wikipedia:", "wikipedia talk:", "file:", "file talk:", "mediawiki:", "mediawiki talk:",
             "template:", "template talk:", "help:", "help talk:", "category:", "category talk:", "portal:", "portal talk:", "book:", "book talk:",
             "draft:", "draft talk:", "education program:", "education program talk:", "timedtext:", "timedtext talk:", "module:", "module talk:", "topic:",
@@ -168,16 +170,6 @@ public class WikiDocument {
         this.raw = text;
     }
 
-    private boolean startsNotWith(String text, ArrayList<String> patterns) {
-        for (String stopPattern : patterns) {
-            if (text.startsWith(stopPattern)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
     /**
      * Extract headlines from article content.
      * <p/>
@@ -245,9 +237,9 @@ public class WikiDocument {
                 if (target.length() > 0
                         && !target.contains("<")
                         && !target.contains(">")
-                        && startsNotWith(target.toLowerCase(), listOfStopPatterns)) {
+                        && WikiSimStringUtils.startsNotWith(target.toLowerCase(), INVALID_NAMESPACES)) {
                     // First char is not case sensitive
-                    target = org.apache.commons.lang.StringUtils.capitalize(target);
+                    target = StringUtils.capitalize(target);
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
                 }
             }

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 /**
  * @author rob
  */
-public class StringUtils {
+public class WikiSimStringUtils {
 
 
     /**
@@ -65,4 +65,14 @@ public class StringUtils {
         }
         return list;
     }
+
+    public static boolean startsNotWith(String text, ArrayList<String> patterns) {
+        for (String stopPattern : patterns) {
+            if (text.startsWith(stopPattern)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

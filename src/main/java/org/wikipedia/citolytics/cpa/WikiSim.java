@@ -16,6 +16,7 @@
 */
 package org.wikipedia.citolytics.cpa;
 
+import org.apache.flink.api.common.operators.base.ReduceOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
@@ -26,6 +27,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
+import org.wikipedia.citolytics.cpa.operators.CPAGroupReducer;
 import org.wikipedia.citolytics.cpa.operators.CPAReducer;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.redirects.operators.ReduceResults;
@@ -101,13 +103,29 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Calculate results
-        result = text.flatMap(new DocumentProcessor())
-                .withParameters(config)
+        if (params.has("group-reduce")) {
+            result = text.flatMap(new DocumentProcessor())
+                    .withParameters(config)
 //                .groupBy(1, 2) // Group by Page A, Page B
-                .groupBy(0) // Group by LinkTuple.hash()
+                    .groupBy(0) // Group by LinkTuple.hash()
+                    .reduceGroup(new CPAGroupReducer())
+//                    .reduce(new CPAReducer())
+//                    .setParallelism(1)
+//                .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
 
-                .reduceGroup(new CPAReducer())
-                .withParameters(config);
+                    .withParameters(config)
+            ;
+        } else {
+            result = text.flatMap(new DocumentProcessor())
+                    .withParameters(config)
+                    .groupBy(0) // Group by LinkTuple.hash()
+                    .reduce(new CPAReducer())
+                    .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
+//                    .setParallelism(1)
+                    .withParameters(config)
+            ;
+        }
+
 
         // Resolve redirects if requested
         if (params.has("redirects")) {
