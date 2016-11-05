@@ -1,11 +1,14 @@
 package org.wikipedia.citolytics.tests;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +18,15 @@ import java.util.Scanner;
  * @author malteschwarzer
  */
 public class WikiSimTest extends Tester {
+    private String fixture;
+    private WikiSimAbstractJob job;
+
+    @Before
+    public void setUp() throws Exception {
+        job = new WikiSim();
+        job.verbose();
+    }
+
     public void assertOutput(List<WikiSimResult> actual, String pathToExpected) throws Exception {
         HashSet<WikiSimResult> expected = new HashSet<>();
 
@@ -55,17 +67,36 @@ public class WikiSimTest extends Tester {
         }
     }
 
+    private String getInputPath() throws FileNotFoundException {
+        return resource("fixtures/" + fixture + ".input");
+    }
+
+    private String getExpectedOutputPath() {
+        return "fixtures/" + fixture + ".expected";
+    }
+
+
     @Test
     public void testSimple() throws Exception {
-        WikiSim job = new WikiSim();
+        fixture = "wikisim_simple.xml";
 
-        job.verbose().start(("--input " + resource("fixtures/wikisim_simple.xml.input") + " --output local").split(" "));
-        assertOutput(job.getOutput(), "fixtures/wikisim_simple.xml.expected");
+        job.start("--input " + getInputPath() + " --output local");
+
+        assertOutput(job.getOutput(), getExpectedOutputPath());
 
 //        job.enableSingleOutputFile()
 //                .verbose()
 //                .start(("--input " + resource("fixtures/wikisim_simple.xml.input") + " --group-reduce --output " + resource("fixtures/wikisim_simple.xml.expected")).split(" "));
 
 
+    }
+
+    @Test
+    public void testAlpha() throws Exception {
+        fixture = "wikisim_alpha.xml";
+
+        job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output local");
+
+        assertOutput(job.getOutput(), getExpectedOutputPath());
     }
 }
