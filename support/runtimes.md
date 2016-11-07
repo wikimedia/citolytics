@@ -43,13 +43,17 @@ parallelization.default: 300
 - Full Dump
     - taskmanager.memory.fraction: 0.85
     - parallelism 100
-        - WikiSim Reduce        1h 25m
-            - FlatMap out       11,216,905,047 / 638 GB
+        - WikiSim Reduce            1h 25m
+            - FlatMap out           11,216,905,047 / 638 GB
 
-        - WikiSim GroupReduce   1h 46m
-            - FlatMap out       11,423,198,553 / 734 GB
+        - WikiSim GroupReduce       1h 46m
+            - FlatMap out           11,423,198,553 / 734 GB
+
+        - WikiSim Reduce + Redirects
 
 
+
+### Debugging
 
 - CPA
     - WikiSim (result only): 1h 4m
