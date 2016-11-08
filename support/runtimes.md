@@ -25,11 +25,16 @@ We used Apache Flink v0.8 and Hadoop v2.0. The text-based similarity measure was
 
 ### Mobile Recommendations (Flink 1.1.0)
 
+TaskManager: 8
+
 Settings
 ```
 taskmanager.memory.fraction: 0.6
 taskmanager.numberOfTaskSlots: 64
 parallelization.default: 300
+
+jobmanager.heap.mb: 15024
+taskmanager.heap.mb: 40000
 ```
 
 - 1GB Dump Test
@@ -42,6 +47,10 @@ parallelization.default: 300
 
 - Full Dump
     - taskmanager.memory.fraction: 0.85
+        - Physical Memory       62.1 GB
+        - Free Memory           39.1 GB
+        - Flink Managed Memory  28.8 GB
+
     - parallelism 100
         - WikiSim Reduce            1h 25m
             - FlatMap out           11,216,905,047 / 638 GB
@@ -50,8 +59,17 @@ parallelization.default: 300
             - FlatMap out           11,423,198,553 / 734 GB
 
         - WikiSim Reduce + Redirects
+            - GroupReduce               5h 19m
+            - OuterJoin + SortedReduce  2h 6m   (Left_HybridHash_Build_Second)
+            - OuterJoin + CombineHint   2h 3m
 
+    - taskmanager.heap.mb: 55000; taskmanager.memory.fraction: 0.9
+         - Physical Memory       62.1 GB
+         - Free Memory           53.7 GB
+         - Flink Managed Memory  43.7 GB
 
+         - WikiSim Reduce + Redirects
+            - OuterJoin + CombineHint   2h 8m (not memory-bound?)
 
 ### Debugging
 

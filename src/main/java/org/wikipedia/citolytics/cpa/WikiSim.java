@@ -30,7 +30,7 @@ import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.operators.CPAGroupReducer;
 import org.wikipedia.citolytics.cpa.operators.CPAReducer;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
-import org.wikipedia.citolytics.redirects.operators.ReplaceRedirects;
+import org.wikipedia.citolytics.redirects.operators.ReplaceRedirectsWithOuterJoin;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.processing.DocumentProcessor;
 
@@ -146,33 +146,33 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
      * @return Result set with resolved redirects
      */
     public static DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String pathToRedirects) {
+        boolean outerJoin = true;
+
         // fields
-        int hash = 0;
-        int pageA = 1;
-        int pageB = 2;
+        int hash = WikiSimResult.HASH_KEY;
+        int pageA = WikiSimResult.PAGE_A_KEY;
+        int pageB = WikiSimResult.PAGE_A_KEY;
         int redirectSource = 0;
-        int redirectTarget = 1;
 
         DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, pathToRedirects);
 
-//        return wikiSimResults;
         return wikiSimResults
                 // replace page names with redirect target
                 // page A
-                .coGroup(redirects)
+                .leftOuterJoin(redirects)
                 .where(pageA)
                 .equalTo(redirectSource)
-                .with(new ReplaceRedirects(pageA))
-                        // page B
-                .coGroup(redirects)
+                .with(new ReplaceRedirectsWithOuterJoin(pageA))
+                // page B
+                .leftOuterJoin(redirects)
                 .where(pageB)
                 .equalTo(redirectSource)
-                .with(new ReplaceRedirects(pageB))
-                        // sum duplicated tuples
-                .groupBy(hash) // Page A, Page B (hash)
+                .with(new ReplaceRedirectsWithOuterJoin(pageB))
+                // sum duplicated tuples
+                .groupBy(hash)
                 .reduce(new CPAReducer())
-//                .reduceGroup(new ReduceResults())
-                ;
+                .setCombineHint(ReduceOperatorBase.CombineHint.HASH);
+
     }
 
 

@@ -41,20 +41,25 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
 
     private double[] alphas = new double[]{1.0};
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
-    private boolean removeInfoBox = true;
+    private boolean enableInfoBoxRemoval = true;
 
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
 
         enableWiki2006 = parameter.getBoolean("wiki2006", true);
-        removeInfoBox = parameter.getBoolean("removeInfoBox", true);
+        enableInfoBoxRemoval = parameter.getBoolean("removeInfoBox", true);
 
         String[] arr = parameter.getString("alpha", "1.0").split(",");
         alphas = new double[arr.length];
         for (int i = 0; i < arr.length; i++) {
             alphas[i] = Double.parseDouble(arr[i]);
         }
+    }
+
+    public DocumentProcessor enableInfoBoxRemoval() {
+        enableInfoBoxRemoval = true;
+        return this;
     }
 
 
@@ -153,7 +158,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
         text = p2.matcher(text).replaceAll("");
 
         // remove info box
-        if (removeInfoBox) {
+        if (enableInfoBoxRemoval) {
             text = removeInfoBox(text);
         }
 

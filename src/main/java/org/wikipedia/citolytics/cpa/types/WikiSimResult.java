@@ -34,9 +34,9 @@ public class WikiSimResult extends Tuple6<
     private final boolean enableDistSquared = false;
 //    private final boolean enableCount = false;
 
-    private final static int HASH_KEY = 0;
-    private final static int PAGE_A_KEY = 1;
-    private final static int PAGE_B_KEY = 2;
+    public final static int HASH_KEY = 0;
+    public final static int PAGE_A_KEY = 1;
+    public final static int PAGE_B_KEY = 2;
     private final static int CPI_LIST_KEY = 5;
     private final static int MAX_KEY = 7; // disabled
     private final static int MIN_KEY = 6; // disabled

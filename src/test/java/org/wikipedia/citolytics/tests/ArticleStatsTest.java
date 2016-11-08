@@ -10,6 +10,8 @@ import org.wikipedia.citolytics.stats.ArticleStatsWithInboundLinks;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
 
+import static org.junit.Assert.assertEquals;
+
 
 public class ArticleStatsTest extends Tester {
     @Ignore
@@ -50,7 +52,7 @@ public class ArticleStatsTest extends Tester {
 
         WikiDocument doc = new DocumentProcessor().processDoc(xml);
 
-        System.out.println("Headlines: " + doc.getHeadlines().size());
+        assertEquals("Invalid headline count", 39, doc.getHeadlines().size());
 
     }
 
@@ -62,7 +64,7 @@ public class ArticleStatsTest extends Tester {
 
         WikiDocument doc = new DocumentProcessor().processDoc(xml);
 
-        System.out.println("AvgLinkDistance: " + doc.getAvgLinkDistance());
+        assertEquals("AvgLinkDistance is wrong", 4121.20, doc.getAvgLinkDistance(), 0.01);
 
     }
 
@@ -92,7 +94,9 @@ public class ArticleStatsTest extends Tester {
 
     @Test
     public void extractLinks() throws Exception {
-        new LinksExtractor()
-                .start(new String[]{input("linkParserTest.xml"), "print"});
+        LinksExtractor job = new LinksExtractor();
+
+        job.start(input("linkParserTest.xml") + " local");
+        assertEquals("Invalid link count", 195, job.output.size());
     }
 }

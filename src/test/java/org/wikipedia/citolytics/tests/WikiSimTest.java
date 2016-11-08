@@ -99,4 +99,11 @@ public class WikiSimTest extends Tester {
 
         assertOutput(job.getOutput(), getExpectedOutputPath());
     }
+
+    @Test
+    public void testSimpleWithRedirects() throws Exception {
+        fixture = "wikisim_simple_with_redirects.xml";
+
+
+    }
 }

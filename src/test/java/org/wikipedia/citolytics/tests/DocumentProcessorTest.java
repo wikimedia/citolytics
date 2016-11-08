@@ -1,6 +1,7 @@
 package org.wikipedia.citolytics.tests;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
@@ -45,6 +46,7 @@ public class DocumentProcessorTest extends Tester {
 
     }
 
+    @Ignore
     @Test
     public void TestStaticCPI() throws Exception {
         String wikiText = getFileContents("wikiInfoBox_1.xml");
