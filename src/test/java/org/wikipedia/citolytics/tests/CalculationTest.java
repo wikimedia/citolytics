@@ -105,18 +105,26 @@ public class CalculationTest extends Tester {
         int found = 0;
 
         for (ClickStreamResult r : job6.output) {
-            if (r.f0.equals("Article C")) {
-                if (r.f2 != 6 || r.f3 != 99 || r.f4 != 0 || r.f5 != 0 || r.f6 != 0 || r.f7 != 0) {
-                    throw new Exception("Invalid clicks for Article C");
-                }
+            if (r.getArticle().equals("Article C")) {
+                assertEquals("Invalid getResultsCount (result=" + r + ")", 7, r.getResults().size());
+                assertEquals("Invalid getImpressions (result=" + r + ")", 99, r.getImpressions());
+                assertEquals("Invalid getTotalClicks (result=" + r + ")", 0, r.getTotalClicks());
+                assertEquals("Invalid getClicks1", 0, r.getClicks1());
+                assertEquals("Invalid getClicks2", 0, r.getClicks2());
+                assertEquals("Invalid getClicks3", 0, r.getClicks3());
+
                 found++;
             }
 
 
-            if (r.f0.equals("Article A")) {
-                if (r.f2 != 6 || r.f3 != 0 || r.f4 != 20 || r.f5 != 20 || r.f6 != 20 || r.f7 != 20) {
-                    throw new Exception("Invalid clicks for Article C");
-                }
+            if (r.getArticle().equals("Article A")) {
+                assertEquals("Invalid getResultsCount (result=" + r + ")", 6, r.getResults().size());
+                assertEquals("Invalid getImpressions (result=" + r + ")", 0, r.getImpressions());
+                assertEquals("Invalid getTotalClicks (result=" + r + ")", 20, r.getTotalClicks());
+                assertEquals("Invalid getClicks1", 20, r.getClicks1());
+                assertEquals("Invalid getClicks2", 20, r.getClicks2());
+                assertEquals("Invalid getClicks3", 20, r.getClicks3());
+
                 found++;
             }
         }

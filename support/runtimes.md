@@ -71,6 +71,9 @@ taskmanager.heap.mb: 40000
          - WikiSim Reduce + Redirects
             - OuterJoin + CombineHint   2h 8m (not memory-bound?)
 
+    - set number of task manager slots per node >>
+    - java mission control (enable debug options -X..)
+
 ### Debugging
 
 - CPA
