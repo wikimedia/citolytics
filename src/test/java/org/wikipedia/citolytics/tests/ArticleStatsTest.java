@@ -96,7 +96,7 @@ public class ArticleStatsTest extends Tester {
     public void extractLinks() throws Exception {
         LinksExtractor job = new LinksExtractor();
 
-        job.start(input("linkParserTest.xml") + " local");
+        job.enableLocalEnvironment().start(input("linkParserTest.xml") + " local");
         assertEquals("Invalid link count", 195, job.output.size());
     }
 }

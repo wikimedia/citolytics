@@ -4,6 +4,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSink;
 import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 
@@ -20,7 +21,7 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
     public String outputFilename;
     public List<T> output = new ArrayList<>();
     public DataSet<T> result;
-    public final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+    public ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
     private boolean writeAsText = false;
 
@@ -41,6 +42,24 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
 
     public WikiSimAbstractJob verbose() {
         env.getConfig().disableSysoutLogging();
+        return this;
+    }
+
+    /**
+     * Enables local execution environment that can be used for unit testing (Travis CI bugfix).
+     *
+     * @return
+     */
+    public WikiSimAbstractJob enableLocalEnvironment() {
+        Configuration conf = new Configuration();
+
+//        conf.setInteger("taskmanager.network.numberOfBuffers", 16000);
+//        conf.setInteger("taskmanager.numberOfTaskSlots", 32);
+
+        env = ExecutionEnvironment.createLocalEnvironment(conf);
+
+        env.setParallelism(1);
+
         return this;
     }
 

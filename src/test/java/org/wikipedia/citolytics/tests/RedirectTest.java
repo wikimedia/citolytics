@@ -26,7 +26,7 @@ public class RedirectTest extends Tester {
 
         WikiSim job = new WikiSim();
 
-        job.start(("--input " + input("wikiRedirectedLinks.xml")
+        job.enableLocalEnvironment().start(("--input " + input("wikiRedirectedLinks.xml")
                 + " --output print"
                 + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
 
@@ -39,6 +39,8 @@ public class RedirectTest extends Tester {
         String outputB = "wikisim_integrity_b.out";
         WikiSim job = new WikiSim();
 
+        job.enableLocalEnvironment();
+
         job.start(("--input " + input("completeTestWikiDump.xml")
                 + " --output " + output(outputA)
                 + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
@@ -50,7 +52,7 @@ public class RedirectTest extends Tester {
 
         CheckOutputIntegrity test = new CheckOutputIntegrity();
 
-        test.start(new String[]{
+        test.enableLocalEnvironment().start(new String[]{
                 resource(outputA),
                 resource(outputB),
                 "local"

@@ -149,13 +149,17 @@ public class CalculationTest extends Tester {
         // If threshold is greater than 0, result count varies
         // without infobox removal= 126253
         // with infobox removal= 118341
-        job.verbose().start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
+        job.enableLocalEnvironment()
+                .verbose()
+                .start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
+
         assertEquals("WikiSim result count is wrong", 126253, job.output.size());
 
-        job.verbose().start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
+        job.enableLocalEnvironment()
+                .verbose()
+                .start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
+
         assertEquals("WikiSim result count is wrong", 118341, job.output.size());
-
-
     }
 
     @Ignore
@@ -180,11 +184,13 @@ public class CalculationTest extends Tester {
 
         CheckOutputIntegrity job = new CheckOutputIntegrity();
 
-        job.verbose().start(new String[]{
+        job.enableLocalEnvironment()
+                .verbose()
+                .start(new String[]{
                 resource("wikisim_output.csv"),
                 resource("wikisim_output_b.csv"),
                 "print"
-        });
+                });
 
 //        System.out.println(job.output);
 //        assertEquals("CheckOutputIntegrity should return errors.", 2, job.output.size());
@@ -202,7 +208,9 @@ public class CalculationTest extends Tester {
     public void TestWiki2006() throws Exception {
 
         WikiSim job = new WikiSim();
-        job.verbose().start(new String[]{
+        job.enableLocalEnvironment()
+                .verbose()
+                .start(new String[]{
                 resource("wiki2006.xml"),
                 "local", "0.81,1.5,1.25", "0", "0", "2006"});
 

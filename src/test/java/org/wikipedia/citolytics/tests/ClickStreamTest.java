@@ -27,7 +27,7 @@ public class ClickStreamTest extends Tester {
     public void validateDataSet() throws Exception {
         ValidateClickStreamData job = new ValidateClickStreamData();
 
-        job.verbose().start(new String[]{resource("2015_02_clickstream_preview.tsv"), "local"});
+        job.enableLocalEnvironment().verbose().start(new String[]{resource("2015_02_clickstream_preview.tsv"), "local"});
 
         if (job.output.size() != 44)
             throw new Exception("Number of results != 44");
