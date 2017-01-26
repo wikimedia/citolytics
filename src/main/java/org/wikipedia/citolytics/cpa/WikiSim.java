@@ -35,7 +35,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
     private Configuration config;
     public String inputFilename;
-    private String redirectsFilename;
+    public String redirectsFilename;
     public String alpha = "1.5";
     private int reducerThreshold = 1;
     private int combinerThreshold = 1;
