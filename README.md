@@ -10,6 +10,7 @@ The evaluation was performed on the English Wikipedia XML dump from [September 2
 
 ### Requirements
 
+- Maven (v3.0+)
 - Apache Flink (v1.1.0)
 
 ### Contents
@@ -33,11 +34,18 @@ See Also Evaluation | Clickstream Evaluation
 
 We performed several evaluations on the recommendation quality of CPA, CoCit and MLT. Additional plots and raw and aggregated results can be found [here](evaluation).
 
-### Run
-- Compile the Maven project
-- Run Apache Flink jobs separately from jar-file with -c parameter.
+### Build
 
-### Available Flink Jobs (Classes)
+```
+mvn clean
+mvn install
+```
+
+### Run
+
+Run Apache Flink jobs separately from jar-file (target/cpa-0.1.jar) and set -c parameter for each class.
+
+#### Available Flink Jobs (Classes)
 
 - **CPA/CoCit Computation**: org.wikipedia.citolytics.cpa.WikiSim
 ```
