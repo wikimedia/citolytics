@@ -63,6 +63,11 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
         return this;
     }
 
+    public WikiSimAbstractJob setEnvironment(ExecutionEnvironment env) {
+        this.env = env;
+        return this;
+    }
+
     public WikiSimAbstractJob enableTextOutput() {
         writeAsText = true;
         return this;

@@ -43,11 +43,29 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
     private boolean enableInfoBoxRemoval = true;
 
+    private static final int WIKI2006_ID_MATCH_GROUP = 2;
+    private static final int WIKI2006_TITLE_MATCH_GROUP = 1;
+    private static final int WIKI2006_TEXT_MATCH_GROUP = 3;
+
+    private static final int DEFAULT_ID_MATCH_GROUP = 3;
+    private static final int DEFAULT_TITLE_MATCH_GROUP = 1;
+    private static final int DEFAULT_TEXT_MATCH_GROUP = 4;
+    private static final int DEFAULT_NS_MATCH_GROUP = 2;
+
+    private int idMatchGroup = DEFAULT_ID_MATCH_GROUP;
+    private int titleMatchGroup = DEFAULT_TITLE_MATCH_GROUP;
+    private int textMatchGroup = DEFAULT_TEXT_MATCH_GROUP;
+    private int nsMatchGroup = DEFAULT_NS_MATCH_GROUP;
+
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
 
         enableWiki2006 = parameter.getBoolean("wiki2006", true);
+        if(enableWiki2006) {
+            enableWiki2006();
+        }
+
         enableInfoBoxRemoval = parameter.getBoolean("removeInfoBox", true);
 
         String[] arr = parameter.getString("alpha", "1.0").split(",");
@@ -55,6 +73,13 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
         for (int i = 0; i < arr.length; i++) {
             alphas[i] = Double.parseDouble(arr[i]);
         }
+    }
+
+    public void enableWiki2006() {
+        idMatchGroup = WIKI2006_ID_MATCH_GROUP;
+        titleMatchGroup = WIKI2006_TITLE_MATCH_GROUP;
+        textMatchGroup = WIKI2006_TEXT_MATCH_GROUP;
+        nsMatchGroup = -1;
     }
 
     public DocumentProcessor enableInfoBoxRemoval() {
@@ -89,31 +114,19 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
             return null; // if the record does not contain parsable page-xml
         }
 
-        // otherwise create a WikiDocument object from the xml
+        // Create a WikiDocument object from the xml
         WikiDocument doc = new WikiDocument(this);
-        if (enableWiki2006) {
-            doc.setId(Integer.parseInt(m.group(2)));
-            doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(1)));
+        doc.setId(Integer.parseInt(m.group(idMatchGroup)));
+        doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(titleMatchGroup)));
+        doc.setNS(nsMatchGroup >= 0 ? Integer.parseInt(m.group(nsMatchGroup)) : 0);
 
-            if (processSeeAlsoOnly) {
-                doc.setText(getSeeAlsoSection(WikiSimStringUtils.unescapeEntities(m.group(3))));
-            } else {
-                doc.setText(WikiSimStringUtils.unescapeEntities(m.group(3)));
-            }
-        } else {
-            // Default WikiXml
-            doc.setId(Integer.parseInt(m.group(3)));
-            doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(1)));
-            doc.setNS(Integer.parseInt(m.group(2)));
+        // skip docs from namespaces other than
+        if (doc.getNS() != 0) return null;
 
-            // skip docs from namespaces other than
-            if (doc.getNS() != 0) return null;
+        doc.setText(WikiSimStringUtils.unescapeEntities(m.group(textMatchGroup)));
 
-            if (processSeeAlsoOnly) {
-                doc.setText(getSeeAlsoSection(WikiSimStringUtils.unescapeEntities(m.group(4))));
-            } else {
-                doc.setText(WikiSimStringUtils.unescapeEntities(m.group(4)));
-            }
+        if (processSeeAlsoOnly) {
+            doc.setText(getSeeAlsoSection(doc.getText()));
         }
 
         return doc;

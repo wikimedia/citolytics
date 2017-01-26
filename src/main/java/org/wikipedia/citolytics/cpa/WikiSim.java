@@ -33,6 +33,16 @@ import org.wikipedia.processing.DocumentProcessor;
  */
 public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
+    private Configuration config;
+    public String inputFilename;
+    private String redirectsFilename;
+    public String alpha = "1.5";
+    private int reducerThreshold = 1;
+    private int combinerThreshold = 1;
+    private boolean median = true;
+    private boolean wiki2006 = false;
+    private boolean removeInfoBox = false;
+
     public static String getUsage() {
         return "Usage: --input [DATASET] --output [OUTPUT] --alpha [ALPHA1, ALPHA2, ...] " +
                 "--reducer-threshold [REDUCER-THRESHOLD] --combiner-threshold [COMBINER-THRESHOLD] --format [WIKI-VERSION] " +
@@ -49,7 +59,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         new WikiSim().start(args);
     }
 
-    public void plan() {
+    public void init() {
         jobName = "WikiSim";
 
         // Bug fix (heartbeat bug)
@@ -70,51 +80,51 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         }
 
         // Read arguments
-        String inputFilename = params.get("input");
+        inputFilename = params.get("input");
         outputFilename = params.get("output");
+        redirectsFilename = params.get("redirects");
 
-        // Configuration for 2nd order functions
-        Configuration config = new Configuration();
-        config.setString("alpha", params.get("alpha", "1.5"));
-        config.setInteger("reducerThreshold", params.getInt("reducer-threshold", 1));
-        config.setInteger("combinerThreshold", params.getInt("combiner-threshold", 1));
+        alpha = params.get("alpha", "1.5");
+        reducerThreshold = params.getInt("reducer-threshold", 1);
+        combinerThreshold = params.getInt("combiner-threshold", 1);
+        wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006") ? true : false;
+        removeInfoBox = !params.has("keep-infobox");
+    }
 
-        config.setBoolean("median", true);
-        config.setBoolean("wiki2006", params.get("format", "2013").equalsIgnoreCase("2006") ? true : false);
-        config.setBoolean("removeInfoBox", !params.has("keep-infobox"));
+    public Configuration getConfig() {
+        if(config == null) {
+            // Configuration for 2nd order functions
+            config = new Configuration();
+            config.setString("alpha", alpha);
+            config.setInteger("reducerThreshold", reducerThreshold);
+            config.setInteger("combinerThreshold", combinerThreshold);
+
+            config.setBoolean("median", true);
+            config.setBoolean("wiki2006", wiki2006);
+            config.setBoolean("removeInfoBox", removeInfoBox);
+        }
+        return config;
+    }
+
+    public void plan() {
 
         // Read Wikipedia XML Dump
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Calculate results
-        if (params.has("group-reduce")) {
-            result = text.flatMap(new DocumentProcessor())
-                    .withParameters(config)
-//                .groupBy(1, 2) // Group by Page A, Page B
-                    .groupBy(0) // Group by LinkTuple.hash()
-                    .reduceGroup(new CPAGroupReducer())
-//                    .reduce(new CPAReducer())
+        result = text.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
+                .withParameters(getConfig())
+                .groupBy(0) // Group by LinkTuple.hash()
+                .reduce(new CPAReducer())
+                .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
 //                    .setParallelism(1)
-//                .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
-
-                    .withParameters(config)
-            ;
-        } else {
-            result = text.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
-                    .withParameters(config)
-                    .groupBy(0) // Group by LinkTuple.hash()
-                    .reduce(new CPAReducer())
-                    .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
-//                    .setParallelism(1)
-                    .withParameters(config)
-            ;
-        }
+                .withParameters(getConfig());
 
 
         // Resolve redirects if requested
-        if (params.has("redirects")) {
+        if (redirectsFilename != null) {
             jobName += " with redirects";
-            result = resolveRedirects(env, result, params.get("redirects"));
+            result = resolveRedirects(env, result, redirectsFilename);
         }
     }
 
