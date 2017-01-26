@@ -37,8 +37,7 @@ We performed several evaluations on the recommendation quality of CPA, CoCit and
 ### Build
 
 ```
-mvn clean
-mvn install
+mvn clean install -Dmaven.test.skip=true
 ```
 
 ### Run

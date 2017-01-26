@@ -43,7 +43,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         String wikiDumpInputFilename = params.getRequired("wikidump");
 
         outputFilename = params.getRequired("output");
-
+        String idTitleMappingFilename = params.get("idtitle-mapping", null);
         int topK = params.getInt("topk", 10);
         int fieldScore = params.getInt("score", 5);
         int fieldPageA = params.getInt("page-a", 1);
@@ -60,7 +60,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         // TODO idMapping
         WikiSim wikiSimJob = new WikiSim();
-        wikiSimJob.alpha = "0.9";
+        wikiSimJob.alpha = "0.855"; // From JCDL paper: a1=0.81, a2=0.9 -> a_mean = 0.855
         wikiSimJob.inputFilename = wikiDumpInputFilename;
         wikiSimJob.setEnvironment(env);
         wikiSimJob.plan();
@@ -79,8 +79,15 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
                 .groupBy(0)
                 .reduceGroup(new WikiSimGroupReducer(topK));
 
+        DataSet<Tuple2<Integer, String>> idTitleMapping = idTitleMappingFilename != null ?
+                env.readCsvFile(idTitleMappingFilename)
+                    .fieldDelimiter("|")
+                    .types(Integer.class, String.class)
+
+                : IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDumpInputFilename);
+
         // Transform result list to JSON with page ids
-        result = wikiSimData.join(IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDumpInputFilename))
+        result = wikiSimData.join(idTitleMapping)
                 .where(0)
                 .equalTo(1)
                 .with(new JSONMapper(disableScores));
