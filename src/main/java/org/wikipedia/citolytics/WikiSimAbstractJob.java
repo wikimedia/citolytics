@@ -8,6 +8,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public abstract class WikiSimAbstractJob<T extends Tuple> {
     private int outputParallelism = -1;
     public String[] args;
-    public String jobName;
+    protected String jobName;
     public String outputFilename;
     public List<T> output = new ArrayList<>();
     public DataSet<T> result;
@@ -28,12 +29,12 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
     public WikiSimAbstractJob() {
     }
 
-    public WikiSimAbstractJob setJobName(String name) {
+    protected WikiSimAbstractJob setJobName(String name) {
         jobName = name;
         return this;
     }
 
-    public String getJobName() {
+    private String getJobName() {
         if (jobName == null)
             return this.getClass().getCanonicalName();
         else
@@ -95,7 +96,7 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
 
     }
 
-    public void execute() throws Exception {
+    private void execute() throws Exception {
         writeOutput();
     }
 
@@ -104,7 +105,7 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
      *
      * @throws Exception
      */
-    public void writeOutput() throws Exception {
+    private void writeOutput() throws Exception {
 
         if (result == null) {
             System.err.println("Result data set is not set.");
@@ -124,12 +125,11 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
                 if (writeAsText) {
                     sink = result.writeAsText(outputFilename, FileSystem.WriteMode.OVERWRITE);
                 } else {
-                    sink = result.write(new WikiOutputFormat<T>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
+                    sink = result.write(new WikiOutputFormat<>(outputFilename), outputFilename, FileSystem.WriteMode.OVERWRITE);
                 }
 
                 if (outputParallelism > 0)
                     sink.setParallelism(outputParallelism);
-
 
                 env.execute(getJobName());
             }
