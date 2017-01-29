@@ -20,6 +20,8 @@ export PARALLELISM=150
 
 $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
     --wikidump $WIKI_DUMP \
+    --enable-elastic \
+    --ignore-missing-ids \
     --output $OUTPUT_DIR/wikisim
 
 ```
@@ -49,4 +51,11 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput
     --wikidump $WIKI_DUMP \
     --idtitle-mapping $INTERMEDIATE_DIR/idtitle \
     --output $OUTPUT_DIR/wikisim
+```
+
+
+### Trigger ES import
+
+``` 
+curl -s -XPOST 'http://localhost:9200/content/page/_bulk' -d @wikisim.json
 ```

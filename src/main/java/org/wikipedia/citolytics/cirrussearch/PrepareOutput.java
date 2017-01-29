@@ -2,10 +2,7 @@ package org.wikipedia.citolytics.cirrussearch;
 
 import org.apache.flink.api.common.functions.FlatJoinFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.JoinFunction;
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -54,37 +51,39 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         boolean elasticBulkSyntax = params.has("enable-elastic");
         boolean ignoreMissingIds = params.has("ignore-missing-ids");
 
+        setJobName("CirrusSearch PrepareOutput");
+
+        // Prepare results
+        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimData;
+        if(wikiSimInputFilename == null) {
+
+            // Build new result list
+            WikiSim wikiSimJob = new WikiSim();
+            wikiSimJob.alpha = "0.855"; // From JCDL paper: a1=0.81, a2=0.9 -> a_mean = 0.855
+            wikiSimJob.inputFilename = wikiDumpInputFilename;
+            wikiSimJob.redirectsFilename = redirectsFilename;
+            wikiSimJob.setEnvironment(env);
+            wikiSimJob.plan();
+
+            wikiSimData = wikiSimJob.result
+                    .flatMap(new FlatMapFunction<WikiSimResult, Tuple3<String, String, Double>>() {
+                        private final int alphaKey = 0;
+                        @Override
+                        public void flatMap(WikiSimResult in, Collector<Tuple3<String, String, Double>> out) throws Exception {
+
+                            out.collect(new Tuple3<>(in.getPageA(), in.getPageB(), in.getCPI(alphaKey)));
+                            out.collect(new Tuple3<>(in.getPageB(), in.getPageA(), in.getCPI(alphaKey)));
+                        }
+                    })
+                    .groupBy(0)
+                    .reduceGroup(new WikiSimGroupReducer(topK));
+        } else {
+            // Use existing result list;
+            wikiSimData = ClickStreamEvaluation.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
+        }
 
 
-        setJobName("Cirrussearch PrepareOutput");
-
-//        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimData =
-//                ClickStreamEvaluation.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
-
-//        result = wikiSimData.map(new JSONMapper(disableScores));
-
-        // TODO idMapping
-        WikiSim wikiSimJob = new WikiSim();
-        wikiSimJob.alpha = "0.855"; // From JCDL paper: a1=0.81, a2=0.9 -> a_mean = 0.855
-        wikiSimJob.inputFilename = wikiDumpInputFilename;
-        wikiSimJob.redirectsFilename = redirectsFilename;
-        wikiSimJob.setEnvironment(env);
-        wikiSimJob.plan();
-
-        // Build result list
-        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimData = wikiSimJob.result
-                .flatMap(new FlatMapFunction<WikiSimResult, Tuple3<String, String, Double>>() {
-                    private final int alphaKey = 0;
-                    @Override
-                    public void flatMap(WikiSimResult in, Collector<Tuple3<String, String, Double>> out) throws Exception {
-
-                        out.collect(new Tuple3<>(in.getPageA(), in.getPageB(), in.getCPI(alphaKey)));
-                        out.collect(new Tuple3<>(in.getPageB(), in.getPageA(), in.getCPI(alphaKey)));
-                    }
-                })
-                .groupBy(0)
-                .reduceGroup(new WikiSimGroupReducer(topK));
-
+        // Load id-title mapping
         DataSet<Tuple2<Integer, String>> idTitleMapping = idTitleMappingFilename != null ?
                 env.readCsvFile(idTitleMappingFilename)
                     .fieldDelimiter("|")
@@ -108,7 +107,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         /**
          * @param disableScores Set to true if score should not be included in JSON output
          */
-        public JSONMapper(boolean disableScores, boolean elasticBulkSyntax, boolean ignoreMissingIds) {
+        JSONMapper(boolean disableScores, boolean elasticBulkSyntax, boolean ignoreMissingIds) {
             this.disableScores = disableScores;
             this.elasticBulkSyntax = elasticBulkSyntax;
             this.ignoreMissingIds = ignoreMissingIds;
