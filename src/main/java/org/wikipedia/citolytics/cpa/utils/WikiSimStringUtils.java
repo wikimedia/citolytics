@@ -22,6 +22,7 @@ import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author rob
@@ -66,7 +67,7 @@ public class WikiSimStringUtils {
         return list;
     }
 
-    public static boolean startsNotWith(String text, ArrayList<String> patterns) {
+    public static boolean startsNotWith(String text, List<String> patterns) {
         for (String stopPattern : patterns) {
             if (text.startsWith(stopPattern)) {
                 return false;

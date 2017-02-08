@@ -23,6 +23,10 @@ import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +38,7 @@ import java.util.regex.Pattern;
  * Extracts links from Wikipedia documents, generates result records.
  */
 public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult> {
+    private static final String INVALID_NAMESPACES_FILENAME = "invalid_namespaces.txt";
     public static final String INFOBOX_TAG = "{{Infobox";
     public static String seeAlsoTitle = "==see also==";
     public static String seeAlsoRegex = "(^|\\W)" + seeAlsoTitle + "$";
@@ -56,6 +61,8 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
     private int titleMatchGroup = DEFAULT_TITLE_MATCH_GROUP;
     private int textMatchGroup = DEFAULT_TEXT_MATCH_GROUP;
     private int nsMatchGroup = DEFAULT_NS_MATCH_GROUP;
+
+    private List<String> invalidNameSpaces;
 
     @Override
     public void open(Configuration parameter) throws Exception {
@@ -284,6 +291,37 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
             }
         }
         return closePos;
+    }
+
+    /**
+     * A first call namespaces are read from the INVALID_NAMESPACES_FILE resource
+     *
+     * @return List if invalid namespaces in lower case (e.g. talk:)
+     */
+    public List<String> getInvalidNameSpaces() {
+
+        if(invalidNameSpaces == null) {
+
+            // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
+            invalidNameSpaces = new ArrayList<>();
+
+            try {
+                File f = new File(getClass().getClassLoader().getResource(INVALID_NAMESPACES_FILENAME).getFile());
+                Scanner s = new Scanner(f);
+                while (s.hasNextLine()){
+                    String line = s.nextLine();
+
+                    if(!line.isEmpty())
+                        invalidNameSpaces.add(line);
+                }
+                s.close();
+            } catch (Exception e) {
+                System.err.println("Cannot read from INVALID_NAMESPACES file");
+                e.printStackTrace();
+            }
+        }
+
+        return invalidNameSpaces;
     }
 }
 

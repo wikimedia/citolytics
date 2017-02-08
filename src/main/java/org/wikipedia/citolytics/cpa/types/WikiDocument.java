@@ -34,14 +34,6 @@ import static java.lang.Math.max;
 public class WikiDocument {
     private DocumentProcessor processor;
 
-    // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
-    public final static ArrayList<String> INVALID_NAMESPACES = new ArrayList<String>(Arrays.asList(
-            "media:", "special:", "talk:", "user:", "user talk:", "wikipedia:", "wikipedia talk:", "file:", "file talk:", "mediawiki:", "mediawiki talk:",
-            "template:", "template talk:", "help:", "help talk:", "category:", "category talk:", "portal:", "portal talk:", "book:", "book talk:",
-            "draft:", "draft talk:", "education program:", "education program talk:", "timedtext:", "timedtext talk:", "module:", "module talk:", "topic:",
-            "image:"
-    ));
-
     private final LinkTuple linkTuple = new LinkTuple();
 
     /**
@@ -229,7 +221,7 @@ public class WikiDocument {
                 if (target.length() > 0
                         && !target.contains("<")
                         && !target.contains(">")
-                        && WikiSimStringUtils.startsNotWith(target.toLowerCase(), INVALID_NAMESPACES)) {
+                        && WikiSimStringUtils.startsNotWith(target.toLowerCase(), getDocumentProcessor().getInvalidNameSpaces())) {
                     // First char is not case sensitive
                     target = StringUtils.capitalize(target);
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
