@@ -1,6 +1,7 @@
 package org.wikipedia.citolytics.cpa.types;
 
 import org.apache.flink.api.java.tuple.Tuple6;
+import org.apache.flink.api.java.tuple.Tuple8;
 import org.apache.flink.types.DoubleValue;
 import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
  * --  7 Long   maxDist #
  * -- 8 Double median  #
  */
-public class WikiSimResult extends Tuple6<
+public class WikiSimResult extends Tuple8<
         Long, // hash
         String, // page A
         String, // page B
@@ -28,7 +29,9 @@ public class WikiSimResult extends Tuple6<
 //        Long, // distSquared
 //        Long, // min
 //        Long, // max
-        DoubleListValue // CPA
+        DoubleListValue, // CPA
+        Integer,
+        Integer
         > {
     private final boolean enableMinMax = false;
     private final boolean enableDistSquared = false;
@@ -37,6 +40,8 @@ public class WikiSimResult extends Tuple6<
     public final static int HASH_KEY = 0;
     public final static int PAGE_A_KEY = 1;
     public final static int PAGE_B_KEY = 2;
+    public final static int PAGE_A_ID_KEY = 6;
+    public final static int PAGE_B_ID_KEY = 7;
     private final static int CPI_LIST_KEY = 5;
     private final static int MAX_KEY = 7; // disabled
     private final static int MIN_KEY = 6; // disabled
@@ -89,6 +94,8 @@ public class WikiSimResult extends Tuple6<
     }
 
     public void init() {
+        setPageAId(0);
+        setPageBId(0);
         setCount(1);
         setDistSquared(0);
         setMin(0);
@@ -152,6 +159,22 @@ public class WikiSimResult extends Tuple6<
 //    public LinkTuple getLinkTuple() {
 //        return getField(1);
 //    }
+
+    public int getPageAId() {
+        return getField(PAGE_A_ID_KEY);
+    }
+
+    public int getPageBId() {
+        return getField(PAGE_B_ID_KEY);
+    }
+
+    public void setPageAId(int id) {
+        setField(id, PAGE_A_ID_KEY);
+    }
+
+    public void setPageBId(int id) {
+        setField(id, PAGE_B_ID_KEY);
+    }
 
     public String getPageA() {
         return this.f1;

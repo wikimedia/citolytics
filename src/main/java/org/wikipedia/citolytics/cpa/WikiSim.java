@@ -1,5 +1,6 @@
 package org.wikipedia.citolytics.cpa;
 
+import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.operators.base.ReduceOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -10,6 +11,7 @@ import org.apache.flink.configuration.ConfigConstants;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
+import org.wikipedia.citolytics.cirrussearch.PrepareOutput;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.operators.CPAGroupReducer;
 import org.wikipedia.citolytics.cpa.operators.CPAReducer;
@@ -37,11 +39,13 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
     public String inputFilename;
     public String redirectsFilename;
     public String alpha = "1.5";
+    public boolean removeMissingIds = false;
     private int reducerThreshold = 1;
     private int combinerThreshold = 1;
     private boolean median = true;
     private boolean wiki2006 = false;
     private boolean removeInfoBox = false;
+
 
     public static String getUsage() {
         return "Usage: --input [DATASET] --output [OUTPUT] --alpha [ALPHA1, ALPHA2, ...] " +
@@ -80,6 +84,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         }
 
         // Read arguments
+        config = null;
         inputFilename = params.get("input");
         outputFilename = params.get("output");
         redirectsFilename = params.get("redirects");
@@ -89,6 +94,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         combinerThreshold = params.getInt("combiner-threshold", 1);
         wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006") ? true : false;
         removeInfoBox = !params.has("keep-infobox");
+        removeMissingIds = params.has("remove-missing-ids");
     }
 
     public Configuration getConfig() {
@@ -106,7 +112,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         return config;
     }
 
-    public void plan() {
+    public void plan() throws Exception {
 
         // Read Wikipedia XML Dump
         DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
@@ -126,6 +132,11 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
             jobName += " with redirects";
             result = resolveRedirects(env, result, redirectsFilename);
         }
+
+        // TODO Add page Id to all other methods
+//        if (removeMissingIds) {
+//            result = removeMissingIds(result, PrepareOutput.getIdTitleMapping(env, null, inputFilename));
+//        }
     }
 
     /**
@@ -166,8 +177,44 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
                 .groupBy(hash)
                 .reduce(new CPAReducer())
                 .setCombineHint(ReduceOperatorBase.CombineHint.HASH);
-
     }
 
+    public DataSet<WikiSimResult> removeMissingIds(DataSet<WikiSimResult> wikiSimResults, DataSet<Tuple2<Integer, String>> idTitleMapping) {
+
+        return wikiSimResults
+                // page A
+                .leftOuterJoin(idTitleMapping)
+                .where(WikiSimResult.PAGE_A_KEY)
+                .equalTo(MissingIdRemover.TITLE_KEY)
+                .with(new MissingIdRemover(true))
+                // page B
+                .leftOuterJoin(idTitleMapping)
+                .where(WikiSimResult.PAGE_A_KEY)
+                .equalTo(MissingIdRemover.TITLE_KEY)
+                .with(new MissingIdRemover(false));
+    }
+
+    public class MissingIdRemover implements JoinFunction<WikiSimResult, Tuple2<Integer, String>, WikiSimResult> {
+        public final static int TITLE_KEY = 1;
+        public final static int ID_KEY = 0;
+
+        private boolean pageA = true;
+        public MissingIdRemover(boolean pageA) {
+            this.pageA = pageA;
+        }
+
+        @Override
+        public WikiSimResult join(WikiSimResult wikiSimResult, Tuple2<Integer, String> mapping) throws Exception {
+            if (mapping != null) {
+                if(pageA) {
+                    wikiSimResult.setPageAId(mapping.getField(ID_KEY));
+                } else {
+                    wikiSimResult.setPageBId(mapping.getField(ID_KEY));
+                }
+                return wikiSimResult;
+            }
+            return null;
+        }
+    }
 
 }

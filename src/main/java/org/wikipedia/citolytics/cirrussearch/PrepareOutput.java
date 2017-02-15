@@ -3,6 +3,7 @@ package org.wikipedia.citolytics.cirrussearch;
 import org.apache.flink.api.common.functions.FlatJoinFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -53,6 +54,9 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         setJobName("CirrusSearch PrepareOutput");
 
+        // Load id-title mapping
+        DataSet<Tuple2<Integer, String>> idTitleMapping = getIdTitleMapping(env, idTitleMappingFilename, wikiDumpInputFilename);
+
         // Prepare results
         DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimData;
         if(wikiSimInputFilename == null) {
@@ -82,15 +86,6 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             wikiSimData = ClickStreamEvaluation.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
         }
 
-
-        // Load id-title mapping
-        DataSet<Tuple2<Integer, String>> idTitleMapping = idTitleMappingFilename != null ?
-                env.readCsvFile(idTitleMappingFilename)
-                    .fieldDelimiter("|")
-                    .types(Integer.class, String.class)
-
-                : IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDumpInputFilename);
-
         // Transform result list to JSON with page ids
         // TODO Check if there some pages lost (left or equi-join)
         result = wikiSimData.leftOuterJoin(idTitleMapping)
@@ -98,6 +93,20 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
                 .equalTo(1)
                 .with(new JSONMapper(disableScores, elasticBulkSyntax, ignoreMissingIds));
     }
+
+    public static DataSet<Tuple2<Integer, String>> getIdTitleMapping(ExecutionEnvironment env, String idTitleMappingFilename,
+                                                               String wikiDumpInputFilename) throws Exception {
+        if(idTitleMappingFilename != null) {
+            return env.readCsvFile(idTitleMappingFilename)
+                    .fieldDelimiter("|")
+                    .types(Integer.class, String.class);
+        } else if(wikiDumpInputFilename != null) {
+            return IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDumpInputFilename);
+        } else {
+            throw new Exception("Could not get IdTitleMapping. Either idTitleMappingFilename or wikiDumpInputFilename needs to be set.");
+        }
+    }
+
 
     public class JSONMapper implements FlatJoinFunction<Tuple2<String, WikiSimComparableResultList<Double>>, Tuple2<Integer, String>, Tuple1<String>> {
         private boolean disableScores = false;
@@ -158,8 +167,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
                 putResultArray(d, in.f1);
 
-                out.collect(new Tuple1<>(a.toString())); // action_and_meta_data
-                out.collect(new Tuple1<>(s.toString())); // source
+                out.collect(new Tuple1<>(a.toString() + "\n" + s.toString())); // action_and_meta_data \n source
 
             } else {
                 // Default output

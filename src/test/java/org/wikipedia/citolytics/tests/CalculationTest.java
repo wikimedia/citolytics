@@ -153,13 +153,14 @@ public class CalculationTest extends Tester {
                 .verbose()
                 .start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
 
-        assertEquals("WikiSim result count is wrong", 126253, job.output.size());
+        assertEquals("WikiSim result count is wrong (keep infobox)", 126253, job.output.size());
 
+        job = new WikiSim();
         job.enableLocalEnvironment()
                 .verbose()
                 .start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
 
-        assertEquals("WikiSim result count is wrong", 118341, job.output.size());
+        assertEquals("WikiSim result count is wrong (removed infobox)", 118341, job.output.size());
     }
 
     @Ignore
