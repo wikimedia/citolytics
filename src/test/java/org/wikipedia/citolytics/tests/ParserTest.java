@@ -21,16 +21,17 @@ public class ParserTest extends Tester {
 
         // With infobox removal = 586
         // Without infobox removal = 618
-        assertEquals("Link count wrong in wikiSeeAlso.xml", 586, doc.getOutLinks().size());
+        // with old namespace check = 586
+        assertEquals("Link count wrong in wikiSeeAlso.xml", 585, doc.getOutLinks().size());
 
         doc = new WikiDocument();
         doc.setText(getFileContents("wikiTalkPage.xml"));
-
-        assertEquals("Link count wrong in wikiTalkPage.xml", 150, doc.getOutLinks().size());
+        // with old namespace check = 150
+        assertEquals("Link count wrong in wikiTalkPage.xml", 147, doc.getOutLinks().size());
 
         doc = new WikiDocument();
         doc.setText(getFileContents("linkTest.wmd"));
-
+        // with old namespace check = 36
         assertEquals("Link count wrong in linkTest.wmd", 36, doc.getOutLinks().size());
 
     }

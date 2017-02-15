@@ -221,7 +221,10 @@ public class WikiDocument {
                 if (target.length() > 0
                         && !target.contains("<")
                         && !target.contains(">")
-                        && WikiSimStringUtils.startsNotWith(target.toLowerCase(), getDocumentProcessor().getInvalidNameSpaces())) {
+                        && WikiSimStringUtils.startsNotWith(target.toLowerCase(), getDocumentProcessor().getInvalidNameSpaces())
+                        // Alternative test for invalid namespaces -> check for ":"
+                        && !target.contains(":")
+                        ) {
                     // First char is not case sensitive
                     target = StringUtils.capitalize(target);
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));

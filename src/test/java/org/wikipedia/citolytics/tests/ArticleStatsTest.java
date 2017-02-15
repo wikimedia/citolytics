@@ -47,7 +47,6 @@ public class ArticleStatsTest extends Tester {
     @Test
     public void HeadlineTest() {
 
-
         String xml = getFileContents("wikiSeeAlso.xml");
 
         WikiDocument doc = new DocumentProcessor().processDoc(xml);
@@ -59,12 +58,11 @@ public class ArticleStatsTest extends Tester {
     @Test
     public void AvgLinkDistanceTest() {
 
-
         String xml = getFileContents("wikiSeeAlso.xml");
 
         WikiDocument doc = new DocumentProcessor().processDoc(xml);
-
-        assertEquals("AvgLinkDistance is wrong", 4121.20, doc.getAvgLinkDistance(), 0.01);
+        // old invalid namespace check=4121.20
+        assertEquals("AvgLinkDistance is wrong", 4120.99, doc.getAvgLinkDistance(), 0.01);
 
     }
 

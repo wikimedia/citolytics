@@ -149,18 +149,20 @@ public class CalculationTest extends Tester {
         // If threshold is greater than 0, result count varies
         // without infobox removal= 126253
         // with infobox removal= 118341
+        // with old namespace check = 126253
         job.enableLocalEnvironment()
                 .verbose()
                 .start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
 
-        assertEquals("WikiSim result count is wrong (keep infobox)", 126253, job.output.size());
+        assertEquals("WikiSim result count is wrong (keep infobox)", 125751, job.output.size());
 
+        // with old namespace check = 118341
         job = new WikiSim();
         job.enableLocalEnvironment()
                 .verbose()
                 .start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
 
-        assertEquals("WikiSim result count is wrong (removed infobox)", 118341, job.output.size());
+        assertEquals("WikiSim result count is wrong (removed infobox)", 117855, job.output.size());
     }
 
     @Ignore

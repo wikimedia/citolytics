@@ -298,6 +298,7 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
      *
      * @return List if invalid namespaces in lower case (e.g. talk:)
      */
+    @Deprecated
     public List<String> getInvalidNameSpaces() {
 
         if(invalidNameSpaces == null) {
