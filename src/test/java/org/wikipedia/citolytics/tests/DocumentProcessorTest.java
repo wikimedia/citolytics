@@ -19,6 +19,13 @@ import static org.junit.Assert.assertEquals;
  * @author malteschwarzer
  */
 public class DocumentProcessorTest extends Tester {
+    @Test
+    public void testGetInvalidNameSpaces() throws Exception {
+        DocumentProcessor dp = new DocumentProcessor();
+
+        assertEquals("Invalid count of invalid namespaces (re-run py script?)", 320, dp.getInvalidNameSpaces().size());
+    }
+
     private void infoBoxRemoval(String filename) throws Exception {
         String wikiText = getFileContents(filename);
         DocumentProcessor dp = new DocumentProcessor();
@@ -93,7 +100,7 @@ public class DocumentProcessorTest extends Tester {
                             if (linkTarget.length() > 0
                                     && !linkTarget.contains("<")
                                     && !linkTarget.contains(">")
-                                    && WikiSimStringUtils.startsNotWith(linkTarget.toLowerCase(), WikiDocument.INVALID_NAMESPACES)) {
+                                    && WikiSimStringUtils.startsNotWith(linkTarget.toLowerCase(), dp.getInvalidNameSpaces())) {
                                 // First char is not case sensitive
                                 linkTarget = StringUtils.capitalize(linkTarget);
                                 links.put(linkTarget, new LinkPosition(hl2_counter, hl3_counter, paragraph_counter, m.start()));

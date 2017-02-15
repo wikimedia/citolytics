@@ -1,0 +1,320 @@
+gadget talk:
+gadget:
+gadget definition talk:
+gadget definition:
+talk:
+user talk:
+user:
+project talk:
+project:
+file talk:
+file:
+mediawiki talk:
+special:
+topic:
+mediawiki:
+template talk:
+template:
+help talk:
+help:
+category talk:
+category:
+module talk:
+module:
+media:
+discuție carte:
+carte:
+campaign talk:
+campaign:
+cod:
+discuție cod:
+proiect:
+discuție proiect:
+portal:
+discuție portal:
+education program talk:
+education program:
+timedtext talk:
+timedtext:
+portal discussão:
+livro:
+livro discussão:
+تانبه:
+د تانبې خبرې اترې:
+കവാടം:
+കവാടത്തിന്റെ സംവാദം:
+portale:
+'ngazzaminde d'u portale:
+초안토론:
+초안:
+위키프로젝트:
+위키프로젝트토론:
+포털:
+포털토론:
+ಕರಡು ಚರಚ:
+ಕರಡು:
+gotûbêja portalê:
+porth:
+keskows porth:
+партал:
+абмеркаваньне парталу:
+портал:
+портал беседа:
+nochricht dischkrian:
+nochricht:
+spruch:
+spruch dischkrian:
+buach:
+buach dischkrian:
+portal dischkrian:
+text:
+text dischkrian:
+woat:
+woat dischkrian:
+размовы пра партал:
+portaal:
+portaalbespreking:
+descusión portal:
+diskusi portal:
+ìwé:
+ọ̀rọ̀ ìwé:
+èbúté:
+ọ̀rọ̀ èbúté:
+פארטאל:
+פארטאל רעדן:
+تبادلۂ خیال مسودہ:
+مسودہ:
+کتاب:
+تبادلۂ خیال کتاب:
+باب:
+تبادلۂ خیال باب:
+პორტალი:
+პორტალი განხილვა:
+asenfaṛ:
+amyannan usenfaṛ:
+awwur:
+amyannan uwwur:
+жоба:
+жоба талқылауы:
+портал талқылауы:
+ނެރު:
+ނެރު ޚިޔާލު:
+artikeldata:
+artikeldatadiskussion:
+portaldiskussion:
+sgwrs porth:
+portal vaten:
+portal diskussion:
+rejstřík:
+diskuse k rejstříku:
+portál:
+diskuse k portálu:
+portal talk:
+draft talk:
+draft:
+門:
+議:
+разговор за портал:
+projècte:
+discussion projècte:
+discussion portal:
+progetto:
+discussioni progetto:
+discussioni portale:
+gátt:
+gáttaspjall:
+libro:
+conversa libro:
+conversa portal:
+వేదిక:
+వేదిక చర్చ:
+ਫਾਟਕ:
+ਫਾਟਕ ਗੱਲ-ਬਾਤ:
+pruggettu:
+discussioni pruggettu:
+purtali:
+discussioni purtali:
+portada:
+usapang portada:
+สถานีย่อย:
+คุยเรื่องสถานีย่อย:
+በር:
+በር ውይይት:
+lango:
+majadiliano ya lango:
+obrolan portal:
+разговор о порталу:
+portálvita:
+thread talk:
+thread:
+summary talk:
+summary:
+պորտալ:
+պորտալի քննարկում:
+pembicaraan portal:
+appendice:
+discussion appendice:
+হমিলদুৱার:
+হমিলদুৱার য়্যারী:
+প্রবেশদ্বার:
+প্রবেশদ্বার আলোচনা:
+viquiprojecte:
+viquiprojecte discussió:
+portal discussió:
+razgovor o portalu:
+प्रवेशद्वारम्:
+प्रवेशद्वारसम्भाषणम्:
+پورتال:
+پورتال گپ:
+πύλη:
+συζήτηση πύλης:
+book:
+book talk:
+projekto:
+projekta diskuto:
+portalo:
+portala diskuto:
+wikiproyecto:
+wikiproyecto discusión:
+portal discusión:
+anexo:
+anexo discusión:
+portaali arutelu:
+wikiproiektu:
+wikiproiektu eztabaida:
+atari:
+atari eztabaida:
+diskussjoni portal:
+perbualan portal:
+лоиҳа:
+баҳси лоиҳа:
+баҳси портал:
+पोर्टल:
+पोर्टल वार्ता:
+दबू:
+दबू खँलाबँला:
+portal diskuschoon:
+portaldiskusjon:
+nochricht diskussion:
+spruch diskussion:
+buech:
+buech diskussion:
+text diskussion:
+wort:
+wort diskussion:
+инкубатор:
+обсуждение инкубатора:
+обсуждение портала:
+арбитраж:
+обсуждение арбитража:
+проект:
+обсуждение проекта:
+tema:
+temadiskusjon:
+ପୋର୍ଟାଲ:
+ପୋର୍ଟାଲ ଆଲୋଚନା:
+overleg portaal:
+dodatak:
+razgovor o dodatku:
+दालन:
+दालन चर्चा:
+portála:
+portálaságastallan:
+שיחת טיוטה:
+טיוטה:
+ספר:
+שיחת ספר:
+פורטל:
+שיחת פורטל:
+प्रवेशद्वार:
+प्रवेशद्वार वार्ता:
+بوابة:
+نقاش البوابة:
+ৱিকিচ'ৰা:
+ৱিকিচ'ৰা আলোচনা:
+مناقشة بوابة:
+portal müzakirəsi:
+проект буйынса фекерләшеү:
+портал буйынса фекерләшеү:
+پوْرتال:
+پوْرتال دانیشیغی:
+puotal:
+puotal diskoshan:
+プロジェクト:
+プロジェクト‐ノート:
+portal‐ノート:
+projeto:
+discussion projeto:
+portałe:
+discussion portałe:
+nochricht dischbediere:
+spruch dischbediere:
+buch:
+buch dischbediere:
+text dischbediere:
+wort dischbediere:
+vikiprojektas:
+vikiprojekto aptarimas:
+vikisritis:
+vikisrities aptarimas:
+sąrašas:
+sąrašo aptarimas:
+چأک چئنە پورتال:
+vikiprojekts:
+vikiprojekta diskusija:
+portāls:
+portāla diskusija:
+diskusia k portálu:
+portal diskutim:
+wikiprojekt:
+dyskusja wikiprojektu:
+dyskusja portalu:
+pogovor o portalu:
+ද්වාරය:
+ද්වාරය සාකච්ඡාව:
+ویکیپرۆژە:
+لێدوانی ویکیپرۆژە:
+دەروازە:
+لێدوانی دەروازە:
+ков:
+ков дийцаре:
+loyiha:
+loyiha munozarasi:
+portal munozarasi:
+portaol:
+euverlèk portaol:
+porta:
+disputatio portae:
+purtaal:
+descüssiun purtaal:
+descüssiú portal:
+projet:
+discussion projet:
+portail:
+discussion portail:
+référence:
+discussion référence:
+metasivu:
+keskustelu metasivusta:
+teemasivu:
+keskustelu teemasivusta:
+wikiprojekti:
+keskustelu wikiprojektista:
+kirja:
+keskustelu kirjasta:
+بحث پیش‌نویس:
+پیش‌نویس:
+بحث کتاب:
+درگاه:
+بحث درگاه:
+page:
+page talk:
+index:
+index talk:
+портал бәхәсе:
+வலைவாசல்:
+வலைவாசல் பேச்சு:
+portal tartışma:
+обговорення порталу:
+chủ đề:
+thảo luận chủ đề:
