@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.cpa.types;
 
-import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.api.java.tuple.Tuple8;
 import org.apache.flink.types.DoubleValue;
 import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
@@ -8,7 +7,8 @@ import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 import java.util.regex.Pattern;
 
 /**
- * Result for WikiSim
+ * Represents a recommendation pair for pages A <-> B
+ *
  * <p/>
  * 0 Long   hash
  * 1 JPO    linkTuple
@@ -22,16 +22,16 @@ import java.util.regex.Pattern;
  */
 public class WikiSimResult extends Tuple8<
         Long, // hash
-        String, // page A
-        String, // page B
+        String, // page title A
+        String, // page title B
         Long, // distance
         Integer, // count
 //        Long, // distSquared
 //        Long, // min
 //        Long, // max
         DoubleListValue, // CPA
-        Integer,
-        Integer
+        Integer, // page id A
+        Integer // page id B
         > {
     private final boolean enableMinMax = false;
     private final boolean enableDistSquared = false;
@@ -88,6 +88,8 @@ public class WikiSimResult extends Tuple8<
         setField(LinkTuple.getHash(pageA, pageB), HASH_KEY);
         setField(pageA, PAGE_A_KEY);
         setField(pageB, PAGE_B_KEY);
+        setPageAId(0);
+        setPageBId(0);
 
         setDistance(distance);
         setCount(count);

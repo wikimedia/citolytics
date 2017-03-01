@@ -1,10 +1,10 @@
 package org.wikipedia.citolytics.seealso.better;
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.apache.log4j.Logger;
+import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Reads the MoreLikeThis result set created by ResultCollector of https://github.com/mschwarzer/Wikipedia2Lucene
  */
-public class MLTInputMapper extends RichFlatMapFunction<String, Tuple2<String, WikiSimComparableResultList<Double>>> {
+public class MLTInputMapper extends RichFlatMapFunction<String, WikiSimTopResults> {
     private static Logger LOG = Logger.getLogger(MLTInputMapper.class);
 
     private int topK = 20;
@@ -27,7 +27,7 @@ public class MLTInputMapper extends RichFlatMapFunction<String, Tuple2<String, W
     }
 
     @Override
-    public void flatMap(String s, Collector<Tuple2<String, WikiSimComparableResultList<Double>>> out) throws Exception {
+    public void flatMap(String s, Collector<WikiSimTopResults> out) throws Exception {
         String[] cols = delimiterPattern.split(s);
         WikiSimComparableResultList<Double> results = new WikiSimComparableResultList<>();
 
@@ -37,14 +37,14 @@ public class MLTInputMapper extends RichFlatMapFunction<String, Tuple2<String, W
             }
 
             for (int c = 1; c < cols.length; c += 2) {
-                results.add(new WikiSimComparableResult<>(cols[c], Double.valueOf(cols[c + 1])));
+                results.add(new WikiSimComparableResult<>(cols[c], Double.valueOf(cols[c + 1]), 0));
 
                 if (results.size() >= topK) {
                     break;
                 }
             }
 
-            out.collect(new Tuple2<>(cols[0], results));
+            out.collect(new WikiSimTopResults(cols[0], results));
         } catch (Exception e) {
             LOG.error("Cannot parse line - " + e.getMessage() + "\n" + s);
         }

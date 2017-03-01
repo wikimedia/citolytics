@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.cpa;
 
-import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.operators.base.ReduceOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -11,10 +10,10 @@ import org.apache.flink.configuration.ConfigConstants;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
-import org.wikipedia.citolytics.cirrussearch.PrepareOutput;
+import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.operators.CPAGroupReducer;
 import org.wikipedia.citolytics.cpa.operators.CPAReducer;
+import org.wikipedia.citolytics.cpa.operators.MissingIdRemover;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.redirects.operators.ReplaceRedirectsWithOuterJoin;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
@@ -97,6 +96,11 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         removeMissingIds = params.has("remove-missing-ids");
     }
 
+    /**
+     * Returns current job configuration
+     *
+     * @return Job configuration
+     */
     public Configuration getConfig() {
         if(config == null) {
             // Configuration for 2nd order functions
@@ -133,10 +137,10 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
             result = resolveRedirects(env, result, redirectsFilename);
         }
 
-        // TODO Add page Id to all other methods
-//        if (removeMissingIds) {
-//            result = removeMissingIds(result, PrepareOutput.getIdTitleMapping(env, null, inputFilename));
-//        }
+        // Remove results without ids, i.e. do not exist as page
+        if (removeMissingIds) {
+            result = MissingIdRemover.removeMissingIds(result, IdTitleMappingExtractor.getIdTitleMapping(env, null, inputFilename));
+        }
     }
 
     /**
@@ -145,13 +149,12 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
      * Wikipedia uses inconsistent internal links, therefore, we need to check each result record
      * for redirects, map redirects to their targets and sum up resulting duplicates.
      *
-     * @param env
-     * @param wikiSimResults
-     * @param pathToRedirects
+     * @param env ExecutionEnvironment
+     * @param wikiSimResults Result tuples with redirects
+     * @param pathToRedirects Path to redirects CSV (HDFS or local)
      * @return Result set with resolved redirects
      */
     public static DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String pathToRedirects) {
-        boolean outerJoin = true;
 
         // fields
         int hash = WikiSimResult.HASH_KEY;
@@ -179,42 +182,6 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
                 .setCombineHint(ReduceOperatorBase.CombineHint.HASH);
     }
 
-    public DataSet<WikiSimResult> removeMissingIds(DataSet<WikiSimResult> wikiSimResults, DataSet<Tuple2<Integer, String>> idTitleMapping) {
 
-        return wikiSimResults
-                // page A
-                .leftOuterJoin(idTitleMapping)
-                .where(WikiSimResult.PAGE_A_KEY)
-                .equalTo(MissingIdRemover.TITLE_KEY)
-                .with(new MissingIdRemover(true))
-                // page B
-                .leftOuterJoin(idTitleMapping)
-                .where(WikiSimResult.PAGE_A_KEY)
-                .equalTo(MissingIdRemover.TITLE_KEY)
-                .with(new MissingIdRemover(false));
-    }
-
-    public class MissingIdRemover implements JoinFunction<WikiSimResult, Tuple2<Integer, String>, WikiSimResult> {
-        public final static int TITLE_KEY = 1;
-        public final static int ID_KEY = 0;
-
-        private boolean pageA = true;
-        public MissingIdRemover(boolean pageA) {
-            this.pageA = pageA;
-        }
-
-        @Override
-        public WikiSimResult join(WikiSimResult wikiSimResult, Tuple2<Integer, String> mapping) throws Exception {
-            if (mapping != null) {
-                if(pageA) {
-                    wikiSimResult.setPageAId(mapping.getField(ID_KEY));
-                } else {
-                    wikiSimResult.setPageBId(mapping.getField(ID_KEY));
-                }
-                return wikiSimResult;
-            }
-            return null;
-        }
-    }
 
 }

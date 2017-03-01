@@ -11,10 +11,10 @@ import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.clickstream.operators.EvaluateClicks;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
+import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.better.MLTInputMapper;
 import org.wikipedia.citolytics.seealso.better.WikiSimGroupReducer;
 import org.wikipedia.citolytics.seealso.better.WikiSimInputMapper;
-import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +53,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         DataSet<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamDataSet = ClickStreamHelper.getRichClickStreamDataSet(env, clickStreamInputFilename);
 
         // WikiSim
-        DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> wikiSimGroupedDataSet;
+        DataSet<WikiSimTopResults> wikiSimGroupedDataSet;
 
         // CPA or MLT results?
         if (fieldScore >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
@@ -81,7 +81,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                 .with(new EvaluateClicks(topK));
     }
 
-    public static DataSet<Tuple2<String, WikiSimComparableResultList<Double>>> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) {
+    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) {
 
         Log.info("Reading WikiSim from " + filename);
 

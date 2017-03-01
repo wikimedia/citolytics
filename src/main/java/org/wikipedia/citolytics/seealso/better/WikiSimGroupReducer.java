@@ -1,18 +1,18 @@
 package org.wikipedia.citolytics.seealso.better;
 
 import org.apache.flink.api.common.functions.GroupReduceFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cpa.types.WikiSimSingleResult;
+import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class WikiSimGroupReducer implements GroupReduceFunction<Tuple3<String, String, Double>, Tuple2<String, WikiSimComparableResultList<Double>>> {
-    public int maxQueueSize = 20;
+public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimSingleResult, WikiSimTopResults> {
+    private int maxQueueSize = 20;
 
     public WikiSimGroupReducer() {
     }
@@ -22,14 +22,14 @@ public class WikiSimGroupReducer implements GroupReduceFunction<Tuple3<String, S
     }
 
     @Override
-    public void reduce(Iterable<Tuple3<String, String, Double>> in, Collector<Tuple2<String, WikiSimComparableResultList<Double>>> out) throws Exception {
-        Iterator<Tuple3<String, String, Double>> iterator = in.iterator();
+    public void reduce(Iterable<WikiSimSingleResult> in, Collector<WikiSimTopResults> out) throws Exception {
+        Iterator<WikiSimSingleResult> iterator = in.iterator();
 
-        Tuple3<String, String, Double> joinRecord = null;
+        WikiSimSingleResult joinRecord = null;
 
         // Default: MinQueue = Smallest elements a kept in queue
         // -> Change: MaxQueue = Keep greatest elements
-        MinMaxPriorityQueue<WikiSimComparableResult<Double>> unsortedQueue = MinMaxPriorityQueue
+        MinMaxPriorityQueue<WikiSimComparableResult<Double>> queue = MinMaxPriorityQueue
                 .orderedBy(new Comparator<WikiSimComparableResult<Double>>() {
                     @Override
                     public int compare(WikiSimComparableResult<Double> o1, WikiSimComparableResult<Double> o2) {
@@ -41,10 +41,10 @@ public class WikiSimGroupReducer implements GroupReduceFunction<Tuple3<String, S
 
         while (iterator.hasNext()) {
             joinRecord = iterator.next();
-            unsortedQueue.add(new WikiSimComparableResult<Double>((String) joinRecord.getField(1), (Double) joinRecord.getField(2)));
+            queue.add(new WikiSimComparableResult<>(joinRecord.getRecommendationTitle(), joinRecord.getScore(), joinRecord.getRecommendationId()));
         }
 
         //  WikiSimComparableResultList<Double>
-        out.collect(new Tuple2<>((String) joinRecord.getField(0), new WikiSimComparableResultList<Double>(unsortedQueue)));
+        out.collect(new WikiSimTopResults(joinRecord.getSourceTitle(), joinRecord.getSourceId(), new WikiSimComparableResultList<>(queue)));
     }
 }

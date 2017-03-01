@@ -165,6 +165,21 @@ public class CalculationTest extends Tester {
         assertEquals("WikiSim result count is wrong (removed infobox)", 117855, job.output.size());
     }
 
+
+    @Ignore
+    @Test
+    public void TestMissingIdRemoval() throws Exception {
+
+        WikiSim job = new WikiSim();
+        job
+                .enableLocalEnvironment()
+                .verbose()
+                .start(("--input " + resource("wikisim_missingids.xml") + " --remove-missing-ids --output local").split(" "));
+
+        assertEquals("Invalid output size", 3, job.output.size());
+
+    }
+
     @Ignore
     @Test
     public void TestLocalExecution() throws Exception {

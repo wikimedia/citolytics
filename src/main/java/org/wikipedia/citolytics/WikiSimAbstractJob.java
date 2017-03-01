@@ -8,7 +8,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +40,11 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
             return jobName;
     }
 
+    /**
+     * Disables stdout logging
+     *
+     * @return Job
+     */
     public WikiSimAbstractJob verbose() {
         env.getConfig().disableSysoutLogging();
         return this;
@@ -49,7 +53,7 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
     /**
      * Enables local execution environment that can be used for unit testing (Travis CI bugfix).
      *
-     * @return
+     * @return Job
      */
     public WikiSimAbstractJob enableLocalEnvironment() {
         Configuration conf = new Configuration();
@@ -90,6 +94,11 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
         execute();
     }
 
+    /**
+     * This method provides the actual job execution plan
+     *
+     * @throws Exception
+     */
     abstract public void plan() throws Exception;
 
     public void init() {

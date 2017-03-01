@@ -21,9 +21,14 @@ export PARALLELISM=150
 $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
     --wikidump $WIKI_DUMP \
     --enable-elastic \
-    --ignore-missing-ids \
-    --output $OUTPUT_DIR/wikisim
+    --output $OUTPUT_DIR/wikisim_elastic.json
 
+$FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
+    --wikidump $WIKI_DUMP \
+    --enable-elastic \
+    --ignore-missing-ids \
+    --output $OUTPUT_DIR/wikisim_elastic_ignore_missing_ids.json
+    
 ```
 
 ### With prepared data
@@ -48,9 +53,11 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELIS
 
 # Generate top-10 results as JSON
 $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
-    --wikidump $WIKI_DUMP \
+    --wikisim $OUTPUT_DIR/wikisim_raw \
+    --wikidump NONE \
     --idtitle-mapping $INTERMEDIATE_DIR/idtitle \
-    --output $OUTPUT_DIR/wikisim
+    --enable-elastic \
+    --output $OUTPUT_DIR/wikisim.json
 ```
 
 

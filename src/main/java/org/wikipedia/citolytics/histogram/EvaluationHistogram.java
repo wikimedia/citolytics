@@ -107,7 +107,7 @@ public class EvaluationHistogram {
 
                         while (iterator.hasNext()) {
                             joinRecord = iterator.next();
-                            unsortedQueue.add(new WikiSimComparableResult<Double>((String) joinRecord.getField(0), (Double) joinRecord.getField(2)));
+                            unsortedQueue.add(new WikiSimComparableResult<>((String) joinRecord.getField(0), (Double) joinRecord.getField(2), 0));
                             count++;
                         }
 

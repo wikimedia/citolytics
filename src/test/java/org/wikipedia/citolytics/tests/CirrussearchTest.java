@@ -1,15 +1,13 @@
 package org.wikipedia.citolytics.tests;
 
-import org.apache.flink.api.java.tuple.Tuple1;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cirrussearch.PrepareOutput;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 /**
- * @author malteschwarzer
+ * Test for all CirrusSearch-related jobs
  */
 public class CirrussearchTest extends Tester {
 
@@ -22,10 +20,18 @@ public class CirrussearchTest extends Tester {
 
     @Ignore
     @Test
-    public void testElasticBulkOutput() throws Exception {
+    public void testElasticBulkOutputIgnoreIds() throws Exception {
         PrepareOutput.main(("--wikisim " + resource("wikisim_output.csv")
                 + " --wikidump " + resource("wikiSeeAlso2.xml")
                 + " --enable-elastic --ignore-missing-ids --output print --topk 10").split(" "));
+    }
+
+
+    @Ignore
+    @Test
+    public void testElasticBulkOutput() throws Exception {
+        PrepareOutput.main(("--wikidump " + resource("wikisim_missingids.xml")
+                + " --enable-elastic --output print --topk 10").split(" "));
     }
 
     @Ignore

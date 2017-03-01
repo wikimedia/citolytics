@@ -4,6 +4,7 @@ import com.google.common.collect.Ordering;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class EvaluateSeeAlso implements CoGroupFunction<
         Tuple2<String, ArrayList<String>>,
-        Tuple2<String, WikiSimComparableResultList<Double>>,
+        WikiSimTopResults,
         SeeAlsoEvaluationResult
         > {
 
@@ -32,9 +33,9 @@ public class EvaluateSeeAlso implements CoGroupFunction<
     }
 
     @Override
-    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<Tuple2<String, WikiSimComparableResultList<Double>>> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
+    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<WikiSimTopResults> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
         Iterator<Tuple2<String, ArrayList<String>>> iteratorA = a.iterator();
-        Iterator<Tuple2<String, WikiSimComparableResultList<Double>>> iteratorB = b.iterator();
+        Iterator<WikiSimTopResults> iteratorB = b.iterator();
 
         if (iteratorA.hasNext()) {
             Tuple2<String, ArrayList<String>> recordA = iteratorA.next();
@@ -49,9 +50,9 @@ public class EvaluateSeeAlso implements CoGroupFunction<
             int[] matches = new int[]{0, 0, 0};
 
             if (iteratorB.hasNext()) {
-                Tuple2<String, WikiSimComparableResultList<Double>> recordB = iteratorB.next();
+                WikiSimTopResults recordB = iteratorB.next();
 
-                sortedList = Ordering.natural().greatestOf((WikiSimComparableResultList<Double>) recordB.getField(1), topK);
+                sortedList = Ordering.natural().greatestOf(recordB.getResults(), topK);
 
                 List<String> resultList = getResultNamesAsList(sortedList);
 
@@ -71,7 +72,7 @@ public class EvaluateSeeAlso implements CoGroupFunction<
                     (String) recordA.getField(0),
                     (ArrayList<String>) recordA.getField(1),
                     ((ArrayList<String>) recordA.getField(1)).size(),
-                    new WikiSimComparableResultList<Double>(sortedList),
+                    new WikiSimComparableResultList<>(sortedList),
                     sortedList.size(),
                     hrr,
                     topKScore,
@@ -85,10 +86,9 @@ public class EvaluateSeeAlso implements CoGroupFunction<
 
     public static List<String> getResultNamesAsList(List<WikiSimComparableResult<Double>> sortedList) {
         List<String> resultList = new ArrayList<>();
-        Iterator<WikiSimComparableResult<Double>> iterator = sortedList.listIterator();
 
-        while (iterator.hasNext()) {
-            resultList.add(iterator.next().getName());
+        for (WikiSimComparableResult<Double> aSortedList : sortedList) {
+            resultList.add(aSortedList.getName());
         }
         return resultList;
     }

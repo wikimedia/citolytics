@@ -1,14 +1,14 @@
 package org.wikipedia.citolytics.seealso.better;
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cpa.types.WikiSimSingleResult;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class WikiSimInputMapper extends RichFlatMapFunction<String, Tuple3<String, String, Double>> {
+public class WikiSimInputMapper extends RichFlatMapFunction<String, WikiSimSingleResult> {
     int fieldScore = 9;
     int fieldPageA = 1;
     int fieldPageB = 2;
@@ -26,7 +26,7 @@ public class WikiSimInputMapper extends RichFlatMapFunction<String, Tuple3<Strin
     }
 
     @Override
-    public void flatMap(String s, Collector<Tuple3<String, String, Double>> out) throws Exception {
+    public void flatMap(String s, Collector<WikiSimSingleResult> out) throws Exception {
         String[] cols = delimiterPattern.split(s);
 
 //        cols[fieldScore] = String.valueOf(100 * Math.random()).substring(0, 6);
@@ -44,8 +44,8 @@ public class WikiSimInputMapper extends RichFlatMapFunction<String, Tuple3<Strin
             Double score = Double.valueOf(scoreString);
 //                    .substring(0, maxLength));
 
-            out.collect(new Tuple3<>(cols[fieldPageA], cols[fieldPageB], score));
-            out.collect(new Tuple3<>(cols[fieldPageB], cols[fieldPageA], score));
+            out.collect(new WikiSimSingleResult(cols[fieldPageA], cols[fieldPageB], score));
+            out.collect(new WikiSimSingleResult(cols[fieldPageB], cols[fieldPageA], score));
 //        } catch (ArrayIndexOutOfBoundsException e) {
 //            // nothing
 //            return;

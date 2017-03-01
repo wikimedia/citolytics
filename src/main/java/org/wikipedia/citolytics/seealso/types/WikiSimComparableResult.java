@@ -1,16 +1,20 @@
 package org.wikipedia.citolytics.seealso.types;
 
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 
 /**
  * Makes WikiSimResults comparable
  * - Sort1 Field: Ordered Descending (CoCit/CPA scores)
  * - Sort2 Field: Ordered Ascending (Article recommendation)
+ *
+ * - Field 3: id
  */
-public class WikiSimComparableResult<T extends Comparable> extends Tuple2<String, T> implements Comparable<WikiSimComparableResult<T>> {
+public class WikiSimComparableResult<T extends Comparable> extends Tuple3<String, T, Integer> implements Comparable<WikiSimComparableResult<T>> {
     public final static int SORT1_FIELD = 1;
     public final static int SORT2_FIELD = 0;
 
+    @Deprecated
     public WikiSimComparableResult(Tuple2<String, T> tuple) {
         setField(tuple.getField(0), 0);
         setField(tuple.getField(1), 1);
@@ -25,12 +29,24 @@ public class WikiSimComparableResult<T extends Comparable> extends Tuple2<String
     }
 
     public String getName() {
-        return getField(0);
+        return f0;
     }
 
-    public WikiSimComparableResult(String f0, T f1) {
-        setField(f0, 0);
-        setField(f1, 1);
+    public int getId() {
+        return f2;
+    }
+
+    @Deprecated
+    public WikiSimComparableResult(String title, T score) {
+        f0 = title;
+        f1 = score;
+        f2 = 0;
+    }
+
+    public WikiSimComparableResult(String title, T score, Integer id) {
+        f0 = title;
+        f1 = score;
+        f2 = id;
     }
 
     @Override

@@ -145,17 +145,17 @@ public class EvaluationTest extends Tester {
                 })
                 .maximumSize(maxListLength).create();
 
-        WikiSimComparableResult<Double> testItemLow = new WikiSimComparableResult<>("B", 2.0);
-        WikiSimComparableResult<Double> testItemHigh = new WikiSimComparableResult<>("A", 5.0);
+        WikiSimComparableResult<Double> testItemLow = new WikiSimComparableResult<>("B", 2.0, 0);
+        WikiSimComparableResult<Double> testItemHigh = new WikiSimComparableResult<>("A", 5.0, 0);
 
         queue.add(testItemLow);
         queue.add(testItemLow);
         queue.add(testItemLow);
         queue.add(testItemLow);
         queue.add(testItemHigh);
-        queue.add(new WikiSimComparableResult<>("A", 4.0));
-        queue.add(new WikiSimComparableResult<>("A", 3.0));
-        queue.add(new WikiSimComparableResult<>("A", 2.0));
+        queue.add(new WikiSimComparableResult<>("A", 4.0, 0));
+        queue.add(new WikiSimComparableResult<>("A", 3.0,0));
+        queue.add(new WikiSimComparableResult<>("A", 2.0,0));
         queue.add(testItemLow);
 
         System.out.println("Simple Queue" + queue);
@@ -176,16 +176,16 @@ public class EvaluationTest extends Tester {
 
     @Test
     public void GreatestOfTest() throws Exception {
-        WikiSimComparableResult<Double> testItemLow = new WikiSimComparableResult<>("B", 2.0);
-        WikiSimComparableResult<Double> testItemHigh = new WikiSimComparableResult<>("A", 5.0);
+        WikiSimComparableResult<Double> testItemLow = new WikiSimComparableResult<>("B", 2.0, 0);
+        WikiSimComparableResult<Double> testItemHigh = new WikiSimComparableResult<>("A", 5.0, 0);
 
         List<WikiSimComparableResult<Double>> unsortedList = new ArrayList<>();
 
         unsortedList.add(testItemLow);
-        unsortedList.add(new WikiSimComparableResult<>("A", 2.0));
+        unsortedList.add(new WikiSimComparableResult<>("A", 2.0, 0));
         unsortedList.add(testItemHigh);
-        unsortedList.add(new WikiSimComparableResult<>("A", 4.0));
-        unsortedList.add(new WikiSimComparableResult<>("A", 3.0));
+        unsortedList.add(new WikiSimComparableResult<>("A", 4.0,0));
+        unsortedList.add(new WikiSimComparableResult<>("A", 3.0, 0));
 
 
         List<WikiSimComparableResult<Double>> sortedList = Ordering.natural().greatestOf(unsortedList, 4);
@@ -234,15 +234,15 @@ public class EvaluationTest extends Tester {
 
         List<WikiSimComparableResult<Double>> retrieved = new ArrayList<>();
 
-        retrieved.add(new WikiSimComparableResult<>("Hole opener", 3.0517578125E-5));
-        retrieved.add(new WikiSimComparableResult<>("Drilling stabilizer", 9.313225746154785E-10));
-        retrieved.add(new WikiSimComparableResult<>("Drill bit", 2.1268224907304786E-12));
-        retrieved.add(new WikiSimComparableResult<>("Drag bit", 2.8421709430404007E-14));
-        retrieved.add(new WikiSimComparableResult<>("Driller (oil)", 1.0E-15));
-        retrieved.add(new WikiSimComparableResult<>("Drilling rig", 6.490547151887447E-17));
+        retrieved.add(new WikiSimComparableResult<>("Hole opener", 3.0517578125E-5, 0));
+        retrieved.add(new WikiSimComparableResult<>("Drilling stabilizer", 9.313225746154785E-10, 0));
+        retrieved.add(new WikiSimComparableResult<>("Drill bit", 2.1268224907304786E-12, 0));
+        retrieved.add(new WikiSimComparableResult<>("Drag bit", 2.8421709430404007E-14, 0));
+        retrieved.add(new WikiSimComparableResult<>("Driller (oil)", 1.0E-15, 0));
+        retrieved.add(new WikiSimComparableResult<>("Drilling rig", 6.490547151887447E-17, 0));
 
-        retrieved.add(new WikiSimComparableResult<>("Tungsten carbide", 3.1475538306147624E-25));
-        retrieved.add(new WikiSimComparableResult<>("Well bore", 5.986591089105288E-27));
+        retrieved.add(new WikiSimComparableResult<>("Tungsten carbide", 3.1475538306147624E-25, 0));
+        retrieved.add(new WikiSimComparableResult<>("Well bore", 5.986591089105288E-27, 0));
 
         retrieved = Ordering.natural().greatestOf(retrieved, 10);
 
