@@ -32,6 +32,9 @@ import org.wikipedia.processing.DocumentProcessor;
  * --combiner-threshold [int]   Combiner threshold: Discard records with lower number of co-citations (default: 1)
  * --format [str]   Format of Wikipedia XML Dump (default: 2013; set to "2006" for older dumps)
  * --redirects [path]  Resolve redirects? Set path to redirects set (default: n)
+ * --resolve-redirects
+ * --remove-missing-ids
+ * --keep-infobox
  */
 public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
@@ -47,6 +50,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
     private int reducerThreshold = 1;
     private int combinerThreshold = 1;
 
+    private DataSource<String> wikiDump;
 
     public static String getUsage() {
         return "Usage: --input [DATASET] --output [OUTPUT] --alpha [ALPHA1, ALPHA2, ...] " +
@@ -93,7 +97,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         alpha = params.get("alpha", "1.5");
         reducerThreshold = params.getInt("reducer-threshold", 1);
         combinerThreshold = params.getInt("combiner-threshold", 1);
-        wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006") ? true : false;
+        wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006");
         removeInfoBox = !params.has("keep-infobox");
         removeMissingIds = params.has("remove-missing-ids");
         resolveRedirects = params.has("resolve-redirects");
@@ -122,10 +126,10 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
     public void plan() throws Exception {
 
         // Read Wikipedia XML Dump
-        DataSource<String> dump = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
+        wikiDump = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Calculate results
-        result = dump.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
+        result = wikiDump.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
                 .withParameters(getConfig())
                 .groupBy(0) // Group by LinkTuple.hash()
                 .reduce(new CPAReducer())
@@ -143,7 +147,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         // Remove results without ids, i.e. do not exist as page
         if (removeMissingIds) {
             jobName += " + id removal";
-            result = MissingIdRemover.removeMissingIds(result, IdTitleMappingExtractor.getIdTitleMapping(env, null, inputFilename));
+            result = MissingIdRemover.removeMissingIds(result, IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDump));
         }
     }
 
@@ -169,7 +173,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
         if(pathToRedirects == null) {
             // Load redirects from XML dump
-            redirects = RedirectExtractor.extractRedirectMappings(env, inputFilename);
+            redirects = RedirectExtractor.extractRedirectMappings(env, wikiDump);
         } else {
             // Load redirects from pre-processed data set
             redirects = WikiSimRedirects.getRedirectsDataSet(env, pathToRedirects);

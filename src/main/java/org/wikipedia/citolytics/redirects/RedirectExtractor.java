@@ -39,9 +39,11 @@ public class RedirectExtractor extends WikiSimAbstractJob<RedirectMapping> {
     }
 
     public static DataSet<RedirectMapping> extractRedirectMappings(ExecutionEnvironment env, String wikiDumpInputFilename) {
-        DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), wikiDumpInputFilename);
+        return extractRedirectMappings(env, env.readFile(new WikiDocumentDelimitedInputFormat(), wikiDumpInputFilename));
+    }
 
-        return text.flatMap(new FlatMapFunction<String, RedirectMapping>() {
+    public static DataSet<RedirectMapping> extractRedirectMappings(ExecutionEnvironment env, DataSource<String> wikiDump) {
+        return wikiDump.flatMap(new FlatMapFunction<String, RedirectMapping>() {
             @Override
             public void flatMap(String content, Collector<RedirectMapping> out) throws Exception {
                 Pattern pattern = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);

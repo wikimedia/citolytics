@@ -3,6 +3,7 @@ package org.wikipedia.citolytics.cirrussearch;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
@@ -30,8 +31,11 @@ public class IdTitleMappingExtractor extends WikiSimAbstractJob<IdTitleMapping> 
     }
 
     public static DataSet<IdTitleMapping> extractIdTitleMapping(ExecutionEnvironment env, String inputFilename) {
-        return env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
-                .flatMap(new  FlatMapFunction<String, IdTitleMapping>() {
+        return extractIdTitleMapping(env, env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename));
+    }
+
+    public static DataSet<IdTitleMapping> extractIdTitleMapping(ExecutionEnvironment env, DataSource<String> wikiDump) {
+        return wikiDump.flatMap(new  FlatMapFunction<String, IdTitleMapping>() {
             @Override
             public void flatMap(String s, Collector<IdTitleMapping> out) throws Exception {
                 DocumentProcessor dp = new DocumentProcessor();
