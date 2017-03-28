@@ -10,6 +10,7 @@ import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 
@@ -70,26 +71,26 @@ public class ArticleStatsWithInboundLinks extends WikiSimAbstractJob<Tuple6<Stri
 
         // Resolve redirects in inbound links
         if (args.length > 2) {
-            DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[2]);
+            DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[2]);
 
             links = links
                     .coGroup(redirects)
                     .where(0)
                     .equalTo(0)
                             // Replace redirects
-                    .with(new CoGroupFunction<Tuple2<String, Integer>, Tuple2<String, String>, Tuple2<String, Integer>>() {
+                    .with(new CoGroupFunction<Tuple2<String, Integer>, RedirectMapping, Tuple2<String, Integer>>() {
                         @Override
-                        public void coGroup(Iterable<Tuple2<String, Integer>> links, Iterable<Tuple2<String, String>> redirects, Collector<Tuple2<String, Integer>> out) throws Exception {
+                        public void coGroup(Iterable<Tuple2<String, Integer>> links, Iterable<RedirectMapping> redirects, Collector<Tuple2<String, Integer>> out) throws Exception {
                             Iterator<Tuple2<String, Integer>> iteratorLinks = links.iterator();
-                            Iterator<Tuple2<String, String>> iteratorRedirects = redirects.iterator();
+                            Iterator<RedirectMapping> iteratorRedirects = redirects.iterator();
 
                             if (iteratorLinks.hasNext()) {
                                 Tuple2<String, Integer> link = iteratorLinks.next();
 
                                 if (iteratorRedirects.hasNext()) {
-                                    Tuple2<String, String> redirect = iteratorRedirects.next();
+                                    RedirectMapping redirect = iteratorRedirects.next();
 
-                                    link.f0 = redirect.f1;
+                                    link.f0 = redirect.getTarget();
                                 }
 
                                 out.collect(link);

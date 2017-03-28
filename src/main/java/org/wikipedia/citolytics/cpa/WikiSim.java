@@ -4,7 +4,6 @@ import org.apache.flink.api.common.operators.base.ReduceOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.ConfigConstants;
 import org.apache.flink.configuration.Configuration;
@@ -14,7 +13,9 @@ import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.operators.CPAReducer;
 import org.wikipedia.citolytics.cpa.operators.MissingIdRemover;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.operators.ReplaceRedirectsWithOuterJoin;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.processing.DocumentProcessor;
@@ -39,11 +40,12 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
     public String redirectsFilename;
     public String alpha = "1.5";
     public boolean removeMissingIds = false;
-    private int reducerThreshold = 1;
-    private int combinerThreshold = 1;
+    public boolean resolveRedirects = false;
     private boolean median = true;
     private boolean wiki2006 = false;
     private boolean removeInfoBox = false;
+    private int reducerThreshold = 1;
+    private int combinerThreshold = 1;
 
 
     public static String getUsage() {
@@ -94,6 +96,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006") ? true : false;
         removeInfoBox = !params.has("keep-infobox");
         removeMissingIds = params.has("remove-missing-ids");
+        resolveRedirects = params.has("resolve-redirects");
     }
 
     /**
@@ -119,10 +122,10 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
     public void plan() throws Exception {
 
         // Read Wikipedia XML Dump
-        DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
+        DataSource<String> dump = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Calculate results
-        result = text.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
+        result = dump.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
                 .withParameters(getConfig())
                 .groupBy(0) // Group by LinkTuple.hash()
                 .reduce(new CPAReducer())
@@ -132,13 +135,14 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
 
         // Resolve redirects if requested
-        if (redirectsFilename != null) {
-            jobName += " with redirects";
+        if (redirectsFilename != null || resolveRedirects) {
+            jobName += " + redirects";
             result = resolveRedirects(env, result, redirectsFilename);
         }
 
         // Remove results without ids, i.e. do not exist as page
         if (removeMissingIds) {
+            jobName += " + id removal";
             result = MissingIdRemover.removeMissingIds(result, IdTitleMappingExtractor.getIdTitleMapping(env, null, inputFilename));
         }
     }
@@ -154,7 +158,8 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
      * @param pathToRedirects Path to redirects CSV (HDFS or local)
      * @return Result set with resolved redirects
      */
-    public static DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String pathToRedirects) {
+    public DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String pathToRedirects) {
+        DataSet<RedirectMapping> redirects;
 
         // fields
         int hash = WikiSimResult.HASH_KEY;
@@ -162,7 +167,13 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         int pageB = WikiSimResult.PAGE_A_KEY;
         int redirectSource = 0;
 
-        DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, pathToRedirects);
+        if(pathToRedirects == null) {
+            // Load redirects from XML dump
+            redirects = RedirectExtractor.extractRedirectMappings(env, inputFilename);
+        } else {
+            // Load redirects from pre-processed data set
+            redirects = WikiSimRedirects.getRedirectsDataSet(env, pathToRedirects);
+        }
 
         return wikiSimResults
                 // replace page names with redirect target

@@ -1,13 +1,13 @@
 package org.wikipedia.citolytics.redirects.single;
 
 import org.apache.flink.api.common.functions.CoGroupFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 
 import java.util.Iterator;
 
-public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsResult, Tuple2<String, String>, WikiSimRedirectsResult> {
+public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsResult, RedirectMapping, WikiSimRedirectsResult> {
     public int replaceField = 0;
     public int hashField = 0;
     public int pageAField = 1;
@@ -19,10 +19,10 @@ public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsR
     }
 
     @Override
-    public void coGroup(Iterable<WikiSimRedirectsResult> a, Iterable<Tuple2<String, String>> redirect, Collector<WikiSimRedirectsResult> out) throws Exception {
+    public void coGroup(Iterable<WikiSimRedirectsResult> a, Iterable<RedirectMapping> redirect, Collector<WikiSimRedirectsResult> out) throws Exception {
         Iterator<WikiSimRedirectsResult> iteratorA = a.iterator();
-        Iterator<Tuple2<String, String>> iteratorRedirect = redirect.iterator();
-        Tuple2<String, String> recordRedirect = null;
+        Iterator<RedirectMapping> iteratorRedirect = redirect.iterator();
+        RedirectMapping recordRedirect = null;
 
         // Redirect exists?
         if (iteratorRedirect.hasNext()) {
@@ -36,7 +36,7 @@ public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsR
             if (recordRedirect != null) {
 
                 // replace page in original record
-                recordA.setField(recordRedirect.getField(redirectTargetField), replaceField);
+                recordA.setField(recordRedirect.getTarget(), replaceField);
 
                 // check for alphabetic order
                 int order = ((String) recordA.getField(pageBField)).compareTo((String) recordA.getField(pageAField));

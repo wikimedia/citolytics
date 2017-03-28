@@ -11,6 +11,7 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.processing.DocumentProcessor;
@@ -72,7 +73,7 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
             // Resolve redirects in SeeAlso links
             jobName += " with redirects";
 
-            DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, params.get("redirects"));
+            DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, params.get("redirects"));
 
             result = wikiPages.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
                 @Override
@@ -97,20 +98,20 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
                     .where(1) // see also link
                     .equalTo(0) // redirect source
                             // replace
-                    .with(new CoGroupFunction<Tuple2<String, String>, Tuple2<String, String>, Tuple2<String, String>>() {
+                    .with(new CoGroupFunction<Tuple2<String, String>, RedirectMapping, Tuple2<String, String>>() {
                         @Override
-                        public void coGroup(Iterable<Tuple2<String, String>> seeAlso, Iterable<Tuple2<String, String>> redirect, Collector<Tuple2<String, String>> out) throws Exception {
+                        public void coGroup(Iterable<Tuple2<String, String>> seeAlso, Iterable<RedirectMapping> redirect, Collector<Tuple2<String, String>> out) throws Exception {
                             Iterator<Tuple2<String, String>> iteratorSeeAlso = seeAlso.iterator();
-                            Iterator<Tuple2<String, String>> iteratorRedirect = redirect.iterator();
+                            Iterator<RedirectMapping> iteratorRedirect = redirect.iterator();
 
                             while (iteratorSeeAlso.hasNext()) {
                                 Tuple2<String, String> recordSeeAlso = iteratorSeeAlso.next();
 
                                 if (iteratorRedirect.hasNext()) {
-                                    Tuple2<String, String> recordRedirect = iteratorRedirect.next();
+                                    RedirectMapping recordRedirect = iteratorRedirect.next();
 
                                     // replace
-                                    recordSeeAlso.setField(recordRedirect.getField(1), 1);
+                                    recordSeeAlso.setField(recordRedirect.getTarget(), 1);
                                 }
                                 out.collect(recordSeeAlso);
                             }

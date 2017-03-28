@@ -1,12 +1,14 @@
 package org.wikipedia.citolytics.redirects;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
@@ -24,7 +26,7 @@ import java.util.regex.Pattern;
  * https://dumps.wikimedia.org/enwiki/20160901/enwiki-20160901-redirect.sql.gz
  * (redirects.sql dump cannot be used, since it has id->name mappings. We need name->name.)
  */
-public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>> {
+public class RedirectExtractor extends WikiSimAbstractJob<RedirectMapping> {
     public static void main(String[] args) throws Exception {
         new RedirectExtractor().start(args);
     }
@@ -32,14 +34,16 @@ public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>
     public void plan() {
         ParameterTool params = ParameterTool.fromArgs(args);
 
-        String inputWikiSet = params.getRequired("input");
         outputFilename = params.getRequired("output");
+        result = extractRedirectMappings(env, params.getRequired("input"));
+    }
 
-        DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), inputWikiSet);
+    public static DataSet<RedirectMapping> extractRedirectMappings(ExecutionEnvironment env, String wikiDumpInputFilename) {
+        DataSource<String> text = env.readFile(new WikiDocumentDelimitedInputFormat(), wikiDumpInputFilename);
 
-        result = text.flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
+        return text.flatMap(new FlatMapFunction<String, RedirectMapping>() {
             @Override
-            public void flatMap(String content, Collector<Tuple2<String, String>> out) throws Exception {
+            public void flatMap(String content, Collector<RedirectMapping> out) throws Exception {
                 Pattern pattern = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
 
                 Matcher m = pattern.matcher(content);
@@ -60,7 +64,7 @@ public class RedirectExtractor extends WikiSimAbstractJob<Tuple2<String, String>
 
                 if (!mr.find()) return;
 
-                out.collect(new Tuple2<>(
+                out.collect(new RedirectMapping(
                         doc.getTitle(),
                         WikiSimStringUtils.unescapeEntities(mr.group(1))
                 ));

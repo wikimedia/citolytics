@@ -10,6 +10,7 @@ import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
@@ -48,7 +49,7 @@ public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String,
 
         outputFilename = args[3];
 
-        DataSet<Tuple2<String, String>> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
+        DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
 
         DataSet<Tuple2<String, String>> linkTupleList = env.readCsvFile(inputLinkTuplesFilename)
                 .fieldDelimiter(WikiSimConfiguration.csvFieldDelimiter.charAt(0))

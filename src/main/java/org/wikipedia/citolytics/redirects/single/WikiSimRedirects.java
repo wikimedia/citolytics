@@ -3,7 +3,7 @@ package org.wikipedia.citolytics.redirects.single;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.tuple.Tuple2;
+import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.utils.WikiSimOutputWriter;
 
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class WikiSimRedirects {
         int redirectSource = 0;
         int redirectTarget = 1;
 
-        DataSet<Tuple2<String, String>> redirects = getRedirectsDataSet(env, args[1]);
+        DataSet<RedirectMapping> redirects = getRedirectsDataSet(env, args[1]);
 
         DataSet<WikiSimRedirectsResult> res = getWikiSimDataSet(env, args[0])
                 // replace page names with redirect target
@@ -75,21 +75,21 @@ public class WikiSimRedirects {
         }
     }
 
-    public static DataSet<Tuple2<String, String>> getRedirectsDataSet(ExecutionEnvironment env, String filename) {
+    public static DataSet<RedirectMapping> getRedirectsDataSet(ExecutionEnvironment env, String filename) {
         if (debug) {
             return env.fromElements(
-                    new Tuple2<>("Aaa", "A"),
-                    new Tuple2<>("Aa", "A"),
-                    new Tuple2<>("Aaaa", "A"),
-                    new Tuple2<>("D", "A")
+                    new RedirectMapping("Aaa", "A"),
+                    new RedirectMapping("Aa", "A"),
+                    new RedirectMapping("Aaaa", "A"),
+                    new RedirectMapping("D", "A")
             );
         } else {
             return env.readTextFile(filename)
-                    .map(new MapFunction<String, Tuple2<String, String>>() {
+                    .map(new MapFunction<String, RedirectMapping>() {
                         @Override
-                        public Tuple2<String, String> map(String s) throws Exception {
+                        public RedirectMapping map(String s) throws Exception {
                             String[] cols = s.split(Pattern.quote("|"));
-                            return new Tuple2<>(cols[0], cols[1]);
+                            return new RedirectMapping(cols[0], cols[1]);
                         }
                     });
         }
