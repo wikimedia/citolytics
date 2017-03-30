@@ -5,9 +5,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
-import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,19 +18,19 @@ import java.util.regex.Pattern;
  * 3. Map all to en-wiki
  * 4. Recompute results
  */
-public class MultiLang extends WikiSimAbstractJob<LangLinkTuple> {
-    public static void main(String[] args) throws Exception {
-        new MultiLang().start(args);
-    }
-
-    @Override
-    public void plan() throws Exception {
-        ParameterTool params = ParameterTool.fromArgs(args);
-
-        outputFilename = params.getRequired("output");
-        result = readLangLinksDataSet(env, params.getRequired("input"));
-
-    }
+public class MultiLang { //extends WikiSimAbstractJob<LangLinkTuple> {
+//    public static void main(String[] args) throws Exception {
+//        new MultiLang().start(args);
+//    }
+//
+//    @Override
+//    public void plan() throws Exception {
+//        ParameterTool params = ParameterTool.fromArgs(args);
+//
+//        outputFilename = params.getRequired("output");
+//        result = readLangLinksDataSet(env, params.getRequired("input"));
+//
+//    }
 
 
     public static DataSet<LangLinkTuple> readLangLinksDataSet(ExecutionEnvironment env, String pathToDataSet, String lang) {
@@ -67,13 +65,14 @@ public class MultiLang extends WikiSimAbstractJob<LangLinkTuple> {
                     collectMatch(m, out);
                 } else {
                     // Match INSERT INTO statement
-                    Pattern p2 = Pattern.compile("([0-9]+),'(.*?)','(.*?)'$");
+                    Pattern p2 = Pattern.compile("([0-9]+),'(.*?)','(.*?)'");
                     Matcher m2 = p2.matcher(s);
 
                     if (m2.find()) {
                         collectMatch(m2, out);
                     } else {
                         // Nothing match at all.. s is CREATE TABLE statement
+                        System.out.println(s);
                     }
                 }
             }
