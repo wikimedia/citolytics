@@ -19,7 +19,7 @@ public class ArticleStatsTest extends Tester {
     public void LocalExecution() throws Exception {
 
         new ArticleStats()
-                .verbose()
+                .silent()
                 .start(
                         new String[]{
                                 resource("wikiSeeAlso2.xml"),
@@ -36,7 +36,7 @@ public class ArticleStatsTest extends Tester {
          */
 
         new ArticleStatsWithInboundLinks()
-                .verbose()
+                .silent()
                 .start(new String[]{
                 input("completeTestWikiDump.xml"),
                 "print" //outputFilename

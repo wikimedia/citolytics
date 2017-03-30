@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.clickstream.types;
 
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple8;
 
 import java.util.ArrayList;
@@ -13,13 +12,13 @@ import java.util.ArrayList;
  */
 public class ClickStreamResult extends
         //    Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>
-        Tuple8<String, ArrayList<Tuple3<String, Double, Integer>>, Integer, Integer, Integer, Integer, Integer, Integer> {
+        Tuple8<String, ArrayList<ClickStreamRecommendationResult>, Integer, Integer, Integer, Integer, Integer, Integer> {
 
 
     public ClickStreamResult() {
     }
 
-    public ClickStreamResult(String article, ArrayList<Tuple3<String, Double, Integer>> results, int resultsCount,
+    public ClickStreamResult(String article, ArrayList<ClickStreamRecommendationResult> results, int resultsCount,
                              int impressions, int totalClicks, int clicks1, int clicks2, int clicks3) {
         f0 = article;
         f1 = results;
@@ -35,7 +34,7 @@ public class ClickStreamResult extends
         return f0;
     }
 
-    public ArrayList<Tuple3<String, Double, Integer>> getResults() {
+    public ArrayList<ClickStreamRecommendationResult> getRecommendations() {
         return f1;
     }
 

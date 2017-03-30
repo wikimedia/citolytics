@@ -1,216 +1,150 @@
 package org.wikipedia.citolytics.clickstream.utils;
 
-import com.google.common.collect.Sets;
-import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.GroupReduceFunction;
+import org.apache.flink.api.common.functions.JoinFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.utils.WikiSimOutputWriter;
-import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
-import org.wikipedia.citolytics.seealso.better.SeeAlsoInputMapper;
-import org.wikipedia.citolytics.seealso.operators.BetterSeeAlsoLinkExistsFilter;
+import org.wikipedia.citolytics.clickstream.operators.ClickStreamDataSetReader;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamTranslateTuple;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
+import org.wikipedia.citolytics.multilang.LangLinkTuple;
+import org.wikipedia.citolytics.multilang.MultiLang;
 
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 /**
  * Using Wikipedia ClickStream data set as relevance judgements.
- * <p/>
- * General information: http://meta.wikimedia.org/wiki/Research:Wikipedia_clickstream
- * Download: http://figshare.com/articles/Wikipedia_Clickstream/1305770
- * Examples: http://ewulczyn.github.io/Wikipedia_Clickstream_Getting_Started/
- * <p/>
+ *
+ * @link General information: http://meta.wikimedia.org/wiki/Research:Wikipedia_clickstream
+ * @link Download: http://figshare.com/articles/Wikipedia_Clickstream/1305770
+ * @link Examples: http://ewulczyn.github.io/Wikipedia_Clickstream_Getting_Started/
+ *
  * Fields: rev_id, curr_id, n, prev_title (referrer), curr_title, type
  */
 public class ClickStreamHelper {
-    public final static HashSet<String> filterNameSpaces = Sets.newHashSet(
-            "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
-            "other-bing", "other-facebook", "other-twitter", "other-other"
-    );
-
-    public final static String filterType = "link";
 
     /**
-     * Returns Tuple3 with (String) article name, (Integer) impressions, (HashMap<String, Integer>) clicks to link name / count
+     * Returns data set of click stream tuples
      *
-     * @param env
-     * @param filename
+     * @param env ExecutionEnvironment
+     * @param filename Path to data set (separate multiple files by comma)
      * @return
      */
-    public static DataSet<Tuple3<String, Integer, HashMap<String, Integer>>> getRichClickStreamDataSet(ExecutionEnvironment env, String filename) {
-        return env.readTextFile(filename)
-                .flatMap(new FlatMapFunction<String, Tuple3<String, Integer, HashMap<String, Integer>>>() {
-                    @Override
-                    public void flatMap(String s, Collector<Tuple3<String, Integer, HashMap<String, Integer>>> out) throws Exception {
-                        String[] cols = s.split(Pattern.quote("\t"));
-                        if (cols.length == 6) {
+    public static DataSet<ClickStreamTuple> getClickStreamDataSet(ExecutionEnvironment env, String filename) {
+        return getTranslatedClickStreamDataSet(env, filename, null, null);
+    }
 
-                            // replace underscore
-                            String referrer = cols[3].replace("_", " ");
-                            String current = cols[4].replace("_", " ");
+    public static DataSet<ClickStreamTuple> getTranslatedClickStreamDataSet(ExecutionEnvironment env, String filename, String lang, String langLinksFilename) {
+        DataSet<ClickStreamTranslateTuple> translateInput = readClickStreamDataSetInputs(env, filename);
 
-                            try {
-                                int clicks = cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2]);
+        // Translate if requested
+        if(lang != null && langLinksFilename != null) {
 
-                                // Clicks
-                                if (filterType.equals(cols[5]) && !filterNameSpaces.contains(referrer)) {
-                                    out.collect(new Tuple3<>(
-                                            referrer,
-                                            0,
-                                            getClicksOnLink(current, clicks)
-                                    ));
-                                }
+            // Load enwiki language links
+            DataSet<LangLinkTuple> langLinks = MultiLang.readLangLinksDataSet(env, langLinksFilename, lang);
 
-                                // Impressions
-                                if (clicks > 0)
-                                    out.collect(new Tuple3<>(current, clicks, new HashMap<String, Integer>()));
-
-                            } catch (NumberFormatException e) {
-                                return;
-                            }
-
-
-                        } else {
-                            throw new Exception("Wrong column length: " + cols.length + "; " + Arrays.toString(cols));
-                        }
-                    }
+            // Translate article name and target name
+            translateInput = translateInput
+                // article name
+                .join(langLinks)
+                .where(ClickStreamTranslateTuple.ARTICLE_ID_KEY)
+                .equalTo(LangLinkTuple.PAGE_ID_KEY)
+                .with((JoinFunction<ClickStreamTranslateTuple, LangLinkTuple, ClickStreamTranslateTuple>) (cs, ll) -> {
+                    // Replace names with translated values
+                    System.out.println("TRANLATE (articleName) " + cs.getArticleName() + " => " + ll.getTargetTitle());
+                    cs.setField(ll.getTargetTitle(), ClickStreamTranslateTuple.ARTICLE_NAME_KEY);
+                    return cs;
                 })
-                .groupBy(0)
-                .reduceGroup(new GroupReduceFunction<Tuple3<String, Integer, HashMap<String, Integer>>, Tuple3<String, Integer, HashMap<String, Integer>>>() {
-                    @Override
-                    public void reduce(Iterable<Tuple3<String, Integer, HashMap<String, Integer>>> in, Collector<Tuple3<String, Integer, HashMap<String, Integer>>> out) throws Exception {
-                        Iterator<Tuple3<String, Integer, HashMap<String, Integer>>> iterator = in.iterator();
-                        int impressions = 0;
-                        HashMap<String, Integer> clicks = null;
-                        String article = null;
-
-                        while (iterator.hasNext()) {
-                            Tuple3<String, Integer, HashMap<String, Integer>> record = iterator.next();
-
-                            if (article == null) {
-                                article = record.f0;
-                                impressions = record.f1;
-                                clicks = record.f2;
-                            } else {
-                                impressions += record.f1;
-                                clicks.putAll(record.f2);
-                            }
-                        }
-
-                        out.collect(new Tuple3<>(article, impressions, clicks));
-                    }
-                })
+                // target name
+                .join(langLinks)
+                .where(ClickStreamTranslateTuple.TARGET_ID_KEY)
+                .equalTo(LangLinkTuple.PAGE_ID_KEY)
+                .with((JoinFunction<ClickStreamTranslateTuple, LangLinkTuple, ClickStreamTranslateTuple>) (cs, ll) -> {
+                    // Replace names with translated values
+                    System.out.println("TRANLATE (targetName) " + cs.getTargetName() + " => " + ll.getTargetTitle());
+                    cs.setField(ll.getTargetTitle(), ClickStreamTranslateTuple.TARGET_NAME_KEY);
+                    return cs;
+                });
                 ;
-
-    }
-
-
-    public static HashMap<String, Integer> getClicksOnLink(String link, int clicks) {
-        HashMap<String, Integer> res = new HashMap<>();
-        res.put(link, clicks);
-        return res;
-    }
-
-    /**
-     * Returns Tuple3 with (String) article name, (String) link name, (Integer) clicks count (from article name to link name)
-     *
-     * @param env
-     * @param filename Path to click stream data set
-     * @return
-     */
-    public static DataSet<Tuple3<String, String, Integer>> getClickStreamDataSet(ExecutionEnvironment env, String filename) {
-        return env.readTextFile(filename)
-                .flatMap(new FlatMapFunction<String, Tuple3<String, String, Integer>>() {
-                    @Override
-                    public void flatMap(String s, Collector<Tuple3<String, String, Integer>> out) throws Exception {
-                        String[] cols = s.split(Pattern.quote("\t"));
-
-                        // Replace underscores?
-                        // e.g. 'Tis_So_Sweet_to_Trust_in_Jesus
-
-                        if (cols.length == 6) {
-                            if (filterType.equals(cols[5]) && !filterNameSpaces.contains(cols[3])) {
-                                out.collect(new Tuple3<>(
-                                        cols[3],
-                                        cols[4],
-                                        cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2])
-                                ));
-                            }
-                        } else {
-                            throw new Exception("Wrong column length: " + cols.length + "; " + Arrays.toString(cols));
-                        }
-                    }
-                })
-                ;
-    }
-
-
-    public static void main(String[] args) throws Exception {
-
-        // set up the execution environment
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
-        if (args.length < 4) {
-            System.err.print("Error: Parameter missing! Required: CLICKSTREAM SEEALSO LINKS OUTPUT, Current: " + Arrays.toString(args));
-            System.exit(1);
         }
 
-        String linksFilename = args[2];
-        String outputFilename = args[3];
+//        try {
+//            translateInput.print();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-        // prev_title, curr_title, n
-        DataSet<Tuple3<String, String, Integer>> clickStream = getClickStreamDataSet(env, args[0]);
+        // Transform translateInput into normal input
+        DataSet<ClickStreamTuple> input = translateInput.flatMap(new FlatMapFunction<ClickStreamTranslateTuple, ClickStreamTuple>() {
+            @Override
+            public void flatMap(ClickStreamTranslateTuple in, Collector<ClickStreamTuple> out) throws Exception {
 
-        DataSet<Tuple2<String, ArrayList<String>>> seeAlso = env.readTextFile(args[1])
-                .map(new SeeAlsoInputMapper());
+                out.collect(new ClickStreamTuple(
+                            in.getArticleName(), //referrerName,
+                            in.getArticleId(), //referrerId,
+                            0,
+                            ClickStreamDataSetReader.getOutMap(in.getTargetName(), in.getClicks()),
+                            ClickStreamDataSetReader.getOutMap(in.getTargetName(), in.getTargetId())
+                    ));
 
-        DataSet<Tuple2<String, HashSet<String>>> links = SeeAlsoEvaluation.getLinkDataSet(env, linksFilename);
+                // Impressions
+                if (in.getClicks() > 0)
+                    out.collect(new ClickStreamTuple(in.getTargetName(), in.getTargetId(), in.getClicks(), new HashMap<>(), new HashMap<>()));
+            }
+        });
 
-        DataSet<Tuple3<String, String, Integer>> res = seeAlso
-                .coGroup(links)
-                .where(0)
-                .equalTo(0)
-                .with(new BetterSeeAlsoLinkExistsFilter())
-                .coGroup(clickStream)
-                .where(0)
-                .equalTo(0)
-                .with(new CoGroupFunction<Tuple2<String, ArrayList<String>>, Tuple3<String, String, Integer>, Tuple3<String, String, Integer>>() {
+//        try {
+//            input.print();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        // Group and reduce click streams
+        return input
+                .groupBy(0)
+                .reduce(new ReduceFunction<ClickStreamTuple>() {
                     @Override
-                    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> seeAlso, Iterable<Tuple3<String, String, Integer>> clickStream, Collector<Tuple3<String, String, Integer>> out) throws Exception {
-                        Iterator<Tuple2<String, ArrayList<String>>> seeAlsoIterator = seeAlso.iterator();
-                        Iterator<Tuple3<String, String, Integer>> clickStreamIterator = clickStream.iterator();
+                    public ClickStreamTuple reduce(ClickStreamTuple a, ClickStreamTuple b) throws Exception {
 
-                        if (seeAlsoIterator.hasNext()) {
-                            Tuple2<String, ArrayList<String>> seeAlsoRecord = seeAlsoIterator.next();
-                            String article = seeAlsoRecord.getField(0);
-                            ArrayList<String> linkList = seeAlsoRecord.getField(1);
+                        a.getOutClicks().putAll(b.getOutClicks());
+                        a.getOutIds().putAll(b.getOutIds());
 
-                            HashMap<String, Integer> clickStreamMap = new HashMap<>();
-
-                            while (clickStreamIterator.hasNext()) {
-                                Tuple3<String, String, Integer> clickStreamRecord = clickStreamIterator.next();
-
-                                clickStreamMap.put((String) clickStreamRecord.getField(1), (Integer) clickStreamRecord.getField(2));
-                            }
-
-                            for (String link : linkList) {
-                                out.collect(new Tuple3<>(
-                                        article,
-                                        link,
-                                        clickStreamMap.containsKey(link) ? clickStreamMap.get(link) : 0
-                                ));
-                            }
-
-                        }
+                        return new ClickStreamTuple(
+                                a.getArticleName(),
+                                a.getArticleId(),
+                                a.getImpressions() + b.getImpressions(),
+                                a.getOutClicks(),
+                                a.getOutIds());
                     }
-                });
-
-
-        new WikiSimOutputWriter<Tuple3<String, String, Integer>>("ClickStream evaluation")
-                .write(env, res, outputFilename);
+                })
+                ;
     }
+
+    /**
+     * Helper methods that enables reading from multiple inputs
+     *
+     * @param env
+     * @param filename Separate multiple inputs by comma
+     * @return
+     */
+    private static DataSet<ClickStreamTranslateTuple> readClickStreamDataSetInputs(ExecutionEnvironment env, String filename) {
+        // Read input(s)
+        DataSet<ClickStreamTranslateTuple> input = null;
+        for(String f: filename.split(",")) {
+            // Read current input
+            DataSet<ClickStreamTranslateTuple> currentInput = env.readTextFile(f)
+                    .flatMap(new ClickStreamDataSetReader());
+            if(input == null) {
+                // Set if it is first input
+                input = currentInput;
+            } else {
+                // Otherwise union with previous inputs
+                input = input.union(currentInput);
+            }
+        }
+        return input;
+    }
+
 }

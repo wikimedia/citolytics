@@ -5,11 +5,11 @@ import org.apache.flink.api.java.tuple.Tuple5;
 /**
  * Represents a single recommendation from A -> B.
  */
-public class WikiSimSingleResult extends Tuple5<String, String, Double, Integer, Integer> {
-    public WikiSimSingleResult() {}
+public class WikiSimRecommendation extends Tuple5<String, String, Double, Integer, Integer> {
+    public WikiSimRecommendation() {}
 
     @Deprecated
-    public WikiSimSingleResult(String sourceTitle, String recommendationTitle, Double score) {
+    public WikiSimRecommendation(String sourceTitle, String recommendationTitle, Double score) {
         f0 = sourceTitle;
         f1 = recommendationTitle;
         f2 = score;
@@ -17,7 +17,7 @@ public class WikiSimSingleResult extends Tuple5<String, String, Double, Integer,
         f4 = 0;
     }
 
-    public WikiSimSingleResult(String sourceTitle, String recommendationTitle, Double score, int sourceId, int recommendationId) {
+    public WikiSimRecommendation(String sourceTitle, String recommendationTitle, Double score, int sourceId, int recommendationId) {
         f0 = sourceTitle;
         f1 = recommendationTitle;
         f2 = score;

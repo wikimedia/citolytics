@@ -3,16 +3,16 @@ package org.wikipedia.citolytics.seealso.operators;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.WikiSimSingleResult;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
 
 import java.util.HashSet;
 import java.util.Iterator;
 
 
-public class BetterLinkExistsFilter implements CoGroupFunction<WikiSimSingleResult, Tuple2<String, HashSet<String>>, WikiSimSingleResult> {
+public class BetterLinkExistsFilter implements CoGroupFunction<WikiSimRecommendation, Tuple2<String, HashSet<String>>, WikiSimRecommendation> {
     @Override
-    public void coGroup(Iterable<WikiSimSingleResult> a, Iterable<Tuple2<String, HashSet<String>>> b, Collector<WikiSimSingleResult> out) throws Exception {
-        Iterator<WikiSimSingleResult> iteratorA = a.iterator();
+    public void coGroup(Iterable<WikiSimRecommendation> a, Iterable<Tuple2<String, HashSet<String>>> b, Collector<WikiSimRecommendation> out) throws Exception {
+        Iterator<WikiSimRecommendation> iteratorA = a.iterator();
         Iterator<Tuple2<String, HashSet<String>>> iteratorB = b.iterator();
 
         // Collect if not in HashSet
@@ -20,7 +20,7 @@ public class BetterLinkExistsFilter implements CoGroupFunction<WikiSimSingleResu
             if (!iteratorB.hasNext()) {
                 out.collect(iteratorA.next());
             } else {
-                WikiSimSingleResult aRecord = iteratorA.next();
+                WikiSimRecommendation aRecord = iteratorA.next();
                 Tuple2<String, HashSet<String>> bRecord = iteratorB.next();
 
                 if (!((HashSet) bRecord.getField(1)).contains(aRecord.getField(1))) {

@@ -1,22 +1,18 @@
 package org.wikipedia.citolytics.clickstream;
 
-import com.esotericsoftware.minlog.Log;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.clickstream.operators.EvaluateClicks;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.better.MLTInputMapper;
-import org.wikipedia.citolytics.seealso.better.WikiSimGroupReducer;
-import org.wikipedia.citolytics.seealso.better.WikiSimInputMapper;
+import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult> {
@@ -24,6 +20,9 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
     public static String outputAggregateFilename;
+
+    private static String langLinksInputFilename = null;
+    private static String lang = null;
 
     private int topK = 10;
     private boolean mltResults = false;
@@ -42,6 +41,9 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         outputFilename = params.getRequired("output");
         topK = params.getInt("topk", 10);
 
+        langLinksInputFilename = params.get("langlinks");
+        lang = params.get("lang");
+
         int fieldScore = params.getInt("score", 5);
         int fieldPageA = params.getInt("page-a", 1);
         int fieldPageB = params.getInt("page-b", 2);
@@ -50,7 +52,11 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         setJobName("ClickStreamEvaluation");
 
         // Gold standard
-        DataSet<Tuple3<String, Integer, HashMap<String, Integer>>> clickStreamDataSet = ClickStreamHelper.getRichClickStreamDataSet(env, clickStreamInputFilename);
+
+        // Multi language evaluation
+//        if(lang != null && !lang.equalsIgnoreCase("en") && langLinksInputFilename != null && !langLinksInputFilename.isEmpty()) {
+            DataSet<ClickStreamTuple> clickStreamDataSet = ClickStreamHelper.getTranslatedClickStreamDataSet(env, clickStreamInputFilename, lang, langLinksInputFilename);
+//        }
 
         // WikiSim
         DataSet<WikiSimTopResults> wikiSimGroupedDataSet;
@@ -60,7 +66,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
             // CPA
             jobName += " CPA Score=" + fieldScore + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
 
-            wikiSimGroupedDataSet = readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
+            wikiSimGroupedDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
         } else {
             // MLT
             jobName += " MLT";
@@ -73,28 +79,36 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                     .withParameters(config);
         }
 
+        // Multi language evaluation
+//        if(lang != null && !lang.equalsIgnoreCase("en") && langLinksInputFilename != null && !langLinksInputFilename.isEmpty()) {
+//            // Load enwiki language links
+//            DataSet<LangLinkTuple> langLinks = MultiLang.readLangLinksDataSet(env, langLinksInputFilename, lang);
+//
+//            clickStreamDataSet.join(langLinks)
+//                    .where(ClickStreamTuple.ARTICLE_ID_KEY)
+//                    .equalTo(LangLinkTuple.PAGE_ID_KEY)
+//                    .with(new JoinFunction<ClickStreamTuple, LangLinkTuple, Object>() {
+//                    }
+//        }
+
+
+        try {
+            System.out.println("WIKISIM = ");
+            wikiSimGroupedDataSet.print();
+            System.out.println("CS = ....");
+            clickStreamDataSet.print();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // Evaluation
         result = wikiSimGroupedDataSet
                 .coGroup(clickStreamDataSet)
-                .where(0)
-                .equalTo(0)
+                .where(0) // source name
+                .equalTo(0) // click stream article name
                 .with(new EvaluateClicks(topK));
     }
 
-    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) {
 
-        Log.info("Reading WikiSim from " + filename);
-
-        Configuration config = new Configuration();
-
-        config.setInteger("fieldPageA", fieldPageA);
-        config.setInteger("fieldPageB", fieldPageB);
-        config.setInteger("fieldScore", fieldScore);
-
-        return env.readTextFile(filename)
-                .flatMap(new WikiSimInputMapper())
-                .withParameters(config)
-                .groupBy(0)
-                .reduceGroup(new WikiSimGroupReducer(topK));
-    }
 }

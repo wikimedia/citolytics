@@ -45,7 +45,8 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
      *
      * @return Job
      */
-    public WikiSimAbstractJob verbose() {
+    public WikiSimAbstractJob silent() {
+//        env.getConfig().disable
         env.getConfig().disableSysoutLogging();
         return this;
     }

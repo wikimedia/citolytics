@@ -98,5 +98,5 @@ prev_id	curr_id	n	prev_title	curr_title	type
 22344579	331586	30	Academy_Award_for_Best_Original_Screenplay	"Crocodile"_Dundee	link
 1872502	331586	10	Boy-Scoutz_'n_the_Hood	"Crocodile"_Dundee	other
 5644	331586	13	Comedy_film	"Crocodile"_Dundee	link
-0	0	10	QQQ	CPA link	link
-0	0	20	QQQ	CPA nolink	link
+1	2	10	QQQ	CPA link	link
+1	3	20	QQQ	CPA nolink	link

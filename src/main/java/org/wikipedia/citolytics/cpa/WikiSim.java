@@ -128,13 +128,12 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         // Read Wikipedia XML Dump
         wikiDump = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
-        // Calculate results
+        // Compute CPA recommendations
         result = wikiDump.flatMap(new DocumentProcessor()) // TODO alpha in flatMap
                 .withParameters(getConfig())
-                .groupBy(0) // Group by LinkTuple.hash()
+                .groupBy(WikiSimResult.HASH_KEY)
                 .reduce(new CPAReducer())
                 .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
-//                    .setParallelism(1)
                 .withParameters(getConfig());
 
 

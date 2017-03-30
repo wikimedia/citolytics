@@ -3,7 +3,7 @@ package org.wikipedia.citolytics.seealso.better;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.WikiSimSingleResult;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
 import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
@@ -11,7 +11,7 @@ import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimSingleResult, WikiSimTopResults> {
+public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommendation, WikiSimTopResults> {
     private int maxQueueSize = 20;
 
     public WikiSimGroupReducer() {
@@ -22,10 +22,10 @@ public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimSingleRes
     }
 
     @Override
-    public void reduce(Iterable<WikiSimSingleResult> in, Collector<WikiSimTopResults> out) throws Exception {
-        Iterator<WikiSimSingleResult> iterator = in.iterator();
+    public void reduce(Iterable<WikiSimRecommendation> in, Collector<WikiSimTopResults> out) throws Exception {
+        Iterator<WikiSimRecommendation> iterator = in.iterator();
 
-        WikiSimSingleResult joinRecord = null;
+        WikiSimRecommendation joinRecord = null;
 
         // Default: MinQueue = Smallest elements a kept in queue
         // -> Change: MaxQueue = Keep greatest elements

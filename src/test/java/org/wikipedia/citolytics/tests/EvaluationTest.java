@@ -13,7 +13,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.ClickStreamStats;
-import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
 import org.wikipedia.citolytics.seealso.better.EvaluateSeeAlso;
@@ -24,19 +23,6 @@ import org.wikipedia.citolytics.tests.utils.Tester;
 import java.util.*;
 
 public class EvaluationTest extends Tester {
-
-    @Deprecated
-    public void TestClickStream() throws Exception {
-        ClickStreamHelper.main(
-                new String[]{
-                        "file://" + getClass().getClassLoader().getResources("2015_02_clickstream_preview.tsv").nextElement().getPath(),
-                        "file://" + getClass().getClassLoader().getResources("evaluation_seealso.csv").nextElement().getPath(),
-                        "file://" + getClass().getClassLoader().getResources("evaluation_links.csv").nextElement().getPath(),
-
-                        "print"
-                }
-        );
-    }
 
     @Ignore
     @Test

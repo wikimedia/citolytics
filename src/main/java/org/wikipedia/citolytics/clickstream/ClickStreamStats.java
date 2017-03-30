@@ -6,8 +6,8 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.utils.WikiSimOutputWriter;
 
@@ -29,9 +29,9 @@ public class ClickStreamStats {
         // Count articles with ClickStream data, target links
         DataSet<Tuple2<Integer, Integer>> output = ClickStreamHelper.getClickStreamDataSet(env, args[0])
                 .groupBy(0)
-                .reduceGroup(new GroupReduceFunction<Tuple3<String, String, Integer>, Tuple2<Integer, Integer>>() {
+                .reduceGroup(new GroupReduceFunction<ClickStreamTuple, Tuple2<Integer, Integer>>() {
                     @Override
-                    public void reduce(Iterable<Tuple3<String, String, Integer>> in, Collector<Tuple2<Integer, Integer>> out) throws Exception {
+                    public void reduce(Iterable<ClickStreamTuple> in, Collector<Tuple2<Integer, Integer>> out) throws Exception {
                         out.collect(new Tuple2<>(1, Iterators.size(in.iterator())));
                     }
                 })

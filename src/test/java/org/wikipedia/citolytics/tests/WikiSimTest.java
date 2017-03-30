@@ -24,7 +24,7 @@ public class WikiSimTest extends Tester {
     @Before
     public void setUp() throws Exception {
         job = new WikiSim();
-        job.verbose();
+        job.silent();
         job.enableLocalEnvironment();
     }
 
@@ -86,7 +86,7 @@ public class WikiSimTest extends Tester {
         assertOutput(job.getOutput(), getExpectedOutputPath());
 
 //        job.enableSingleOutputFile()
-//                .verbose()
+//                .silent()
 //                .start(("--input " + resource("fixtures/wikisim_simple.xml.input") + " --group-reduce --output " + resource("fixtures/wikisim_simple.xml.expected")).split(" "));
 
 

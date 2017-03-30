@@ -1,10 +1,8 @@
 package org.wikipedia.citolytics.clickstream.utils;
 
 import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
-
-import java.util.HashMap;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 
 /**
  * Check if
@@ -13,7 +11,7 @@ import java.util.HashMap;
  * <p/>
  * Outputs all invalid records.
  */
-public class ValidateClickStreamData extends WikiSimAbstractJob<Tuple3<String, Integer, HashMap<String, Integer>>> {
+public class ValidateClickStreamData extends WikiSimAbstractJob<ClickStreamTuple> {
 
     public static void main(String[] args) throws Exception {
         new ValidateClickStreamData().start(args);
@@ -24,14 +22,14 @@ public class ValidateClickStreamData extends WikiSimAbstractJob<Tuple3<String, I
         String clickStreamInputFilename = args[0];
         outputFilename = args[1];
 
-        result = ClickStreamHelper.getRichClickStreamDataSet(env, clickStreamInputFilename)
-                .filter(new FilterFunction<Tuple3<String, Integer, HashMap<String, Integer>>>() {
+        result = ClickStreamHelper.getClickStreamDataSet(env, clickStreamInputFilename)
+                .filter(new FilterFunction<ClickStreamTuple>() {
                     @Override
-                    public boolean filter(Tuple3<String, Integer, HashMap<String, Integer>> test) throws Exception {
-                        int impressions = test.f1;
+                    public boolean filter(ClickStreamTuple test) throws Exception {
+                        int impressions = test.getImpressions();
                         int allClicks = 0;
 
-                        for (int clicks : test.f2.values()) {
+                        for (int clicks : test.getOutClicks().values()) {
                             allClicks += clicks;
                         }
 

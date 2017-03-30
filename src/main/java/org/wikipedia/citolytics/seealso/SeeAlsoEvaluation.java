@@ -8,7 +8,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
-import org.wikipedia.citolytics.cpa.types.WikiSimSingleResult;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
 import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.better.*;
 import org.wikipedia.citolytics.seealso.operators.BetterLinkExistsFilter;
@@ -84,8 +84,8 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
             config.setInteger("fieldPageB", fieldPageB);
             config.setInteger("fieldScore", scoreField);
 
-            DataSet<WikiSimSingleResult> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
-                    .flatMap(new WikiSimInputMapper())
+            DataSet<WikiSimRecommendation> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
+                    .flatMap(new WikiSimReader())
                     .withParameters(config);
 
             // LinkFilter

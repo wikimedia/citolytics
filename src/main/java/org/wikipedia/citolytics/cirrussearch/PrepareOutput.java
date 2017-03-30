@@ -10,13 +10,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
-import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
-import org.wikipedia.citolytics.cpa.types.WikiSimSingleResult;
 import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
 import org.wikipedia.citolytics.seealso.better.WikiSimGroupReducer;
+import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
@@ -74,20 +74,20 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             wikiSimJob.plan();
 
             wikiSimData = wikiSimJob.result
-                    .flatMap(new FlatMapFunction<WikiSimResult, WikiSimSingleResult>() {
+                    .flatMap(new FlatMapFunction<WikiSimResult, WikiSimRecommendation>() {
                         private final int alphaKey = 0;
                         @Override
-                        public void flatMap(WikiSimResult in, Collector<WikiSimSingleResult> out) throws Exception {
+                        public void flatMap(WikiSimResult in, Collector<WikiSimRecommendation> out) throws Exception {
 
-                            out.collect(new WikiSimSingleResult(in.getPageA(), in.getPageB(), in.getCPI(alphaKey), in.getPageAId(), in.getPageBId()));
-                            out.collect(new WikiSimSingleResult(in.getPageB(), in.getPageA(), in.getCPI(alphaKey), in.getPageBId(), in.getPageAId()));
+                            out.collect(new WikiSimRecommendation(in.getPageA(), in.getPageB(), in.getCPI(alphaKey), in.getPageAId(), in.getPageBId()));
+                            out.collect(new WikiSimRecommendation(in.getPageB(), in.getPageA(), in.getCPI(alphaKey), in.getPageBId(), in.getPageAId()));
                         }
                     })
                     .groupBy(0)
                     .reduceGroup(new WikiSimGroupReducer(topK));
         } else {
             // Use existing result list;
-            wikiSimData = ClickStreamEvaluation.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
+            wikiSimData = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
         }
 
         // Transform result list to JSON with page ids

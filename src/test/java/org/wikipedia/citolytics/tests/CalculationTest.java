@@ -52,30 +52,30 @@ public class CalculationTest extends Tester {
 
         RedirectExtractor job1 = new RedirectExtractor();
         job1.enableSingleOutputFile()
-                .verbose()
+                .silent()
                 .start("--input " + inputA + " --output " + resource("completeTestRedirects.out"));
 
         WikiSim job2 = new WikiSim();
         job2.enableSingleOutputFile()
-                .verbose()
+                .silent()
                 .start("--input " + inputA + " --output " + resource("completeTestWikiSim.out") + "" +
                         " --alpha 2 --redirects " + resource("completeTestRedirects.out"));
 
         SeeAlsoExtractor job3 = new SeeAlsoExtractor();
         job3.enableSingleOutputFile()
-                .verbose()
+                .silent()
                 .start("--input " + inputA
                         + " --output " + resource("completeTestSeeAlso.out")
                         + " --redirects " + resource("completeTestRedirects.out"));
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
-        job5.verbose()
+        job5.silent()
                 .start("--wikisim " + resource("completeTestWikiSim.out")
                         + " --output local"
                         + " --gold " + resource("completeTestSeeAlso.out"));
 
         ClickStreamEvaluation job6 = new ClickStreamEvaluation();
-        job6.verbose()
+        job6.silent()
                 .start("--wikisim " + resource("completeTestWikiSim.out")
                         + " --gold " + inputB
                         + " --output local");
@@ -107,7 +107,7 @@ public class CalculationTest extends Tester {
 
         for (ClickStreamResult r : job6.output) {
             if (r.getArticle().equals("Article C")) {
-                assertEquals("Invalid getResultsCount (result=" + r + ")", 7, r.getResults().size());
+                assertEquals("Invalid getResultsCount (result=" + r + ")", 7, r.getRecommendations().size());
                 assertEquals("Invalid getImpressions (result=" + r + ")", 99, r.getImpressions());
                 assertEquals("Invalid getTotalClicks (result=" + r + ")", 0, r.getTotalClicks());
                 assertEquals("Invalid getClicks1", 0, r.getClicks1());
@@ -119,7 +119,7 @@ public class CalculationTest extends Tester {
 
 
             if (r.getArticle().equals("Article A")) {
-                assertEquals("Invalid getResultsCount (result=" + r + ")", 6, r.getResults().size());
+                assertEquals("Invalid getResultsCount (result=" + r + ")", 6, r.getRecommendations().size());
                 assertEquals("Invalid getImpressions (result=" + r + ")", 0, r.getImpressions());
                 assertEquals("Invalid getTotalClicks (result=" + r + ")", 20, r.getTotalClicks());
                 assertEquals("Invalid getClicks1", 20, r.getClicks1());
@@ -151,7 +151,7 @@ public class CalculationTest extends Tester {
         // with infobox removal= 118341
         // with old namespace check = 126253
         job.enableLocalEnvironment()
-                .verbose()
+                .silent()
                 .start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (keep infobox)", 125751, job.output.size());
@@ -159,7 +159,7 @@ public class CalculationTest extends Tester {
         // with old namespace check = 118341
         job = new WikiSim();
         job.enableLocalEnvironment()
-                .verbose()
+                .silent()
                 .start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (removed infobox)", 117855, job.output.size());
@@ -173,7 +173,7 @@ public class CalculationTest extends Tester {
         WikiSim job = new WikiSim();
         job
                 .enableLocalEnvironment()
-                .verbose()
+                .silent()
                 .start(("--input " + resource("wikisim_missingids.xml") + " --remove-missing-ids --output local").split(" "));
 
         assertEquals("Invalid output size", 3, job.output.size());
@@ -203,7 +203,7 @@ public class CalculationTest extends Tester {
         CheckOutputIntegrity job = new CheckOutputIntegrity();
 
         job.enableLocalEnvironment()
-                .verbose()
+                .silent()
                 .start(new String[]{
                 resource("wikisim_output.csv"),
                 resource("wikisim_output_b.csv"),
@@ -227,7 +227,7 @@ public class CalculationTest extends Tester {
 
         WikiSim job = new WikiSim();
         job.enableLocalEnvironment()
-                .verbose()
+                .silent()
                 .start(new String[]{
                 resource("wiki2006.xml"),
                 "local", "0.81,1.5,1.25", "0", "0", "2006"});

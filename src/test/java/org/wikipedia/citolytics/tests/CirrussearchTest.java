@@ -1,20 +1,30 @@
 package org.wikipedia.citolytics.tests;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cirrussearch.PrepareOutput;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
+import java.io.FileNotFoundException;
+
 /**
  * Test for all CirrusSearch-related jobs
  */
 public class CirrussearchTest extends Tester {
+    private String wikiSimPath;
+
+    @Before
+    public void before() throws FileNotFoundException {
+        wikiSimPath = resource("wikisim_output.csv");
+    }
+
 
     @Ignore
     @Test
     public void TestPrepareOutputPrint() throws Exception {
-        PrepareOutput.main(("--wikisim " + resource("wikisim_output.csv")
+        PrepareOutput.main(("--wikisim " + wikiSimPath
                 + " --wikidump " + resource("wikiSeeAlso2.xml") + " --output print --topk 10").split(" "));
     }
 

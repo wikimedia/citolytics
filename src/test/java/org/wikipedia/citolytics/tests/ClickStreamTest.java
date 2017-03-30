@@ -1,24 +1,49 @@
 package org.wikipedia.citolytics.tests;
 
-import org.apache.flink.api.java.tuple.Tuple3;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.utils.ValidateClickStreamData;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ClickStreamTest extends Tester {
+    private String wikiSimPath;
+    private String wikiSimLangSimplePath;
+    private String dataSetPath;
+    private String dataSetPath2;
+    private String dataSetPathSimpleLang;
+    private String langLinksPath;
+
+
+
+    @Before
+    public void before() throws FileNotFoundException {
+        wikiSimPath = resource("ClickStreamTest/wikisim_output.csv");
+        wikiSimLangSimplePath = resource("ClickStreamTest/wikisim_output_lang_simple.csv");
+        dataSetPath = resource("ClickStreamTest/clickstream.tsv");
+
+        dataSetPath2 = resource("ClickStreamTest/clickstream_2.tsv");
+        dataSetPathSimpleLang = resource("ClickStreamTest/clickstream_lang_simple.tsv");
+        langLinksPath = resource("ClickStreamTest/lang_links_enwiki.sql");
+
+    }
+
     @Ignore
     @Test
     public void validateLocalDataSet() throws Exception {
         ValidateClickStreamData.main(
                 new String[]{
-                        resource("2015_02_clickstream_preview.tsv"),
+                        dataSetPath,
                         "print"
                 });
     }
@@ -27,39 +52,96 @@ public class ClickStreamTest extends Tester {
     public void validateDataSet() throws Exception {
         ValidateClickStreamData job = new ValidateClickStreamData();
 
-        job.enableLocalEnvironment().verbose().start(new String[]{resource("2015_02_clickstream_preview.tsv"), "local"});
+        job
+                .enableLocalEnvironment()
+                .silent()
+                .start(new String[]{
+                        dataSetPath + "," + dataSetPath2,
+                        "local"
+                });
 
-        if (job.output.size() != 44)
-            throw new Exception("Number of results != 44");
+        assertEquals("Invalid number of records in data set", 44, job.output.size());
     }
+
 
     @Ignore
     @Test
     public void TestClickStreamEvaluation() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.start("--wikisim " + resource("wikisim_output.csv") // TODO check resource conflict with other tests
-                + " --gold " + resource("2015_02_clickstream_preview.tsv")
+        job.start("--wikisim " + wikiSimPath
+                + " --gold " + dataSetPath
+                + "," + dataSetPath2 // Multiple inputs
                 + " --output local");
 
         // Needles
-        ArrayList<ClickStreamResult> needles = new ArrayList<>();
+        ArrayList<ClickStreamResult> needles = new ArrayList<>(
+            Arrays.asList(new ClickStreamResult[]{
+                new ClickStreamResult(
+                        "QQQ",
+                        new ArrayList<>(Arrays.asList(new ClickStreamRecommendationResult[]{
+                                new ClickStreamRecommendationResult("CPA link", 3.0761422E7, 10),
+                                new ClickStreamRecommendationResult("CPA nolink", 3.0761422E7, 20)
+                        })),
+                        2,
+                        0,
+                        38,
+                        30,
+                        30,
+                        10
+                )
+            })
+        );
 
-        ClickStreamResult n1 = new ClickStreamResult();
-        n1.f0 = "QQQ";
-        n1.f1 = new ArrayList<>();
-        n1.f1.add(new Tuple3<>("CPA link", 14.0, 10));
-        n1.f1.add(new Tuple3<>("CPA nolink", 14.0, 20));
-        n1.f2 = 2;
-        n1.f3 = 0;
-        n1.f4 = 38;
-        n1.f5 = 30;
-        n1.f6 = 30;
-        n1.f7 = 10;
+//        for(ClickStreamResult r: job.output) {
+//            System.out.println(r);
+//        }
 
-        needles.add(n1);
+        assertTrue("Needles not found", job.output.containsAll(needles));
+    }
 
-        System.out.println(job.output);
+    @Test
+    public void testMultiLanguageClickStreamEvaluation() throws Exception {
+//        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+//        job.start("--wikisim " + resource("wikisim_output_lang_simple.csv")
+//                + " --gold " + resource("clickstream.tsv")
+//                + "," + resource("clickstream_2.tsv") // Multiple inputs
+//                + " --lang simple"
+//                + " --langlinks " + resource("wikisim_output_lang_simple.csv")
+//                + " --output local");
+
+        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+        job.enableLocalEnvironment().silent().start("--wikisim " + wikiSimLangSimplePath
+                + " --gold " + dataSetPathSimpleLang
+                + " --lang simple"
+                + " --langlinks " + langLinksPath
+                + " --output local");
+        String langPrefix = "simple_";
+
+        // Needles
+        ArrayList<ClickStreamResult> needles = new ArrayList<>(
+                Arrays.asList(new ClickStreamResult[]{
+                        new ClickStreamResult(
+                                langPrefix + "QQQ",
+                                new ArrayList<>(Arrays.asList(new ClickStreamRecommendationResult[]{
+                                        new ClickStreamRecommendationResult(langPrefix + "CPA link", 3.0761422E7, 10),
+                                        new ClickStreamRecommendationResult(langPrefix + "CPA nolink", 3.0761422E7, 20)
+                                })),
+                                2,
+                                0,
+                                38,
+                                30,
+                                30,
+                                10
+                        )
+                })
+        );
+
+        for(ClickStreamResult r: job.output) {
+            System.out.println(r);
+        }
 
         assertTrue("Needles not found", job.output.containsAll(needles));
     }
