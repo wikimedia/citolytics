@@ -53,7 +53,6 @@ public class ClickStreamHelper {
                 .equalTo(LangLinkTuple.PAGE_ID_KEY)
                 .with((JoinFunction<ClickStreamTranslateTuple, LangLinkTuple, ClickStreamTranslateTuple>) (cs, ll) -> {
                     // Replace names with translated values
-                    System.out.println("TRANLATE (articleName) " + cs.getArticleName() + " => " + ll.getTargetTitle());
                     cs.setField(ll.getTargetTitle(), ClickStreamTranslateTuple.ARTICLE_NAME_KEY);
                     return cs;
                 })
@@ -63,43 +62,31 @@ public class ClickStreamHelper {
                 .equalTo(LangLinkTuple.PAGE_ID_KEY)
                 .with((JoinFunction<ClickStreamTranslateTuple, LangLinkTuple, ClickStreamTranslateTuple>) (cs, ll) -> {
                     // Replace names with translated values
-                    System.out.println("TRANLATE (targetName) " + cs.getTargetName() + " => " + ll.getTargetTitle());
                     cs.setField(ll.getTargetTitle(), ClickStreamTranslateTuple.TARGET_NAME_KEY);
                     return cs;
                 });
-                ;
-        }
 
-//        try {
-//            translateInput.print();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        }
 
         // Transform translateInput into normal input
         DataSet<ClickStreamTuple> input = translateInput.flatMap(new FlatMapFunction<ClickStreamTranslateTuple, ClickStreamTuple>() {
             @Override
             public void flatMap(ClickStreamTranslateTuple in, Collector<ClickStreamTuple> out) throws Exception {
-
-                out.collect(new ClickStreamTuple(
-                            in.getArticleName(), //referrerName,
-                            in.getArticleId(), //referrerId,
-                            0,
-                            ClickStreamDataSetReader.getOutMap(in.getTargetName(), in.getClicks()),
-                            ClickStreamDataSetReader.getOutMap(in.getTargetName(), in.getTargetId())
-                    ));
+                ClickStreamTuple t = new ClickStreamTuple(
+                        in.getArticleName(), //referrerName,
+                        in.getArticleId(), //referrerId,
+                        0,
+                        ClickStreamDataSetReader.getOutMap(in.getTargetName(), in.getClicks()),
+                        ClickStreamDataSetReader.getOutMap(in.getTargetName(), in.getTargetId())
+                );
+                out.collect(t);
 
                 // Impressions
-                if (in.getClicks() > 0)
+                if (in.getClicks() > 0) {
                     out.collect(new ClickStreamTuple(in.getTargetName(), in.getTargetId(), in.getClicks(), new HashMap<>(), new HashMap<>()));
+                }
             }
         });
-
-//        try {
-//            input.print();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
         // Group and reduce click streams
         return input
@@ -108,18 +95,22 @@ public class ClickStreamHelper {
                     @Override
                     public ClickStreamTuple reduce(ClickStreamTuple a, ClickStreamTuple b) throws Exception {
 
-                        a.getOutClicks().putAll(b.getOutClicks());
-                        a.getOutIds().putAll(b.getOutIds());
+                        HashMap<String, Integer> outClicks = new HashMap<>();
+                        outClicks.putAll(a.getOutClicks());
+                        outClicks.putAll(b.getOutClicks());
+
+                        HashMap<String, Integer> outIds = new HashMap<>();
+                        outIds.putAll(a.getOutIds());
+                        outIds.putAll(b.getOutIds());
 
                         return new ClickStreamTuple(
                                 a.getArticleName(),
                                 a.getArticleId(),
                                 a.getImpressions() + b.getImpressions(),
-                                a.getOutClicks(),
-                                a.getOutIds());
+                                outClicks,
+                                outIds);
                     }
-                })
-                ;
+                });
     }
 
     /**

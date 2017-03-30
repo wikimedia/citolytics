@@ -47,18 +47,7 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
                             currentId,
                             clicks
                     ));
-//                    out.collect(new ClickStreamTuple(
-//                            referrerName,
-//                            referrerId,
-//                            0,
-//                            getOutMap(currentName, clicks),
-//                            getOutMap(currentName, currentId)
-//                    ));
                 }
-
-                // Impressions
-//                if (clicks > 0)
-//                    out.collect(new ClickStreamTuple(currentName, currentId, clicks, new HashMap<String, Integer>(), new HashMap<String, Integer>()));
 
             } catch (NumberFormatException e) {
                 throw new Exception("Cannot read from clickstream data set. Col = " + s);

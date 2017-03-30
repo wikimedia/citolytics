@@ -63,10 +63,25 @@ public class ClickStreamTest extends Tester {
         assertEquals("Invalid number of records in data set", 44, job.output.size());
     }
 
+    @Test
+    public void testEvaluationSummary() throws Exception {
+        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+        job.start("--wikisim " + wikiSimPath
+                + " --gold " + dataSetPath
+                + "," + dataSetPath2 // Multiple inputs
+                + " --summary"
+                + " --output local");
+
+        assertEquals("Summary should have only a single result tuple", 1, job.output.size());
+        assertEquals("Recommendation count invalid", 2, job.output.get(0).getRecommendations().size());
+        assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
+        assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
+    }
 
     @Ignore
     @Test
-    public void TestClickStreamEvaluation() throws Exception {
+    public void testClickStreamEvaluation() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
         job.start("--wikisim " + wikiSimPath

@@ -7,6 +7,8 @@ import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
  * Represents the top-k recommendations with corresponding scores for a single page.
  */
 public class WikiSimTopResults extends Tuple3<String, WikiSimComparableResultList<Double>, Integer> {
+    public final static int SOURCE_TITLE_KEY = 0;
+
     public WikiSimTopResults() {
 
     }
@@ -29,7 +31,7 @@ public class WikiSimTopResults extends Tuple3<String, WikiSimComparableResultLis
     }
 
     public String getSourceTitle() {
-        return f0;
+        return getField(SOURCE_TITLE_KEY);
     }
 
     public int getSourceId() {

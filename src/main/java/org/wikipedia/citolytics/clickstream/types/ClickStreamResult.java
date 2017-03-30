@@ -13,16 +13,23 @@ import java.util.ArrayList;
 public class ClickStreamResult extends
         //    Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>
         Tuple8<String, ArrayList<ClickStreamRecommendationResult>, Integer, Integer, Integer, Integer, Integer, Integer> {
-
+    public final static int ARTICLE_KEY = 0;
+    public final static int RECOMMENDATIONS_LIST_KEY = 1;
+    public final static int RECOMMENDATIONS_COUNT_KEY = 2;
+    public final static int IMPRESSIONS_KEY = 3;
+    public final static int CLICKS_KEY = 4;
+    public final static int CLICKS_K1_KEY = 5;
+    public final static int CLICKS_K2_KEY = 6;
+    public final static int CLICKS_K3_KEY = 7;
 
     public ClickStreamResult() {
     }
 
-    public ClickStreamResult(String article, ArrayList<ClickStreamRecommendationResult> results, int resultsCount,
+    public ClickStreamResult(String article, ArrayList<ClickStreamRecommendationResult> recommendations, int recommendationsCount,
                              int impressions, int totalClicks, int clicks1, int clicks2, int clicks3) {
         f0 = article;
-        f1 = results;
-        f2 = resultsCount;
+        f1 = recommendations;
+        f2 = recommendationsCount;
         f3 = impressions;
         f4 = totalClicks;
         f5 = clicks1;
@@ -31,30 +38,30 @@ public class ClickStreamResult extends
     }
 
     public String getArticle() {
-        return f0;
+        return getField(ARTICLE_KEY);
     }
 
     public ArrayList<ClickStreamRecommendationResult> getRecommendations() {
-        return f1;
+        return getField(RECOMMENDATIONS_LIST_KEY);
     }
 
     public int getImpressions() {
-        return f3;
+        return getField(IMPRESSIONS_KEY);
     }
 
     public int getTotalClicks() {
-        return f4;
+        return getField(CLICKS_KEY);
     }
 
     public int getClicks1() {
-        return f5;
+        return getField(CLICKS_K1_KEY);
     }
 
     public int getClicks2() {
-        return f6;
+        return getField(CLICKS_K2_KEY);
     }
 
     public int getClicks3() {
-        return f7;
+        return getField(CLICKS_K3_KEY);
     }
 }

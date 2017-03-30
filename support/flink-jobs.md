@@ -8,34 +8,39 @@ You run Flink jobs from this repository by using the following commands. Degree 
     export SPARK_HOME=/share/spark-1.6.0-bin-hadoop2.4
     export FLINK_HOME=/share/flink/current
     export HDFS_PATH=hdfs://ibm-power-1.dima.tu-berlin.de:44000
+    export JAR=/home/mschwarzer/citolytics/target/cpa-0.1.jar
+    export PARALLELISM=150
+        
     export WIKI="enwiki"
     export WIKI_DUMP=$HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170101-pages-articles.xml
     export INTERMEDIATE_DIR=$HDFS_PATH/user/mschwarzer/$WIKI/intermediate
     export OUTPUT_DIR=$HDFS_PATH/user/mschwarzer/$WIKI/output
-    export JAR=/home/mschwarzer/citolytics/target/cpa-0.1.jar
-    export PARALLELISM=150
+    export ENWIKI_LANGLINKS=$HDFS_PATH/user/mschwarzer/enwiki/input/enwiki-20170101-langlinks.sql
+    export CLICKSTREAMS_PATH=$HDFS_PATH/user/mschwarzer/gold/clickstream
     
 ### WikiSim (no redirects)
 
-```
-./bin/flink run -c WikiSim \
-    ./cpa.jar \
-    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
-    hdfs:///user/mschwarzer/v2/results/a01 \
-    0.5,0.8,0.9,1,1.5,2 0 0 n
-```
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
+        --input $WIKI_DUMP \
+        --alpha 0.855 \
+        --output $OUTPUT_DIR/wikisim_raw
+        
+### WikiSim (with prepared-redirects; alpha = {0.855}; no thresholds)
 
-### WikiSim (with redirects; alpha = {0.5,0.8,0.9,1,1.5,2}; no thresholds)
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
+        --input $WIKI_DUMP \
+        --redirects $INTERMEDIATE_DIR/redirects \
+        --alpha 0.855 \
+        --output $OUTPUT_DIR/wikisim_raw
+        
+### WikiSim (with redirects on-the-fly)
 
-```
-flink run -p 64 -c WikiSim \
-    /home/mschwarzer/wikisim/cpa.jar \
-    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
-    hdfs:///user/mschwarzer/v2/results/a01_redirected \
-    0.5,0.8,0.9,1,1.5,2 0 0 n \
-    hdfs:///user/mschwarzer/v2/intermediate/redirects
-```
-
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
+        --input $WIKI_DUMP \
+        --resolve-redirects \
+        --alpha 0.855 \
+        --output $OUTPUT_DIR/wikisim_raw
+        
 ### SeeAlsoEvaluation
 
 #### CPA
@@ -61,6 +66,22 @@ flink run -p 82 -c SeeAlsoEvaluation \
 ### ClickStreamEvaluation
 
 #### CPA
+   
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/ \
+        --gold $CLICKSTREAMS_PATH
+        --topk 10 \
+        --output $OUTPUT_DIR/clickstream
+            
+    # With language links (simplewiki translated from enwiki)
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --wikisim $WIKI_DUMP \
+        --gold $CLICKSTREAMS_PATH
+        --topk 10 \
+        --langlinks $ENWIKI_LANGLINKS
+        --lang simple
+        --output $OUTPUT_DIR/clickstream
+       
 ```
 flink run -p 96 -c ClickStreamEvaluation \
     /home/mschwarzer/wikisim/cpa.jar \

@@ -35,38 +35,27 @@ public class EvaluateClicks implements CoGroupFunction<WikiSimTopResults, ClickS
         Iterator<WikiSimTopResults> wikiSimIterator = wikiSimRecords.iterator();
         Iterator<ClickStreamTuple> clickStreamIterator = clickStreamRecords.iterator();
 
-        // Proceed only when both records exist
-//        if (!wikiSimIterator.hasNext() || !clickStreamIterator.hasNext()) {
-//            return;
-//        }
-
         // Proceed only recommendation records exist
         if (!wikiSimIterator.hasNext()) {
-            return;
-        }
-
-        // It's ok if click stream does not exist
-        HashMap<String, Integer> clickStream = new HashMap<>();
-        int impressions = 0;
-
-        if(IGNORE_MISSING_CLICK_STREAM) {
-            if (clickStreamIterator.hasNext()) {
-                ClickStreamTuple clickStreamRecord = clickStreamIterator.next();
-                clickStream = clickStreamRecord.getOutClicks();
-                impressions = clickStreamRecord.getImpressions();
-            } else {
-                System.out.println("CS not fouund");
-            }
-        } else if(!clickStreamIterator.hasNext()) {
             return;
         }
 
         // Fetch from iterators
         WikiSimTopResults wikiSimRecord = wikiSimIterator.next();
 
+        // It's ok if click stream does not exist
+        HashMap<String, Integer> clickStream;
+        int impressions = 0;
 
-        System.out.println(wikiSimRecord.getSourceTitle() + ": " + clickStream);
+        if(!IGNORE_MISSING_CLICK_STREAM && !clickStreamIterator.hasNext()) {
+            return;
+        }
 
+        ClickStreamTuple clickStreamRecord = clickStreamIterator.next();
+        clickStream = clickStreamRecord.getOutClicks();
+        impressions = clickStreamRecord.getImpressions();
+
+        System.out.println("CS found - " + wikiSimRecord.getSourceTitle() + ": " + clickStreamRecord);
 
         // Sort and get top-k results
         List<WikiSimComparableResult<Double>> retrievedDocuments = Ordering.natural().greatestOf(wikiSimRecord.getResults(), topK);
@@ -95,20 +84,17 @@ public class EvaluateClicks implements CoGroupFunction<WikiSimTopResults, ClickS
         for (Integer c : clickStream.values())
             totalClicks += c;
 
-
-        ClickStreamResult res = new ClickStreamResult();
-
-        res.f0 = wikiSimRecord.getSourceTitle();
-        res.f1 = results;
-        res.f2 = results.size();
-        res.f3 = impressions;
-        res.f4 = totalClicks;
-        res.f5 = clicksK[0];
-        res.f6 = clicksK[1];
-        res.f7 = clicksK[2];
-
         out.collect(
-                res
+            new ClickStreamResult(
+                    wikiSimRecord.getSourceTitle(),
+                    results,
+                    results.size(),
+                    impressions,
+                    totalClicks,
+                    clicksK[0],
+                    clicksK[1],
+                    clicksK[2]
+            )
         );
     }
 
