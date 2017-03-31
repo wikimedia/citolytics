@@ -1,7 +1,8 @@
 package org.wikipedia.citolytics.clickstream.operators;
 
-import com.google.common.collect.Sets;
+//import com.google.common.collect.Sets;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.shaded.com.google.common.collect.Sets;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTranslateTuple;
 

@@ -1,7 +1,8 @@
 package org.wikipedia.citolytics.clickstream.operators;
 
-import com.google.common.collect.Ordering;
+//import com.google.common.collect.Ordering;
 import org.apache.flink.api.common.functions.CoGroupFunction;
+import org.apache.flink.shaded.com.google.common.collect.Ordering;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
