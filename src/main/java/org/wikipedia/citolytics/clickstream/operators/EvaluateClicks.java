@@ -29,7 +29,6 @@ public class EvaluateClicks implements CoGroupFunction<WikiSimTopResults, ClickS
         this.topK = topK;
     }
 
-
     @Override
     public void coGroup(Iterable<WikiSimTopResults> wikiSimRecords, Iterable<ClickStreamTuple> clickStreamRecords, Collector<ClickStreamResult> out) throws Exception {
         Iterator<WikiSimTopResults> wikiSimIterator = wikiSimRecords.iterator();
