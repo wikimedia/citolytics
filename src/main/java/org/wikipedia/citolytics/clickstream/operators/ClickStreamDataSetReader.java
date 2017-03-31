@@ -1,23 +1,15 @@
 package org.wikipedia.citolytics.clickstream.operators;
 
-import com.google.common.collect.Sets;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTranslateTuple;
+import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.regex.Pattern;
 
 
 public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickStreamTranslateTuple> {
-    public final static HashSet<String> filterNameSpaces = Sets.newHashSet(
-            "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
-            "other-bing", "other-facebook", "other-twitter", "other-other"
-    );
-
-    public final static String filterType = "link";
 
     public ClickStreamDataSetReader() {
 
@@ -40,7 +32,7 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
                 int currentId = Integer.valueOf(cols[1]);
                 int clicks = cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2]);
 
-                if (filterType.equals(cols[5]) && !filterNameSpaces.contains(referrerName)) {
+                if (ClickStreamHelper.filterType.equals(cols[5]) && !ClickStreamHelper.filterNameSpaces.contains(referrerName)) {
                     int referrerId = Integer.valueOf(cols[0]);
 
                     out.collect(new ClickStreamTranslateTuple(
@@ -62,9 +54,4 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
         }
     }
 
-    public static HashMap<String, Integer> getOutMap(String link, int clicks_or_id) {
-        HashMap<String, Integer> res = new HashMap<>();
-        res.put(link, clicks_or_id);
-        return res;
-    }
 }
