@@ -68,7 +68,7 @@ flink run -p 82 -c SeeAlsoEvaluation \
 #### CPA
    
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
-        --wikisim $OUTPUT_DIR/ \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
         --gold $CLICKSTREAMS_PATH \
         --topk 10 \
         --output $OUTPUT_DIR/clickstream

@@ -19,6 +19,10 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
 
     public final static String filterType = "link";
 
+    public ClickStreamDataSetReader() {
+
+    }
+
     @Override
     public void flatMap(String s, Collector<ClickStreamTranslateTuple> out) throws Exception {
         String[] cols = s.split(Pattern.quote("\t"));
