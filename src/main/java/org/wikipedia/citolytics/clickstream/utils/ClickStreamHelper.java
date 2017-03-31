@@ -120,7 +120,7 @@ public class ClickStreamHelper {
      * @param filename Separate multiple inputs by comma
      * @return
      */
-    private static DataSet<ClickStreamTranslateTuple> readClickStreamDataSetInputs(ExecutionEnvironment env, String filename) {
+    public static DataSet<ClickStreamTranslateTuple> readClickStreamDataSetInputs(ExecutionEnvironment env, String filename) {
         // Read input(s)
         DataSet<ClickStreamTranslateTuple> input = null;
         for(String f: filename.split(",")) {

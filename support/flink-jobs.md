@@ -67,19 +67,19 @@ flink run -p 82 -c SeeAlsoEvaluation \
 
 #### CPA
    
-    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.ClickStreamEvaluation -p $PARALLELISM $JAR \
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/ \
-        --gold $CLICKSTREAMS_PATH
+        --gold $CLICKSTREAMS_PATH \
         --topk 10 \
         --output $OUTPUT_DIR/clickstream
             
     # With language links (simplewiki translated from enwiki)
-    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.ClickStreamEvaluation -p $PARALLELISM $JAR \
-        --wikisim $WIKI_DUMP \
-        --gold $CLICKSTREAMS_PATH
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --gold $CLICKSTREAMS_PATH \
         --topk 10 \
-        --langlinks $ENWIKI_LANGLINKS
-        --lang simple
+        --langlinks $ENWIKI_LANGLINKS \
+        --lang simple \
         --output $OUTPUT_DIR/clickstream
        
 ```
