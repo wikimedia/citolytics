@@ -12,14 +12,15 @@ import java.util.regex.Pattern;
 
 public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickStreamTranslateTuple> {
 
-    public final static HashSet<String> filterNameSpaces = Sets.newHashSet(
-            "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
-            "other-bing", "other-facebook", "other-twitter", "other-other"
-    );
-    public final static String filterType = "link";
+    private HashSet<String> getFilterNameSpaces() {
+        return Sets.newHashSet(
+                "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
+                "other-bing", "other-facebook", "other-twitter", "other-other"
+        );
+    }
 
-    public ClickStreamDataSetReader() {
-
+    private String getFilterType() {
+        return "link";
     }
 
     @Override
@@ -41,7 +42,7 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
                 int currentId = Integer.valueOf(cols[1]);
                 int clicks = cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2]);
 
-                if (filterType.equals(cols[5]) && !filterNameSpaces.contains(referrerName)) {
+                if (getFilterType().equals(cols[5]) && !getFilterNameSpaces().contains(referrerName)) {
                     int referrerId = Integer.valueOf(cols[0]);
 
                     out.collect(new ClickStreamTranslateTuple(
