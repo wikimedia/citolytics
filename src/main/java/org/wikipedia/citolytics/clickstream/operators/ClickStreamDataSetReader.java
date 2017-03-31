@@ -1,15 +1,22 @@
 package org.wikipedia.citolytics.clickstream.operators;
 
+import com.google.common.collect.Sets;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTranslateTuple;
-import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 
 public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickStreamTranslateTuple> {
+
+    public final static HashSet<String> filterNameSpaces = Sets.newHashSet(
+            "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
+            "other-bing", "other-facebook", "other-twitter", "other-other"
+    );
+    public final static String filterType = "link";
 
     public ClickStreamDataSetReader() {
 
@@ -17,8 +24,10 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
 
     @Override
     public void flatMap(String s, Collector<ClickStreamTranslateTuple> out) throws Exception {
+        int expectedCols = 6;
+
         String[] cols = s.split(Pattern.quote("\t"));
-        if (cols.length == 6) {
+        if (cols.length == expectedCols) {
             // Skip if is title row or not link type
             if (cols[1].equals("prev_id") || !cols[5].equals("link")) {
                 return;
@@ -32,7 +41,7 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
                 int currentId = Integer.valueOf(cols[1]);
                 int clicks = cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2]);
 
-                if (ClickStreamHelper.filterType.equals(cols[5]) && !ClickStreamHelper.filterNameSpaces.contains(referrerName)) {
+                if (filterType.equals(cols[5]) && !filterNameSpaces.contains(referrerName)) {
                     int referrerId = Integer.valueOf(cols[0]);
 
                     out.collect(new ClickStreamTranslateTuple(
@@ -46,11 +55,11 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
                 }
 
             } catch (NumberFormatException e) {
-                throw new Exception("Cannot read from clickstream data set. Col = " + s);
+                throw new Exception("Cannot read from click stream data set. Col = " + s);
             }
 
         } else {
-            throw new Exception("Wrong column length: " + cols.length + "; " + Arrays.toString(cols));
+            throw new Exception("Wrong column length: " + cols.length + " (expected " + expectedCols + ") - " + Arrays.toString(cols));
         }
     }
 

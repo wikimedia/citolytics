@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.clickstream.utils;
 
-import com.google.common.collect.Sets;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
@@ -14,7 +13,6 @@ import org.wikipedia.citolytics.multilang.LangLinkTuple;
 import org.wikipedia.citolytics.multilang.MultiLang;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Using Wikipedia ClickStream data set as relevance judgements.
@@ -26,12 +24,6 @@ import java.util.HashSet;
  * Fields: rev_id, curr_id, n, prev_title (referrer), curr_title, type
  */
 public class ClickStreamHelper {
-
-    public final static HashSet<String> filterNameSpaces = Sets.newHashSet(
-            "other-wikipedia", "other-empty", "other-internal", "other-google", "other-yahoo",
-            "other-bing", "other-facebook", "other-twitter", "other-other"
-    );
-    public final static String filterType = "link";
 
     /**
      * Returns data set of click stream tuples
