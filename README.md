@@ -127,7 +127,7 @@ Run Apache Flink jobs separately from jar-file (target/cpa-0.1.jar) and set -c p
 ```
 
 - Parameters with * are required.
-- For more Flink jobs see [/support/flink-jobs.md](https://github.com/TU-Berlin/cpa-demo/blob/master/support/flink-jobs.md)
+- For more Flink jobs see [/support/flink-jobs/README.md](https://github.com/TU-Berlin/cpa-demo/blob/master/support/flink-jobs.md)
 - For runtime information see [/support/runtimes.md](https://github.com/TU-Berlin/cpa-demo/blob/master/support/runtimes.md)
 
 ### Evaluation Example

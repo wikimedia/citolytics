@@ -84,15 +84,15 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --output $OUTPUT_DIR/clickstream
         
     # With language links, id-title mapping, summary (simplewiki translated from enwiki)
-        $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
-            --wikisim $OUTPUT_DIR/wikisim_raw \
-            --gold $CLICKSTREAMS_PATH \
-            --topk 10 \
-            --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
-            --langlinks $ENWIKI_LANGLINKS \
-            --lang simple \
-            --summary \
-            --output $OUTPUT_DIR/clickstream
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --gold $CLICKSTREAMS_PATH \
+        --topk 10 \
+        --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+        --langlinks $ENWIKI_LANGLINKS \
+        --lang simple \
+        --summary \
+        --output $OUTPUT_DIR/clickstream
              
        
 ```

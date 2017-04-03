@@ -1,8 +1,11 @@
 # Guide
 
+Detailed information on all available Flink jobs can be found [here](support/flink-jobs/README.md). 
+The following guide describes all steps to run Citolytics on a cluster and import the recommendations to MediaWiki/CirrusSearch.
+
 ## Cluster Setup
 
-- Install Flink v1.1+ with Hadoop
+- Install Flink v1.1+ with Hadoop (HDFS)
 
 ## Data
 
@@ -18,10 +21,11 @@ hdfs -put dump.tar $HDFS_PATH
 
 ## Prepare data
 
-See [cirrussearch.md](cirrussearch.md)
+See [cirrussearch.md](flink-jobs/cirrussearch.md)
 
 ## Write to Elasticsearch
 
+MediaWiki/CirrusSearch reads the recommendations from Elasticsearch. Hence, the recommendations need to be populated to the ES index.
 ```
 # Fetch from HDFS
 hdfs -getmerge $HDFS_PATH $DIR/data/citolytics.json
