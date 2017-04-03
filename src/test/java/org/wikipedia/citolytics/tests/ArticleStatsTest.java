@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.linkgraph.LinkGraph;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
-import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.stats.ArticleStatsWithInboundLinks;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
@@ -14,34 +13,55 @@ import static org.junit.Assert.assertEquals;
 
 
 public class ArticleStatsTest extends Tester {
-    @Ignore
+
     @Test
     public void LocalExecution() throws Exception {
 
-        new ArticleStats()
-                .silent()
-                .start(
-                        new String[]{
-                                resource("wikiSeeAlso2.xml"),
-                                "print" //outputFilename
-                        });
+        ArticleStatsWithInboundLinks job = new ArticleStatsWithInboundLinks();
+
+        job.silent()
+                .enableLocalEnvironment()
+                .start("--wikidump " + input("completeTestWikiDump.xml")
+                        + " --output local"
+                        + " --summary");
+
+        assertEquals("Summary should have only single output", 1, job.output.size());
+        assertEquals("Invalid word count", 810, job.output.get(0).getWords());
+        assertEquals("Invalid headline count", 0, job.output.get(0).getHeadlines());
+        assertEquals("Invalid out link count", 24, job.output.get(0).getOutLinks());
+        assertEquals("Invalid in link count", 0, job.output.get(0).getInLinksKey());
     }
 
-    @Ignore
     @Test
-    public void LocalExecutionWithInboundLinks() throws Exception {
+    public void testSummaryWithInboundLinks() throws Exception {
         /**
          * Article A ---> 3 inbound links
          *           ---> 4 inbound links (with redirects)
          */
 
-        new ArticleStatsWithInboundLinks()
-                .silent()
-                .start(new String[]{
-                input("completeTestWikiDump.xml"),
-                "print" //outputFilename
-                        , input("redirects.csv")
-        });
+        ArticleStatsWithInboundLinks job = new ArticleStatsWithInboundLinks();
+
+        job.silent()
+            .enableLocalEnvironment()
+                .start("--wikidump " + input("completeTestWikiDump.xml")
+                        + " --output local"
+                        + " --redirects " + input("redirects.csv")
+                        + " --summary --in-links");
+
+//        System.out.println(job.output);
+
+        assertEquals("Summary should have only single output", 1, job.output.size());
+        assertEquals("Invalid word count", 810, job.output.get(0).getWords());
+        assertEquals("Invalid headline count", 0, job.output.get(0).getHeadlines());
+        assertEquals("Invalid out link count", 24, job.output.get(0).getOutLinks());
+        assertEquals("Invalid in link count", 24, job.output.get(0).getInLinksKey());
+
+        // Without redirects
+        job.start("--wikidump " + input("completeTestWikiDump.xml")
+                        + " --output local"
+                        + " --summary --in-links");
+
+        assertEquals("Invalid in link count (without redirects)", 22, job.output.get(0).getInLinksKey());
     }
 
     @Test
