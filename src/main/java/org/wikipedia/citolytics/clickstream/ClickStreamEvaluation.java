@@ -88,6 +88,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
         // Summarize results if requested
         if(summary) {
+            enableSingleOutputFile();
+
             result = result.sum(ClickStreamResult.IMPRESSIONS_KEY)
                     .andSum(ClickStreamResult.CLICKS_KEY)
                     .andSum(ClickStreamResult.CLICKS_K1_KEY)

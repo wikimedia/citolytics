@@ -42,7 +42,7 @@ public class MultiLang { //extends WikiSimAbstractJob<LangLinkTuple> {
         private String lang;
 
         public LangFilter(String lang) {
-            this.lang = lang;
+            this.lang = lang.replace("wiki", "");
         }
 
         @Override

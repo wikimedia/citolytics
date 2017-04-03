@@ -16,6 +16,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
     export INTERMEDIATE_DIR=$HDFS_PATH/user/mschwarzer/$WIKI/intermediate
     export OUTPUT_DIR=$HDFS_PATH/user/mschwarzer/$WIKI/output
     export ENWIKI_LANGLINKS=$HDFS_PATH/user/mschwarzer/enwiki/input/enwiki-20170101-langlinks.sql
+    export ENWIKI_IDTITLE_MAPPING=$HDFS_PATH/user/mschwarzer/enwiki/intermediate/idtitle
     export CLICKSTREAMS_PATH=$HDFS_PATH/user/mschwarzer/gold/clickstream
     
 ### WikiSim (no redirects)
@@ -81,6 +82,18 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --langlinks $ENWIKI_LANGLINKS \
         --lang simple \
         --output $OUTPUT_DIR/clickstream
+        
+    # With language links, id-title mapping, summary (simplewiki translated from enwiki)
+        $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
+            --wikisim $OUTPUT_DIR/wikisim_raw \
+            --gold $CLICKSTREAMS_PATH \
+            --topk 10 \
+            --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+            --langlinks $ENWIKI_LANGLINKS \
+            --lang simple \
+            --summary \
+            --output $OUTPUT_DIR/clickstream
+             
        
 ```
 flink run -p 96 -c ClickStreamEvaluation \
