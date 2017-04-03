@@ -45,6 +45,10 @@ public class ClickStreamResult extends
         return getField(RECOMMENDATIONS_LIST_KEY);
     }
 
+    public int getRecommendationsCount() {
+        return getField(RECOMMENDATIONS_COUNT_KEY);
+    }
+
     public int getImpressions() {
         return getField(IMPRESSIONS_KEY);
     }

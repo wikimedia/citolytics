@@ -16,7 +16,7 @@ public class MultiLangTest extends Tester {
     public void testReadLangLinksDataSet() throws Exception {
         ExecutionEnvironment env = new LocalEnvironment();
 
-        List<LangLinkTuple> data = MultiLang.readLangLinksDataSet(env, resource("langlinks.sql")).collect();
+        List<LangLinkTuple> data = MultiLang.readLangLinksDataSet(env, resource("MultiLangTest/langlinks.sql")).collect();
 
         assertEquals("Invalid number of links from langlinks.sql", 90548, data.size());
 

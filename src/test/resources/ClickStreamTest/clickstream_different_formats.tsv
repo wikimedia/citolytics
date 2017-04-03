@@ -1,0 +1,97 @@
+prev_id curr_id n       prev_title      curr_title      type
+		3632887 121     other-google    !!      other
+		3632887 93      other-wikipedia !!      other
+		3632887 46      other-empty     !!      other
+		3632887 10      other-other     !!      other
+64486   3632887 11      !_(disambiguation)      !!      other
+2061699 2556962 19      Louden_Up_Now   !!!_(album)     link
+		2556962 25      other-empty     !!!_(album)     other
+		2556962 16      other-google    !!!_(album)     other
+		2556962 44      other-wikipedia !!!_(album)     other
+
+		24750691        10      other-wikipedia 金      other
+		24750691        22      other-empty     金      other
+344071  24750691        38      Kim_(Korean_surname)    金      other
+		15027016        11      other-google    青山    other
+2217874         11      List_of_BL_games        ＬＩＶＥｘＥＶＩＬ_~Shakunetsu_no_Edema~        redlink
+513844          26      Emoji   💸       redlink
+615845          12      Alchemical_symbol       🜐       redlink
+615845          12      Alchemical_symbol       🝳       redlink
+
+prev    curr    type    n
+"Wild_Bill"_Hickok      Deadwood,_South_Dakota  link    182
+$100    United_States_dollar    link    18
+(Ghost)_Riders_in_the_Sky:_A_Cowboy_Legend      Dezperadoz      link    11
+(Ghost)_Riders_in_the_Sky:_A_Cowboy_Legend      Stan_Jones_(songwriter) link    517
+(Hey_You)_The_Rock_Steady_Crew  Rock_Steady_Crew        link    106
+(Miss)understood        Heaven_(Ayumi_Hamasaki_song)    link    13
+(Theme_from)_Valley_of_the_Dolls        I_Say_a_Little_Prayer   link    37
+(You_Gotta)_Fight_for_Your_Right_(To_Party!)    Dawn_of_the_Dead_(1978_film)    link    11
+(You_Gotta)_Fight_for_Your_Right_(To_Party!)    Solid_Gold_Hits link    19
+
+prev    curr    type    n
+"Wild_Bill"_Hickok      Deadwood,_South_Dakota  link    18
+(Ghost)_Riders_in_the_Sky:_A_Cowboy_Legend      Stan_Jones_(songwriter) link    410
+(Hey_You)_The_Rock_Steady_Crew  Rock_Steady_Crew        link    75
+(Miss)understood        Heaven_(Ayumi_Hamasaki_song)    link    13
+(Theme_from)_Valley_of_the_Dolls        Do_You_Know_the_Way_to_San_Jose link    12
+(Theme_from)_Valley_of_the_Dolls        I_Say_a_Little_Prayer   link    30
+(You_Gotta)_Fight_for_Your_Right_(To_Party!)    Solid_Gold_Hits link    12
+(You_Make_Me_Feel_Like)_A_Natural_Woman Mary_J._Blige   link    25
+(You_Make_Me_Feel_Like)_A_Natural_Woman The_Sweet_Inspirations  link    19
+
+prev    curr    type    n
+!_(disambiguation)      Factorial       link    84
+(225088)_2007_OR10      Haumea  link    54
+(Do_the)_Mashed_Potatoes        Mashed_Potato_(dance)   link    16
+(Ha_Ha)_Slow_Down       The_Darkside_Vol._1     link    14
+(Just_Like)_Starting_Over       Billboard_Hot_100       link    16
+(Nothing_But)_Flowers   Naked_(Talking_Heads_album)     link    87
+(They_Long_to_Be)_Close_to_You  Richard_Carpenter_(musician)    link    32
+(They_Long_to_Be)_Close_to_You  YouTube link    23
+(You_Gotta)_Fight_for_Your_Right_(To_Party!)    Cara_Quici      link    17
+
+prev    curr    type    n
+Charles_Darwin  Aristotle       other   15
+Western_culture Aristotle       link    33
+List_of_biologists      Aristotle       link    52
+Hephaestion     Aristotle       link    29
+Goths   Aristotle       link    14
+Socratic_method Aristotle       link    88
+Chronology_of_ancient_Greek_mathematicians      Aristotle       link    22
+Philosophy      Aristotle       link    414
+Inertia Aristotle       link    32
+
+prev    curr    type    n
+Economics_(Aristotle)   Aristotle       link    12
+Greek_words_for_love    Aristotle       link    14
+Pythias Aristotle       link    12
+Psychology      Aristotle       link    37
+Aristotelian_theology   Aristotle       link    16
+Peripatetic_school      Aristotle       link    89
+Homer   Aristotle       link    57
+Albertus_Magnus Aristotle       link    19
+Praxis_(process)        Aristotle       link    20
+
+prev    curr    type    n
+Greek_language  Aristotle       link    59
+Exaggeration    Aristotle       link    11
+Euclid  Aristotle       link    39
+Lucid_dream     Aristotle       link    36
+Oceanography    Aristotle       link    19
+Thespis Aristotle       link    34
+Animal_rights   Aristotle       link    20
+History_of_economic_thought     Aristotle       link    33
+Greek_words_for_love    Aristotle       link    14
+
+		3632887 415     other-empty     !!
+		3632887 113     other-google    !!
+		3632887 33      other-wikipedia !!
+		600744  25      other-yahoo     !!!
+		600744  1193    other-google    !!!
+		600744  1065    other-empty     !!!
+25014178        600744  44      Jerry_Fuchs     !!!
+34552784        600744  11      Flight_Facilities       !!!
+4499    600744  21      Band    !!!
+1446971 600744  14      Gold_Standard_Laboratories      !!!
+

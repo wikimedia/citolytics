@@ -12,6 +12,8 @@ import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.processing.DocumentProcessor;
 
+import java.util.regex.Pattern;
+
 /**
  * Extracts from a Wiki XML dump the mapping from page title to page id.
  *
@@ -51,10 +53,17 @@ public class IdTitleMappingExtractor extends WikiSimAbstractJob<IdTitleMapping> 
     public static DataSet<IdTitleMapping> getIdTitleMapping(ExecutionEnvironment env, String idTitleMappingFilename,
                                                             String wikiDumpInputFilename) throws Exception {
         if(idTitleMappingFilename != null) {
-            throw new Exception("NOT IMPLEMENTED YET");
-//            return env.readCsvFile(idTitleMappingFilename)
-//                    .fieldDelimiter("|")
-//                    .types(Integer.class, String.class);
+            return env.readTextFile(idTitleMappingFilename).flatMap(new FlatMapFunction<String, IdTitleMapping>() {
+                @Override
+                public void flatMap(String s, Collector<IdTitleMapping> out) throws Exception {
+                    String[] cols = s.split(Pattern.quote("|"));
+                    if (cols.length != 2) {
+                        throw new Exception("Invalid id title mapping: " + s);
+                    }
+
+                    out.collect(new IdTitleMapping(Integer.valueOf(cols[0]), cols[1]));
+                }
+            });
         } else if(wikiDumpInputFilename != null) {
             return extractIdTitleMapping(env, wikiDumpInputFilename);
         } else {

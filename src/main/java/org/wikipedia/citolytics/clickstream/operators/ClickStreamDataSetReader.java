@@ -12,6 +12,19 @@ import java.util.regex.Pattern;
 
 
 public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickStreamTranslateTuple> {
+    private final static int WITH_IDS_LENGTH = 6;
+    private final static int WITH_IDS_TYPE_KEY = 5;
+    private final static int WITH_IDS_REF_NAME_KEY = 3;
+    private final static int WITH_IDS_REF_ID_KEY = 0;
+    private final static int WITH_IDS_ARTICLE_NAME_KEY = 4;
+    private final static int WITH_IDS_ARTICLE_ID_KEY = 1;
+    private final static int WITH_IDS_CLICKS_KEY = 2;
+
+    private final static int WITHOUT_IDS_LENGTH = 4;
+    private final static int WITHOUT_IDS_TYPE_KEY = 2;
+    private final static int WITHOUT_IDS_REF_NAME_KEY = 0;
+    private final static int WITHOUT_IDS_ARTICLE_NAME_KEY = 1;
+    private final static int WITHOUT_IDS_CLICKS_KEY = 3;
 
     private HashSet<String> getFilterNameSpaces() {
         return Sets.newHashSet(
@@ -24,44 +37,55 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
         return "link";
     }
 
+    private void collectRow(String[] cols, Collector<ClickStreamTranslateTuple> out, int typeKey, int refNameKey,
+                            int refIdKey, int articleNameKey, int articleIdKey, int clicksKey) throws Exception {
+        // Skip if is title row or not link type
+        if (!cols[typeKey].equals("link")) { // cols[articleNameKey].equals("curr") ||
+            return;
+        }
+
+        // replace underscore
+        String referrerName = cols[refNameKey].replace("_", " ");
+        String articleName = cols[articleNameKey].replace("_", " ");
+
+        try {
+            int articleId = articleIdKey < 0 ? 0 : Integer.valueOf(cols[articleIdKey]);
+            int clicks = cols[clicksKey].isEmpty() ? 0 : Integer.valueOf(cols[clicksKey]);
+
+            if (getFilterType().equals(cols[typeKey]) && !getFilterNameSpaces().contains(referrerName)) {
+                int referrerId = refIdKey < 0 ? 0 : Integer.valueOf(cols[refIdKey]);
+
+                out.collect(new ClickStreamTranslateTuple(
+                        referrerName,
+                        referrerId,
+                        0,
+                        articleName,
+                        articleId,
+                        clicks
+                ));
+            }
+
+        } catch (NumberFormatException e) {
+            throw new Exception("Cannot read from click stream data set. Col = " + Arrays.toString(cols));
+        }
+    }
+
     @Override
     public void flatMap(String s, Collector<ClickStreamTranslateTuple> out) throws Exception {
-        int expectedCols = 6;
 
         String[] cols = s.split(Pattern.quote("\t"));
-        if (cols.length == expectedCols) {
-            // Skip if is title row or not link type
-            if (cols[1].equals("prev_id") || !cols[5].equals("link")) {
-                return;
-            }
 
-            // replace underscore
-            String referrerName = cols[3].replace("_", " ");
-            String currentName = cols[4].replace("_", " ");
+        // Use different key for different data set formats
+        if (cols.length == WITH_IDS_LENGTH) {
+            collectRow(cols, out, WITH_IDS_TYPE_KEY, WITH_IDS_REF_NAME_KEY, WITH_IDS_REF_ID_KEY, WITH_IDS_ARTICLE_NAME_KEY,
+                    WITH_IDS_ARTICLE_ID_KEY, WITH_IDS_CLICKS_KEY);
 
-            try {
-                int currentId = Integer.valueOf(cols[1]);
-                int clicks = cols[2].isEmpty() ? 0 : Integer.valueOf(cols[2]);
-
-                if (getFilterType().equals(cols[5]) && !getFilterNameSpaces().contains(referrerName)) {
-                    int referrerId = Integer.valueOf(cols[0]);
-
-                    out.collect(new ClickStreamTranslateTuple(
-                            referrerName,
-                            referrerId,
-                            0,
-                            currentName,
-                            currentId,
-                            clicks
-                    ));
-                }
-
-            } catch (NumberFormatException e) {
-                throw new Exception("Cannot read from click stream data set. Col = " + s);
-            }
-
+        } else if(cols.length == WITHOUT_IDS_LENGTH) {
+            // Data set has not page ids
+            collectRow(cols, out, WITHOUT_IDS_TYPE_KEY, WITHOUT_IDS_REF_NAME_KEY, -1, WITHOUT_IDS_ARTICLE_NAME_KEY,
+                    -1, WITHOUT_IDS_CLICKS_KEY);
         } else {
-            throw new Exception("Wrong column length: " + cols.length + " (expected " + expectedCols + ") - " + Arrays.toString(cols));
+            throw new Exception("Wrong column length: " + cols.length + " (expected " + WITH_IDS_LENGTH + ") - " + Arrays.toString(cols));
         }
     }
 

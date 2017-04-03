@@ -1,14 +1,17 @@
 package org.wikipedia.citolytics.clickstream.utils;
 
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.clickstream.operators.ClickStreamDataSetReader;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTranslateTuple;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
+import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
 import org.wikipedia.citolytics.multilang.LangLinkTuple;
 import org.wikipedia.citolytics.multilang.MultiLang;
 
@@ -32,12 +35,73 @@ public class ClickStreamHelper {
      * @param filename Path to data set (separate multiple files by comma)
      * @return
      */
-    public static DataSet<ClickStreamTuple> getClickStreamDataSet(ExecutionEnvironment env, String filename) {
-        return getTranslatedClickStreamDataSet(env, filename, null, null);
+    public static DataSet<ClickStreamTuple> getClickStreamDataSet(ExecutionEnvironment env, String filename) throws Exception {
+        return getTranslatedClickStreamDataSet(env, filename, null, null, null);
     }
 
-    public static DataSet<ClickStreamTuple> getTranslatedClickStreamDataSet(ExecutionEnvironment env, String filename, String lang, String langLinksFilename) {
+    /**
+     * Get click stream data set, translates if requested and adds page ids if those are missing in input data
+     *
+     * @param env ExecutionEnvironment.
+     * @param filename Path to data set (separate multiple files by comma)
+     * @param lang Language code of used WikiSim input
+     * @param langLinksFilename Path to enwiki language links
+     * @param idTitleMappingFilename Path to id-title mapping of enwiki
+     * @return
+     * @throws Exception
+     */
+    public static DataSet<ClickStreamTuple> getTranslatedClickStreamDataSet(ExecutionEnvironment env, String filename,
+                                                                            String lang, String langLinksFilename, String idTitleMappingFilename) throws Exception {
         DataSet<ClickStreamTranslateTuple> translateInput = readClickStreamDataSetInputs(env, filename);
+
+        // Check for ids
+        DataSet<ClickStreamTranslateTuple> translateInputWithIds = translateInput.filter(new FilterFunction<ClickStreamTranslateTuple>() {
+            @Override
+            public boolean filter(ClickStreamTranslateTuple t) throws Exception {
+                return t.hasIds();
+            }
+        });
+
+        // If id does not exist, use id-title mapping to get corresponding page ids
+        if(idTitleMappingFilename != null) {
+            DataSet<IdTitleMapping> idTitleMapping = IdTitleMappingExtractor.getIdTitleMapping(env, idTitleMappingFilename, null);
+
+            // Filter for tuples without ids
+            DataSet<ClickStreamTranslateTuple> translateInputWithoutIds = translateInput
+                    .filter(new FilterFunction<ClickStreamTranslateTuple>() {
+                        @Override
+                        public boolean filter(ClickStreamTranslateTuple t) throws Exception {
+                            return !t.hasIds();
+                        }
+                    })
+                    // Get page id of source article
+                    .join(idTitleMapping)
+                    .where(ClickStreamTranslateTuple.ARTICLE_NAME_KEY)
+                    .equalTo(IdTitleMapping.TITLE_KEY)
+                    .with(new JoinFunction<ClickStreamTranslateTuple, IdTitleMapping, ClickStreamTranslateTuple>() {
+                        @Override
+                        public ClickStreamTranslateTuple join(ClickStreamTranslateTuple cs, IdTitleMapping mapping) throws Exception {
+                            cs.setArticleId(mapping.getField(IdTitleMapping.ID_KEY));
+                            return cs;
+                        }
+                    })
+                    // get page id of target article
+                    .join(idTitleMapping)
+                    .where(ClickStreamTranslateTuple.TARGET_NAME_KEY)
+                    .equalTo(IdTitleMapping.TITLE_KEY)
+                    .with(new JoinFunction<ClickStreamTranslateTuple, IdTitleMapping, ClickStreamTranslateTuple>() {
+                        @Override
+                        public ClickStreamTranslateTuple join(ClickStreamTranslateTuple cs, IdTitleMapping mapping) throws Exception {
+                            cs.setTargetId(mapping.getField(IdTitleMapping.ID_KEY));
+                            return cs;
+                        }
+                    });
+
+            // Merge again
+            translateInput = translateInputWithIds.union(translateInputWithoutIds);
+        } else {
+            translateInput = translateInputWithIds;
+        }
 
         // Translate if requested
         if(lang != null && langLinksFilename != null) {

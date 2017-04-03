@@ -10,10 +10,9 @@ import org.wikipedia.citolytics.cpa.types.WikiSimResult;
  * Removes pages without id from WikiSim results
  */
 public class MissingIdRemover implements FlatJoinFunction<WikiSimResult, IdTitleMapping, WikiSimResult> {
-    public final static int TITLE_KEY = 1;
-    public final static int ID_KEY = 0;
 
     private boolean pageA = true;
+
     public MissingIdRemover(boolean pageA) {
         this.pageA = pageA;
     }
@@ -22,9 +21,9 @@ public class MissingIdRemover implements FlatJoinFunction<WikiSimResult, IdTitle
     public void join(WikiSimResult wikiSimResult, IdTitleMapping mapping, Collector<WikiSimResult> out) throws Exception {
         if (mapping != null) {
             if(pageA) {
-                wikiSimResult.setPageAId(mapping.getField(ID_KEY));
+                wikiSimResult.setPageAId(mapping.getField(IdTitleMapping.ID_KEY));
             } else {
-                wikiSimResult.setPageBId(mapping.getField(ID_KEY));
+                wikiSimResult.setPageBId(mapping.getField(IdTitleMapping.ID_KEY));
 
             }
             out.collect(wikiSimResult);
@@ -44,12 +43,12 @@ public class MissingIdRemover implements FlatJoinFunction<WikiSimResult, IdTitle
                 // page A
                 .leftOuterJoin(idTitleMapping)
                 .where(WikiSimResult.PAGE_A_KEY)
-                .equalTo(MissingIdRemover.TITLE_KEY)
+                .equalTo(IdTitleMapping.TITLE_KEY)
                 .with(new MissingIdRemover(true))
                 // page B
                 .leftOuterJoin(idTitleMapping)
                 .where(WikiSimResult.PAGE_B_KEY)
-                .equalTo(MissingIdRemover.TITLE_KEY)
+                .equalTo(IdTitleMapping.TITLE_KEY)
                 .with(new MissingIdRemover(false));
     }
 }

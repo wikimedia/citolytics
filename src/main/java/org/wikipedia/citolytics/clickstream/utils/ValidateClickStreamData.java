@@ -17,7 +17,7 @@ public class ValidateClickStreamData extends WikiSimAbstractJob<ClickStreamTuple
         new ValidateClickStreamData().start(args);
     }
 
-    public void plan() {
+    public void plan() throws Exception {
 
         String clickStreamInputFilename = args[0];
         outputFilename = args[1];

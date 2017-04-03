@@ -32,6 +32,10 @@ public class ClickStreamTranslateTuple extends Tuple6<String, Integer, Integer, 
         f5 = clicks;
     }
 
+    public boolean hasIds() {
+        return f1 != 0 && f4 != 0;
+    }
+
     public String getArticleName() {
         return getField(ARTICLE_NAME_KEY);
     }
@@ -56,5 +60,12 @@ public class ClickStreamTranslateTuple extends Tuple6<String, Integer, Integer, 
         return getField(TARGET_CLICKS_KEY);
     }
 
+    public void setArticleId(int id) {
+        setField(id, ARTICLE_ID_KEY);
+    }
+
+    public void setTargetId(int id) {
+        setField(id, TARGET_ID_KEY);
+    }
 
 }

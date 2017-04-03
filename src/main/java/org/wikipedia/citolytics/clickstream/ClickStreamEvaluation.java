@@ -33,7 +33,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         new ClickStreamEvaluation().start(args);
     }
 
-    public void plan() {
+    public void plan() throws Exception {
 
         ParameterTool params = ParameterTool.fromArgs(args);
 
@@ -53,9 +53,10 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         // Name
         setJobName("ClickStreamEvaluation");
 
-        // Load gold standard (include translations with requested)
+        // Load gold standard (include translations with requested, provide id-title-mapping if non-id format is used)
         DataSet<ClickStreamTuple> clickStreamDataSet =
-                ClickStreamHelper.getTranslatedClickStreamDataSet(env, clickStreamInputFilename, lang, langLinksInputFilename);
+                ClickStreamHelper.getTranslatedClickStreamDataSet(env, clickStreamInputFilename, lang,
+                        langLinksInputFilename, params.get("id-title-mapping"));
 
         // WikiSim
         DataSet<WikiSimTopResults> wikiSimGroupedDataSet;
@@ -91,7 +92,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                     .andSum(ClickStreamResult.CLICKS_KEY)
                     .andSum(ClickStreamResult.CLICKS_K1_KEY)
                     .andSum(ClickStreamResult.CLICKS_K2_KEY)
-                    .andSum(ClickStreamResult.CLICKS_K3_KEY);
+                    .andSum(ClickStreamResult.CLICKS_K3_KEY)
+                    .andSum(ClickStreamResult.RECOMMENDATIONS_COUNT_KEY);
         }
     }
 

@@ -21,6 +21,8 @@ public class ClickStreamTest extends Tester {
     private String wikiSimLangSimplePath;
     private String dataSetPath;
     private String dataSetPath2;
+    private String dataSetPathFormatTest;
+
     private String dataSetPathSimpleLang;
     private String langLinksPath;
 
@@ -34,6 +36,7 @@ public class ClickStreamTest extends Tester {
 
         dataSetPath2 = resource("ClickStreamTest/clickstream_2.tsv");
         dataSetPathSimpleLang = resource("ClickStreamTest/clickstream_lang_simple.tsv");
+        dataSetPathFormatTest = resource("ClickStreamTest/different_formats");
         langLinksPath = resource("ClickStreamTest/lang_links_enwiki.sql");
 
     }
@@ -73,8 +76,10 @@ public class ClickStreamTest extends Tester {
                 + " --summary"
                 + " --output local");
 
+        System.out.println(job.output);
+
         assertEquals("Summary should have only a single result tuple", 1, job.output.size());
-        assertEquals("Recommendation count invalid", 2, job.output.get(0).getRecommendations().size());
+        assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
         assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
     }
@@ -89,42 +94,15 @@ public class ClickStreamTest extends Tester {
                 + "," + dataSetPath2 // Multiple inputs
                 + " --output local");
 
-        // Needles
-        ArrayList<ClickStreamResult> needles = new ArrayList<>(
-            Arrays.asList(new ClickStreamResult[]{
-                new ClickStreamResult(
-                        "QQQ",
-                        new ArrayList<>(Arrays.asList(new ClickStreamRecommendationResult[]{
-                                new ClickStreamRecommendationResult("CPA link", 3.0761422E7, 10),
-                                new ClickStreamRecommendationResult("CPA nolink", 3.0761422E7, 20)
-                        })),
-                        2,
-                        0,
-                        38,
-                        30,
-                        30,
-                        10
-                )
-            })
-        );
-
 //        for(ClickStreamResult r: job.output) {
 //            System.out.println(r);
 //        }
 
-        assertTrue("Needles not found", job.output.containsAll(needles));
+        assertTrue("Needles not found", job.output.containsAll(getNeedles("")));
     }
 
     @Test
     public void testMultiLanguageClickStreamEvaluation() throws Exception {
-//        ClickStreamEvaluation job = new ClickStreamEvaluation();
-
-//        job.start("--wikisim " + resource("wikisim_output_lang_simple.csv")
-//                + " --gold " + resource("clickstream.tsv")
-//                + "," + resource("clickstream_2.tsv") // Multiple inputs
-//                + " --lang simple"
-//                + " --langlinks " + resource("wikisim_output_lang_simple.csv")
-//                + " --output local");
 
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
@@ -133,10 +111,31 @@ public class ClickStreamTest extends Tester {
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
                 + " --output local");
-        String langPrefix = "simple_";
 
-        // Needles
-        ArrayList<ClickStreamResult> needles = new ArrayList<>(
+        for(ClickStreamResult r: job.output) {
+            System.out.println(r);
+        }
+
+        assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
+    }
+
+    @Test
+    public void testDifferentFormatsAndMultiLang() throws Exception {
+        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+        job.start("--wikisim " + wikiSimLangSimplePath
+                + " --gold " + dataSetPathFormatTest
+                + " --lang simple"
+                + " --langlinks " + langLinksPath
+                + " --id-title-mapping " + resource("ClickStreamTest/idtitle_mapping.in")
+                + " --output local");
+
+        System.out.println(job.output);
+        assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
+    }
+
+    private ArrayList<ClickStreamResult> getNeedles(String langPrefix) {
+        return new ArrayList<>(
                 Arrays.asList(new ClickStreamResult[]{
                         new ClickStreamResult(
                                 langPrefix + "QQQ",
@@ -153,11 +152,5 @@ public class ClickStreamTest extends Tester {
                         )
                 })
         );
-
-        for(ClickStreamResult r: job.output) {
-            System.out.println(r);
-        }
-
-        assertTrue("Needles not found", job.output.containsAll(needles));
     }
 }
