@@ -22,9 +22,9 @@ import org.wikipedia.processing.DocumentProcessor;
  *
  * Usage: --wikidump <WIKI-XML> --output <OUTPUT-FILE> [--summary] [--redirects <REDIRECTS-FILE>]
  */
-public class ArticleStatsWithInboundLinks extends WikiSimAbstractJob<ArticleStatsTuple> {
+public class ArticleStats extends WikiSimAbstractJob<ArticleStatsTuple> {
     public static void main(String[] args) throws Exception {
-        new ArticleStatsWithInboundLinks().start(args);
+        new ArticleStats().start(args);
     }
 
     public void plan() throws Exception {

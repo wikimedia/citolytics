@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.linkgraph.LinkGraph;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
-import org.wikipedia.citolytics.stats.ArticleStatsWithInboundLinks;
+import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
 
@@ -17,7 +17,7 @@ public class ArticleStatsTest extends Tester {
     @Test
     public void LocalExecution() throws Exception {
 
-        ArticleStatsWithInboundLinks job = new ArticleStatsWithInboundLinks();
+        ArticleStats job = new ArticleStats();
 
         job.silent()
                 .enableLocalEnvironment()
@@ -39,7 +39,7 @@ public class ArticleStatsTest extends Tester {
          *           ---> 4 inbound links (with redirects)
          */
 
-        ArticleStatsWithInboundLinks job = new ArticleStatsWithInboundLinks();
+        ArticleStats job = new ArticleStats();
 
         job.silent()
             .enableLocalEnvironment()
