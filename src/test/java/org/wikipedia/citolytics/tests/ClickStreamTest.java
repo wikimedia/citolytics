@@ -70,7 +70,7 @@ public class ClickStreamTest extends Tester {
     public void testEvaluationSummary() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.start("--wikisim " + wikiSimPath
+        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --summary"
@@ -89,7 +89,7 @@ public class ClickStreamTest extends Tester {
     public void testClickStreamEvaluation() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.start("--wikisim " + wikiSimPath
+        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --output local");
@@ -106,7 +106,7 @@ public class ClickStreamTest extends Tester {
 
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.enableLocalEnvironment().silent().start("--wikisim " + wikiSimLangSimplePath
+        job.enableLocalEnvironment().enableLocalEnvironment().silent().start("--wikisim " + wikiSimLangSimplePath
                 + " --gold " + dataSetPathSimpleLang
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
@@ -123,7 +123,7 @@ public class ClickStreamTest extends Tester {
     public void testDifferentFormatsAndMultiLang() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.start("--wikisim " + wikiSimLangSimplePath
+        job.enableLocalEnvironment().start("--wikisim " + wikiSimLangSimplePath
                 + " --gold " + dataSetPathFormatTest
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
