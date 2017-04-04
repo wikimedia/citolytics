@@ -93,6 +93,20 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --lang simple \
         --summary \
         --output $OUTPUT_DIR/clickstream
+        
+    # With idfCPI
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --gold $CLICKSTREAMS_PATH \
+        --topk 10 \
+        --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+        --langlinks $ENWIKI_LANGLINKS \
+        --lang simple \
+        --summary \
+        --article-stats $OUTPUT_DIR/stats \
+        --idf-cpi \
+        --output $OUTPUT_DIR/cs_idfcpi
+        
              
        
 ```
@@ -156,12 +170,11 @@ flink run -p 96 -c CheckOutputIntegrity \
 ```
 
 #### Stats (words, headlines, outLinks, avgLinkDistance, outLinksPerWords, inLinks)
-```
-flink run -p 96 -c ArticleStatsWithInboundLinks \
-    /home/mschwarzer/wikisim/cpa.jar \
-    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
-    hdfs:///user/mschwarzer/v2/results/stats2
-```
+
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.ArticleStats -p $PARALLELISM $JAR \
+        --wikidump $WIKI_DUMP \
+        --in-links \
+        --output $OUTPUT_DIR/stats
 
 With resolved redirects for inLinks:
 

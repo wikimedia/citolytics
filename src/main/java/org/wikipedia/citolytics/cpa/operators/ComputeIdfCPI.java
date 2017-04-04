@@ -16,9 +16,9 @@ public class ComputeIdfCPI implements JoinFunction<WikiSimRecommendation, Articl
     public WikiSimRecommendation join(WikiSimRecommendation rec, ArticleStatsTuple stats) throws Exception {
         // TODO use score * log(totalArticles / inLinks)
         if(stats != null) {
-//            double idf = Math.log(articleCount * stats.getInLinks());
+            double idf = Math.log(articleCount * stats.getInLinks());
             double oldScore = rec.getScore();
-            double idf = 1. / stats.getInLinks();
+//            double idf = 1. / stats.getInLinks();
 
             rec.setScore(rec.getScore() * idf);
 
