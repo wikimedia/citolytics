@@ -17,7 +17,7 @@ public class ParserTest extends Tester {
     @Test
     public void testLinkCount() {
         WikiDocument doc = new WikiDocument();
-        doc.setText(getFileContents("wikiSeeAlso.xml"));
+        doc.setText(getFileContents("ArticleStatsTest/wikiSeeAlso.xml"));
 
         // With infobox removal = 586
         // Without infobox removal = 618

@@ -47,7 +47,7 @@ public class CalculationTest extends Tester {
     public void CompleteTest() throws Exception {
         // TODO
 
-        String inputA = resource("completeTestWikiDump.xml");
+        String inputA = resource("ArticleStatsTest/completeTestWikiDump.xml");
         String inputB = resource("completeTestClickStreamDataSet.tsv");
 
         RedirectExtractor job1 = new RedirectExtractor();
@@ -152,7 +152,7 @@ public class CalculationTest extends Tester {
         // with old namespace check = 126253
         job.enableLocalEnvironment()
                 .silent()
-                .start(("--input " + resource("wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
+                .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (keep infobox)", 125751, job.output.size());
 
@@ -160,7 +160,7 @@ public class CalculationTest extends Tester {
         job = new WikiSim();
         job.enableLocalEnvironment()
                 .silent()
-                .start(("--input " + resource("wikiSeeAlso.xml") + " --output local").split(" "));
+                .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (removed infobox)", 117855, job.output.size());
     }
@@ -184,7 +184,7 @@ public class CalculationTest extends Tester {
     @Test
     public void TestLocalExecution() throws Exception {
 
-        WikiSim.main(("--input " + resource("wikiSeeAlso.xml") + " --output print --alpha 1.5,1.25,1,0.5,0").split(" "));
+        WikiSim.main(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output print --alpha 1.5,1.25,1,0.5,0").split(" "));
     }
 
     @Ignore
@@ -218,7 +218,7 @@ public class CalculationTest extends Tester {
     @Test
     public void NegativeAlphaCPI() throws Exception {
         WikiSim job = new WikiSim();
-        job.start(("--input " + resource("completeTestWikiDump.xml") + " --output print --alpha 1,-1").split(" "));
+        job.start(("--input " + resource("ArticleStatsTest/completeTestWikiDump.xml") + " --output print --alpha 1,-1").split(" "));
     }
 
     @Ignore

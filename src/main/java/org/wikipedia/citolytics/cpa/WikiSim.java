@@ -18,6 +18,8 @@ import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.operators.ReplaceRedirectsWithOuterJoin;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
+import org.wikipedia.citolytics.stats.ArticleStats;
+import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 import org.wikipedia.processing.DocumentProcessor;
 
 /**
@@ -49,6 +51,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
     private boolean removeInfoBox = false;
     private int reducerThreshold = 1;
     private int combinerThreshold = 1;
+    private boolean idfCPI = false;
 
     private DataSource<String> wikiDump;
 
@@ -101,6 +104,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         removeInfoBox = !params.has("keep-infobox");
         removeMissingIds = params.has("remove-missing-ids");
         resolveRedirects = params.has("resolve-redirects");
+        idfCPI = params.has("idf-cpi");
     }
 
     /**
@@ -147,6 +151,15 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
         if (removeMissingIds) {
             jobName += " + id removal";
             result = MissingIdRemover.removeMissingIds(result, IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDump));
+        }
+
+        // Recompute CPI with Inverse Document Frequency In Link Count
+        if(idfCPI) {
+            ArticleStats statsJob = new ArticleStats();
+            statsJob.inLinks = true;
+            // TODO redirects?
+            DataSet<ArticleStatsTuple> stats = statsJob.result;
+            // Move to groupedResults -> idf should be only on recommendation target, not pairwise
         }
     }
 

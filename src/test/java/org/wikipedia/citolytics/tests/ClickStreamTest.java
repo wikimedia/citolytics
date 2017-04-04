@@ -25,6 +25,7 @@ public class ClickStreamTest extends Tester {
 
     private String dataSetPathSimpleLang;
     private String langLinksPath;
+    private String articleStatsPath;
 
 
 
@@ -38,7 +39,7 @@ public class ClickStreamTest extends Tester {
         dataSetPathSimpleLang = resource("ClickStreamTest/clickstream_lang_simple.tsv");
         dataSetPathFormatTest = resource("ClickStreamTest/different_formats");
         langLinksPath = resource("ClickStreamTest/lang_links_enwiki.sql");
-
+        articleStatsPath = resource("ClickStreamTest/stats.in");
     }
 
     @Ignore
@@ -132,6 +133,17 @@ public class ClickStreamTest extends Tester {
 
         System.out.println(job.output);
         assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
+    }
+
+    @Ignore
+    @Test
+    public void testClickStreamWithIdfCPI() throws Exception {
+        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
+                + " --gold " + dataSetPath + "," + dataSetPath2 // Multiple inputs
+                + " --idf-cpi --article-stats " + articleStatsPath
+                + " --output print");
     }
 
     private ArrayList<ClickStreamResult> getNeedles(String langPrefix) {

@@ -4,6 +4,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -12,9 +13,12 @@ import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.types.WikiDocument;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.processing.DocumentProcessor;
+
+import java.util.regex.Pattern;
 
 
 /**
@@ -23,19 +27,28 @@ import org.wikipedia.processing.DocumentProcessor;
  * Usage: --wikidump <WIKI-XML> --output <OUTPUT-FILE> [--summary] [--redirects <REDIRECTS-FILE>]
  */
 public class ArticleStats extends WikiSimAbstractJob<ArticleStatsTuple> {
+    public boolean summary;
+    public boolean inLinks;
+    public String inputFilename;
+    public String redirectsFilename;
+
     public static void main(String[] args) throws Exception {
         new ArticleStats().start(args);
     }
 
-    public void plan() throws Exception {
+    public void init() {
+        jobName = "ArticleStats";
 
         ParameterTool params = ParameterTool.fromArgs(args);
 
-        String inputFilename = params.getRequired("wikidump");
+        inputFilename = params.getRequired("wikidump");
         outputFilename = params.getRequired("output");
+        redirectsFilename = params.get("redirects");
+        summary = params.has("summary");
+        inLinks = params.has("in-links");
+    }
 
-        boolean summary = params.has("summary");
-        boolean inLinks = params.has("in-links");
+    public void plan() throws Exception {
 
         DataSet<ArticleStatsTuple> stats = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
                 .flatMap(new FlatMapFunction<String, ArticleStatsTuple>() {
@@ -64,8 +77,8 @@ public class ArticleStats extends WikiSimAbstractJob<ArticleStatsTuple> {
                     ;
 
             // Resolve redirects in inbound links
-            if (params.has("redirects")) {
-                DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, params.get("redirects"));
+            if (redirectsFilename != null) {
+                DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, redirectsFilename);
 
                 links = links
                         .leftOuterJoin(redirects)
@@ -129,5 +142,26 @@ public class ArticleStats extends WikiSimAbstractJob<ArticleStatsTuple> {
                 )
 
         );
+    }
+
+    public static DataSet<ArticleStatsTuple> getArticleStatsFromFile(ExecutionEnvironment env, String inputFilename) {
+        return env.readTextFile(inputFilename).flatMap(new FlatMapFunction<String, ArticleStatsTuple>() {
+            @Override
+            public void flatMap(String s, Collector<ArticleStatsTuple> out) throws Exception {
+                String[] cols = s.split(Pattern.quote(WikiSimConfiguration.csvFieldDelimiter));
+
+                if(cols.length != ArticleStatsTuple.IN_LINKS_KEY + 1)
+                    throw new Exception("Invalid article stats row: " + s);
+
+                out.collect(new ArticleStatsTuple(
+                        cols[ArticleStatsTuple.ARTICLE_NAME_KEY],
+                        Integer.valueOf(cols[ArticleStatsTuple.WORDS_KEY]),
+                        Integer.valueOf(cols[ArticleStatsTuple.HEADLINES_KEY]),
+                        Integer.valueOf(cols[ArticleStatsTuple.OUT_LINKS_KEY]),
+                        Double.valueOf(cols[ArticleStatsTuple.AVG_LINK_DISTANCE_KEY]),
+                        Integer.valueOf(cols[ArticleStatsTuple.IN_LINKS_KEY])
+                        ));
+            }
+        });
     }
 }

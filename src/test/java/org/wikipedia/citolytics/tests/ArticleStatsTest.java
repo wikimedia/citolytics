@@ -13,15 +13,27 @@ import static org.junit.Assert.assertEquals;
 
 
 public class ArticleStatsTest extends Tester {
-
     @Test
-    public void LocalExecution() throws Exception {
+    public void testWriteToFile() throws Exception {
 
         ArticleStats job = new ArticleStats();
 
         job.silent()
                 .enableLocalEnvironment()
-                .start("--wikidump " + input("completeTestWikiDump.xml")
+                .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
+                        + " --in-links"
+                        + " --output " + output("ArticleStatsTest/stats.out"));
+
+    }
+
+    @Test
+    public void testSummary() throws Exception {
+
+        ArticleStats job = new ArticleStats();
+
+        job.silent()
+                .enableLocalEnvironment()
+                .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --summary");
 
@@ -29,7 +41,7 @@ public class ArticleStatsTest extends Tester {
         assertEquals("Invalid word count", 810, job.output.get(0).getWords());
         assertEquals("Invalid headline count", 0, job.output.get(0).getHeadlines());
         assertEquals("Invalid out link count", 24, job.output.get(0).getOutLinks());
-        assertEquals("Invalid in link count", 0, job.output.get(0).getInLinksKey());
+        assertEquals("Invalid in link count", 0, job.output.get(0).getInLinks());
     }
 
     @Test
@@ -43,9 +55,9 @@ public class ArticleStatsTest extends Tester {
 
         job.silent()
             .enableLocalEnvironment()
-                .start("--wikidump " + input("completeTestWikiDump.xml")
+                .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
-                        + " --redirects " + input("redirects.csv")
+                        + " --redirects " + input("ArticleStatsTest/redirects.csv")
                         + " --summary --in-links");
 
 //        System.out.println(job.output);
@@ -54,20 +66,20 @@ public class ArticleStatsTest extends Tester {
         assertEquals("Invalid word count", 810, job.output.get(0).getWords());
         assertEquals("Invalid headline count", 0, job.output.get(0).getHeadlines());
         assertEquals("Invalid out link count", 24, job.output.get(0).getOutLinks());
-        assertEquals("Invalid in link count", 24, job.output.get(0).getInLinksKey());
+        assertEquals("Invalid in link count", 24, job.output.get(0).getInLinks());
 
         // Without redirects
-        job.start("--wikidump " + input("completeTestWikiDump.xml")
+        job.start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --summary --in-links");
 
-        assertEquals("Invalid in link count (without redirects)", 22, job.output.get(0).getInLinksKey());
+        assertEquals("Invalid in link count (without redirects)", 22, job.output.get(0).getInLinks());
     }
 
     @Test
     public void HeadlineTest() {
 
-        String xml = getFileContents("wikiSeeAlso.xml");
+        String xml = getFileContents("ArticleStatsTest/wikiSeeAlso.xml");
 
         WikiDocument doc = new DocumentProcessor().processDoc(xml);
 
@@ -78,7 +90,7 @@ public class ArticleStatsTest extends Tester {
     @Test
     public void AvgLinkDistanceTest() {
 
-        String xml = getFileContents("wikiSeeAlso.xml");
+        String xml = getFileContents("ArticleStatsTest/wikiSeeAlso.xml");
 
         WikiDocument doc = new DocumentProcessor().processDoc(xml);
         // old invalid namespace check=4121.20
@@ -103,8 +115,8 @@ public class ArticleStatsTest extends Tester {
     public void RedirectsInLinkGraph() throws Exception {
         new LinkGraph()
                 .start(new String[]{
-                        input("completeTestWikiDump.xml"),
-                        input("redirects.csv"),
+                        input("ArticleStatsTest/completeTestWikiDump.xml"),
+                        input("ArticleStatsTest/redirects.csv"),
                         input("linkGraphInput.csv"),
                         "print"
                 });
@@ -114,7 +126,7 @@ public class ArticleStatsTest extends Tester {
     public void extractLinks() throws Exception {
         LinksExtractor job = new LinksExtractor();
 
-        job.enableLocalEnvironment().start(input("linkParserTest.xml") + " local");
+        job.enableLocalEnvironment().start(input("ArticleStatsTest/linkParserTest.xml") + " local");
         assertEquals("Invalid link count", 194, job.output.size()); // old namespace check = 195
     }
 }

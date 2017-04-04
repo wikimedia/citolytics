@@ -31,6 +31,15 @@ public class ArticleStatsTuple extends Tuple6<String, Integer, Integer, Integer,
         setField(0, IN_LINKS_KEY);
     }
 
+    public ArticleStatsTuple(String name, int words, int headlines, int outLinks, double avgLinkDistance, int inLinks) {
+        setField(name, ARTICLE_NAME_KEY);
+        setField(words, WORDS_KEY);
+        setField(headlines, HEADLINES_KEY);
+        setField(outLinks, OUT_LINKS_KEY);
+        setField(avgLinkDistance, AVG_LINK_DISTANCE_KEY);
+        setField(inLinks, IN_LINKS_KEY);
+    }
+
     public int getWords() {
         return getField(WORDS_KEY);
     }
@@ -43,7 +52,7 @@ public class ArticleStatsTuple extends Tuple6<String, Integer, Integer, Integer,
         return getField(OUT_LINKS_KEY);
     }
 
-    public int getInLinksKey() {
+    public int getInLinks() {
         return getField(IN_LINKS_KEY);
     }
 

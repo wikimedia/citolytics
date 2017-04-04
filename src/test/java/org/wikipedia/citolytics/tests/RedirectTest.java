@@ -28,7 +28,7 @@ public class RedirectTest extends Tester {
 
         job.enableLocalEnvironment().start(("--input " + input("wikiRedirectedLinks.xml")
                 + " --output print"
-                + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
+                + " --alpha 1.5,1.75 --redirects " + input("ArticleStatsTest/redirects.csv")).split(" "));
 
     }
 
@@ -41,13 +41,13 @@ public class RedirectTest extends Tester {
 
         job.enableLocalEnvironment();
 
-        job.start(("--input " + input("completeTestWikiDump.xml")
+        job.start(("--input " + input("ArticleStatsTest/completeTestWikiDump.xml")
                 + " --output " + output(outputA)
-                + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
+                + " --alpha 1.5,1.75 --redirects " + input("ArticleStatsTest/redirects.csv")).split(" "));
 
-        job.start(("--input " + input("completeTestWikiDump.xml")
+        job.start(("--input " + input("ArticleStatsTest/completeTestWikiDump.xml")
                 + " --output " + output(outputB)
-                + " --alpha 1.5,1.75 --redirects " + input("redirects.csv")).split(" "));
+                + " --alpha 1.5,1.75 --redirects " + input("ArticleStatsTest/redirects.csv")).split(" "));
 
 
         CheckOutputIntegrity test = new CheckOutputIntegrity();
@@ -71,7 +71,7 @@ public class RedirectTest extends Tester {
                 new String[]{
 //                        "dataset",
                         resource("wikisim_output.csv"),
-                        resource("redirects.csv"),
+                        resource("ArticleStatsTest/redirects.csv"),
                         "print"
                 }
         );

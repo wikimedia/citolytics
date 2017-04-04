@@ -55,8 +55,6 @@ public class EvaluateClicks implements CoGroupFunction<WikiSimTopResults, ClickS
         clickStream = clickStreamRecord.getOutClicks();
         impressions = clickStreamRecord.getImpressions();
 
-        System.out.println("CS found - " + wikiSimRecord.getSourceTitle() + ": " + clickStreamRecord);
-
         // Sort and get top-k results
         List<WikiSimComparableResult<Double>> retrievedDocuments = Ordering.natural().greatestOf(wikiSimRecord.getResults(), topK);
 

@@ -20,10 +20,12 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
     public static String outputAggregateFilename;
+    public static String articleStatsFilename;
 
     private static String langLinksInputFilename = null;
     private static String lang = null;
     private static boolean summary = false;
+    private static boolean idfCPI = false;
 
     private int topK = 10;
     private boolean mltResults = false;
@@ -45,6 +47,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         langLinksInputFilename = params.get("langlinks");
         lang = params.get("lang");
         summary = params.has("summary");
+        idfCPI = params.has("idf-cpi");
+        articleStatsFilename = params.get("article-stats");
 
         int fieldScore = params.getInt("score", 5);
         int fieldPageA = params.getInt("page-a", 1);
@@ -66,7 +70,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
             // CPA
             jobName += " CPA Score=" + fieldScore + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
 
-            wikiSimGroupedDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore);
+            wikiSimGroupedDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore, idfCPI, articleStatsFilename);
+
         } else {
             // MLT
             jobName += " MLT";

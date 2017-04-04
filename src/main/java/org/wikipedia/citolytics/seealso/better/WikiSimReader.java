@@ -6,9 +6,12 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cpa.operators.ComputeIdfCPI;
 import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
+import org.wikipedia.citolytics.stats.ArticleStats;
+import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -63,7 +66,14 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
         }
     }
 
-    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) {
+
+    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
+        return readWikiSimOutput(env, filename, topK, fieldPageA, fieldPageB, fieldScore, false, null);
+    }
+
+    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK,
+                                                               int fieldPageA, int fieldPageB, int fieldScore,
+                                                               boolean idfCPI, String articleStatsFilename) throws Exception {
 
         Log.info("Reading WikiSim from " + filename);
 
@@ -73,9 +83,28 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
         config.setInteger("fieldPageB", fieldPageB);
         config.setInteger("fieldScore", fieldScore);
 
-        return env.readTextFile(filename)
+        // Read recommendation from files
+        DataSet<WikiSimRecommendation> recommendations = env.readTextFile(filename)
                 .flatMap(new WikiSimReader())
-                .withParameters(config)
+                .withParameters(config);
+
+        // Add idfCPI factor to score
+        if(idfCPI && articleStatsFilename != null) {
+            // TODO redirects?
+            DataSet<ArticleStatsTuple> stats = ArticleStats.getArticleStatsFromFile(env, articleStatsFilename);
+
+            // Total articles
+            long count = stats.count();
+
+            recommendations = recommendations
+                    .leftOuterJoin(stats)
+                    .where(WikiSimRecommendation.RECOMMENDATION_TITLE_KEY)
+                    .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
+                    .with(new ComputeIdfCPI(count));
+        }
+
+        // Build recommendation sets
+        return recommendations
                 .groupBy(0)
                 .reduceGroup(new WikiSimGroupReducer(topK));
     }
