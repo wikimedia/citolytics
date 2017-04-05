@@ -56,11 +56,20 @@ results.
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
         --wikidump NONE \
-        --idtitle-mapping $INTERMEDIATE_DIR/idtitle \
         --enable-elastic \
         --output $OUTPUT_DIR/wikisim.json
 
+### Alternative pre-processing options
 
+    # Generate top-10 results as JSON
+    # - with CPI expression and article stats
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --wikidump NONE \
+        --enable-elastic \
+        --cpi %1$f*Math.log(%3$d/%2$d) \
+        --article-stats $OUTPUT_DIR/stats \
+        --output $OUTPUT_DIR/wikisim.json
 
 ### Trigger ES import
 

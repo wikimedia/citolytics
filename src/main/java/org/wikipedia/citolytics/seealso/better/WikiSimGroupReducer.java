@@ -4,14 +4,14 @@ import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
-import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommendation, WikiSimTopResults> {
+public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommendation, WikiSimRecommendationSet> {
     private int maxQueueSize = 20;
 
     public WikiSimGroupReducer() {
@@ -22,7 +22,7 @@ public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommend
     }
 
     @Override
-    public void reduce(Iterable<WikiSimRecommendation> in, Collector<WikiSimTopResults> out) throws Exception {
+    public void reduce(Iterable<WikiSimRecommendation> in, Collector<WikiSimRecommendationSet> out) throws Exception {
         Iterator<WikiSimRecommendation> iterator = in.iterator();
 
         WikiSimRecommendation joinRecord = null;
@@ -45,6 +45,6 @@ public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommend
         }
 
         //  WikiSimComparableResultList<Double>
-        out.collect(new WikiSimTopResults(joinRecord.getSourceTitle(), joinRecord.getSourceId(), new WikiSimComparableResultList<>(queue)));
+        out.collect(new WikiSimRecommendationSet(joinRecord.getSourceTitle(), joinRecord.getSourceId(), new WikiSimComparableResultList<>(queue)));
     }
 }

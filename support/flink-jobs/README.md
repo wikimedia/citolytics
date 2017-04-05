@@ -94,7 +94,7 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --summary \
         --output $OUTPUT_DIR/clickstream
         
-    # With idfCPI
+    # With CPI expression
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
         --gold $CLICKSTREAMS_PATH \
@@ -104,7 +104,7 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --lang simple \
         --summary \
         --article-stats $OUTPUT_DIR/stats \
-        --idf-cpi \
+        --cpi %1$f*Math.log(%3$d/%2$d) \
         --output $OUTPUT_DIR/cs_idfcpi
         
              

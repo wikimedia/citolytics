@@ -9,9 +9,13 @@ import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.utils.ValidateClickStreamData;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.IllegalFormatConversionException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -137,13 +141,33 @@ public class ClickStreamTest extends Tester {
 
     @Ignore
     @Test
-    public void testClickStreamWithIdfCPI() throws Exception {
+    public void testClickStreamWithCPI() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
         job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath + "," + dataSetPath2 // Multiple inputs
-                + " --idf-cpi --article-stats " + articleStatsPath
+                + " --cpi %1$f*Math.log(%3$d/%2$d) --article-stats " + articleStatsPath
                 + " --output print");
+    }
+
+    @Test
+    public void testMathExpressionCPI() throws Exception {
+
+        double score = 0.5;
+        int inLinks = 10;
+        int articleCount = 1000;
+        String cpiExpr = "%1$f*Math.log(%3$d/%2$d)";
+
+        try {
+            ScriptEngineManager mgr = new ScriptEngineManager();
+            ScriptEngine engine = mgr.getEngineByName("JavaScript");
+
+            double cpi = (double) engine.eval(String.format(cpiExpr, score, inLinks, articleCount));
+            assertEquals("Invalid CPI score", 2.302585092994046, cpi, 0);
+
+        } catch(ScriptException | IllegalFormatConversionException e) {
+            throw new Exception("Cannot evaluate CPI script expression: " + cpiExpr + "; Exception: " + e.getMessage());
+        }
     }
 
     private ArrayList<ClickStreamResult> getNeedles(String langPrefix) {

@@ -1,15 +1,19 @@
 package org.wikipedia.citolytics.clickstream;
 
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.clickstream.operators.EvaluateClicks;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
-import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
+import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
 import org.wikipedia.citolytics.seealso.better.MLTInputMapper;
 import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 
@@ -22,10 +26,15 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
     public static String outputAggregateFilename;
     public static String articleStatsFilename;
 
+    private static String topRecommendationsFilename;
+    private static String idTitleMappingFilename;
     private static String langLinksInputFilename = null;
     private static String lang = null;
     private static boolean summary = false;
-    private static boolean idfCPI = false;
+    private static String cpiExpr;
+    private static int fieldScore;
+    private static int fieldPageA;
+    private static int fieldPageB;
 
     private int topK = 10;
     private boolean mltResults = false;
@@ -35,7 +44,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         new ClickStreamEvaluation().start(args);
     }
 
-    public void plan() throws Exception {
+
+    public void init() {
 
         ParameterTool params = ParameterTool.fromArgs(args);
 
@@ -47,12 +57,18 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         langLinksInputFilename = params.get("langlinks");
         lang = params.get("lang");
         summary = params.has("summary");
-        idfCPI = params.has("idf-cpi");
+        cpiExpr = params.get("cpi");
         articleStatsFilename = params.get("article-stats");
+        idTitleMappingFilename = params.get("id-title-mapping");
+        topRecommendationsFilename = params.get("top-recommendations");
 
-        int fieldScore = params.getInt("score", 5);
-        int fieldPageA = params.getInt("page-a", 1);
-        int fieldPageB = params.getInt("page-b", 2);
+        fieldScore = params.getInt("score", 5);
+        fieldPageA = params.getInt("page-a", 1);
+        fieldPageB = params.getInt("page-b", 2);
+    }
+
+    public void plan() throws Exception {
+
 
         // Name
         setJobName("ClickStreamEvaluation");
@@ -60,17 +76,19 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         // Load gold standard (include translations with requested, provide id-title-mapping if non-id format is used)
         DataSet<ClickStreamTuple> clickStreamDataSet =
                 ClickStreamHelper.getTranslatedClickStreamDataSet(env, clickStreamInputFilename, lang,
-                        langLinksInputFilename, params.get("id-title-mapping"));
+                        langLinksInputFilename, idTitleMappingFilename);
 
         // WikiSim
-        DataSet<WikiSimTopResults> wikiSimGroupedDataSet;
+        DataSet<WikiSimRecommendationSet> wikiSimGroupedDataSet;
 
         // CPA or MLT results?
         if (fieldScore >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
             // CPA
             jobName += " CPA Score=" + fieldScore + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
 
-            wikiSimGroupedDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, topK, fieldPageA, fieldPageB, fieldScore, idfCPI, articleStatsFilename);
+            wikiSimGroupedDataSet = WikiSimReader.buildRecommendationSets(env,
+                    WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename,
+                    fieldPageA, fieldPageB, fieldScore), topK, cpiExpr, articleStatsFilename);
 
         } else {
             // MLT
@@ -87,9 +105,32 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         // Evaluation
         result = wikiSimGroupedDataSet
                 .coGroup(clickStreamDataSet)
-                .where(WikiSimTopResults.SOURCE_TITLE_KEY)
+                .where(WikiSimRecommendationSet.SOURCE_TITLE_KEY)
                 .equalTo(ClickStreamTuple.ARTICLE_NAME_KEY)
                 .with(new EvaluateClicks(topK));
+
+        // Top recommended articles (only #1 recommendations)
+        // TODO limit out
+        if(topRecommendationsFilename != null) {
+            DataSet<Tuple2<String, Integer>> topRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Integer>>() {
+                        @Override
+                        public void flatMap(ClickStreamResult r, Collector<Tuple2<String, Integer>> out) throws Exception {
+                            if (r.getRecommendationsCount() > 0) {
+                                if(r.getRecommendations().get(0).getRecommendedArticle().equalsIgnoreCase("United States")) {
+                                    out.collect(new Tuple2<>(r.getRecommendations().get(0).getRecommendedArticle(),
+                                            1));
+                                }
+                            }
+                        }
+                    })
+//                    .groupBy(0)
+                    .sum(1)
+//                    .
+                    ;
+
+            topRecommendations.write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE);
+        }
+
 
         // Summarize results if requested
         if(summary) {

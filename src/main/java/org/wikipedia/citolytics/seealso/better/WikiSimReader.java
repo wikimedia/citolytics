@@ -6,10 +6,11 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.operators.ComputeIdfCPI;
+import org.wikipedia.citolytics.cpa.operators.ComputeComplexCPI;
 import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
 import org.wikipedia.citolytics.cpa.types.WikiSimResult;
-import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
@@ -23,8 +24,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
     int fieldPageIdA = WikiSimResult.PAGE_A_ID_KEY;
     int fieldPageIdB = WikiSimResult.PAGE_B_ID_KEY;
 
-    private final int MAX_SCORE_LENGTH = 16;
-    private final Pattern delimiterPattern = Pattern.compile(Pattern.quote("|"));
+    private final Pattern delimiterPattern = Pattern.compile(Pattern.quote(WikiSimConfiguration.csvFieldDelimiter));
 
     @Override
     public void open(Configuration parameter) throws Exception {
@@ -39,26 +39,20 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
     public void flatMap(String s, Collector<WikiSimRecommendation> out) throws Exception {
         String[] cols = delimiterPattern.split(s);
 
-//        cols[fieldScore] = String.valueOf(100 * Math.random()).substring(0, 6);
-//        System.out.println(cols[fieldScore]);
-
         if (fieldScore >= cols.length || fieldPageA >= cols.length || fieldPageB >= cols.length) {
-            System.err.println("invalid col length : " + cols.length + " (score=" + fieldScore + ", a=" + fieldPageA + ", b=" + fieldPageB + "// " + s);
-            return;
+            throw new Exception("invalid col length : " + cols.length + " (score=" + fieldScore + ", a=" + fieldPageA + ", b=" + fieldPageB + "// " + s);
+//            return;
         }
 
 
         try {
             String scoreString = cols[fieldScore];
-//            int maxLength = (scoreString.length() < MAX_SCORE_LENGTH) ? scoreString.length() : MAX_SCORE_LENGTH;
             Double score = Double.valueOf(scoreString);
-//                    .substring(0, maxLength));
 
+            // Collect full pair (A -> B and B -> A)
             out.collect(new WikiSimRecommendation(cols[fieldPageA], cols[fieldPageB], score, Integer.valueOf(cols[fieldPageIdA]), Integer.valueOf(cols[fieldPageIdB])));
             out.collect(new WikiSimRecommendation(cols[fieldPageB], cols[fieldPageA], score, Integer.valueOf(cols[fieldPageIdB]), Integer.valueOf(cols[fieldPageIdA])));
-//        } catch (ArrayIndexOutOfBoundsException e) {
-//            // nothing
-//            return;
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols) + "\n" + e.getMessage());
@@ -67,13 +61,12 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
     }
 
 
-    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
-        return readWikiSimOutput(env, filename, topK, fieldPageA, fieldPageB, fieldScore, false, null);
-    }
+//    public static DataSet<WikiSimRecommendationSet> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
+//        return readWikiSimOutput(env, filename, topK, fieldPageA, fieldPageB, fieldScore, null, null);
+//    }
 
-    public static DataSet<WikiSimTopResults> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK,
-                                                               int fieldPageA, int fieldPageB, int fieldScore,
-                                                               boolean idfCPI, String articleStatsFilename) throws Exception {
+    public static DataSet<WikiSimRecommendation> readWikiSimOutput(ExecutionEnvironment env, String filename,
+                                                               int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
 
         Log.info("Reading WikiSim from " + filename);
 
@@ -84,12 +77,20 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
         config.setInteger("fieldScore", fieldScore);
 
         // Read recommendation from files
-        DataSet<WikiSimRecommendation> recommendations = env.readTextFile(filename)
+//        DataSet<WikiSimRecommendation> recommendations =
+                return env.readTextFile(filename)
                 .flatMap(new WikiSimReader())
                 .withParameters(config);
 
-        // Add idfCPI factor to score
-        if(idfCPI && articleStatsFilename != null) {
+        // Build recommendation sets
+//        return buildRecommendationSets(env, recommendations, topK, cpiExpr, articleStatsFilename);
+    }
+
+    public static DataSet<WikiSimRecommendationSet> buildRecommendationSets(ExecutionEnvironment env,
+                                                                            DataSet<WikiSimRecommendation> recommendations,
+                                                                            int topK, String cpiExpr, String articleStatsFilename) throws Exception {
+        // Compute complex CPI with expression
+        if(cpiExpr != null && articleStatsFilename != null) {
             // TODO redirects?
             DataSet<ArticleStatsTuple> stats = ArticleStats.getArticleStatsFromFile(env, articleStatsFilename);
 
@@ -100,12 +101,12 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
                     .leftOuterJoin(stats)
                     .where(WikiSimRecommendation.RECOMMENDATION_TITLE_KEY)
                     .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
-                    .with(new ComputeIdfCPI(count));
+                    .with(new ComputeComplexCPI(count, cpiExpr));
         }
 
-        // Build recommendation sets
         return recommendations
-                .groupBy(0)
+                .groupBy(WikiSimRecommendation.SOURCE_TITLE_KEY)
                 .reduceGroup(new WikiSimGroupReducer(topK));
+
     }
 }

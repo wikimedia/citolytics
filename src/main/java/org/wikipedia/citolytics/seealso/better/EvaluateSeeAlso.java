@@ -4,7 +4,7 @@ import com.google.common.collect.Ordering;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class EvaluateSeeAlso implements CoGroupFunction<
         Tuple2<String, ArrayList<String>>,
-        WikiSimTopResults,
+        WikiSimRecommendationSet,
         SeeAlsoEvaluationResult
         > {
 
@@ -33,9 +33,9 @@ public class EvaluateSeeAlso implements CoGroupFunction<
     }
 
     @Override
-    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<WikiSimTopResults> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
+    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<WikiSimRecommendationSet> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
         Iterator<Tuple2<String, ArrayList<String>>> iteratorA = a.iterator();
-        Iterator<WikiSimTopResults> iteratorB = b.iterator();
+        Iterator<WikiSimRecommendationSet> iteratorB = b.iterator();
 
         if (iteratorA.hasNext()) {
             Tuple2<String, ArrayList<String>> recordA = iteratorA.next();
@@ -50,7 +50,7 @@ public class EvaluateSeeAlso implements CoGroupFunction<
             int[] matches = new int[]{0, 0, 0};
 
             if (iteratorB.hasNext()) {
-                WikiSimTopResults recordB = iteratorB.next();
+                WikiSimRecommendationSet recordB = iteratorB.next();
 
                 sortedList = Ordering.natural().greatestOf(recordB.getResults(), topK);
 

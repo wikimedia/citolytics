@@ -9,7 +9,7 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
-import org.wikipedia.citolytics.cpa.types.WikiSimTopResults;
+import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
 import org.wikipedia.citolytics.seealso.better.*;
 import org.wikipedia.citolytics.seealso.operators.BetterLinkExistsFilter;
 import org.wikipedia.citolytics.seealso.operators.BetterSeeAlsoLinkExistsFilter;
@@ -72,7 +72,7 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
                 .map(new SeeAlsoInputMapper());
 
         // Read result set
-        DataSet<WikiSimTopResults> wikiSimGroupedDataSet;
+        DataSet<WikiSimRecommendationSet> wikiSimGroupedDataSet;
 
         // CPA or MLT results?
         if (scoreField >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
