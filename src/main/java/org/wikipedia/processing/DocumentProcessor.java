@@ -16,12 +16,8 @@
  */
 package org.wikipedia.processing;
 
-import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
+import org.wikipedia.processing.types.WikiDocument;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,31 +27,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Document Processor
+ * Document Processor: Handles processing of Wikipedia documents from XML dump.
  *
- * TODO Strip from CPA to allow general usage (aka WikiFlink)
+ * Use for:
+ * - Info box removal
+ * - "See also" section extraction
  *
- * Extracts links from Wikipedia documents, generates result records.
  */
-public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult> {
+public class DocumentProcessor {
     private static final String INVALID_NAMESPACES_FILENAME = "invalid_namespaces.txt";
     public static final String INFOBOX_TAG = "{{Infobox";
+
+    public static final int WIKI2006_ID_MATCH_GROUP = 2;
+    public static final int WIKI2006_TITLE_MATCH_GROUP = 1;
+    public static final int WIKI2006_TEXT_MATCH_GROUP = 3;
+
+    public static final int DEFAULT_ID_MATCH_GROUP = 3;
+    public static final int DEFAULT_TITLE_MATCH_GROUP = 1;
+    public static final int DEFAULT_TEXT_MATCH_GROUP = 4;
+    public static final int DEFAULT_NS_MATCH_GROUP = 2;
+
     public static String seeAlsoTitle = "==see also==";
     public static String seeAlsoRegex = "(^|\\W)" + seeAlsoTitle + "$";
     public static int seeAlsoRegexFlags = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE;
 
-    private double[] alphas = new double[]{1.0};
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
     private boolean enableInfoBoxRemoval = true;
-
-    private static final int WIKI2006_ID_MATCH_GROUP = 2;
-    private static final int WIKI2006_TITLE_MATCH_GROUP = 1;
-    private static final int WIKI2006_TEXT_MATCH_GROUP = 3;
-
-    private static final int DEFAULT_ID_MATCH_GROUP = 3;
-    private static final int DEFAULT_TITLE_MATCH_GROUP = 1;
-    private static final int DEFAULT_TEXT_MATCH_GROUP = 4;
-    private static final int DEFAULT_NS_MATCH_GROUP = 2;
 
     private int idMatchGroup = DEFAULT_ID_MATCH_GROUP;
     private int titleMatchGroup = DEFAULT_TITLE_MATCH_GROUP;
@@ -64,45 +61,18 @@ public class DocumentProcessor extends RichFlatMapFunction<String, WikiSimResult
 
     private List<String> invalidNameSpaces;
 
-    @Override
-    public void open(Configuration parameter) throws Exception {
-        super.open(parameter);
-
-        enableWiki2006 = parameter.getBoolean("wiki2006", true);
-        if(enableWiki2006) {
-            enableWiki2006();
-        }
-
-        enableInfoBoxRemoval = parameter.getBoolean("removeInfoBox", true);
-
-        String[] arr = parameter.getString("alpha", "1.0").split(",");
-        alphas = new double[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            alphas[i] = Double.parseDouble(arr[i]);
-        }
-    }
-
-    public void enableWiki2006() {
+    public DocumentProcessor enableWiki2006() {
+        enableWiki2006 = true;
         idMatchGroup = WIKI2006_ID_MATCH_GROUP;
         titleMatchGroup = WIKI2006_TITLE_MATCH_GROUP;
         textMatchGroup = WIKI2006_TEXT_MATCH_GROUP;
         nsMatchGroup = -1;
-    }
-
-    public DocumentProcessor enableInfoBoxRemoval() {
-        enableInfoBoxRemoval = true;
         return this;
     }
 
-
-    @Override
-    public void flatMap(String content, Collector<WikiSimResult> out) {
-
-        WikiDocument doc = processDoc(content);
-
-        if (doc == null) return;
-
-        doc.collectLinksAsResult(out, alphas);
+    public DocumentProcessor setInfoBoxRemoval(boolean enable) {
+        enableInfoBoxRemoval = enable;
+        return this;
     }
 
     public WikiDocument processDoc(String content) {

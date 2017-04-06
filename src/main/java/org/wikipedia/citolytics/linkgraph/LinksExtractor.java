@@ -5,8 +5,8 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.processing.DocumentProcessor;
+import org.wikipedia.processing.types.WikiDocument;
 
 import java.util.List;
 import java.util.Map;

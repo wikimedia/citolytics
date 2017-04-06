@@ -9,8 +9,8 @@ import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
+import org.wikipedia.processing.types.WikiDocument;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

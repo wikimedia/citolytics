@@ -14,10 +14,10 @@
  * this stuff is worth it, you can buy me a beer in return.
  * ----------------------------------------------------------------------------
  */
-package org.wikipedia.citolytics.cpa.types;
+package org.wikipedia.processing.types;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.flink.util.Collector;
+import org.wikipedia.citolytics.cpa.types.LinkTuple;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.processing.DocumentProcessor;
 
@@ -29,7 +29,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 /**
- * @author rob
+ * Represents a Wikipedia documents including its text and properties, provides methods for link and word map extraction.
  */
 public class WikiDocument {
     private DocumentProcessor processor;
@@ -243,38 +243,6 @@ public class WikiDocument {
         while (m.find()) {
             currentWS++;
             wordMap.put(m.start(), currentWS);
-        }
-    }
-
-    public void collectLinksAsResult(Collector<WikiSimResult> collector, double[] alphas) {
-        //Skip all namespaces other than main
-        if (ns != 0) {
-            return;
-        }
-        getOutLinks();
-        getWordMap();
-
-        // Loop all link pairs
-        for (Map.Entry<String, Integer> outLink1 : outLinks) {
-            for (Map.Entry<String, Integer> outLink2 : outLinks) {
-                // Check alphabetical order (A before B)
-                String pageA = outLink1.getKey();
-                String pageB = outLink2.getKey();
-                int order = pageA.compareTo(pageB);
-
-                if (order < 0) {
-                    int w1 = wordMap.floorEntry(outLink1.getValue()).getValue();
-                    int w2 = wordMap.floorEntry(outLink2.getValue()).getValue();
-                    int d = max(abs(w1 - w2), 1); // CPI definition
-
-                    //recDistance.setValue(1 / (pow(d, α)));
-
-                    if (LinkTuple.isValid(pageA, pageB)) {
-                        collector.collect(new WikiSimResult(pageA, pageB, d, alphas));
-                    }
-
-                }
-            }
         }
     }
 

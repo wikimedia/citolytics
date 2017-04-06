@@ -3,10 +3,10 @@ package org.wikipedia.citolytics.tests;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
+import org.wikipedia.processing.types.WikiDocument;
 
 import java.util.HashMap;
 import java.util.Map;

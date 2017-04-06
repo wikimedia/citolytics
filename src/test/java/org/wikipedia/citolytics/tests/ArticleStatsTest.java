@@ -2,12 +2,12 @@ package org.wikipedia.citolytics.tests;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.linkgraph.LinkGraph;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
+import org.wikipedia.processing.types.WikiDocument;
 
 import static org.junit.Assert.assertEquals;
 

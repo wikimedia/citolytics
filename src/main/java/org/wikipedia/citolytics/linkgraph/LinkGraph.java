@@ -11,10 +11,10 @@ import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.processing.DocumentProcessor;
+import org.wikipedia.processing.types.WikiDocument;
 
 import java.util.Collection;
 import java.util.List;

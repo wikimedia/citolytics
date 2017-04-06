@@ -143,7 +143,7 @@ public class CalculationTest extends Tester {
     }
 
     @Test
-    public void TestResultCount() throws Exception {
+    public void TestResultCountKeepInfoBox() throws Exception {
         WikiSim job = new WikiSim();
 
         // If threshold is greater than 0, result count varies
@@ -155,9 +155,12 @@ public class CalculationTest extends Tester {
                 .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (keep infobox)", 125751, job.output.size());
+    }
 
+    @Test
+    public void testResultsCountRemovedInfoBox() throws Exception {
         // with old namespace check = 118341
-        job = new WikiSim();
+        WikiSim job = new WikiSim();
         job.enableLocalEnvironment()
                 .silent()
                 .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output local").split(" "));

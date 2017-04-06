@@ -2,8 +2,8 @@ package org.wikipedia.citolytics.histogram;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.WikiDocument;
 import org.wikipedia.processing.DocumentProcessor;
+import org.wikipedia.processing.types.WikiDocument;
 
 
 public class HistogramMapper implements FlatMapFunction<String, HistogramResult> {
