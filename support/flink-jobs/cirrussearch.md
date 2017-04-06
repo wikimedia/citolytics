@@ -57,19 +57,21 @@ results.
         --wikisim $OUTPUT_DIR/wikisim_raw \
         --wikidump NONE \
         --enable-elastic \
-        --output $OUTPUT_DIR/wikisim.json
+        --output $OUTPUT_DIR/citolytics_$WIKI.json
 
 ### Alternative pre-processing options
 
     # Generate top-10 results as JSON
-    # - with CPI expression and article stats
+    # - with CPI expression and article stats, e.g.
+    #   --cpi %1\$f*Math.log\(%3\$d/%2\$d\)  
+    # - WARNING: expression needs to be escaped
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
         --wikidump NONE \
         --enable-elastic \
-        --cpi %1$f*Math.log(%3$d/%2$d) \
+        --cpi %1\$f \
         --article-stats $OUTPUT_DIR/stats \
-        --output $OUTPUT_DIR/wikisim.json
+        --output $OUTPUT_DIR/citolytics_$WIKI.cpi.json
 
 ### Trigger ES import
 
