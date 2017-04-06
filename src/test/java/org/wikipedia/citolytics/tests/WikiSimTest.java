@@ -14,9 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * @author malteschwarzer
- */
 public class WikiSimTest extends Tester {
     private String fixture;
     private WikiSimAbstractJob job;
@@ -69,17 +66,17 @@ public class WikiSimTest extends Tester {
     }
 
     private String getInputPath() throws FileNotFoundException {
-        return resource("fixtures/" + fixture + ".input");
+        return resource("WikiSimTest/" + fixture + ".input");
     }
 
     private String getExpectedOutputPath() {
-        return "fixtures/" + fixture + ".expected";
+        return "WikiSimTest/" + fixture + ".expected";
     }
 
 
     @Test
     public void testSimple() throws Exception {
-        fixture = "wikisim_simple.xml";
+        fixture = "simple.xml";
 
         job.start("--input " + getInputPath() + " --output local");
 
@@ -87,14 +84,23 @@ public class WikiSimTest extends Tester {
 
 //        job.enableSingleOutputFile()
 //                .silent()
-//                .start(("--input " + resource("fixtures/wikisim_simple.xml.input") + " --group-reduce --output " + resource("fixtures/wikisim_simple.xml.expected")).split(" "));
+//                .start(("--input " + resource("WikiSimTest/simple.xml.input") + " --group-reduce --output " + resource("WikiSimTest/simple.xml.expected")).split(" "));
 
 
     }
 
     @Test
+    public void testRelativeProximity() throws Exception {
+        fixture = "relative_proximity.xml";
+        job.start("--input " + getInputPath() + " --relative-proximity --output local");
+
+        assertOutput(job.getOutput(), getExpectedOutputPath());
+
+    }
+
+    @Test
     public void testAlpha() throws Exception {
-        fixture = "wikisim_alpha.xml";
+        fixture = "alpha.xml";
 
         job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output local");
 
@@ -103,7 +109,7 @@ public class WikiSimTest extends Tester {
 
     @Test
     public void testSimpleWithRedirects() throws Exception {
-        fixture = "wikisim_simple_with_redirects.xml";
+        fixture = "simple_with_redirects.xml";
 
 
     }

@@ -34,17 +34,27 @@ public class DocumentProcessorTest extends Tester {
     }
     @Test
     public void TestInfoBoxRemoval() throws Exception {
-        infoBoxRemoval("wikiInfoBox_1.xml");
+        infoBoxRemoval("DocumentProcessorTest/wikiInfoBox_1.xml");
     }
 
     @Test
     public void TestInfoBoxRemoval_MultipleInfoBoxes() throws Exception {
-        infoBoxRemoval("wikiInfoBox_2.xml");
+        infoBoxRemoval("DocumentProcessorTest/wikiInfoBox_2.xml");
     }
 
     @Test
     public void TestInfoBoxRemoval_NotClosingInfoBox() throws Exception {
-        infoBoxRemoval("wikiInfoBox_3.xml");
+        infoBoxRemoval("DocumentProcessorTest/wikiInfoBox_3.xml");
+    }
+
+
+    @Test
+    public void testWordMapExtraction() throws Exception {
+        String wikiText = getFileContents("DocumentProcessorTest/wikiInfoBox_1.xml");
+        DocumentProcessor dp = new DocumentProcessor();
+
+        assertEquals("Invalid word count returned", 26067, dp.processDoc(wikiText).getWordMap().size());
+
     }
 
     private Pattern getHeadlinePattern(int level) {
@@ -53,10 +63,11 @@ public class DocumentProcessorTest extends Tester {
 
     }
 
+
     @Ignore
     @Test
     public void TestStaticCPI() throws Exception {
-        String wikiText = getFileContents("wikiInfoBox_1.xml");
+        String wikiText = getFileContents("DocumentProcessorTest/wikiInfoBox_1.xml");
         DocumentProcessor dp = new DocumentProcessor();
 
         WikiDocument doc = dp.processDoc(wikiText);

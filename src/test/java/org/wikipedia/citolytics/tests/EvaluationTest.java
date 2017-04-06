@@ -13,7 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.ClickStreamStats;
-import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
 import org.wikipedia.citolytics.seealso.better.EvaluateSeeAlso;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
@@ -343,7 +343,7 @@ public class EvaluationTest extends Tester {
         String pageA = "Foo";
         String pageB = "Bar";
 
-        if (LinkTuple.getHash(pageA, pageB) != LinkTuple.getHash(pageA, pageB))
+        if (LinkPair.getHash(pageA, pageB) != LinkPair.getHash(pageA, pageB))
             throw new Exception("Hash not the same.");
     }
 

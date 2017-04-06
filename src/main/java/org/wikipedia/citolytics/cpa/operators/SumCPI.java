@@ -38,13 +38,13 @@ public class SumCPI extends RichReduceFunction<RecommendationPair> {
         c.setDistance(a.getDistance() + b.getDistance());
         c.setCount(a.getCount() + b.getCount());
 
-        if (a.getCPI().size() == 0) {
-            // TODO Can this happen anyway?
-            a.setCPI(initCPI(a.getDistance()));
-        }
-        if (b.getCPI().size() == 0) {
-            b.setCPI(initCPI(b.getDistance()));
-        }
+//        if (a.getCPI().size() == 0) {
+//            // TODO Can this happen anyway?
+//            a.setCPI(initCPI(a.getDistance()));
+//        }
+//        if (b.getCPI().size() == 0) {
+//            b.setCPI(initCPI(b.getDistance()));
+//        }
 
         c.setCPI(DoubleListValue.sum(a.getCPI(), b.getCPI()));
 

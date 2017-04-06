@@ -9,7 +9,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
@@ -28,7 +28,7 @@ import static java.lang.Math.max;
  * Extracts detailed link graph of link pairs (LinkTuples) from Wikipedia.
  * <p/>
  * Input: List of LinkTuples
- * Output CSV: Article; LinkTuple; Distance
+ * Output CSV: Article; LinkPair; Distance
  */
 public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String, Integer>> {
 
@@ -75,7 +75,7 @@ public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String,
 
             @Override
             public void flatMap(String content, Collector<Tuple4<String, String, String, Integer>> out) throws Exception {
-                LinkTuple linkTuple = new LinkTuple();
+                LinkPair linkPair = new LinkPair();
 
                 WikiDocument doc = new DocumentProcessor().processDoc(content);
                 if (doc == null) return;
@@ -94,15 +94,15 @@ public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String,
                             int d = max(abs(w1 - w2), 1);
                             //recDistance.setValue(1 / (pow(d, α)));
 
-                            linkTuple.setFirst(outLink1.getKey());
-                            linkTuple.setSecond(outLink2.getKey());
+                            linkPair.setFirst(outLink1.getKey());
+                            linkPair.setSecond(outLink2.getKey());
 
                             // Add result to collector
-                            if (linkTuple.isValid() && (linkTupleList.contains(linkTuple) || linkTupleList.contains(linkTuple.getTwin()))) {
+                            if (linkPair.isValid() && (linkTupleList.contains(linkPair) || linkTupleList.contains(linkPair.getTwin()))) {
                                 out.collect(new Tuple4<>(
                                                 doc.getTitle(),
-                                                linkTuple.getFirst(),
-                                                linkTuple.getSecond(),
+                                                linkPair.getFirst(),
+                                                linkPair.getSecond(),
                                                 d)
                                 );
                             }

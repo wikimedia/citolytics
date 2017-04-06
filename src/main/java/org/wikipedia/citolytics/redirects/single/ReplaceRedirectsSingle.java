@@ -2,7 +2,7 @@ package org.wikipedia.citolytics.redirects.single;
 
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 
 import java.util.Iterator;
@@ -48,7 +48,7 @@ public class ReplaceRedirectsSingle implements CoGroupFunction<WikiSimRedirectsR
                     recordA.setField(tmp, pageAField);
                 }
                 // update hash
-                recordA.setField(LinkTuple.getHash((String) recordA.getField(pageAField), (String) recordA.getField(pageBField)), hashField);
+                recordA.setField(LinkPair.getHash((String) recordA.getField(pageAField), (String) recordA.getField(pageBField)), hashField);
             }
 
             // Collect original record (independent of redirect)

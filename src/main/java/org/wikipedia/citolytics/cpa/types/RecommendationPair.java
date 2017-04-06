@@ -24,7 +24,7 @@ public class RecommendationPair extends Tuple8<
         Long, // hash
         String, // page title A
         String, // page title B
-        Long, // distance
+        Double, // distance
         Integer, // count
 //        Long, // distSquared
 //        Long, // min
@@ -53,7 +53,7 @@ public class RecommendationPair extends Tuple8<
         // Flink needs empty constructor
     }
 
-    public RecommendationPair(LinkTuple link, int distance) {
+    public RecommendationPair(LinkPair link, double distance) {
         init(link.getFirst(), link.getSecond(), distance, 1);
         init();
     }
@@ -63,7 +63,7 @@ public class RecommendationPair extends Tuple8<
         init();
     }
 
-    public RecommendationPair(String pageA, String pageB, int distance, double[] alphas) {
+    public RecommendationPair(String pageA, String pageB, double distance, double[] alphas) {
 
         init(pageA, pageB, distance, 1);
         init();
@@ -74,18 +74,18 @@ public class RecommendationPair extends Tuple8<
         }
     }
 
-    public double computeCPI(int distance, double alpha) {
+    public double computeCPI(double distance, double alpha) {
         return Math.pow(distance, -alpha);
     }
 
-    public RecommendationPair(String pageA, String pageB, int distance, int count, double[] cpa) {
+    public RecommendationPair(String pageA, String pageB, double distance, int count, double[] cpa) {
 
         init(pageA, pageB, distance, count);
         setCPI(cpa);
     }
 
-    public void init(String pageA, String pageB, int distance, int count) {
-        setField(LinkTuple.getHash(pageA, pageB), HASH_KEY);
+    public void init(String pageA, String pageB, double distance, int count) {
+        setField(LinkPair.getHash(pageA, pageB), HASH_KEY);
         setField(pageA, PAGE_A_KEY);
         setField(pageB, PAGE_B_KEY);
         setPageAId(0);
@@ -106,13 +106,13 @@ public class RecommendationPair extends Tuple8<
         setField(new DoubleListValue(), CPI_LIST_KEY);
     }
 
-    public void setDistance(long distance) {
+    public void setDistance(double distance) {
         setField(distance, DISTANCE_KEY);
     }
 
-    public void setDistance(int distance) {
-        setField(Long.valueOf(distance), DISTANCE_KEY);
-    }
+//    public void setDistance(double distance) {
+//        setField(Long.valueOf(distance), DISTANCE_KEY);
+//    }
 
     public void setCount(int count) {
         setField(count, COUNT_KEY);
@@ -158,7 +158,7 @@ public class RecommendationPair extends Tuple8<
         return getField(0);
     }
 
-//    public LinkTuple getLinkTuple() {
+//    public LinkPair getLinkTuple() {
 //        return getField(1);
 //    }
 
@@ -186,7 +186,7 @@ public class RecommendationPair extends Tuple8<
         return this.f2;
     }
 
-    public long getDistance() {
+    public double getDistance() {
         return getField(DISTANCE_KEY);
     }
 
@@ -243,6 +243,7 @@ public class RecommendationPair extends Tuple8<
         return getPageA().hashCode()
                 + getPageB().hashCode()
                 + getCount()
+                + Double.valueOf(getDistance()).hashCode()
 //                + getCPI().hashCode()
                 ;
     }
@@ -259,7 +260,7 @@ public class RecommendationPair extends Tuple8<
 
         RecommendationPair res = new RecommendationPair(cols[PAGE_A_KEY], cols[PAGE_B_KEY]);
 
-        res.setDistance(Integer.valueOf(cols[DISTANCE_KEY]));
+        res.setDistance(Double.valueOf(cols[DISTANCE_KEY]));
         res.setCount(Integer.valueOf(cols[COUNT_KEY]));
 
         DoubleListValue cpi = new DoubleListValue();

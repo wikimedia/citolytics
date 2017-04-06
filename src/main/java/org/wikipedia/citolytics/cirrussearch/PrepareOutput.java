@@ -11,11 +11,11 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.WikiSim;
+import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
-import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 

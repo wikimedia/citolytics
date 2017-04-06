@@ -5,11 +5,10 @@ import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.cpa.WikiSim;
-import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.cpa.utils.ValidateOrderInOutput;
-import org.wikipedia.citolytics.histogram.Histogram;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
@@ -238,20 +237,6 @@ public class CalculationTest extends Tester {
         assertEquals("Result count wrong", 87632, job.output.size());
     }
 
-    @Ignore
-    @Test
-    public void TestHistogram() throws Exception {
-
-        //  wikiTalkPage.xml"
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso2.xml").nextElement().getPath();
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-
-
-        outputFilename = "print";
-
-        Histogram.main(new String[]{inputFilename, outputFilename});
-    }
-
 
     @Ignore
     @Test
@@ -267,7 +252,7 @@ public class CalculationTest extends Tester {
     @Test
     public void IntermediateResultSize() throws Exception {
         String str = "ABC";
-        RecommendationPair result = new RecommendationPair(new LinkTuple("Page AAAAA", "Page BBBB"), 999);
+        RecommendationPair result = new RecommendationPair(new LinkPair("Page AAAAA", "Page BBBB"), 999);
 
         result.setDistSquared(9999);
         result.setCPI(new double[]{1.99, 10.99, 0.995, 1234.5678});
@@ -281,8 +266,8 @@ public class CalculationTest extends Tester {
     @Test
     public void HashCollisionTest() throws Exception {
         // TODO Improve hash function.
-        if (LinkTuple.getHash("NPR", "The Church of Jesus Christ of Latter-day Saints")
-                == LinkTuple.getHash("Mp3", "The Church of Jesus Christ of Latter-day Saints")) {
+        if (LinkPair.getHash("NPR", "The Church of Jesus Christ of Latter-day Saints")
+                == LinkPair.getHash("Mp3", "The Church of Jesus Christ of Latter-day Saints")) {
             throw new Exception("Hashcodes are equal.");
         }
 

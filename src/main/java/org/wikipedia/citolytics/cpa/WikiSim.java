@@ -35,6 +35,7 @@ import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
  * --resolve-redirects
  * --remove-missing-ids
  * --keep-infobox
+ * --relative-proximity
  */
 public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
 
@@ -44,12 +45,12 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
     public String alpha = "1.5";
     public boolean removeMissingIds = false;
     public boolean resolveRedirects = false;
+    public boolean relativeProximity = false;
     private boolean median = true;
     private boolean wiki2006 = false;
     private boolean removeInfoBox = false;
     private int reducerThreshold = 1;
     private int combinerThreshold = 1;
-    private boolean idfCPI = false;
 
     private DataSource<String> wikiDump;
 
@@ -102,7 +103,7 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
         removeInfoBox = !params.has("keep-infobox");
         removeMissingIds = params.has("remove-missing-ids");
         resolveRedirects = params.has("resolve-redirects");
-        idfCPI = params.has("idf-cpi");
+        relativeProximity = params.has("relative-proximity");
     }
 
     /**
@@ -121,6 +122,8 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
             config.setBoolean("median", true);
             config.setBoolean("wiki2006", wiki2006);
             config.setBoolean("removeInfoBox", removeInfoBox);
+            config.setBoolean("relativeProximity", relativeProximity);
+
         }
         return config;
     }

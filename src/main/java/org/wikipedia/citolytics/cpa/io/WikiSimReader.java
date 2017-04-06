@@ -1,4 +1,4 @@
-package org.wikipedia.citolytics.seealso.better;
+package org.wikipedia.citolytics.cpa.io;
 
 import com.esotericsoftware.minlog.Log;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
@@ -11,6 +11,7 @@ import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
+import org.wikipedia.citolytics.seealso.better.RecommendationSetBuilder;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
@@ -89,6 +90,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
             // Total articles
             long count = stats.count();
 
+            // TODO JoinHint? Currently using left hybrid build second
             recommendations = recommendations
                     .leftOuterJoin(stats)
                     .where(Recommendation.RECOMMENDATION_TITLE_KEY)
@@ -97,7 +99,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
         }
 
         return recommendations
-                .groupBy(Recommendation.SOURCE_TITLE_KEY)
+                .groupBy(Recommendation.SOURCE_TITLE_KEY) // Using HashPartition Sort on [0; ASC] TODO Maybe use reduce()
                 .reduceGroup(new RecommendationSetBuilder(topK));
 
     }

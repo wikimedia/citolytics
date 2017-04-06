@@ -4,12 +4,12 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
-public class LinkTuple extends Tuple2<String, String> {
-    public LinkTuple() {
+public class LinkPair extends Tuple2<String, String> {
+    public LinkPair() {
 
     }
 
-    public LinkTuple(String first, String second) {
+    public LinkPair(String first, String second) {
         setFirst(first);
         setSecond(second);
     }
@@ -38,8 +38,8 @@ public class LinkTuple extends Tuple2<String, String> {
         return first.length() > 0 && second.length() > 0 && !first.equals("\\") && !second.equals("\\");
     }
 
-    public LinkTuple getTwin() {
-        return new LinkTuple(getSecond(), getFirst());
+    public LinkPair getTwin() {
+        return new LinkPair(getSecond(), getFirst());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.wikipedia.citolytics.redirects.operators;
 
 import org.apache.flink.api.common.functions.JoinFunction;
-import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 
@@ -35,7 +35,7 @@ public class ReplaceRedirectsWithOuterJoin implements JoinFunction<Recommendatio
                 record.setField(tmp, pageAField);
             }
             // update hash
-            record.setField(LinkTuple.getHash((String) record.getField(pageAField), (String) record.getField(pageBField)), hashField);
+            record.setField(LinkPair.getHash((String) record.getField(pageAField), (String) record.getField(pageBField)), hashField);
         }
 
         return record;

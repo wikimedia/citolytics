@@ -17,7 +17,7 @@
 package org.wikipedia.processing.types;
 
 import org.apache.commons.lang.StringUtils;
-import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.processing.DocumentProcessor;
 
@@ -34,7 +34,7 @@ import static java.lang.Math.max;
 public class WikiDocument {
     private DocumentProcessor processor;
 
-    private final LinkTuple linkTuple = new LinkTuple();
+    private final LinkPair linkPair = new LinkPair();
 
     /**
      * reciprocal distance *

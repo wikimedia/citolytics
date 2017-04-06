@@ -13,9 +13,9 @@ import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
+import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.better.MLTInputMapper;
-import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 
 import java.util.HashSet;
 
