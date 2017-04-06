@@ -4,7 +4,7 @@ import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.processing.DocumentProcessor;
 import org.wikipedia.processing.types.WikiDocument;
 
@@ -16,7 +16,7 @@ import static java.lang.Math.max;
 /**
  * Processes Wikipedia documents with DocumentProcessor and extracts link pairs that are used for CPA computations.
  */
-public class LinkPairExtractor extends RichFlatMapFunction<String, WikiSimResult> {
+public class RecommendationPairExtractor extends RichFlatMapFunction<String, RecommendationPair> {
 
     private DocumentProcessor dp;
 
@@ -51,7 +51,7 @@ public class LinkPairExtractor extends RichFlatMapFunction<String, WikiSimResult
     }
 
     @Override
-    public void flatMap(String content, Collector<WikiSimResult> out) throws Exception {
+    public void flatMap(String content, Collector<RecommendationPair> out) throws Exception {
         DocumentProcessor dp = getDocumentProcessor();
 
         WikiDocument doc = dp.processDoc(content);
@@ -61,7 +61,7 @@ public class LinkPairExtractor extends RichFlatMapFunction<String, WikiSimResult
         collectLinkPairs(doc, out);
     }
 
-    private void collectLinkPairs(WikiDocument doc, Collector<WikiSimResult> out) {
+    private void collectLinkPairs(WikiDocument doc, Collector<RecommendationPair> out) {
         //Skip all namespaces other than main
         if (doc.getNS() != 0) {
             return;
@@ -83,7 +83,7 @@ public class LinkPairExtractor extends RichFlatMapFunction<String, WikiSimResult
                     //recDistance.setValue(1 / (pow(d, α)));
 
                     if (LinkTuple.isValid(pageA, pageB)) {
-                        out.collect(new WikiSimResult(pageA, pageB, d, alphas));
+                        out.collect(new RecommendationPair(pageA, pageB, d, alphas));
                     }
 
                 }

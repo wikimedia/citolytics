@@ -2,12 +2,12 @@ package org.wikipedia.citolytics.redirects.single;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple4;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 
 import java.util.regex.Pattern;
 
 /**
- * WikiSimResult as strings
+ * RecommendationPair as strings
  * 0: Hash
  * 1: Page A
  * 2: Page B
@@ -20,7 +20,7 @@ public class WikiSimRedirectsResult extends Tuple4<Long, String, String, String>
         // Flink needs empty constructor
     }
 
-    public WikiSimRedirectsResult(WikiSimResult result) {
+    public WikiSimRedirectsResult(RecommendationPair result) {
 
         setField(result.getHash(), 0);
         setField(result.f1, 1);
@@ -43,7 +43,7 @@ public class WikiSimRedirectsResult extends Tuple4<Long, String, String, String>
         setField(Long.valueOf(cols[0]), 0);
         setField(cols[1], 1);
         setField(cols[2], 2);
-        setField(cols[3], 3); // rest of WikiSimResult
+        setField(cols[3], 3); // rest of RecommendationPair
     }
 
     public void sumWith(WikiSimRedirectsResult otherResult) throws Exception {

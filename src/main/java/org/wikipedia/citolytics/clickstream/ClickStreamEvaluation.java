@@ -13,7 +13,7 @@ import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.better.MLTInputMapper;
 import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 
@@ -79,7 +79,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                         langLinksInputFilename, idTitleMappingFilename);
 
         // WikiSim
-        DataSet<WikiSimRecommendationSet> wikiSimGroupedDataSet;
+        DataSet<RecommendationSet> wikiSimGroupedDataSet;
 
         // CPA or MLT results?
         if (fieldScore >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
@@ -105,7 +105,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         // Evaluation
         result = wikiSimGroupedDataSet
                 .coGroup(clickStreamDataSet)
-                .where(WikiSimRecommendationSet.SOURCE_TITLE_KEY)
+                .where(RecommendationSet.SOURCE_TITLE_KEY)
                 .equalTo(ClickStreamTuple.ARTICLE_NAME_KEY)
                 .with(new EvaluateClicks(topK));
 

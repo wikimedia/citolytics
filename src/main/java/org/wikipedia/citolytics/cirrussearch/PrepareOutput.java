@@ -12,9 +12,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.better.WikiSimReader;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
@@ -53,7 +53,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         setJobName("CirrusSearch PrepareOutput");
 
         // Prepare results
-        DataSet<WikiSimRecommendation>  recommendations;
+        DataSet<Recommendation>  recommendations;
         if(wikiSimInputFilename == null) {
 
             // Build new result list
@@ -67,13 +67,13 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             wikiSimJob.plan();
 
             recommendations = wikiSimJob.result
-                    .flatMap(new FlatMapFunction<WikiSimResult, WikiSimRecommendation>() {
+                    .flatMap(new FlatMapFunction<RecommendationPair, Recommendation>() {
                         private final int alphaKey = 0;
                         @Override
-                        public void flatMap(WikiSimResult in, Collector<WikiSimRecommendation> out) throws Exception {
+                        public void flatMap(RecommendationPair in, Collector<Recommendation> out) throws Exception {
 
-                            out.collect(new WikiSimRecommendation(in.getPageA(), in.getPageB(), in.getCPI(alphaKey), in.getPageAId(), in.getPageBId()));
-                            out.collect(new WikiSimRecommendation(in.getPageB(), in.getPageA(), in.getCPI(alphaKey), in.getPageBId(), in.getPageAId()));
+                            out.collect(new Recommendation(in.getPageA(), in.getPageB(), in.getCPI(alphaKey), in.getPageAId(), in.getPageBId()));
+                            out.collect(new Recommendation(in.getPageB(), in.getPageA(), in.getCPI(alphaKey), in.getPageBId(), in.getPageAId()));
                         }
                     });
         } else {
@@ -82,7 +82,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         }
 
         // Compute recommendation sets
-        DataSet<WikiSimRecommendationSet> recommendationSets = WikiSimReader.buildRecommendationSets(env, recommendations, topK, cpiExpr, articleStatsFilename);
+        DataSet<RecommendationSet> recommendationSets = WikiSimReader.buildRecommendationSets(env, recommendations, topK, cpiExpr, articleStatsFilename);
 
                 // Transform result list to JSON with page ids
         // TODO Check if there some pages lost (left or equi-join)
@@ -99,7 +99,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
     /**
      * ES bulk JSON format builder for recommendation sets.
      */
-    public class JSONMapper implements FlatMapFunction<WikiSimRecommendationSet, Tuple1<String>> {
+    public class JSONMapper implements FlatMapFunction<RecommendationSet, Tuple1<String>> {
         protected boolean disableScores = false;
         protected boolean elasticBulkSyntax = false;
         protected boolean ignoreMissingIds = false;
@@ -180,7 +180,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         }
 
         @Override
-        public void flatMap(WikiSimRecommendationSet in, Collector<Tuple1<String>> out) throws Exception {
+        public void flatMap(RecommendationSet in, Collector<Tuple1<String>> out) throws Exception {
             int pageId = in.getSourceId();
 
             // Check for page id
@@ -195,7 +195,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
     }
 
     @Deprecated
-    public class JSONMapperWithIdCheck extends JSONMapper implements FlatJoinFunction<WikiSimRecommendationSet, IdTitleMapping, Tuple1<String>> {
+    public class JSONMapperWithIdCheck extends JSONMapper implements FlatJoinFunction<RecommendationSet, IdTitleMapping, Tuple1<String>> {
 
         /**
          * @param disableScores     Set to true if score should not be included in JSON output
@@ -208,7 +208,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         }
 
         @Override
-        public void join(WikiSimRecommendationSet in, IdTitleMapping mapping, Collector<Tuple1<String>> out) throws Exception {
+        public void join(RecommendationSet in, IdTitleMapping mapping, Collector<Tuple1<String>> out) throws Exception {
             int pageId;
 
             // Check for page id

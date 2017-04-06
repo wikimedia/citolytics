@@ -1,7 +1,7 @@
 package org.wikipedia.citolytics.cpa.operators;
 
 import org.apache.flink.api.common.functions.JoinFunction;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
+import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
 import javax.script.ScriptEngine;
@@ -26,7 +26,7 @@ import java.util.IllegalFormatConversionException;
  *  - original: %1$f
  *
  */
-public class ComputeComplexCPI implements JoinFunction<WikiSimRecommendation, ArticleStatsTuple, WikiSimRecommendation> {
+public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleStatsTuple, Recommendation> {
     private long articleCount = 0;
     private String cpiExpr = "%1$d";
 
@@ -39,7 +39,7 @@ public class ComputeComplexCPI implements JoinFunction<WikiSimRecommendation, Ar
     }
 
     @Override
-    public WikiSimRecommendation join(WikiSimRecommendation rec, ArticleStatsTuple stats) throws Exception {
+    public Recommendation join(Recommendation rec, ArticleStatsTuple stats) throws Exception {
         if(stats != null) {
 
             try {

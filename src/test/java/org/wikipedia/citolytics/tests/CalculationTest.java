@@ -6,7 +6,7 @@ import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.cpa.utils.ValidateOrderInOutput;
 import org.wikipedia.citolytics.histogram.Histogram;
@@ -267,13 +267,13 @@ public class CalculationTest extends Tester {
     @Test
     public void IntermediateResultSize() throws Exception {
         String str = "ABC";
-        WikiSimResult result = new WikiSimResult(new LinkTuple("Page AAAAA", "Page BBBB"), 999);
+        RecommendationPair result = new RecommendationPair(new LinkTuple("Page AAAAA", "Page BBBB"), 999);
 
         result.setDistSquared(9999);
         result.setCPI(new double[]{1.99, 10.99, 0.995, 1234.5678});
 
         System.out.println("String = " + TestUtils.sizeof(str));
-        System.out.println("WikiSimResult = " + TestUtils.sizeof(result));
+        System.out.println("RecommendationPair = " + TestUtils.sizeof(result));
 
     }
 

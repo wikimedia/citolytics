@@ -4,7 +4,7 @@ import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.apache.log4j.Logger;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Reads the MoreLikeThis result set created by ResultCollector of https://github.com/mschwarzer/Wikipedia2Lucene
  */
-public class MLTInputMapper extends RichFlatMapFunction<String, WikiSimRecommendationSet> {
+public class MLTInputMapper extends RichFlatMapFunction<String, RecommendationSet> {
     private static Logger LOG = Logger.getLogger(MLTInputMapper.class);
 
     private int topK = 20;
@@ -27,7 +27,7 @@ public class MLTInputMapper extends RichFlatMapFunction<String, WikiSimRecommend
     }
 
     @Override
-    public void flatMap(String s, Collector<WikiSimRecommendationSet> out) throws Exception {
+    public void flatMap(String s, Collector<RecommendationSet> out) throws Exception {
         String[] cols = delimiterPattern.split(s);
         WikiSimComparableResultList<Double> results = new WikiSimComparableResultList<>();
 
@@ -44,7 +44,7 @@ public class MLTInputMapper extends RichFlatMapFunction<String, WikiSimRecommend
                 }
             }
 
-            out.collect(new WikiSimRecommendationSet(cols[0], results));
+            out.collect(new RecommendationSet(cols[0], results));
         } catch (Exception e) {
             LOG.error("Cannot parse line - " + e.getMessage() + "\n" + s);
         }

@@ -7,9 +7,9 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.operators.ComputeComplexCPI;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
@@ -17,12 +17,12 @@ import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommendation> {
-    int fieldScore = 9;
-    int fieldPageA = 1;
-    int fieldPageB = 2;
-    int fieldPageIdA = WikiSimResult.PAGE_A_ID_KEY;
-    int fieldPageIdB = WikiSimResult.PAGE_B_ID_KEY;
+public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
+    private int fieldScore = 9;
+    private int fieldPageA = 1;
+    private int fieldPageB = 2;
+    private int fieldPageIdA = RecommendationPair.PAGE_A_ID_KEY;
+    private int fieldPageIdB = RecommendationPair.PAGE_B_ID_KEY;
 
     private final Pattern delimiterPattern = Pattern.compile(Pattern.quote(WikiSimConfiguration.csvFieldDelimiter));
 
@@ -36,7 +36,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
     }
 
     @Override
-    public void flatMap(String s, Collector<WikiSimRecommendation> out) throws Exception {
+    public void flatMap(String s, Collector<Recommendation> out) throws Exception {
         String[] cols = delimiterPattern.split(s);
 
         if (fieldScore >= cols.length || fieldPageA >= cols.length || fieldPageB >= cols.length) {
@@ -50,8 +50,8 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
             Double score = Double.valueOf(scoreString);
 
             // Collect full pair (A -> B and B -> A)
-            out.collect(new WikiSimRecommendation(cols[fieldPageA], cols[fieldPageB], score, Integer.valueOf(cols[fieldPageIdA]), Integer.valueOf(cols[fieldPageIdB])));
-            out.collect(new WikiSimRecommendation(cols[fieldPageB], cols[fieldPageA], score, Integer.valueOf(cols[fieldPageIdB]), Integer.valueOf(cols[fieldPageIdA])));
+            out.collect(new Recommendation(cols[fieldPageA], cols[fieldPageB], score, Integer.valueOf(cols[fieldPageIdA]), Integer.valueOf(cols[fieldPageIdB])));
+            out.collect(new Recommendation(cols[fieldPageB], cols[fieldPageA], score, Integer.valueOf(cols[fieldPageIdB]), Integer.valueOf(cols[fieldPageIdA])));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,12 +61,8 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
     }
 
 
-//    public static DataSet<WikiSimRecommendationSet> readWikiSimOutput(ExecutionEnvironment env, String filename, int topK, int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
-//        return readWikiSimOutput(env, filename, topK, fieldPageA, fieldPageB, fieldScore, null, null);
-//    }
-
-    public static DataSet<WikiSimRecommendation> readWikiSimOutput(ExecutionEnvironment env, String filename,
-                                                               int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
+    public static DataSet<Recommendation> readWikiSimOutput(ExecutionEnvironment env, String filename,
+                                                            int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
 
         Log.info("Reading WikiSim from " + filename);
 
@@ -77,18 +73,14 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
         config.setInteger("fieldScore", fieldScore);
 
         // Read recommendation from files
-//        DataSet<WikiSimRecommendation> recommendations =
-                return env.readTextFile(filename)
+        return env.readTextFile(filename)
                 .flatMap(new WikiSimReader())
                 .withParameters(config);
-
-        // Build recommendation sets
-//        return buildRecommendationSets(env, recommendations, topK, cpiExpr, articleStatsFilename);
     }
 
-    public static DataSet<WikiSimRecommendationSet> buildRecommendationSets(ExecutionEnvironment env,
-                                                                            DataSet<WikiSimRecommendation> recommendations,
-                                                                            int topK, String cpiExpr, String articleStatsFilename) throws Exception {
+    public static DataSet<RecommendationSet> buildRecommendationSets(ExecutionEnvironment env,
+                                                                     DataSet<Recommendation> recommendations,
+                                                                     int topK, String cpiExpr, String articleStatsFilename) throws Exception {
         // Compute complex CPI with expression
         if(cpiExpr != null && articleStatsFilename != null) {
             // TODO redirects?
@@ -99,14 +91,14 @@ public class WikiSimReader extends RichFlatMapFunction<String, WikiSimRecommenda
 
             recommendations = recommendations
                     .leftOuterJoin(stats)
-                    .where(WikiSimRecommendation.RECOMMENDATION_TITLE_KEY)
+                    .where(Recommendation.RECOMMENDATION_TITLE_KEY)
                     .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
                     .with(new ComputeComplexCPI(count, cpiExpr));
         }
 
         return recommendations
-                .groupBy(WikiSimRecommendation.SOURCE_TITLE_KEY)
-                .reduceGroup(new WikiSimGroupReducer(topK));
+                .groupBy(Recommendation.SOURCE_TITLE_KEY)
+                .reduceGroup(new RecommendationSetBuilder(topK));
 
     }
 }

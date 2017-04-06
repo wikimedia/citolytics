@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * --  7 Long   maxDist #
  * -- 8 Double median  #
  */
-public class WikiSimResult extends Tuple8<
+public class RecommendationPair extends Tuple8<
         Long, // hash
         String, // page title A
         String, // page title B
@@ -49,21 +49,21 @@ public class WikiSimResult extends Tuple8<
     private final static int COUNT_KEY = 4;
     private final static int DISTANCE_KEY = 3;
 
-    public WikiSimResult() {
+    public RecommendationPair() {
         // Flink needs empty constructor
     }
 
-    public WikiSimResult(LinkTuple link, int distance) {
+    public RecommendationPair(LinkTuple link, int distance) {
         init(link.getFirst(), link.getSecond(), distance, 1);
         init();
     }
 
-    public WikiSimResult(String pageA, String pageB) {
+    public RecommendationPair(String pageA, String pageB) {
         init(pageA, pageB, 0, 1);
         init();
     }
 
-    public WikiSimResult(String pageA, String pageB, int distance, double[] alphas) {
+    public RecommendationPair(String pageA, String pageB, int distance, double[] alphas) {
 
         init(pageA, pageB, distance, 1);
         init();
@@ -78,7 +78,7 @@ public class WikiSimResult extends Tuple8<
         return Math.pow(distance, -alpha);
     }
 
-    public WikiSimResult(String pageA, String pageB, int distance, int count, double[] cpa) {
+    public RecommendationPair(String pageA, String pageB, int distance, int count, double[] cpa) {
 
         init(pageA, pageB, distance, count);
         setCPI(cpa);
@@ -227,9 +227,9 @@ public class WikiSimResult extends Tuple8<
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof WikiSimResult)) return false;
+        if (!(o instanceof RecommendationPair)) return false;
 
-        WikiSimResult that = (WikiSimResult) o;
+        RecommendationPair that = (RecommendationPair) o;
 
         return getPageA().equals(that.getPageA())
                 && getPageB().equals(that.getPageB())
@@ -248,16 +248,16 @@ public class WikiSimResult extends Tuple8<
     }
 
     /**
-     * Construct WikiSimResult tuple from string / csv line
+     * Construct RecommendationPair tuple from string / csv line
      *
      * @param csv
      * @param delimitter
-     * @return WikiSimResult
+     * @return RecommendationPair
      */
-    public static WikiSimResult valueOf(String csv, String delimitter) {
+    public static RecommendationPair valueOf(String csv, String delimitter) {
         String[] cols = csv.split(Pattern.quote(delimitter));
 
-        WikiSimResult res = new WikiSimResult(cols[PAGE_A_KEY], cols[PAGE_B_KEY]);
+        RecommendationPair res = new RecommendationPair(cols[PAGE_A_KEY], cols[PAGE_B_KEY]);
 
         res.setDistance(Integer.valueOf(cols[DISTANCE_KEY]));
         res.setCount(Integer.valueOf(cols[COUNT_KEY]));

@@ -2,21 +2,21 @@ package org.wikipedia.citolytics.redirects.operators;
 
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 
-public class ReplaceRedirectsWithOuterJoin implements JoinFunction<WikiSimResult, RedirectMapping, WikiSimResult> {
+public class ReplaceRedirectsWithOuterJoin implements JoinFunction<RecommendationPair, RedirectMapping, RecommendationPair> {
     public int replaceField = 0;
-    public int hashField = WikiSimResult.HASH_KEY;
-    public int pageAField = WikiSimResult.PAGE_A_KEY;
-    public int pageBField = WikiSimResult.PAGE_B_KEY;
+    public int hashField = RecommendationPair.HASH_KEY;
+    public int pageAField = RecommendationPair.PAGE_A_KEY;
+    public int pageBField = RecommendationPair.PAGE_B_KEY;
 
     public ReplaceRedirectsWithOuterJoin(int replaceField) {
         this.replaceField = replaceField;
     }
 
     @Override
-    public WikiSimResult join(WikiSimResult record, RedirectMapping redirect) throws Exception {
+    public RecommendationPair join(RecommendationPair record, RedirectMapping redirect) throws Exception {
 
         if (redirect != null) {
             // replace page in original record

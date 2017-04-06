@@ -8,8 +8,8 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
+import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.better.*;
 import org.wikipedia.citolytics.seealso.operators.BetterLinkExistsFilter;
 import org.wikipedia.citolytics.seealso.operators.BetterSeeAlsoLinkExistsFilter;
@@ -72,7 +72,7 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
                 .map(new SeeAlsoInputMapper());
 
         // Read result set
-        DataSet<WikiSimRecommendationSet> wikiSimGroupedDataSet;
+        DataSet<RecommendationSet> wikiSimGroupedDataSet;
 
         // CPA or MLT results?
         if (scoreField >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
@@ -84,7 +84,7 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
             config.setInteger("fieldPageB", fieldPageB);
             config.setInteger("fieldScore", scoreField);
 
-            DataSet<WikiSimRecommendation> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
+            DataSet<Recommendation> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new WikiSimReader())
                     .withParameters(config);
 
@@ -105,7 +105,7 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
 
             wikiSimGroupedDataSet = wikiSimDataSet
                     .groupBy(0)
-                    .reduceGroup(new WikiSimGroupReducer(topK));
+                    .reduceGroup(new RecommendationSetBuilder(topK));
 
 
         } else {

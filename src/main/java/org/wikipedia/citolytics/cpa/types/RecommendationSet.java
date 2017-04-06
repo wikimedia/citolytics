@@ -6,21 +6,21 @@ import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 /**
  * Represents the top-k recommendations with corresponding scores for a single page.
  */
-public class WikiSimRecommendationSet extends Tuple3<String, WikiSimComparableResultList<Double>, Integer> {
+public class RecommendationSet extends Tuple3<String, WikiSimComparableResultList<Double>, Integer> {
     public final static int SOURCE_TITLE_KEY = 0;
 
-    public WikiSimRecommendationSet() {
+    public RecommendationSet() {
 
     }
 
     @Deprecated
-    public WikiSimRecommendationSet(String sourceTitle, WikiSimComparableResultList<Double> resultsList) {
+    public RecommendationSet(String sourceTitle, WikiSimComparableResultList<Double> resultsList) {
         f0 = sourceTitle;
         f1 = resultsList;
         f2 = 0;
     }
 
-    public WikiSimRecommendationSet(String sourceTitle, int sourceId, WikiSimComparableResultList<Double> resultsList) {
+    public RecommendationSet(String sourceTitle, int sourceId, WikiSimComparableResultList<Double> resultsList) {
         f0 = sourceTitle;
         f1 = resultsList;
         f2 = sourceId;

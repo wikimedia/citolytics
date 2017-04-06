@@ -3,29 +3,29 @@ package org.wikipedia.citolytics.seealso.better;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;
 import org.apache.flink.util.Collector;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendation;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
+import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommendation, WikiSimRecommendationSet> {
+public class RecommendationSetBuilder implements GroupReduceFunction<Recommendation, RecommendationSet> {
     private int maxQueueSize = 20;
 
-    public WikiSimGroupReducer() {
+    public RecommendationSetBuilder() {
     }
 
-    public WikiSimGroupReducer(int maxQueueSize) {
+    public RecommendationSetBuilder(int maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
 
     @Override
-    public void reduce(Iterable<WikiSimRecommendation> in, Collector<WikiSimRecommendationSet> out) throws Exception {
-        Iterator<WikiSimRecommendation> iterator = in.iterator();
+    public void reduce(Iterable<Recommendation> in, Collector<RecommendationSet> out) throws Exception {
+        Iterator<Recommendation> iterator = in.iterator();
 
-        WikiSimRecommendation joinRecord = null;
+        Recommendation joinRecord = null;
 
         // Default: MinQueue = Smallest elements a kept in queue
         // -> Change: MaxQueue = Keep greatest elements
@@ -45,6 +45,6 @@ public class WikiSimGroupReducer implements GroupReduceFunction<WikiSimRecommend
         }
 
         //  WikiSimComparableResultList<Double>
-        out.collect(new WikiSimRecommendationSet(joinRecord.getSourceTitle(), joinRecord.getSourceId(), new WikiSimComparableResultList<>(queue)));
+        out.collect(new RecommendationSet(joinRecord.getSourceTitle(), joinRecord.getSourceId(), new WikiSimComparableResultList<>(queue)));
     }
 }

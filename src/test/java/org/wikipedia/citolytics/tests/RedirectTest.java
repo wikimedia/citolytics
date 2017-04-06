@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.LinkTuple;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
@@ -124,7 +124,7 @@ public class RedirectTest extends Tester {
     @Ignore
     @Test
     public void TestResultConstructor() {
-        WikiSimResult r1 = new WikiSimResult(new LinkTuple("Page A", "Page B"), 99);
+        RecommendationPair r1 = new RecommendationPair(new LinkTuple("Page A", "Page B"), 99);
         r1.setCPI(new double[]{0.1, 0.5, 1.5, 24.5, 88});
         r1.setDistSquared(500);
 

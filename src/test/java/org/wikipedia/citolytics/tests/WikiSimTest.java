@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.WikiSim;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.io.File;
@@ -28,8 +28,8 @@ public class WikiSimTest extends Tester {
         job.enableLocalEnvironment();
     }
 
-    public void assertOutput(List<WikiSimResult> actual, String pathToExpected) throws Exception {
-        HashSet<WikiSimResult> expected = new HashSet<>();
+    public void assertOutput(List<RecommendationPair> actual, String pathToExpected) throws Exception {
+        HashSet<RecommendationPair> expected = new HashSet<>();
 
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(pathToExpected).getFile());
@@ -38,7 +38,7 @@ public class WikiSimTest extends Tester {
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                expected.add(WikiSimResult.valueOf(line, "|"));
+                expected.add(RecommendationPair.valueOf(line, "|"));
             }
 
             scanner.close();
@@ -54,7 +54,7 @@ public class WikiSimTest extends Tester {
 
         // Test every records
         int correct = 0;
-        for (WikiSimResult a : actual) {
+        for (RecommendationPair a : actual) {
 
 //            System.out.println(a);
             if (expected.contains(a)) {

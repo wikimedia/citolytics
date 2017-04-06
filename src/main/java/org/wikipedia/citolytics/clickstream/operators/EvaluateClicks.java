@@ -7,7 +7,7 @@ import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
-import org.wikipedia.citolytics.cpa.types.WikiSimRecommendationSet;
+import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Calculates CTR, total clicks, impressions for each article in result set.
  */
-public class EvaluateClicks implements CoGroupFunction<WikiSimRecommendationSet, ClickStreamTuple, ClickStreamResult> {
+public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickStreamTuple, ClickStreamResult> {
     private final static boolean IGNORE_MISSING_CLICK_STREAM = false;
     private int[] k = new int[]{10, 5, 1};
     private int topK = 10;
@@ -31,8 +31,8 @@ public class EvaluateClicks implements CoGroupFunction<WikiSimRecommendationSet,
     }
 
     @Override
-    public void coGroup(Iterable<WikiSimRecommendationSet> wikiSimRecords, Iterable<ClickStreamTuple> clickStreamRecords, Collector<ClickStreamResult> out) throws Exception {
-        Iterator<WikiSimRecommendationSet> wikiSimIterator = wikiSimRecords.iterator();
+    public void coGroup(Iterable<RecommendationSet> wikiSimRecords, Iterable<ClickStreamTuple> clickStreamRecords, Collector<ClickStreamResult> out) throws Exception {
+        Iterator<RecommendationSet> wikiSimIterator = wikiSimRecords.iterator();
         Iterator<ClickStreamTuple> clickStreamIterator = clickStreamRecords.iterator();
 
         // Proceed only recommendation records exist
@@ -41,7 +41,7 @@ public class EvaluateClicks implements CoGroupFunction<WikiSimRecommendationSet,
         }
 
         // Fetch from iterators
-        WikiSimRecommendationSet wikiSimRecord = wikiSimIterator.next();
+        RecommendationSet wikiSimRecord = wikiSimIterator.next();
 
         // It's ok if click stream does not exist
         HashMap<String, Integer> clickStream;

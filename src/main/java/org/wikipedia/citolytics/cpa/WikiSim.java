@@ -11,11 +11,11 @@ import org.apache.flink.configuration.GlobalConfiguration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
-import org.wikipedia.citolytics.cpa.operators.CPAReducer;
-import org.wikipedia.citolytics.cpa.operators.LinkPairExtractor;
 import org.wikipedia.citolytics.cpa.operators.MissingIdRemover;
+import org.wikipedia.citolytics.cpa.operators.RecommendationPairExtractor;
+import org.wikipedia.citolytics.cpa.operators.SumCPI;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
-import org.wikipedia.citolytics.cpa.types.WikiSimResult;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.operators.ReplaceRedirectsWithOuterJoin;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
@@ -36,7 +36,7 @@ import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
  * --remove-missing-ids
  * --keep-infobox
  */
-public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
+public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
 
     private Configuration config;
     public String inputFilename;
@@ -132,10 +132,10 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
 
         // Compute CPA recommendations
         result = wikiDump
-                .flatMap(new LinkPairExtractor())
+                .flatMap(new RecommendationPairExtractor())
                 .withParameters(getConfig())
-                .groupBy(WikiSimResult.HASH_KEY)
-                .reduce(new CPAReducer())
+                .groupBy(RecommendationPair.HASH_KEY)
+                .reduce(new SumCPI())
                 .setCombineHint(ReduceOperatorBase.CombineHint.HASH)
                 .withParameters(getConfig());
 
@@ -165,13 +165,13 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
      * @param pathToRedirects Path to redirects CSV (HDFS or local)
      * @return Result set with resolved redirects
      */
-    public DataSet<WikiSimResult> resolveRedirects(ExecutionEnvironment env, DataSet<WikiSimResult> wikiSimResults, String pathToRedirects) {
+    public DataSet<RecommendationPair> resolveRedirects(ExecutionEnvironment env, DataSet<RecommendationPair> wikiSimResults, String pathToRedirects) {
         DataSet<RedirectMapping> redirects;
 
         // fields
-        int hash = WikiSimResult.HASH_KEY;
-        int pageA = WikiSimResult.PAGE_A_KEY;
-        int pageB = WikiSimResult.PAGE_A_KEY;
+        int hash = RecommendationPair.HASH_KEY;
+        int pageA = RecommendationPair.PAGE_A_KEY;
+        int pageB = RecommendationPair.PAGE_A_KEY;
         int redirectSource = 0;
 
         if(pathToRedirects == null) {
@@ -196,7 +196,7 @@ public class WikiSim extends WikiSimAbstractJob<WikiSimResult> {
                 .with(new ReplaceRedirectsWithOuterJoin(pageB))
                 // sum duplicated tuples
                 .groupBy(hash)
-                .reduce(new CPAReducer())
+                .reduce(new SumCPI())
                 .setCombineHint(ReduceOperatorBase.CombineHint.HASH);
     }
 
