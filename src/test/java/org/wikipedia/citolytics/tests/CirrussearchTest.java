@@ -30,35 +30,53 @@ public class CirrussearchTest extends Tester {
 
     @Test
     public void testPrintOutput() throws Exception {
-        PrepareOutput.main(("--wikidump " + wikiDumpPath + " --output print --topk 10").split(" "));
+        PrepareOutput job = new PrepareOutput();
+
+        job.enableLocalEnvironment()
+                .start("--wikidump " + wikiDumpPath + " --output print --topk 10");
     }
 
     @Test
     public void testElasticBulkOutputIgnoreIds() throws Exception {
-        PrepareOutput.main(("--wikisim " + wikiSimPath
+        PrepareOutput job = new PrepareOutput();
+
+        job.enableLocalEnvironment()
+                .start("--wikisim " + wikiSimPath
                 + " --wikidump " + wikiDumpPath
-                + " --enable-elastic --ignore-missing-ids --output print --topk 10").split(" "));
+                + " --enable-elastic --ignore-missing-ids --output print --topk 10");
     }
 
     @Test
     public void testElasticBulkOutput() throws Exception {
-        PrepareOutput.main(("--wikidump " + missingIdsPath
-                + " --enable-elastic --output print --topk 10").split(" "));
+        PrepareOutput job = new PrepareOutput();
+
+        job.enableLocalEnvironment()
+                .start("--wikidump " + missingIdsPath
+                + " --enable-elastic --output print --topk 10");
     }
 
     @Test
     public void testPrepareOutputDisabledScores() throws Exception {
-        PrepareOutput.main(("--wikisim " + wikiSimPath + " --disable-scores --output print --topk 10").split(" "));
+        PrepareOutput job = new PrepareOutput();
+
+        job.enableLocalEnvironment()
+                .start("--wikisim " + wikiSimPath + " --disable-scores --output print --topk 10");
     }
 
     @Test
     public void testPrepareOutputSave() throws Exception {
-        PrepareOutput.main(("--wikisim " + wikiSimPath + " --output " + outputPath).split(" "));
+        PrepareOutput job = new PrepareOutput();
+
+        job.enableLocalEnvironment()
+                .start("--wikisim " + wikiSimPath + " --output " + outputPath);
     }
 
     @Test
     public void testIdTitleMappingExtractor() throws Exception {
-        IdTitleMappingExtractor.main(("--input " + wikiDumpPath+ " --output print").split(" "));
+        IdTitleMappingExtractor job = new IdTitleMappingExtractor();
+
+        job.enableLocalEnvironment()
+                .start("--input " + wikiDumpPath+ " --output print");
     }
 
     @Test
