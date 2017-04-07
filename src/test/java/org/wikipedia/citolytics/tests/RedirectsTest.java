@@ -120,7 +120,10 @@ public class RedirectsTest extends Tester {
     @Ignore
 //    @Test
     public void RedirectEncoding() throws Exception {
-        RedirectExtractor.main(new String[]{
+
+        RedirectExtractor job = new RedirectExtractor();
+
+        job.start(new String[]{
                 "/Users/malteschwarzer/Desktop/wikitest.xml",
                 "file://" + getClass().getClassLoader().getResources("redirects.out").nextElement().getPath()
         });

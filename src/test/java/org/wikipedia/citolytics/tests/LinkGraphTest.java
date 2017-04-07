@@ -12,14 +12,18 @@ import static org.junit.Assert.assertEquals;
  */
 public class LinkGraphTest extends Tester {
     @Test
-    public void RedirectsInLinkGraph() throws Exception {
-        new LinkGraph()
+    public void testRedirectsInLinkGraph() throws Exception {
+        LinkGraph job = new LinkGraph();
+
+        job.enableLocalEnvironment()
                 .start(new String[]{
                         input("ArticleStatsTest/completeTestWikiDump.xml"),
                         input("ArticleStatsTest/redirects.csv"),
                         input("linkGraphInput.csv"),
-                        "print"
+                        "local"
                 });
+
+        assertEquals("Invalid number of link graph items returned", 3, job.output.size());
     }
 
 
