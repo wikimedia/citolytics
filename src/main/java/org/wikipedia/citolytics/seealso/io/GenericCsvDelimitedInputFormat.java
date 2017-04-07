@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Work-Around of Apache Flink CsvImportFormat: Allows quotes in CSV field data
  */
+@Deprecated
 public class GenericCsvDelimitedInputFormat<OUT extends Tuple> extends DelimitedInputFormat<OUT> {
 
     private static final long serialVersionUID = 1L;

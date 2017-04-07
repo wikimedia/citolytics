@@ -4,6 +4,7 @@ import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple1;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.util.regex.Pattern;
@@ -14,17 +15,19 @@ import java.util.regex.Pattern;
 public class RedirectCount extends WikiSimAbstractJob<Tuple1<Integer>> {
     public static void main(String[] args) throws Exception {
         new RedirectCount()
-                .enableSingleOutputFile()
-                .enableTextOutput()
                 .start(args);
     }
 
-    public void plan() {
+    public void plan() throws Exception {
+        ParameterTool params = ParameterTool.fromArgs(args);
 
-        outputFilename = args[2];
+        outputFilename = params.getRequired("output");
+
+//        enableSingleOutputFile();
+//        enableTextOutput();
 
         // article|link target
-        DataSet<Tuple1<String>> links = env.readTextFile(args[0])
+        DataSet<Tuple1<String>> links = env.readTextFile(params.getRequired("links"))
                 .map(new MapFunction<String, Tuple1<String>>() {
                     @Override
                     public Tuple1<String> map(String s) throws Exception {
@@ -34,7 +37,7 @@ public class RedirectCount extends WikiSimAbstractJob<Tuple1<Integer>> {
                 });
 
         // source|redirect target
-        DataSet<Tuple1<String>> redirects = env.readTextFile(args[1])
+        DataSet<Tuple1<String>> redirects = env.readTextFile(params.getRequired("redirects"))
                 .map(new MapFunction<String, Tuple1<String>>() {
                     @Override
                     public Tuple1<String> map(String s) throws Exception {

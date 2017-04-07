@@ -19,7 +19,15 @@ public class Tester {
         return resource(filename);
     }
 
+    public String resource(String filename, boolean testClassDirectory) throws FileNotFoundException {
+        if(testClassDirectory) {
+            filename = getClass().getSimpleName() + "/" + filename;
+        }
+        return resource(filename);
+    }
+
     public String resource(String filename) throws FileNotFoundException {
+
         try {
             return "file://" + getClass().getClassLoader().getResources(filename).nextElement().getPath();
         } catch (NoSuchElementException | IOException e) {

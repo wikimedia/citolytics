@@ -2,6 +2,7 @@ package org.wikipedia.citolytics.linkgraph;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
@@ -23,15 +24,10 @@ public class LinksExtractor extends WikiSimAbstractJob<Tuple2<String, String>> {
     }
 
     public void plan() {
+        ParameterTool params = ParameterTool.fromArgs(args);
 
-        if (args.length <= 1) {
-            System.err.println("Input/output parameters missing!");
-            System.err.println("USAGE: <wiki-xml-dump> <output>");
-            System.exit(1);
-        }
-
-        String inputFilename = args[0];
-        outputFilename = args[1];
+        String inputFilename = params.getRequired("input");
+        outputFilename = params.getRequired("output");
 
         result = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
                 .flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {

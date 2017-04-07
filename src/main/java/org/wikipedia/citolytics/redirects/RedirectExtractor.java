@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
  * (redirects.sql dump cannot be used, since it has id->name mappings. We need name->name.)
  */
 public class RedirectExtractor extends WikiSimAbstractJob<RedirectMapping> {
+
+    private final static String REGEX = "(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)";
+
     public static void main(String[] args) throws Exception {
         new RedirectExtractor().start(args);
     }
@@ -46,7 +49,7 @@ public class RedirectExtractor extends WikiSimAbstractJob<RedirectMapping> {
         return wikiDump.flatMap(new FlatMapFunction<String, RedirectMapping>() {
             @Override
             public void flatMap(String content, Collector<RedirectMapping> out) throws Exception {
-                Pattern pattern = Pattern.compile("(?:<page>\\s+)(?:<title>)(.*?)(?:</title>)\\s+(?:<ns>)(.*?)(?:</ns>)\\s+(?:<id>)(.*?)(?:</id>)(?:.*?)(?:<text.*?>)(.*?)(?:</text>)", Pattern.DOTALL);
+                Pattern pattern = Pattern.compile(REGEX, Pattern.DOTALL);
 
                 Matcher m = pattern.matcher(content);
                 // if the record does not contain parsable page-xml

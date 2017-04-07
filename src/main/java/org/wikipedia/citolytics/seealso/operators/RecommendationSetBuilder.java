@@ -1,4 +1,4 @@
-package org.wikipedia.citolytics.seealso.better;
+package org.wikipedia.citolytics.seealso.operators;
 
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.shaded.com.google.common.collect.MinMaxPriorityQueue;

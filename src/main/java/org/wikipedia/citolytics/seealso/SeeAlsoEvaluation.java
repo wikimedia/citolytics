@@ -11,12 +11,7 @@ import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
-import org.wikipedia.citolytics.seealso.better.EvaluateSeeAlso;
-import org.wikipedia.citolytics.seealso.better.MLTInputMapper;
-import org.wikipedia.citolytics.seealso.better.RecommendationSetBuilder;
-import org.wikipedia.citolytics.seealso.better.SeeAlsoInputMapper;
-import org.wikipedia.citolytics.seealso.operators.BetterLinkExistsFilter;
-import org.wikipedia.citolytics.seealso.operators.BetterSeeAlsoLinkExistsFilter;
+import org.wikipedia.citolytics.seealso.operators.*;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 
 import java.util.ArrayList;

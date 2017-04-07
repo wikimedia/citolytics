@@ -15,7 +15,7 @@ import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.ClickStreamStats;
 import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
-import org.wikipedia.citolytics.seealso.better.EvaluateSeeAlso;
+import org.wikipedia.citolytics.seealso.operators.EvaluateSeeAlso;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.utils.EvaluationMeasures;
 import org.wikipedia.citolytics.tests.utils.Tester;

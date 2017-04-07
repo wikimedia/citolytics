@@ -1,8 +1,8 @@
 package org.wikipedia.citolytics.tests;
 
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
 import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
@@ -15,15 +15,22 @@ import static org.junit.Assert.*;
 
 public class SeeAlsoTest extends Tester {
 
-    @Ignore
     @Test
-    public void LocalExecution() throws Exception {
+    public void testSeeAlsoExtractor() throws Exception {
 
-        SeeAlsoExtractor.main(new String[]{resource("wikiSeeAlso2.xml"), "print"});
+        SeeAlsoExtractor job = new SeeAlsoExtractor();
+
+        job
+                .enableLocalEnvironment()
+                .enableSingleOutputFile()
+                .start("--input " + resource("wiki_dump.xml.in", true)
+                    + " --output local");
+
+        assertEquals("Invalid see also article count extracted", 7, job.output.size());
     }
 
     @Test
-    public void ExtractSeeAlsoNoRedirects() throws Exception {
+    public void testExtractSeeAlsoNoRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
         job.enableLocalEnvironment().start(("--input " + resource("wikiSeeAlso2.xml") + " --output local").split(" "));
@@ -200,5 +207,17 @@ public class SeeAlsoTest extends Tester {
         } else {
             throw new Exception("See also not found if not in beginning of line.");
         }
+    }
+
+    @Test
+    public void testSeeAlsoEvaluation() throws Exception {
+        SeeAlsoEvaluation job = new SeeAlsoEvaluation();
+
+        job.enableLocalEnvironment()
+                .start("--wikisim " + resource("wikisim.in", true)
+                        + " --gold " + resource("seealso_links.in", true)
+                        + " --output local");
+
+        assertEquals("Invalid output count", 7, job.output.size());
     }
 }

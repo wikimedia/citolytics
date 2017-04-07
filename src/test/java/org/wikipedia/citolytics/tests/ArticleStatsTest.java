@@ -3,7 +3,6 @@ package org.wikipedia.citolytics.tests;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.linkgraph.LinkGraph;
-import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
@@ -110,23 +109,5 @@ public class ArticleStatsTest extends Tester {
         });
     }
 
-    @Ignore
-    @Test
-    public void RedirectsInLinkGraph() throws Exception {
-        new LinkGraph()
-                .start(new String[]{
-                        input("ArticleStatsTest/completeTestWikiDump.xml"),
-                        input("ArticleStatsTest/redirects.csv"),
-                        input("linkGraphInput.csv"),
-                        "print"
-                });
-    }
 
-    @Test
-    public void extractLinks() throws Exception {
-        LinksExtractor job = new LinksExtractor();
-
-        job.enableLocalEnvironment().start(input("ArticleStatsTest/linkParserTest.xml") + " local");
-        assertEquals("Invalid link count", 194, job.output.size()); // old namespace check = 195
-    }
 }

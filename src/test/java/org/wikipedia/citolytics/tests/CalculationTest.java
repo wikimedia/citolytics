@@ -9,7 +9,6 @@ import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.cpa.utils.ValidateOrderInOutput;
-import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
 import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
@@ -237,16 +236,6 @@ public class CalculationTest extends Tester {
         assertEquals("Result count wrong", 87632, job.output.size());
     }
 
-
-    @Ignore
-    @Test
-    public void TestLinkExtractor() throws Exception {
-
-        String inputFilename = "file://" + getClass().getClassLoader().getResources("wikiSeeAlso2.xml").nextElement().getPath();
-        String outputFilename = "file://" + getClass().getClassLoader().getResources("test.out").nextElement().getPath();
-
-        LinksExtractor.main(new String[]{inputFilename, outputFilename});
-    }
 
     @Ignore
     @Test

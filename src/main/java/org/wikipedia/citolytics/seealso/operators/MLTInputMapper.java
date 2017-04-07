@@ -1,4 +1,4 @@
-package org.wikipedia.citolytics.seealso.better;
+package org.wikipedia.citolytics.seealso.operators;
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;

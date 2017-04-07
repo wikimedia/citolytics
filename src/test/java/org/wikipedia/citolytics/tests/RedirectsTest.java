@@ -1,6 +1,6 @@
 package org.wikipedia.citolytics.tests;
 
-
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.types.DoubleValue;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,7 +19,34 @@ import org.wikipedia.citolytics.tests.utils.Tester;
 
 import static org.junit.Assert.assertEquals;
 
-public class RedirectTest extends Tester {
+/**
+ * Tests for redirects.* package and WikiSim with redirects
+ */
+public class RedirectsTest extends Tester {
+    @Test
+    public void testRedirectCount() throws Exception {
+        RedirectCount job = new RedirectCount();
+
+        job
+                .enableLocalEnvironment()
+                .start("--output local"
+                                + " --redirects " + resource("redirects.in", true)
+                                + " --links " + resource("links.in", true));
+
+        assertEquals("Invalid count returned", 1, (int) job.output.get(0).getField(0));
+    }
+
+    @Test
+    public void testRedirectExtractor() throws Exception {
+        RedirectExtractor job = new RedirectExtractor();
+
+        job.enableLocalEnvironment()
+                .start("--output local --input " + resource("wiki_dump.xml.in", true));
+
+        assertEquals("Invalid redirect returned", new Tuple2<>("Games", "Game"), job.output.get(0));
+        assertEquals("Invalid number of redirects returned", 1, job.output.size());
+    }
+
 
     @Test
     public void TestRedirectedExecution() throws Exception {

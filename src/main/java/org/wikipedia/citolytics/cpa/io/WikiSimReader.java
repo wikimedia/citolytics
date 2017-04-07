@@ -2,6 +2,7 @@ package org.wikipedia.citolytics.cpa.io;
 
 import com.esotericsoftware.minlog.Log;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.api.common.operators.base.JoinOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.configuration.Configuration;
@@ -11,7 +12,7 @@ import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
-import org.wikipedia.citolytics.seealso.better.RecommendationSetBuilder;
+import org.wikipedia.citolytics.seealso.operators.RecommendationSetBuilder;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
@@ -92,7 +93,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
 
             // TODO JoinHint? Currently using left hybrid build second
             recommendations = recommendations
-                    .leftOuterJoin(stats)
+                    .leftOuterJoin(stats, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
                     .where(Recommendation.RECOMMENDATION_TITLE_KEY)
                     .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
                     .with(new ComputeComplexCPI(count, cpiExpr));

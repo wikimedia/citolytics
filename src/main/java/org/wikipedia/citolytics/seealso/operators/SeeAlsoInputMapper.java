@@ -1,4 +1,4 @@
-package org.wikipedia.citolytics.seealso.better;
+package org.wikipedia.citolytics.seealso.operators;
 
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;

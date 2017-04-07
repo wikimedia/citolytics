@@ -25,7 +25,8 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
 
     private boolean writeAsText = false;
 
-    public WikiSimAbstractJob() {
+    protected WikiSimAbstractJob() {
+
     }
 
     protected WikiSimAbstractJob setJobName(String name) {
@@ -127,7 +128,6 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
             } else if (outputFilename.equalsIgnoreCase("print")) {
                 result.print();
             } else if (outputFilename.equalsIgnoreCase("local") || outputFilename.equalsIgnoreCase("collect")) {
-//                result.output(new LocalCollectionOutputFormat<>(output));
                 output = result.collect();
             } else {
                 DataSink sink;

@@ -34,7 +34,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         String wikiSimInputFilename = params.get("wikisim"); // not in use
 
-        String wikiDumpInputFilename = params.getRequired("wikidump");
+        String wikiDumpInputFilename = params.get("wikidump");
         String articleStatsFilename = params.get("article-stats");
         String cpiExpr = params.get("cpi");
 
@@ -54,7 +54,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         // Prepare results
         DataSet<Recommendation>  recommendations;
-        if(wikiSimInputFilename == null) {
+        if(wikiDumpInputFilename != null) {
 
             // Build new result list
             WikiSim wikiSimJob = new WikiSim();
@@ -76,9 +76,11 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
                             out.collect(new Recommendation(in.getPageB(), in.getPageA(), in.getCPI(alphaKey), in.getPageBId(), in.getPageAId()));
                         }
                     });
-        } else {
+        } else if(wikiSimInputFilename != null){
             // Use existing result list;
             recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore);
+        } else {
+            throw new Exception("Either --wikidump or --wikisim parameter must be provided.");
         }
 
         // Compute recommendation sets
