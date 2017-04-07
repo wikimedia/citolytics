@@ -60,11 +60,10 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
     public WikiSimAbstractJob enableLocalEnvironment() {
         Configuration conf = new Configuration();
 
-//        conf.setInteger("taskmanager.network.numberOfBuffers", 16000);
-//        conf.setInteger("taskmanager.numberOfTaskSlots", 32);
+        conf.setInteger("taskmanager.network.numberOfBuffers", 1024);
+        conf.setInteger("taskmanager.numberOfTaskSlots", 32);
 
         env = ExecutionEnvironment.createLocalEnvironment(conf);
-
         env.setParallelism(1);
 
         return this;
