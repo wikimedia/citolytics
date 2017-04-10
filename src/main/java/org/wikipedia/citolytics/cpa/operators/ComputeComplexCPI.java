@@ -4,11 +4,6 @@ import org.apache.flink.api.common.functions.JoinFunction;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.util.IllegalFormatConversionException;
-
 /**
  * Recomputes CPI value with script expression, e.g. to use idf.
  *
@@ -42,17 +37,17 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
     public Recommendation join(Recommendation rec, ArticleStatsTuple stats) throws Exception {
         if(stats != null) {
 
-            try {
+//            try {
 
-                ScriptEngineManager mgr = new ScriptEngineManager();
-                ScriptEngine engine = mgr.getEngineByName("JavaScript");
-
-                double cpi = (double) engine.eval(String.format(cpiExpr, rec.getScore(), stats.getInLinks(), articleCount));
+//                ScriptEngineManager mgr = new ScriptEngineManager();
+//                ScriptEngine engine = mgr.getEngineByName("JavaScript");
+//                double cpi = (double) engine.eval(String.format(cpiExpr, rec.getScore(), stats.getInLinks(), articleCount));
+                double cpi = rec.getScore() * Math.log( articleCount / stats.getInLinks() );
                 rec.setScore(cpi);
 
-            } catch(ScriptException | IllegalFormatConversionException e) {
-                throw new Exception("Cannot evaluate CPI script expression: " + cpiExpr + "; Exception: " + e.getMessage());
-            }
+//            } catch(ScriptException | IllegalFormatConversionException e) {
+//                throw new Exception("Cannot evaluate CPI script expression: " + cpiExpr + "; Exception: " + e.getMessage());
+//            }
 //            System.out.println(">>> " + rec.getRecommendationTitle() + "\t count= " + articleCount + "\t  idf=" + idf + "\t new score=" + rec.getScore() + "\t old=" + oldScore);
 
         }
