@@ -42,7 +42,7 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
 //                ScriptEngineManager mgr = new ScriptEngineManager();
 //                ScriptEngine engine = mgr.getEngineByName("JavaScript");
 //                double cpi = (double) engine.eval(String.format(cpiExpr, rec.getScore(), stats.getInLinks(), articleCount));
-                double cpi = rec.getScore() * Math.log( articleCount / stats.getInLinks() );
+                double cpi = rec.getScore() * Math.log( articleCount / (stats.getInLinks() + 1) );
                 rec.setScore(cpi);
 
 //            } catch(ScriptException | IllegalFormatConversionException e) {

@@ -55,7 +55,6 @@ results.
     # Generate top-10 results as JSON
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
-        --wikidump NONE \
         --enable-elastic \
         --output $OUTPUT_DIR/citolytics_$WIKI.json
 
@@ -67,7 +66,6 @@ results.
     # - WARNING: expression needs to be escaped
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
-        --wikidump NONE \
         --enable-elastic \
         --cpi %1\$f \
         --article-stats $OUTPUT_DIR/stats \
