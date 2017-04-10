@@ -6,35 +6,30 @@ import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+/**
+ * Resolve redirects in "See also" links
+ */
 public class SeeAlsoRedirects extends WikiSimAbstractJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
         new SeeAlsoRedirects().start(args);
     }
 
     public void plan() {
-        if (args.length <= 2) {
-            System.err.print("Error: Parameter missing! Required: <SEEALSO> <REDIRECTS> <OUTPUT>, Current: " + Arrays.toString(args));
-            System.exit(1);
-        }
+        ParameterTool params = ParameterTool.fromArgs(args);
 
-        outputFilename = args[2];
+        outputFilename = params.getRequired("output");
 
-        int pageA = 1;
-        int pageB = 2;
-        int redirectSource = 0;
-        int redirectTarget = 1;
+        DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, params.getRequired("redirects"));
 
-        DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
-
-        result = env.readTextFile(args[0])
+        result = env.readTextFile(params.getRequired("seealso"))
                 // read and map to tuple2 structure
                 .flatMap(new FlatMapFunction<String, Tuple2<String, String>>() {
                     @Override

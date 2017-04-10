@@ -92,8 +92,8 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
 
         // Read arguments
         config = null;
-        inputFilename = params.get("input");
-        outputFilename = params.get("output");
+        inputFilename = params.getRequired("input");
+        outputFilename = params.getRequired("output");
         redirectsFilename = params.get("redirects");
 
         alpha = params.get("alpha", "1.5");

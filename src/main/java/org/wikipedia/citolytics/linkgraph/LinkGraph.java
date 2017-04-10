@@ -5,6 +5,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
@@ -33,26 +34,22 @@ import static java.lang.Math.max;
 public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String, Integer>> {
 
     public static void main(String[] args) throws Exception {
-        new LinkGraph().enableSingleOutputFile().start(args);
+        new LinkGraph().start(args);
     }
 
     public void plan() {
+        enableSingleOutputFile();
+        ParameterTool params = ParameterTool.fromArgs(args);
 
-        if (args.length <= 3) {
-            System.err.println("Input/output parameters missing!");
-            System.err.println(getDescription());
-            System.exit(1);
-        }
+        String inputWikiFilename = params.getRequired("wikidump");
+        String inputLinkTuplesFilename = params.getRequired("links");
 
-        String inputWikiFilename = args[0];
-        String inputLinkTuplesFilename = args[2];
+        outputFilename = params.getRequired("output");
 
-        outputFilename = args[3];
-
-        DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, args[1]);
+        DataSet<RedirectMapping> redirects = WikiSimRedirects.getRedirectsDataSet(env, params.getRequired("redirects"));
 
         DataSet<Tuple2<String, String>> linkTupleList = env.readCsvFile(inputLinkTuplesFilename)
-                .fieldDelimiter(WikiSimConfiguration.csvFieldDelimiter.charAt(0))
+                .fieldDelimiter(WikiSimConfiguration.csvFieldDelimiter)
                 .types(String.class, String.class)
                 .coGroup(redirects)
                 .where(1) // link B (Redirect target)
@@ -114,7 +111,4 @@ public class LinkGraph extends WikiSimAbstractJob<Tuple4<String, String, String,
         }).withBroadcastSet(linkTupleList, "linkTupleList");
     }
 
-    public static String getDescription() {
-        return "Parameters: [WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]";
-    }
 }

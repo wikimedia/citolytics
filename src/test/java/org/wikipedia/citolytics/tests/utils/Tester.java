@@ -1,6 +1,8 @@
 package org.wikipedia.citolytics.tests.utils;
 
 
+import org.wikipedia.citolytics.WikiSimAbstractJob;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +10,14 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Tester {
+    protected WikiSimAbstractJob job;
+
+    protected WikiSimAbstractJob setJob(WikiSimAbstractJob job) {
+        this.job = job;
+        this.job.enableLocalEnvironment().enableSingleOutputFile();
+
+        return this.job;
+    }
 
     public String input(String filename) throws FileNotFoundException {
         // TODO Check if not empty

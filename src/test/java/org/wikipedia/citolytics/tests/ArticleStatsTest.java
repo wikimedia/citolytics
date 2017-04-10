@@ -1,8 +1,6 @@
 package org.wikipedia.citolytics.tests;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.linkgraph.LinkGraph;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
@@ -76,7 +74,7 @@ public class ArticleStatsTest extends Tester {
     }
 
     @Test
-    public void HeadlineTest() {
+    public void testHeadlineCount() {
 
         String xml = getFileContents("ArticleStatsTest/wikiSeeAlso.xml");
 
@@ -87,7 +85,7 @@ public class ArticleStatsTest extends Tester {
     }
 
     @Test
-    public void AvgLinkDistanceTest() {
+    public void testAvgLinkDistance() {
 
         String xml = getFileContents("ArticleStatsTest/wikiSeeAlso.xml");
 
@@ -96,18 +94,5 @@ public class ArticleStatsTest extends Tester {
         assertEquals("AvgLinkDistance is wrong", 4120.99, doc.getAvgLinkDistance(), 0.01);
 
     }
-
-    @Ignore
-    @Test
-    public void TestLinkGraph() throws Exception {
-
-        LinkGraph.main(new String[]{
-                resource("wikiSeeAlso2.xml"),
-                resource("redirects.out"),
-                resource("linkGraphInput.csv"),
-                "print"
-        });
-    }
-
 
 }

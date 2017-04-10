@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
+import org.wikipedia.citolytics.clickstream.ClickStreamStats;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.utils.ValidateClickStreamData;
@@ -89,12 +90,9 @@ public class ClickStreamTest extends Tester {
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
     }
 
-    @Ignore
     @Test
     public void testClickStreamEvaluation() throws Exception {
-        ClickStreamEvaluation job = new ClickStreamEvaluation();
-
-        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
+        setJob(new ClickStreamEvaluation()).start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --output local");
@@ -105,6 +103,15 @@ public class ClickStreamTest extends Tester {
 
         assertTrue("Needles not found", job.output.containsAll(getNeedles("")));
     }
+
+    @Test
+    public void testClickStreamStats() throws Exception {
+        setJob(new ClickStreamStats())
+                .start("--input " + dataSetPath + " --output local");
+
+        assertEquals("Invalid result count", 1, job.output.size());
+    }
+
 
     @Test
     public void testMultiLanguageClickStreamEvaluation() throws Exception {

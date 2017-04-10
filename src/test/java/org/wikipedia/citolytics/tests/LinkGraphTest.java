@@ -13,15 +13,12 @@ import static org.junit.Assert.assertEquals;
 public class LinkGraphTest extends Tester {
     @Test
     public void testRedirectsInLinkGraph() throws Exception {
-        LinkGraph job = new LinkGraph();
-
-        job.enableLocalEnvironment()
-                .start(new String[]{
-                        input("ArticleStatsTest/completeTestWikiDump.xml"),
-                        input("ArticleStatsTest/redirects.csv"),
-                        input("linkGraphInput.csv"),
-                        "local"
-                });
+        setJob(new LinkGraph())
+                .start("--wikidump " + resource("ArticleStatsTest/completeTestWikiDump.xml")
+                        + " --redirects " + resource("ArticleStatsTest/redirects.csv")
+                        + " --links " + input("linkGraphInput.csv")
+                        + " --output local"
+                );
 
         assertEquals("Invalid number of link graph items returned", 3, job.output.size());
     }
@@ -29,9 +26,8 @@ public class LinkGraphTest extends Tester {
 
     @Test
     public void testLinksExtractor() throws Exception {
-        LinksExtractor job = new LinksExtractor();
-
-        job.enableLocalEnvironment().start("--input " + input("ArticleStatsTest/linkParserTest.xml")
+        setJob(new LinksExtractor())
+                .start("--input " + input("ArticleStatsTest/linkParserTest.xml")
                 + " --output local");
         assertEquals("Invalid link count", 194, job.output.size()); // old namespace check = 195
     }

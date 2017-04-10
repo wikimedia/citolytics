@@ -93,13 +93,13 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
                         .coGroup(getLinkDataSet(env, linksInputFilename))
                         .where(0)
                         .equalTo(0)
-                        .with(new BetterLinkExistsFilter());
+                        .with(new LinkExistsFilter());
 
                 seeAlsoDataSet = seeAlsoDataSet
                         .coGroup(getLinkDataSet(env, linksInputFilename))
                         .where(0)
                         .equalTo(0)
-                        .with(new BetterSeeAlsoLinkExistsFilter());
+                        .with(new SeeAlsoLinkExistsFilter());
             }
 
             wikiSimGroupedDataSet = wikiSimDataSet

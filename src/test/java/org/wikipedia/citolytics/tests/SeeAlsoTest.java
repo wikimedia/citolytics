@@ -18,16 +18,13 @@ public class SeeAlsoTest extends Tester {
     @Test
     public void testSeeAlsoExtractor() throws Exception {
 
-        SeeAlsoExtractor job = new SeeAlsoExtractor();
-
-        job
-                .enableLocalEnvironment()
-                .enableSingleOutputFile()
+        setJob(new SeeAlsoExtractor())
                 .start("--input " + resource("wiki_dump.xml.in", true)
                     + " --output local");
 
         assertEquals("Invalid see also article count extracted", 7, job.output.size());
     }
+
 
     @Test
     public void testExtractSeeAlsoNoRedirects() throws Exception {
@@ -211,13 +208,36 @@ public class SeeAlsoTest extends Tester {
 
     @Test
     public void testSeeAlsoEvaluation() throws Exception {
-        SeeAlsoEvaluation job = new SeeAlsoEvaluation();
-
-        job.enableLocalEnvironment()
+        setJob(new SeeAlsoEvaluation())
                 .start("--wikisim " + resource("wikisim.in", true)
                         + " --gold " + resource("seealso_links.in", true)
                         + " --output local");
 
         assertEquals("Invalid output count", 7, job.output.size());
     }
+
+    @Test
+    public void testSeeAlsoEvaluationWithLinkFilter() throws Exception {
+
+        setJob(new SeeAlsoEvaluation())
+                .start("--wikisim " + resource("wikisim.in", true)
+                        + " --gold " + resource("seealso_links.in", true)
+                        + " --links " + resource("links.in", true)
+                        + " --output local");
+
+        assertEquals("Invalid output count", 7, job.output.size());
+    }
+
+    @Test
+    public void testSeeAlsoEvaluationMLT() throws Exception {
+        setJob(new SeeAlsoEvaluation())
+                .start("--wikisim " + resource("mlt.in", true)
+                        + " --gold " + resource("seealso_links.in", true)
+                        + " --score -1 --page-a -1 --page-b -1"
+                        + " --output local");
+
+        assertEquals("Invalid output count", 7, job.output.size());
+    }
+
+
 }

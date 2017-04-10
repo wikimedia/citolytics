@@ -8,7 +8,6 @@ import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
-import org.wikipedia.citolytics.cpa.utils.ValidateOrderInOutput;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
 import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
@@ -186,16 +185,6 @@ public class CalculationTest extends Tester {
     public void TestLocalExecution() throws Exception {
 
         WikiSim.main(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output print --alpha 1.5,1.25,1,0.5,0").split(" "));
-    }
-
-    @Ignore
-    @Test
-    public void ValidateWikiSimOutput() throws Exception {
-
-        ValidateOrderInOutput.main(new String[]{
-                resource("wikisim_output.csv"),
-                "print"
-        });
     }
 
     @Test

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 
-public class BetterSeeAlsoLinkExistsFilter implements CoGroupFunction<Tuple2<String, ArrayList<String>>, Tuple2<String, HashSet<String>>, Tuple2<String, ArrayList<String>>> {
+public class SeeAlsoLinkExistsFilter implements CoGroupFunction<Tuple2<String, ArrayList<String>>, Tuple2<String, HashSet<String>>, Tuple2<String, ArrayList<String>>> {
     @Override
     public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<Tuple2<String, HashSet<String>>> b, Collector<Tuple2<String, ArrayList<String>>> out) throws Exception {
         Iterator<Tuple2<String, ArrayList<String>>> iteratorA = a.iterator();

@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * <p/>
  * + Better performance than DoubleListValue
  */
+@Deprecated
 public class ArrayListDouble extends ArrayList<Double> {
     @Override
     public String toString() {

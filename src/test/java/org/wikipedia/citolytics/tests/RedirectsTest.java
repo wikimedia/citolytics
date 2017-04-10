@@ -5,8 +5,6 @@ import org.apache.flink.types.DoubleValue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cpa.WikiSim;
-import org.wikipedia.citolytics.cpa.types.LinkPair;
-import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
@@ -14,7 +12,6 @@ import org.wikipedia.citolytics.redirects.RedirectCount;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.single.SeeAlsoRedirects;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
-import org.wikipedia.citolytics.redirects.single.WikiSimRedirectsResult;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import static org.junit.Assert.assertEquals;
@@ -90,30 +87,27 @@ public class RedirectsTest extends Tester {
     }
 
 
-    @Ignore
     @Test
-    public void TestWikiSimRedirects() throws Exception {
+    public void testWikiSimRedirects() throws Exception {
+        setJob(new WikiSimRedirects()).start(
+                "--wikisim " + resource("wikisim.in", true)
+            + " --redirects " + resource("redirects.in", true)
+            + " --output local");
 
-        WikiSimRedirects.main(
-                new String[]{
-//                        "dataset",
-                        resource("wikisim_output.csv"),
-                        resource("ArticleStatsTest/redirects.csv"),
-                        "print"
-                }
-        );
+        assertEquals("Invalid wikisim output size", 16, job.output.size());
     }
 
-    @Ignore
+
     @Test
-    public void TestSeeAlsoRedirects() throws Exception {
-        SeeAlsoRedirects.main(
-                new String[]{
-                        resource("evaluation_seealso.csv"),
-                        resource("redirects.out"),
-                        "print"
-                }
+    public void testResolveSeeAlsoRedirects() throws Exception {
+        setJob(new SeeAlsoRedirects()).start(
+                "--seealso " + resource("seealso_links.in", true)
+                        + " --redirects " + resource("redirects.in", true)
+                        + " --output local"
         );
+
+        assertEquals("Invalid number of records returned", 7, job.output.size());
+//        job.output
     }
 
 
@@ -151,20 +145,6 @@ public class RedirectsTest extends Tester {
         });
     }
 
-    @Ignore
-    @Test
-    public void TestResultConstructor() {
-        RecommendationPair r1 = new RecommendationPair(new LinkPair("Page A", "Page B"), 99);
-        r1.setCPI(new double[]{0.1, 0.5, 1.5, 24.5, 88});
-        r1.setDistSquared(500);
-
-        System.out.println("r1 = " + r1);
-
-        WikiSimRedirectsResult r2 = new WikiSimRedirectsResult(r1);
-
-        System.out.println("r2 = " + r2);
-
-    }
 
     @Test
     public void DoubleListSumA() throws Exception {

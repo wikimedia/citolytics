@@ -3,6 +3,7 @@ package org.wikipedia.citolytics.cpa.utils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 
@@ -10,7 +11,7 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
- * Check alphabetical order of WikiSim results.
+ * Check alphabetical order of WikiSim results. If everything is right, no result should be returned.
  */
 public class ValidateOrderInOutput extends WikiSimAbstractJob<Tuple3<String, String, Integer>> {
     public static void main(String[] args) throws Exception {
@@ -18,9 +19,11 @@ public class ValidateOrderInOutput extends WikiSimAbstractJob<Tuple3<String, Str
     }
 
     public void plan() {
-        outputFilename = args[1];
+        ParameterTool params = ParameterTool.fromArgs(args);
+
+        outputFilename = params.getRequired("output");
         result = env
-                .readTextFile(args[0])
+                .readTextFile(params.getRequired("input"))
                 .flatMap(new FlatMapFunction<String, Tuple3<String, String, Integer>>() {
                     @Override
                     public void flatMap(String s, Collector<Tuple3<String, String, Integer>> out) throws Exception {

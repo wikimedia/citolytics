@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.seealso.types;
 
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 
 /**
@@ -13,12 +12,6 @@ import org.apache.flink.api.java.tuple.Tuple3;
 public class WikiSimComparableResult<T extends Comparable> extends Tuple3<String, T, Integer> implements Comparable<WikiSimComparableResult<T>> {
     public final static int SORT1_FIELD = 1;
     public final static int SORT2_FIELD = 0;
-
-    @Deprecated
-    public WikiSimComparableResult(Tuple2<String, T> tuple) {
-        setField(tuple.getField(0), 0);
-        setField(tuple.getField(1), 1);
-    }
 
     public T getSortField1() {
         return getField(SORT1_FIELD);
@@ -36,12 +29,6 @@ public class WikiSimComparableResult<T extends Comparable> extends Tuple3<String
         return f2;
     }
 
-    @Deprecated
-    public WikiSimComparableResult(String title, T score) {
-        f0 = title;
-        f1 = score;
-        f2 = 0;
-    }
 
     public WikiSimComparableResult(String title, T score, Integer id) {
         f0 = title;

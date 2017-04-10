@@ -104,8 +104,8 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --lang simple \
         --summary \
         --article-stats $OUTPUT_DIR/stats \
-        --cpi %1$f*Math.log(%3$d/%2$d) \
-        --output $OUTPUT_DIR/cs_idfcpi
+        --cpi %1\$f*Math.log\(%3\$d/%2\$d\) \
+        --output $OUTPUT_DIR/cs_cpi
         
              
        

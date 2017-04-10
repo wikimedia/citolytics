@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
+import org.wikipedia.citolytics.cpa.utils.ValidateOrderInOutput;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.io.File;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+
+import static org.junit.Assert.assertEquals;
 
 public class WikiSimTest extends Tester {
     private String fixture;
@@ -113,4 +116,14 @@ public class WikiSimTest extends Tester {
 
 
     }
+
+
+    @Test
+    public void testValidateWikiSimOutput() throws Exception {
+        setJob(new ValidateOrderInOutput())
+                .start("--input " + resource("wikisim.in", true) + " --output local");
+
+        assertEquals("Invalid result count", 0, job.output.size());
+    }
+
 }
