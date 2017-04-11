@@ -104,9 +104,25 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --lang simple \
         --summary \
         --article-stats $OUTPUT_DIR/stats \
-        --cpi %1\$f*Math.log\(%3\$d/%2\$d\) \
+        --cpi x*log\(z\/\(y+1\)\) \
         --output $OUTPUT_DIR/cs_cpi
         
+    
+    # With CPI expression + top recommendations
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --gold $CLICKSTREAMS_PATH \
+        --topk 10 \
+        --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+        --langlinks $ENWIKI_LANGLINKS \
+        --lang simple \
+        --summary \
+        --article-stats $OUTPUT_DIR/stats \
+        --cpi x*log\(z\/\(y+1\)\) \
+        --top-recommendations $OUTPUT_DIR/top \
+        --output $OUTPUT_DIR/cs_cpi
+        
+            
              
        
 ```

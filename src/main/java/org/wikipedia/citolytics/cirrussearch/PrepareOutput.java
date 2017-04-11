@@ -49,6 +49,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         boolean ignoreMissingIds = params.has("ignore-missing-ids");
         boolean resolveRedirects = params.has("resolve-redirects");
         boolean includeIds = params.has("include-ids");
+        boolean relativeProximity = params.has("relative-proximity");
 
         setJobName("CirrusSearch PrepareOutput");
 
@@ -63,6 +64,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             wikiSimJob.redirectsFilename = redirectsFilename;
             wikiSimJob.removeMissingIds = !ignoreMissingIds; // Ensures that page ids exist
             wikiSimJob.resolveRedirects = resolveRedirects;
+            wikiSimJob.relativeProximity = relativeProximity;
             wikiSimJob.setEnvironment(env);
             wikiSimJob.plan();
 

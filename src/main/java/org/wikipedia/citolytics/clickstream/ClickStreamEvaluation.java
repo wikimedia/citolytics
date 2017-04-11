@@ -154,9 +154,9 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
             topRecommendations = topRecommendations.union(distinctRecommendations);
 
-//            topRecommendations.print();
-
-            topRecommendations.write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE);
+            topRecommendations
+                    .write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE)
+                    .setParallelism(1);
         }
 
 
