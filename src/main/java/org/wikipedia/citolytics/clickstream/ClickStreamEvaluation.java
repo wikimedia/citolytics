@@ -1,6 +1,7 @@
 package org.wikipedia.citolytics.clickstream;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -9,6 +10,7 @@ import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.clickstream.operators.EvaluateClicks;
+import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
@@ -116,17 +118,43 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                         @Override
                         public void flatMap(ClickStreamResult r, Collector<Tuple2<String, Integer>> out) throws Exception {
                             if (r.getRecommendationsCount() > 0) {
-                                if(r.getRecommendations().get(0).getRecommendedArticle().equalsIgnoreCase("United States")) {
-                                    out.collect(new Tuple2<>(r.getRecommendations().get(0).getRecommendedArticle(),
-                                            1));
-                                }
+//                                if(r.getRecommendations().get(0).getRecommendedArticle().equalsIgnoreCase("United States")) {
+//                                    out.collect(new Tuple2<>("#1 = " + r.getRecommendations().get(0).getRecommendedArticle(),
+//                                            1));
+//                                }
+                                out.collect(new Tuple2<>(r.getRecommendations().get(0).getRecommendedArticle(),
+                                        1));
                             }
                         }
                     })
-//                    .groupBy(0)
+                    .groupBy(0)
                     .sum(1)
+                    .max(1)
 //                    .
                     ;
+
+            // Distinct recommendations
+            DataSet<Tuple2<String, Integer>> distinctRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Integer>>() {
+                @Override
+                public void flatMap(ClickStreamResult clickStreamResult, Collector<Tuple2<String, Integer>> out) throws Exception {
+                    for(ClickStreamRecommendationResult r: clickStreamResult.getRecommendations()) {
+                        out.collect(new Tuple2<>(r.getRecommendedArticle(), 1));
+                    }
+
+                }
+            }).distinct(0)
+                    .sum(1)
+                    .map(new MapFunction<Tuple2<String, Integer>, Tuple2<String, Integer>>() {
+                        @Override
+                        public Tuple2<String, Integer> map(Tuple2<String, Integer> in) throws Exception {
+                            in.setField("Distinct recommendations", 0);
+                            return in;
+                        }
+                    });
+
+            topRecommendations = topRecommendations.union(distinctRecommendations);
+
+//            topRecommendations.print();
 
             topRecommendations.write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE);
         }

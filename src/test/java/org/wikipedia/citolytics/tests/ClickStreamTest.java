@@ -90,6 +90,26 @@ public class ClickStreamTest extends Tester {
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
     }
 
+
+    @Test
+    public void testEvaluationSummaryWithTopRecommendations() throws Exception {
+        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
+                + " --gold " + dataSetPath
+                + "," + dataSetPath2 // Multiple inputs
+                + " --summary"
+                + " --top-recommendations " + resource("top_recommendations.out", true)
+                + " --output local");
+
+//        System.out.println(job.output);
+
+        assertEquals("Summary should have only a single result tuple", 1, job.output.size());
+        assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
+        assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
+        assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
+    }
+
     @Test
     public void testClickStreamEvaluation() throws Exception {
         setJob(new ClickStreamEvaluation()).start("--wikisim " + wikiSimPath
