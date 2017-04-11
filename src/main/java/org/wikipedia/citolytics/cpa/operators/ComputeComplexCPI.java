@@ -25,19 +25,19 @@ import org.wikipedia.citolytics.stats.ArticleStatsTuple;
  */
 public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleStatsTuple, Recommendation> {
     private long articleCount = 0;
-//    private String cpiExpressionStr = "%1$d";
-    private Expression cpiExpression;
+    private String cpiExpressionStr = "1";
+//    private Expression cpiExpression;
 
     public ComputeComplexCPI(long articleCount, String cpiExpressionStr) {
         this.articleCount = articleCount;
 
         if (cpiExpressionStr != null && !cpiExpressionStr.isEmpty()) {
-//            this.cpiExpressionStr = cpiExpressionStr;
+            this.cpiExpressionStr = cpiExpressionStr;
 
-            cpiExpression= new ExpressionBuilder(cpiExpressionStr)
-                    .variables("x", "y", "z")
-                    .build()
-                    .setVariable("z", articleCount);
+//            cpiExpression = new ExpressionBuilder(cpiExpressionStr)
+//                    .variables("x", "y", "z")
+//                    .build()
+//                    .setVariable("z", articleCount);
         }
     }
 
@@ -45,16 +45,24 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
     public Recommendation join(Recommendation rec, ArticleStatsTuple stats) throws Exception {
         if(stats != null) {
             double cpi;
+            Expression cpiExpression;
+            cpiExpression = new ExpressionBuilder(cpiExpressionStr)
+                    .variables("x", "y", "z")
+                    .build()
+                    .setVariable("z", articleCount)
+                    .setVariable("x", rec.getScore())
+                    .setVariable("y", stats.getInLinks());
+            cpi = cpiExpression.evaluate();
 
-            if(cpiExpression == null) {
-                cpi = 1;
-            } else{
-                Expression e = cpiExpression
-                        .setVariable("x", rec.getScore())
-                        .setVariable("y", stats.getInLinks());
-
-                cpi = e.evaluate();
-            }
+//            if(cpiExpression == null) {
+//                cpi = 1;
+//            } else{
+//                Expression e = cpiExpression
+//                        .setVariable("x", rec.getScore())
+//                        .setVariable("y", stats.getInLinks());
+//
+//                cpi = e.evaluate();
+//            }
 
 
 //            try {

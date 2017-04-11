@@ -67,7 +67,7 @@ results.
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
         --enable-elastic \
-        --cpi %1\$f \
+        --cpi x*log\(z\/\(y+1\)\) \
         --article-stats $OUTPUT_DIR/stats \
         --output $OUTPUT_DIR/citolytics_$WIKI.cpi.json
 

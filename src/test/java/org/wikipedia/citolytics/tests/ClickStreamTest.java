@@ -173,7 +173,7 @@ public class ClickStreamTest extends Tester {
 
         job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath + "," + dataSetPath2 // Multiple inputs
-                + " --cpi %1$f*Math.log(%3$d/%2$d) --article-stats " + articleStatsPath
+                + " --cpi x*log(z/(y+1)) --article-stats " + articleStatsPath
                 + " --output print");
     }
 
