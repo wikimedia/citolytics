@@ -107,6 +107,29 @@
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>unpack</id>
+                        <!-- executed just before the package phase -->
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <!-- For complex CPI expressions -->
+                                <artifactItem>
+                                    <groupId>net.objecthunter</groupId>
+                                    <artifactId>exp4j</artifactId>
+                                    <version>0.4.8</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                                    <includes>exp4j/**</includes>
+                                </artifactItem>
+
+                            </artifactItems>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
