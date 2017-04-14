@@ -70,6 +70,7 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
         if (doc == null) return;
         if (doc.getNS() != 0) return; // Skip all namespaces other than main
 
+        // TODO merge both collect methods
         if (structureProximity) {
             collectLinkPairsBasedOnStructure(doc, out);
         } else {
@@ -122,6 +123,20 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
         }
     }
 
+    /**
+     * Collect link pairs with structure-based proximity measure. Proximity is measured with static level.
+     *
+     * Supported proximity levels:
+     * - sentence
+     * - paragraph
+     * - subsection
+     * - section
+     * - article
+     *
+     * @param doc Processed and valid Wiki document
+     * @param out Collector
+     * @throws Exception Is thrown if alpha values are set
+     */
     public void collectLinkPairsBasedOnStructure(WikiDocument doc, Collector<RecommendationPair> out) throws Exception {
 
         if(alphas.length != 1 && alphas[0] != 1.0) {
@@ -134,11 +149,13 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
         Pattern hl3_pattern = getHeadlinePattern(3);
         Pattern paragraph_pattern = Pattern.compile("^$", Pattern.MULTILINE);
 
+        // Initialize counters
         int hl2_counter = 0, hl3_counter = 0, paragraph_counter = 0;
 
         Map<String, LinkPosition> links = new HashMap<>();
         String linkTarget;
 
+        // Loop over each structure element and increase counters
         String[] hl2s = hl2_pattern.split(text);
         for (String hl2 : hl2s) {
             String[] hl3s = hl3_pattern.split(hl2);
@@ -148,26 +165,23 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
 
                 for (String paragraph : paragraphs) {
                     // TODO Sentence level
+                    // Extract links
                     Matcher m = WikiDocument.LINKS_PATTERN.matcher(paragraph);
 
                     while (m.find()) {
                         if (m.groupCount() >= 1) {
                             linkTarget = WikiDocument.validateLinkTarget(m.group(1));
-                            if (linkTarget != null) {
+                            if (linkTarget != null && !links.containsKey(linkTarget)) {
                                 links.put(linkTarget, new LinkPosition(hl2_counter, hl3_counter, paragraph_counter, m.start()));
                             }
                         }
                     }
 
-//                    System.out.println(paragraph + "\n\n### </paragraph> ======");
                     paragraph_counter++;
                 }
-
-//                System.out.println("### </hl3>");
                 hl3_counter++;
             }
             hl2_counter++;
-//            System.out.println("### </hl2>");
         }
 
         // Collect link pairs
@@ -185,11 +199,20 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
             }
         }
 
-//        System.out.println(links);
     }
 
+    /**
+     * Build regex for headline matching depending on headline level, e.g.:
+     *
+     * = Headline =
+     * == Headline 2 ==
+     * === Headline 3 ===
+     * ...
+     *
+     * @param level Headline level
+     * @return Regex for headlines in Wiki text
+     */
     private Pattern getHeadlinePattern(int level) {
-//        return "([\\w\\s]+)([=]{" + level + "})";
         return Pattern.compile("([=]{" + level + "})([\\w\\s]+)([=]{" + level + "})$", Pattern.MULTILINE);
 
     }

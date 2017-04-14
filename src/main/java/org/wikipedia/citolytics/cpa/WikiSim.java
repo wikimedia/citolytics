@@ -97,7 +97,7 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
         outputFilename = params.getRequired("output");
         redirectsFilename = params.get("redirects");
 
-        alpha = params.get("alpha", "1.5");
+        alpha = params.get("alpha", "1.0");
         reducerThreshold = params.getInt("reducer-threshold", 1);
         combinerThreshold = params.getInt("combiner-threshold", 1);
         wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006");

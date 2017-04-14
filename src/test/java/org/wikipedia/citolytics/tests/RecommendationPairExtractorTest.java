@@ -1,6 +1,7 @@
 package org.wikipedia.citolytics.tests;
 
 import org.apache.flink.api.common.functions.util.ListCollector;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cpa.operators.RecommendationPairExtractor;
 import org.wikipedia.citolytics.cpa.types.LinkPosition;
@@ -16,6 +17,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class RecommendationPairExtractorTest extends Tester {
+    @Ignore
     @Test
     public void testWordMap() throws Exception {
         String wikiDocStr = getFileContents("RecommendationPairExtractorTest/article.xml.in");
@@ -45,16 +47,14 @@ public class RecommendationPairExtractorTest extends Tester {
         WikiDocument doc = dp.processDoc(wikiDocStr);
 
         List<RecommendationPair> list = new ArrayList<>();
-        ListCollector<RecommendationPair> collector = new ListCollector<>(list);
 
         RecommendationPairExtractor rpe = new RecommendationPairExtractor();
-        rpe.collectLinkPairsBasedOnStructure(doc, collector);
+        rpe.collectLinkPairsBasedOnStructure(doc, new ListCollector<>(list));
 
-        System.out.println(list);
+//        System.out.println(list);
 
         for(RecommendationPair pair: list) {
             assertEquals("Proximity should be paragraph level only", LinkPosition.CPI_PARAGRAPH_LEVEL, pair.getDistance(), 0);
-
         }
     }
 }

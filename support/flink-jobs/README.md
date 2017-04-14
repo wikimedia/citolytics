@@ -41,6 +41,17 @@ You run Flink jobs from this repository by using the following commands. Degree 
         --resolve-redirects \
         --alpha 0.855 \
         --output $OUTPUT_DIR/wikisim_raw
+
+        
+### WikiSim (with structure proximity + redirects)
+
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
+        --input $WIKI_DUMP \
+        --resolve-redirects \
+        --alpha 1.0 \
+        --structure-proximity \
+        --output $OUTPUT_DIR/wikisim_structure_raw
+        
         
 ### SeeAlsoEvaluation
 
