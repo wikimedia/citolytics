@@ -11,6 +11,7 @@ import org.wikipedia.citolytics.tests.utils.Tester;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -54,17 +55,24 @@ public class WikiSimTest extends Tester {
 
         // Test every records
         int correct = 0;
+        List<RecommendationPair> invalidRecords = new ArrayList<>();
         for (RecommendationPair a : actual) {
 
 //            System.out.println(a);
             if (expected.contains(a)) {
                 correct++;
+            } else {
+                invalidRecords.add(a);
             }
         }
 
         if (correct != expected.size()) {
+            if(invalidRecords.size() > 20) {
+                invalidRecords = invalidRecords.subList(0, 20);
+            }
+
             throw new Exception("Invalid number of correct output records. Expected: " + expected.size() +
-                    ". Actual: " + correct + " / " + actual.size());
+                    ". Actual: " + correct + " / " + actual.size() + ". Invalid records (max. 20): " + invalidRecords);
         }
     }
 
@@ -99,6 +107,14 @@ public class WikiSimTest extends Tester {
 
         assertOutput(job.getOutput(), getExpectedOutputPath());
 
+    }
+
+    @Test
+    public void testStructureProximity() throws Exception {
+        fixture = "structure_proximity";
+        job.start("--input " + getInputPath() + " --structure-proximity --output local");
+
+        assertOutput(job.getOutput(), getExpectedOutputPath());
     }
 
     @Test

@@ -17,8 +17,6 @@
 package org.wikipedia.processing.types;
 
 import org.apache.commons.lang.StringUtils;
-import org.wikipedia.citolytics.cpa.types.LinkPair;
-import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.*;
@@ -34,62 +32,34 @@ import static java.lang.Math.max;
 public class WikiDocument {
     private DocumentProcessor processor;
 
-    private final LinkPair linkPair = new LinkPair();
-
     /**
-     * reciprocal distance *
+     *   Used for extraction of links, e.g.
+     *   [[Zielartikel|alternativer Text]]
+     *   [[Artikelname]]
+     *   [[#Wikilink|Wikilink]]
      */
-    //private final DoubleValue recDistance = new DoubleValue();
-    private String target = "";
+    public final static Pattern LINKS_PATTERN = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
 
     private java.util.List<java.util.Map.Entry<String, Integer>> outLinks = null;
     private TreeMap<Integer, Integer> wordMap = null;
-    /*
+
+    /**
      * Raw raw of the document
      */
     private String raw;
 
-    /*
-     * Plaintext version of the document
-     *
-    private StringValue plaintext = new StringValue();
-
-    /*
+    /**
      * Title of the document
      */
     private String title;
 
-    /*
+    /**
      * Wikipedia id of the document
      */
     private int id;
 
     /**
-     * Wikipedia pages belong to different namespaces. Below
-     * is a list that describes a commonly used namespaces.
-     * <p/>
-     * -2	Media
-     * -1	Special
-     * 0	Default
-     * 1	Talk
-     * 2	User
-     * 3	User talk
-     * 4	Wikipedia
-     * 5	Wikipedia talk
-     * 6	File
-     * 7	File talk
-     * 8	MediaWiki
-     * 9	MediaWiki talk
-     * 10	Template
-     * 11	Template talk
-     * 12	Help
-     * 13	Help talk
-     * 14	Category
-     * 15	Category talk
-     * 100	Portal
-     * 101	Portal talk
-     * 108	Book
-     * 109	Book talk
+     * Wikipedia pages belong to different namespaces. (e.g. 0: articles, ...)
      */
     private int ns;
 
@@ -177,6 +147,10 @@ public class WikiDocument {
         this.raw = text;
     }
 
+    public String getCleanText() {
+        return getDocumentProcessor().cleanText(raw);
+    }
+
     /**
      * Extract headlines from article content.
      * <p/>
@@ -203,33 +177,49 @@ public class WikiDocument {
 
 
     private void extractLinks() {
+        // Clean text
+        String text = getCleanText();
+
+        // Reset outlinks
         outLinks = new ArrayList<>();
-
-        String text = getDocumentProcessor().cleanText(raw);
-
-        // Search for links, e.g.
-        // [[Zielartikel|alternativer Text]]
-        // [[Artikelname]]
-        // [[#Wikilink|Wikilink]]
-        Pattern p = Pattern.compile("\\[\\[(.*?)((\\||#).*?)?\\]\\]");
-        Matcher m = p.matcher(text);
+        Matcher m = LINKS_PATTERN.matcher(text);
 
         while (m.find()) {
             if (m.groupCount() >= 1) {
-                target = m.group(1).trim();
-
-                if (target.length() > 0
-                        && !target.contains("<")
-                        && !target.contains(">")
-                        && WikiSimStringUtils.startsNotWith(target.toLowerCase(), getDocumentProcessor().getInvalidNameSpaces())
-                        // Alternative test for invalid namespaces -> check for ":"
-                        && !target.contains(":")
-                        ) {
-                    // First char is not case sensitive
-                    target = StringUtils.capitalize(target);
+//                String target = m.group(1).trim();
+//
+//                if (target.length() > 0
+//                        && !target.contains("<")
+//                        && !target.contains(">")
+//                        // Test for invalid namespaces -> check for ":"
+//                        && !target.contains(":")
+//                        ) {
+//                    // First char is not case sensitive
+//                    target = StringUtils.capitalize(target);
+//                    outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
+//                }
+                String target = validateLinkTarget(m.group(1));
+                if(target != null) {
                     outLinks.add(new AbstractMap.SimpleEntry<>(target, m.start()));
                 }
             }
+        }
+    }
+
+    public static String validateLinkTarget(String target) {
+        target = target.trim();
+
+        if (target.length() > 0
+                && !target.contains("<")
+                && !target.contains(">")
+                // Test for invalid namespaces -> check for ":"
+                && !target.contains(":")
+                ) {
+            // First char is not case sensitive
+            target = StringUtils.capitalize(target);
+            return target;
+        } else {
+            return null;
         }
     }
 

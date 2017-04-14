@@ -4,11 +4,15 @@ import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.LinkPair;
+import org.wikipedia.citolytics.cpa.types.LinkPosition;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.processing.DocumentProcessor;
 import org.wikipedia.processing.types.WikiDocument;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -23,17 +27,22 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
     private double[] alphas = new double[]{1.0};
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
     private boolean relativeProximity = false;
+    private boolean structureProximity = false;
     private Configuration config;
 
+    public RecommendationPairExtractor() {
+    }
+
     @Override
-    public void open(Configuration parameter) throws Exception {
-        super.open(parameter);
+    public void open(Configuration config) throws Exception {
+        super.open(config);
 
-        config = parameter;
-        enableWiki2006 = parameter.getBoolean("wiki2006", true);
-        relativeProximity = parameter.getBoolean("relativeProximity", false);
+        this.config = config;
+        enableWiki2006 = config.getBoolean("wiki2006", true);
+        relativeProximity = config.getBoolean("relativeProximity", false);
+        structureProximity = config.getBoolean("structureProximity", false);
 
-        String[] arr = parameter.getString("alpha", "1.0").split(",");
+        String[] arr = config.getString("alpha", "1.0").split(",");
         alphas = new double[arr.length];
         for (int i = 0; i < arr.length; i++) {
             alphas[i] = Double.parseDouble(arr[i]);
@@ -59,15 +68,28 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
         WikiDocument doc = dp.processDoc(content);
 
         if (doc == null) return;
+        if (doc.getNS() != 0) return; // Skip all namespaces other than main
 
-        collectLinkPairs(doc, out);
+        if (structureProximity) {
+            collectLinkPairsBasedOnStructure(doc, out);
+        } else {
+            collectLinkPairs(doc, out);
+        }
     }
 
+    /**
+     * Collect link pairs with alpha-based proximity measure. Proximity is measured as words between links.
+     * Proximity relative to document length can be used by setting the relativeProximity parameter to true.
+     *
+     * CPI(a,b) = |p_d,a - p_d,b| ^ -alpha
+     * CPI_rel(a,b) = (|p_d,a - p_d,b|/ length(d)) ^ -alpha
+     *
+     * - where p_d,a is the link position of link to a in document d.
+     *
+     * @param doc Processed and valid Wiki document
+     * @param out Collector
+     */
     private void collectLinkPairs(WikiDocument doc, Collector<RecommendationPair> out) {
-        //Skip all namespaces other than main
-        if (doc.getNS() != 0) {
-            return;
-        }
 
         // Loop all link pairs
         for (Map.Entry<String, Integer> outLink1 : doc.getOutLinks()) {
@@ -83,20 +105,93 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
                     int w2 = doc.getWordMap().floorEntry(outLink2.getValue()).getValue();
 
                     // Proximity is defined as number of words between the links
-                    double distance = max(abs(w1 - w2), 1);
+                    double proximity = max(abs(w1 - w2), 1);
 
                     // Make distance relative to article length (number of words in article)
                     if(relativeProximity) {
-                        distance = distance / (double) doc.getWordMap().size();
+                        proximity = proximity / (double) doc.getWordMap().size();
                     }
 
                     // Collect link pair if is valid
                     if (LinkPair.isValid(pageA, pageB)) {
-                        out.collect(new RecommendationPair(pageA, pageB, distance, alphas));
+                        out.collect(new RecommendationPair(pageA, pageB, proximity, alphas));
                     }
 
                 }
             }
         }
     }
+
+    public void collectLinkPairsBasedOnStructure(WikiDocument doc, Collector<RecommendationPair> out) throws Exception {
+
+        if(alphas.length != 1 && alphas[0] != 1.0) {
+            throw new Exception("With using structure-based proximity the alpha values cannot be used");
+        }
+
+        String text = doc.getCleanText();
+
+        Pattern hl2_pattern = getHeadlinePattern(2);
+        Pattern hl3_pattern = getHeadlinePattern(3);
+        Pattern paragraph_pattern = Pattern.compile("^$", Pattern.MULTILINE);
+
+        int hl2_counter = 0, hl3_counter = 0, paragraph_counter = 0;
+
+        Map<String, LinkPosition> links = new HashMap<>();
+        String linkTarget;
+
+        String[] hl2s = hl2_pattern.split(text);
+        for (String hl2 : hl2s) {
+            String[] hl3s = hl3_pattern.split(hl2);
+
+            for (String hl3 : hl3s) {
+                String[] paragraphs = paragraph_pattern.split(hl3);
+
+                for (String paragraph : paragraphs) {
+                    // TODO Sentence level
+                    Matcher m = WikiDocument.LINKS_PATTERN.matcher(paragraph);
+
+                    while (m.find()) {
+                        if (m.groupCount() >= 1) {
+                            linkTarget = WikiDocument.validateLinkTarget(m.group(1));
+                            if (linkTarget != null) {
+                                links.put(linkTarget, new LinkPosition(hl2_counter, hl3_counter, paragraph_counter, m.start()));
+                            }
+                        }
+                    }
+
+//                    System.out.println(paragraph + "\n\n### </paragraph> ======");
+                    paragraph_counter++;
+                }
+
+//                System.out.println("### </hl3>");
+                hl3_counter++;
+            }
+            hl2_counter++;
+//            System.out.println("### </hl2>");
+        }
+
+        // Collect link pairs
+        for(String pageA: links.keySet()) {
+            for(String pageB: links.keySet()) {
+                int order = pageA.compareTo(pageB);
+
+                double proximity = links.get(pageA).getProximity(links.get(pageB));
+
+                if (order < 0) {
+                    if (LinkPair.isValid(pageA, pageB)) {
+                        out.collect(new RecommendationPair(pageA, pageB, proximity, alphas));
+                    }
+                }
+            }
+        }
+
+//        System.out.println(links);
+    }
+
+    private Pattern getHeadlinePattern(int level) {
+//        return "([\\w\\s]+)([=]{" + level + "})";
+        return Pattern.compile("([=]{" + level + "})([\\w\\s]+)([=]{" + level + "})$", Pattern.MULTILINE);
+
+    }
+
 }

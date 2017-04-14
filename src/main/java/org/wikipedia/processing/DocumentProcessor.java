@@ -19,10 +19,7 @@ package org.wikipedia.processing;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.processing.types.WikiDocument;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -263,37 +260,6 @@ public class DocumentProcessor {
         return closePos;
     }
 
-    /**
-     * A first call namespaces are read from the INVALID_NAMESPACES_FILE resource
-     *
-     * @return List if invalid namespaces in lower case (e.g. talk:)
-     */
-    @Deprecated
-    public List<String> getInvalidNameSpaces() {
-
-        if(invalidNameSpaces == null) {
-
-            // namespaces from http://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces
-            invalidNameSpaces = new ArrayList<>();
-
-            try {
-                File f = new File(getClass().getClassLoader().getResource(INVALID_NAMESPACES_FILENAME).getFile());
-                Scanner s = new Scanner(f);
-                while (s.hasNextLine()){
-                    String line = s.nextLine();
-
-                    if(!line.isEmpty())
-                        invalidNameSpaces.add(line);
-                }
-                s.close();
-            } catch (Exception e) {
-                System.err.println("Cannot read from INVALID_NAMESPACES file");
-                e.printStackTrace();
-            }
-        }
-
-        return invalidNameSpaces;
-    }
 }
 
 
