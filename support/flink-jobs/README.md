@@ -154,7 +154,7 @@ The following jobs perform pre-processing or analysis tasks.
         --input $WIKI_DUMP \
         --output $SEEALSO_PATH
         
-With multi-language translation
+With multi-language translation (See [cirrusearch.md](cirrussearch.md) for lang-links extraction)
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtrator  -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
