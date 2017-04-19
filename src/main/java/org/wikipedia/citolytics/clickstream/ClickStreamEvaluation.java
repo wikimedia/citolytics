@@ -118,10 +118,6 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                         @Override
                         public void flatMap(ClickStreamResult r, Collector<Tuple2<String, Integer>> out) throws Exception {
                             if (r.getRecommendationsCount() > 0) {
-//                                if(r.getRecommendations().get(0).getRecommendedArticle().equalsIgnoreCase("United States")) {
-//                                    out.collect(new Tuple2<>("#1 = " + r.getRecommendations().get(0).getRecommendedArticle(),
-//                                            1));
-//                                }
                                 out.collect(new Tuple2<>(r.getRecommendations().get(0).getRecommendedArticle(),
                                         1));
                             }
@@ -129,9 +125,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                     })
                     .groupBy(0)
                     .sum(1)
-                    .max(1)
-//                    .
-                    ;
+                    .max(1);
 
             // Distinct recommendations
             DataSet<Tuple2<String, Integer>> distinctRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Integer>>() {

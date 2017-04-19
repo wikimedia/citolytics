@@ -68,7 +68,16 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
 
         // See also
         DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
-                .map(new SeeAlsoInputMapper());
+                .map(new SeeAlsoInputMapper())
+                .groupBy(0)
+                .reduce(new ReduceFunction<Tuple2<String, ArrayList<String>>>() {
+                    @Override
+                    public Tuple2<String, ArrayList<String>> reduce(Tuple2<String, ArrayList<String>> a, Tuple2<String, ArrayList<String>> b) throws Exception {
+                        a.f1.addAll(b.f1);
+
+                        return a;
+                    }
+                });
 
         // Read result set
         DataSet<RecommendationSet> wikiSimGroupedDataSet;

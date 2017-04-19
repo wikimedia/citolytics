@@ -19,14 +19,16 @@ You run Flink jobs from this repository by using the following commands. Degree 
     export ENWIKI_IDTITLE_MAPPING=$HDFS_PATH/user/mschwarzer/enwiki/intermediate/idtitle
     export CLICKSTREAMS_PATH=$HDFS_PATH/user/mschwarzer/gold/clickstream
     
-### WikiSim (no redirects)
+### WikiSim 
+
+(no redirects)
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
         --alpha 0.855 \
         --output $OUTPUT_DIR/wikisim_raw
         
-### WikiSim (with prepared-redirects; alpha = {0.855}; no thresholds)
+(with prepared-redirects; alpha = {0.855}; no thresholds)
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
@@ -34,7 +36,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
         --alpha 0.855 \
         --output $OUTPUT_DIR/wikisim_raw
         
-### WikiSim (with redirects on-the-fly)
+(with redirects on-the-fly)
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
@@ -43,7 +45,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
         --output $OUTPUT_DIR/wikisim_raw
 
         
-### WikiSim (with structure proximity + redirects)
+(with structure proximity + redirects)
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
@@ -55,29 +57,24 @@ You run Flink jobs from this repository by using the following commands. Degree 
         
 ### SeeAlsoEvaluation
 
-#### CPA
-```
-flink run -p 64 -c SeeAlsoEvaluation \
-    /home/mschwarzer/wikisim/cpa.jar \
-    hdfs:///user/mschwarzer/v2/results/a01_redirected \
-    hdfs:///user/mschwarzer/v2/results/seealso_cpa_1_0 \
-    hdfs:///user/mschwarzer/v2/intermediate/seealso_redirects \
-    nofilter 8
-```
+Evaluate WikiSim output (CPA)
 
-#### MLT
-```
-flink run -p 82 -c SeeAlsoEvaluation \
-    /home/mschwarzer/wikisim/cpa.jar \
-    hdfs:///user/mschwarzer/v2/intermediate/mlt_results \
-    hdfs:///user/mschwarzer/v2/results/seealso_mlt \
-    hdfs:///user/mschwarzer/v2/intermediate/seealso2_redirected \
-    nofilter -1
-```
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoEvaluation  -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --gold $SEEALSO_PATH \
+        --output $OUTPUT_DIR/seealso
+
+
+Evaluate MoreLikeThis output (MLT)
+
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoEvaluation  -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/mlt \
+        --gold $SEEALSO_PATH \
+        --output $OUTPUT_DIR/seealso_mlt
 
 ### ClickStreamEvaluation
 
-#### CPA
+Evaluate WikiSim output (CPA)
    
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
         --wikisim $OUTPUT_DIR/wikisim_raw \
@@ -134,17 +131,7 @@ flink run -p 82 -c SeeAlsoEvaluation \
         --output $OUTPUT_DIR/cs_cpi
         
             
-             
        
-```
-flink run -p 96 -c ClickStreamEvaluation \
-    /home/mschwarzer/wikisim/cpa.jar \
-    hdfs:///user/mschwarzer/v2/results/a01_redirected \
-    hdfs:///datasets/enwiki_2015_02_clickstream.tsv \
-    hdfs:///user/mschwarzer/v2/results/clickstream_cpa_c \
-    5
-```
-
 #### MLT
 ```
 flink run -p 96 -c ClickStreamEvaluation \
@@ -154,6 +141,18 @@ flink run -p 96 -c ClickStreamEvaluation \
     hdfs:///user/mschwarzer/v2/results/clickstream_mlt_c \
     -1
 ```
+
+## Helper jobs
+
+The following jobs perform pre-processing or analysis tasks.
+
+### SeeAlsoExtractor
+
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtrator  -p $PARALLELISM $JAR \
+        --wikisim $OUTPUT_DIR/wikisim_raw \
+        --gold $SEEALSO_PATH \
+        --output $OUTPUT_DIR/seealso
+
 
 ### Redirects
 

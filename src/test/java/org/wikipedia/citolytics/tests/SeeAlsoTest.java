@@ -8,7 +8,6 @@ import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -27,27 +26,38 @@ public class SeeAlsoTest extends Tester {
 
 
     @Test
+    public void testSeeAlsoExtractorMultiLang() throws Exception {
+
+        setJob(new SeeAlsoExtractor())
+                .start("--input " + resource("wiki_dump_de.xml.in", true)
+                        + " --input-lang de"
+                        + " --lang-links " + resource("lang_links.in", true)
+                        + " --output local");
+
+        assertEquals("Invalid see also article count extracted", 2, job.output.size());
+    }
+
+
+    @Test
     public void testExtractSeeAlsoNoRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
         job.enableLocalEnvironment().start(("--input " + resource("wikiSeeAlso2.xml") + " --output local").split(" "));
 
-//        System.out.println(job.output);
-//        System.out.println(job.output.size());
-
         // Needles
         ArrayList<Tuple3<String, String, Integer>> needles = new ArrayList<>();
 
-        needles.add(new Tuple3<>("ASCII", "3568 ASCII#ASCII art#ASCII Ribbon Campaign#Extended ASCII#HTML decimal character rendering", 5));
+        needles.add(new Tuple3<>("ASCII", "3568 ASCII#ASCII Ribbon Campaign#ASCII art#Extended ASCII#HTML decimal character rendering", 5));
         needles.add(new Tuple3<>("Algeria", "Index of Algeria-related articles#Outline of Algeria", 2));
-        needles.add(new Tuple3<>("NFL on NBC", "List of NFL on NBC commentator pairings#List of AFL Championship Game broadcasters#List of NFL Championship Game broadcasters#List of AFC Championship Game broadcasters#List of NFC Championship Game broadcasters#List of Super Bowl broadcasters#NFL on NBC Radio#NFL on NBC music", 8));
+        needles.add(new Tuple3<>("NFL on NBC", "List of AFC Championship Game broadcasters#List of AFL Championship Game broadcasters#List of NFC Championship Game broadcasters#List of NFL Championship Game broadcasters#List of NFL on NBC commentator pairings#List of Super Bowl broadcasters#NFL on NBC Radio#NFL on NBC music", 8));
         needles.add(new Tuple3<>("Africa Squadron", "Artist collective#Lyndhurst Way", 2)); // indent line
 
-        assertTrue("Needles not found", job.output.containsAll(needles));
+        assertJobOutput(job, needles);
 
         // Size
-        assertEquals("SeeAlso output count wrong.", 7, job.output.size());
+        assertEquals("SeeAlso output count wrong.", 7, job.getOutput().size());
     }
+
 
     @Test
     public void ExtractSeeAlsoWithRedirects() throws Exception {
@@ -77,7 +87,7 @@ public class SeeAlsoTest extends Tester {
     @Test
     public void seeAlsoNotExists() {
         String input = "==Title==\nfooo\nbaaaar\n==Reference==\n* x\n* y";
-        String text = DocumentProcessor.stripSeeAlsoSection(input);
+        String text = new DocumentProcessor().stripSeeAlsoSection(input);
 
 
         assertEquals("See section found", -1, text.indexOf("See also"));
@@ -88,7 +98,7 @@ public class SeeAlsoTest extends Tester {
     @Test
     public void seeAlsoLastSection() {
         String input = "==Title==\nfooo\nbaaaar\n==Reference==\n* x\n* y\n==See also==\n* [[foo]]\n* [[bar]]";
-        String text = DocumentProcessor.stripSeeAlsoSection(input);
+        String text = new DocumentProcessor().stripSeeAlsoSection(input);
 
         assertEquals("See section found", -1, text.indexOf("See also"));
         assertNotSame("Text not changed", input, text);
@@ -100,7 +110,7 @@ public class SeeAlsoTest extends Tester {
                 "==Reference==\n" +
                 "* x\n" +
                 "* y";
-        String text = DocumentProcessor.stripSeeAlsoSection(input);
+        String text = new DocumentProcessor().stripSeeAlsoSection(input);
 
         assertEquals("See section found", -1, text.indexOf("See also"));
         assertTrue("Reference not found", text.indexOf("Reference") > 0);
@@ -141,7 +151,7 @@ public class SeeAlsoTest extends Tester {
                 "[[Category:Artist collectives]]\n" +
                 "[[Category:Peckham]]\n" +
                 "[[Category:Arts in London]]\n";
-        String text = DocumentProcessor.stripSeeAlsoSection(input);
+        String text = new DocumentProcessor().stripSeeAlsoSection(input);
 
         assertEquals("See section found", -1, text.indexOf("See also"));
         assertTrue("Notes and references not found", text.indexOf("Notes and references") > 0);
@@ -199,7 +209,7 @@ public class SeeAlsoTest extends Tester {
                         "[[Category:National Football League television series|NBC]]\n" +
                         "[[Category:Television series revived after cancellation]]\n";
 
-        if (Pattern.compile(DocumentProcessor.seeAlsoRegex, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE).matcher(content).find()) {
+        if (new DocumentProcessor().getSeeAlsoPattern().matcher(content).find()) {
             //System.out.println("See also section found.");
         } else {
             throw new Exception("See also not found if not in beginning of line.");

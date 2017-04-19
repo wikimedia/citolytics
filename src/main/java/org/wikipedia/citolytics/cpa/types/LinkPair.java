@@ -44,9 +44,9 @@ public class LinkPair extends Tuple2<String, String> {
 
     @Override
     public String toString() {
-        return String.valueOf(getField(0))
+        return f0
                 + WikiSimConfiguration.csvFieldDelimiter
-                + String.valueOf(getField(1));
+                + f1;
     }
 
     public long getHash() {

@@ -36,4 +36,4 @@ CREATE TABLE `langlinks` (
 --
 
 /*!40000 ALTER TABLE `langlinks` DISABLE KEYS */;
-INSERT INTO `langlinks` VALUES (1,'simple','simple_QQQ'), (2,'simple','simple_CPA link'), (3,'simple','simple_CPA nolink'), (4,'simple','simple_COCIT link')
+INSERT INTO `langlinks` VALUES (1,'simple','simple_QQQ'), (2,'simple','simple_CPA link'), (3,'simple','simple_CPA nolink'), (4,'simple','simple_COCIT link'), (6,'simple','simple_COCIT\'s link')

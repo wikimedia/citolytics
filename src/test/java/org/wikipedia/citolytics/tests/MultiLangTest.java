@@ -28,6 +28,20 @@ public class MultiLangTest extends Tester {
 
         List<LangLinkTuple> data = MultiLang.readLangLinksDataSet(env, resource("ClickStreamTest/lang_links_enwiki.sql")).collect();
 
-        assertEquals("Invalid number of lang links from sql dump",4, data.size());
+        assertEquals("Invalid number of lang links from sql dump",5, data.size());
     }
+
+    @Test
+    public void testSeeAlsoangLinks() throws Exception {
+        ExecutionEnvironment env = new LocalEnvironment();
+
+        List<LangLinkTuple> data = MultiLang.readLangLinksDataSet(env, resource("SeeAlsoTest/lang_links.in"), "en").collect();
+
+//        System.out.println(data);
+
+        assertEquals("Invalid number of lang links from sql dump",6, data.size());
+
+    }
+
+
 }

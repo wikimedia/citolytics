@@ -16,10 +16,11 @@
  */
 package org.wikipedia.processing;
 
+import org.apache.hadoop.util.StringUtils;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.processing.types.WikiDocument;
 
-import java.util.List;
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ import java.util.regex.Pattern;
  * - "See also" section extraction
  *
  */
-public class DocumentProcessor {
+public class DocumentProcessor implements Serializable {
     private static final String INVALID_NAMESPACES_FILENAME = "invalid_namespaces.txt";
     public static final String INFOBOX_TAG = "{{Infobox";
 
@@ -44,10 +45,9 @@ public class DocumentProcessor {
     public static final int DEFAULT_TEXT_MATCH_GROUP = 4;
     public static final int DEFAULT_NS_MATCH_GROUP = 2;
 
-    public static String seeAlsoTitle = "==see also==";
-    public static String seeAlsoRegex = "(^|\\W)" + seeAlsoTitle + "$";
-    public static int seeAlsoRegexFlags = Pattern.MULTILINE + Pattern.CASE_INSENSITIVE;
+    public static final String DEFAULT_SEE_ALSO_LANGUAGE = "en";
 
+    private String seeAlsoTitle;
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
     private boolean enableInfoBoxRemoval = true;
 
@@ -55,8 +55,6 @@ public class DocumentProcessor {
     private int titleMatchGroup = DEFAULT_TITLE_MATCH_GROUP;
     private int textMatchGroup = DEFAULT_TEXT_MATCH_GROUP;
     private int nsMatchGroup = DEFAULT_NS_MATCH_GROUP;
-
-    private List<String> invalidNameSpaces;
 
     public DocumentProcessor enableWiki2006() {
         enableWiki2006 = true;
@@ -91,7 +89,7 @@ public class DocumentProcessor {
         // Create a WikiDocument object from the xml
         WikiDocument doc = new WikiDocument(this);
         doc.setId(Integer.parseInt(m.group(idMatchGroup)));
-        doc.setTitle(WikiSimStringUtils.unescapeEntities(m.group(titleMatchGroup)));
+        doc.setTitle(StringUtils.capitalize(WikiSimStringUtils.unescapeEntities(m.group(titleMatchGroup))));
         doc.setNS(nsMatchGroup >= 0 ? Integer.parseInt(m.group(nsMatchGroup)) : 0);
 
         // skip docs from namespaces other than
@@ -152,26 +150,29 @@ public class DocumentProcessor {
         return text;
     }
 
+    public Pattern getSeeAlsoPattern() {
+        return Pattern.compile("(^|\\W)==" + getSeeAlsoTitle() + "==$", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+    }
+
     /**
      * Extract text of "See Also" section
      *
      * @param wikiText
      * @return seeAlsoText
      */
-    public static String getSeeAlsoSection(String wikiText) {
+    public String getSeeAlsoSection(String wikiText) {
         int seeAlsoStart = -1;
         String seeAlsoText = "";
 
-        Pattern seeAlsoPattern = Pattern.compile(seeAlsoRegex, seeAlsoRegexFlags);
-        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
+        Matcher seeAlsoMatcher = getSeeAlsoPattern().matcher(wikiText);
 
         if (seeAlsoMatcher.find()) {
             seeAlsoStart = seeAlsoMatcher.start();
         }
 
         if (seeAlsoStart > 0) {
-            int seeAlsoEnd = seeAlsoStart + seeAlsoTitle.length();
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + seeAlsoTitle.length()).indexOf("==");
+            int seeAlsoEnd = seeAlsoMatcher.end();
+            int nextHeadlineStart = wikiText.substring(seeAlsoMatcher.end()).indexOf("==");
 
             if (nextHeadlineStart > 0) {
                 seeAlsoText = wikiText.substring(seeAlsoStart, seeAlsoEnd + nextHeadlineStart);
@@ -190,10 +191,9 @@ public class DocumentProcessor {
      * @param wikiText
      * @return wikiText without "See Also" links
      */
-    public static String stripSeeAlsoSection(String wikiText) {
+    public String stripSeeAlsoSection(String wikiText) {
         int seeAlsoStart = -1;
-        Pattern seeAlsoPattern = Pattern.compile(DocumentProcessor.seeAlsoRegex, DocumentProcessor.seeAlsoRegexFlags);
-        Matcher seeAlsoMatcher = seeAlsoPattern.matcher(wikiText);
+        Matcher seeAlsoMatcher = getSeeAlsoPattern().matcher(wikiText);
 
         if (seeAlsoMatcher.find()) {
             seeAlsoStart = seeAlsoMatcher.start();
@@ -201,8 +201,8 @@ public class DocumentProcessor {
 
         // See also section exists
         if (seeAlsoStart > 0) {
-            int seeAlsoEnd = seeAlsoStart + DocumentProcessor.seeAlsoTitle.length();
-            int nextHeadlineStart = wikiText.substring(seeAlsoStart + DocumentProcessor.seeAlsoTitle.length()).indexOf("==");
+            int seeAlsoEnd = seeAlsoMatcher.end();
+            int nextHeadlineStart = wikiText.substring(seeAlsoMatcher.end()).indexOf("==");
 
             String strippedWikiText = wikiText.substring(0, seeAlsoStart);
 
@@ -260,6 +260,33 @@ public class DocumentProcessor {
         return closePos;
     }
 
+    public String getSeeAlsoTitle() {
+        if(seeAlsoTitle == null) {
+            try {
+                setSeeAlsoTitleByLanguage(DEFAULT_SEE_ALSO_LANGUAGE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return seeAlsoTitle;
+    }
+
+    public String getSeeAlsoTitleByLanguage(String lang) throws Exception {
+        switch (lang) {
+            case "en": return "see also";
+            case "de": return "siehe auch";
+            default:
+                throw new Exception("Language is not supported.");
+        }
+    }
+
+    public void setSeeAlsoTitle(String title) {
+        seeAlsoTitle = title;
+    }
+
+    public void setSeeAlsoTitleByLanguage(String langCode) throws Exception {
+        setSeeAlsoTitle(getSeeAlsoTitleByLanguage(langCode));
+    }
 }
 
 

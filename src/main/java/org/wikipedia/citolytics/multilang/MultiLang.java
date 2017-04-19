@@ -11,27 +11,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Handling links between different Wikipedia languages
+ * Helper class for handling links between different Wikipedia languages
  *
  * 1. Read langlink SQL dump for enwiki
  * 2. Prepare locale result set (WikiSim, SeeAlso, ClickStreams, ...)
  * 3. Map all to en-wiki
  * 4. Recompute results
  */
-public class MultiLang { //extends WikiSimAbstractJob<LangLinkTuple> {
-//    public static void main(String[] args) throws Exception {
-//        new MultiLang().start(args);
-//    }
-//
-//    @Override
-//    public void plan() throws Exception {
-//        ParameterTool params = ParameterTool.fromArgs(args);
-//
-//        outputFilename = params.getRequired("output");
-//        result = readLangLinksDataSet(env, params.getRequired("input"));
-//
-//    }
-
+public class MultiLang {
 
     public static DataSet<LangLinkTuple> readLangLinksDataSet(ExecutionEnvironment env, String pathToDataSet, String lang) {
         return readLangLinksDataSet(env, pathToDataSet)
@@ -58,11 +45,25 @@ public class MultiLang { //extends WikiSimAbstractJob<LangLinkTuple> {
         return sql.flatMap(new FlatMapFunction<String, LangLinkTuple>() {
             @Override
             public void flatMap(String s, Collector<LangLinkTuple> out) throws Exception {
-                Pattern p = Pattern.compile("^\\(([0-9]+),'(.*?)','(.*?)'");
-                Matcher m = p.matcher(s);
-                if (m.find()) {
-                    // Match VALUES
-                    collectMatch(m, out);
+                // Clean up
+                s = s.trim();
+                s = s.replaceAll("^\\(", "");
+                s = s.replaceAll("\\)$", "");
+
+
+                // CSV split
+                String[] cols = s.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+
+//                System.out.println(" >>> " + s + "\n =>>" + Arrays.toString(cols));
+
+                if (cols.length == 3) {
+                    // Match VALUES (csv split)
+                    out.collect(new LangLinkTuple(
+                            Integer.parseInt(cols[0]),
+                            cols[1].replaceAll("^'|'$", "").replace("\\'", "'"),
+                            cols[2].replaceAll("^'|'$", "").replace("\\'", "'")
+                    ));
+
                 } else {
                     // Match INSERT INTO statement
                     Pattern p2 = Pattern.compile("([0-9]+),'(.*?)','(.*?)'");
@@ -72,7 +73,7 @@ public class MultiLang { //extends WikiSimAbstractJob<LangLinkTuple> {
                         collectMatch(m2, out);
                     } else {
                         // Nothing match at all.. s is CREATE TABLE statement
-                        System.out.println(s);
+//                        System.err.println("NOT MATCHED ===> " + s);
                     }
                 }
             }

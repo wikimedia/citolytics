@@ -1,11 +1,14 @@
 package org.wikipedia.citolytics.tests.utils;
 
 
+import org.junit.ComparisonFailure;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -17,6 +20,22 @@ public class Tester {
         this.job.enableLocalEnvironment().enableSingleOutputFile();
 
         return this.job;
+    }
+
+    protected void assertJobOutput(WikiSimAbstractJob job, ArrayList needles) throws Exception {
+        int found = 0;
+        List<Object> invalid = new ArrayList<>();
+        for(Object needle: needles) {
+            if(job.getOutput().contains(needle)) {
+                found++;
+            } else {
+                invalid.add(needle);
+            }
+        }
+
+        if(needles.size() != found) {
+            throw new ComparisonFailure("Mssing needles! Invalid records: " + invalid, String.valueOf(needles.size()), String.valueOf(found));
+        }
     }
 
     public String input(String filename) throws FileNotFoundException {
