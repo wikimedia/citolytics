@@ -7,7 +7,6 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.util.Collector;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +50,6 @@ public class MultiLang {
                 s = s.replaceAll("^\\(", "");
                 s = s.replaceAll("\\)$", "");
 
-
                 // CSV split
                 String[] cols = s.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 
@@ -62,14 +60,15 @@ public class MultiLang {
                     try {
                         int pageId = Integer.parseInt(cols[0]);
 
-
                         out.collect(new LangLinkTuple(
                                 pageId,
                                 cols[1].replaceAll("^'|'$", "").replace("\\'", "'"),
                                 cols[2].replaceAll("^'|'$", "").replace("\\'", "'")
                         ));
                     } catch (NumberFormatException e) {
-                        throw new Exception("Cannot parse pageID: " + cols[0] + " // cols: " + Arrays.toString(cols));
+                        // e.g. 19553402,'bg','4\"/40 QF Mk IV,  XII,  XXII'
+                        //throw new Exception("Cannot parse pageID: " + cols[0] + " // cols: " + Arrays.toString(cols));
+                        // TODO do not just ignore
                     }
                 } else {
                     // Match INSERT INTO statement
