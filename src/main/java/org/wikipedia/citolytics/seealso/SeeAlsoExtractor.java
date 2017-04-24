@@ -67,12 +67,11 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
         DataSet<LinkPair> seeAlsolinkPairs = wikiDump.flatMap(new Extractor(dp));
 
 
-        if(inputLang != null) {
+        // Translate "See also" links if requested
+        if(inputLang != null && langLinksPath != null) {
             // Load intermediate data sets (output is enwiki)
             DataSet<IdTitleMapping> idTitleMappings = IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDump);
             DataSet<LangLinkTuple> langLinks = MultiLang.readLangLinksDataSet(env, langLinksPath, "en");
-
-//            System.out.println(">>> SeeAlso link pairs = " + seeAlsolinkPairs.collect());
 
             // Find page ids for source and target titles
             DataSet<LinkPairWithIds> linkPairsWithIds = seeAlsolinkPairs
@@ -91,9 +90,6 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
                         }
                     });
 
-//            System.out.println(">> with ids link pairs 1 = " + linkPairsWithIds.collect());
-//            System.out.println(">> id titles = " + idTitleMappings.collect());
-
             linkPairsWithIds = linkPairsWithIds
                     .leftOuterJoin(idTitleMappings)
                     .where(LinkPairWithIds.PAGE_B_TITLE_KEY)
@@ -111,9 +107,6 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
                             }
                         }
                     });
-
-//            System.out.println(">> with ids link pairs 2 = " + linkPairsWithIds.collect());
-//            System.out.println(">> lang links = " + langLinks.collect());
 
             // Translate via page ids to page titles (source and target pages)
             seeAlsolinkPairs = linkPairsWithIds

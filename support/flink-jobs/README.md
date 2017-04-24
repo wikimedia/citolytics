@@ -15,6 +15,7 @@ You run Flink jobs from this repository by using the following commands. Degree 
     export WIKI_DUMP=$HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170101-pages-articles.xml
     export INTERMEDIATE_DIR=$HDFS_PATH/user/mschwarzer/$WIKI/intermediate
     export OUTPUT_DIR=$HDFS_PATH/user/mschwarzer/$WIKI/output
+    export LANGLINKS=$HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170101-langlinks.sql
     export ENWIKI_LANGLINKS=$HDFS_PATH/user/mschwarzer/enwiki/input/enwiki-20170101-langlinks.sql
     export ENWIKI_IDTITLE_MAPPING=$HDFS_PATH/user/mschwarzer/enwiki/intermediate/idtitle
     export CLICKSTREAMS_PATH=$HDFS_PATH/user/mschwarzer/gold/clickstream
@@ -150,17 +151,17 @@ The following jobs perform pre-processing or analysis tasks.
 
 ### SeeAlsoExtractor
 
-    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtrator  -p $PARALLELISM $JAR \
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtractor  -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
         --output $SEEALSO_PATH
         
 With multi-language translation (See [cirrusearch.md](cirrussearch.md) for lang-links extraction)
 
-    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtrator  -p $PARALLELISM $JAR \
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtractor  -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
         --input-lang de \
-        --lang-links $INTERMEDIATE_DIR/langlinks
-        --output $SEEALSO_PATH
+        --lang-links $LANGLINKS \
+        --output $SEEALSO_PATH.$WIKI
 
                         
 
