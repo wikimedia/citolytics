@@ -28,6 +28,11 @@ public class EditInputMapper implements FlatMapFunction<String, ArticleAuthorPai
 
         String title = titleMatcher.group(1);
 
+        if(title.contains(":")) {
+            // Only article from main namespace
+            return;
+        }
+
         Matcher revMatcher = revRegex.matcher(xml);
         while (revMatcher.find()) {
             Matcher contributorMatcher = contributorRegex.matcher(revMatcher.group(1));

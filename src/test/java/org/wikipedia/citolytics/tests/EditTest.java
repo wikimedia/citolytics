@@ -2,7 +2,7 @@ package org.wikipedia.citolytics.tests;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.wikipedia.citolytics.edits.EditEvaluation;
+import org.wikipedia.citolytics.edits.EditRecommendationExtractor;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EditTest extends Tester {
-    EditEvaluation job;
+    EditRecommendationExtractor job;
     String historyDumpPath;
 
     @Before
@@ -21,12 +21,12 @@ public class EditTest extends Tester {
 //        missingIdsPath = resource("missing_ids.xml",true);
 //        articleStatsPath = resource("stats.in", true);
 
-        job = new EditEvaluation();
+        job = new EditRecommendationExtractor();
         job.enableLocalEnvironment();
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testExtractRecommendations() throws Exception {
 
         job.start("--input " + historyDumpPath + " --output print");
     }

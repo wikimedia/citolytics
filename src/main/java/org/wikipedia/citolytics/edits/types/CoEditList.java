@@ -14,9 +14,13 @@ public class CoEditList extends Tuple2<String, List<String>> {
         f1 = coEdits;
     }
 
+//    public List<WikiSimComparableResult<Double>> getList() {
+//        return f1;
+//    }
     public List<String> getList() {
         return f1;
     }
+
 
     public String getArticle() {
         return f0;
