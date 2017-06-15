@@ -3,7 +3,6 @@ package org.wikipedia.citolytics.tests;
 import com.google.common.collect.MinMaxPriorityQueue;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 
 import java.util.regex.Pattern;
@@ -149,12 +148,12 @@ public class PerformanceTests {
         String testStr = "1.0|2.0|100|0.05|1245.67";
         String delimiter = Pattern.quote("|");
 
-        long start = System.nanoTime();
-        for (int i = 0; i < runs; i++) {
-            DoubleListValue.valueOf(testStr, delimiter);
-        }
-        long time = System.nanoTime() - start;
-        System.out.printf("Parse DoubleListValue took an average of %.1f us%n", time / runs / 1000.0);
+//        long start = System.nanoTime();
+//        for (int i = 0; i < runs; i++) {
+//            DoubleListValue.valueOf(testStr, delimiter);
+//        }
+//        long time = System.nanoTime() - start;
+//        System.out.printf("Parse DoubleListValue took an average of %.1f us%n", time / runs / 1000.0);
 
         long startB = System.nanoTime();
         for (int i = 0; i < runs; i++) {

@@ -1,11 +1,10 @@
 package org.wikipedia.citolytics.tests;
 
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.types.DoubleValue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.cpa.WikiSim;
-import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.cpa.utils.WikiSimStringUtils;
 import org.wikipedia.citolytics.redirects.RedirectCount;
@@ -13,6 +12,9 @@ import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.single.SeeAlsoRedirects;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
 import org.wikipedia.citolytics.tests.utils.Tester;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -147,26 +149,17 @@ public class RedirectsTest extends Tester {
 
 
     @Test
-    public void DoubleListSumA() throws Exception {
-        DoubleListValue a = DoubleListValue.valueOf(new double[]{1, 10, 100});
-        DoubleListValue b = DoubleListValue.valueOf(new double[]{2, 20, 200});
+    public void testDoubleListSumA() throws Exception {
+        List<Double> a = Arrays.asList(1., 10., 100.); //new ArrayList<Double>(){1., 10., 100.}; //Arrays.asList(new double[]{1, 10, 100});
+        List<Double> b = Arrays.asList(2., 20., 200.);
 
-        DoubleListValue sum = DoubleListValue.sum(a, b);
+        List<Double> sum = RecommendationPair.sum(a, b);
 
-        if (sum.get(0).getValue() != 3
-                || sum.get(1).getValue() != 30
-                || sum.get(2).getValue() != 300) {
+        if (sum.get(0) != 3
+                || sum.get(1) != 30
+                || sum.get(2) != 300) {
             throw new Exception("DoubleListValue.sum() does not work: " + sum);
         }
-    }
-
-    // double is not accurate !!!
-    public void DoubleListSumB() {
-        System.out.println(DoubleListValue.valueOf(new double[]{0.1 + 0.2}));
-        System.out.println(new DoubleValue(0.3));
-
-        double d = 0.1 + 0.2;
-        System.out.println(d);
     }
 
     @Test

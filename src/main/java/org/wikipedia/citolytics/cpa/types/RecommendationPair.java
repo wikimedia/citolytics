@@ -1,9 +1,10 @@
 package org.wikipedia.citolytics.cpa.types;
 
 import org.apache.flink.api.java.tuple.Tuple8;
-import org.apache.flink.types.DoubleValue;
-import org.wikipedia.citolytics.cpa.types.list.DoubleListValue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -29,7 +30,7 @@ public class RecommendationPair extends Tuple8<
 //        Long, // distSquared
 //        Long, // min
 //        Long, // max
-        DoubleListValue, // CPA
+        List<Double>, // CPA
         Integer, // page id A
         Integer // page id B
         > {
@@ -70,7 +71,7 @@ public class RecommendationPair extends Tuple8<
 
         // set CPI for all alpha values
         for (double alpha : alphas) {
-            getCPI().add(new DoubleValue(computeCPI(distance, alpha)));
+            getCPI().add(computeCPI(distance, alpha));
         }
     }
 
@@ -103,7 +104,9 @@ public class RecommendationPair extends Tuple8<
         setMin(0);
         setMax(0);
         setMedian(.0);
-        setField(new DoubleListValue(), CPI_LIST_KEY);
+//        setField(new DoubleListValue(), CPI_LIST_KEY);
+        setField(new ArrayList<Double>(), CPI_LIST_KEY);
+
     }
 
     public void setDistance(double distance) {
@@ -127,17 +130,41 @@ public class RecommendationPair extends Tuple8<
             setField(distSquared, DISTSQUARED_KEY);
     }
 
-    public void setCPI(DoubleListValue cpa) {
+    public void setCPI(List<Double> cpa) {
         setField(cpa, CPI_LIST_KEY);
     }
 
     public void setCPI(double[] cpi) {
-        setField(DoubleListValue.valueOf(cpi), CPI_LIST_KEY);
+        // DoubleListValue.valueOf(cpi)
+        setField(Arrays.asList(cpi), CPI_LIST_KEY);
     }
 
-    public void addCPI(DoubleListValue cpi) throws Exception {
-        setField(cpi.sum(getCPI(), cpi), CPI_LIST_KEY);
+    public void addCPI(List<Double> cpi) throws Exception {
+        setField(sum(cpi, getCPI()), CPI_LIST_KEY);
+    }
 
+    public static List<Double> sum(List<Double> firstList, List<Double> secondList) throws Exception {
+        List<Double> result = new ArrayList<>();
+
+        if (firstList == null || secondList == null) {
+            throw new Exception("Cannot sum lists if one list NULL.");
+        } else if (firstList.size() == 0 && secondList.size() == 0) {
+            throw new Exception("Cannot sum lists if both lists are empty.");
+        } else if (firstList.size() == 0 && secondList.size() > 0) {
+            result = secondList;
+        } else if (secondList.size() == 0 && firstList.size() > 0) {
+            result = firstList;
+        } else if (firstList.size() != secondList.size()) {
+            throw new Exception("Cannot sum lists with different size.");
+        }
+
+        int i = 0;
+        for (Double firstValue : firstList) {
+            result.add(i, firstValue + secondList.get(i));
+            i++;
+        }
+
+        return result;
     }
 
     public void setMin(long min) {
@@ -201,12 +228,12 @@ public class RecommendationPair extends Tuple8<
             return 0;
     }
 
-    public DoubleListValue getCPI() {
+    public List<Double> getCPI() {
         return getField(CPI_LIST_KEY);
     }
 
     public double getCPI(int alphaKey) {
-        return ((DoubleListValue) getField(CPI_LIST_KEY)).get(alphaKey).getValue();
+        return getCPI().get(alphaKey);
     }
 
     public long getMin() {
@@ -263,11 +290,16 @@ public class RecommendationPair extends Tuple8<
         res.setDistance(Double.valueOf(cols[DISTANCE_KEY]));
         res.setCount(Integer.valueOf(cols[COUNT_KEY]));
 
-        DoubleListValue cpi = new DoubleListValue();
-        for (int i = CPI_LIST_KEY; i < cols.length; i++) {
-            cpi.add(new DoubleValue(Double.valueOf(cols[i])));
-        }
+//        DoubleListValue cpi = new DoubleListValue();
+//        for (int i = CPI_LIST_KEY; i < cols.length; i++) {
+//            cpi.add(new DoubleValue(Double.valueOf(cols[i])));
+//        }
+//        res.setCPI(cpi);
 
+        List<Double> cpi = new ArrayList<>();
+        for (int i = CPI_LIST_KEY; i < cols.length; i++) {
+            cpi.add(Double.valueOf(cols[i]));
+        }
         res.setCPI(cpi);
 
         return res;
