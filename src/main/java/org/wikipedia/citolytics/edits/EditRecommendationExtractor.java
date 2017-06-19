@@ -2,6 +2,8 @@ package org.wikipedia.citolytics.edits;
 
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.JoinFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -14,6 +16,7 @@ import org.wikipedia.citolytics.edits.operators.EditInputMapper;
 import org.wikipedia.citolytics.edits.types.ArticleAuthorPair;
 import org.wikipedia.citolytics.edits.types.AuthorArticlesList;
 import org.wikipedia.citolytics.edits.types.CoEditList;
+import org.wikipedia.citolytics.edits.types.CoEditMap;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
@@ -53,22 +56,135 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                         HashSet<String> articles = new HashSet<>();
                         ArticleAuthorPair pair = null;
 
-                        while(iterator.hasNext()) {
+                        while (iterator.hasNext()) {
                             pair = iterator.next();
                             articles.add(pair.getArticle());
                         }
 
                         // Only author with at least two articles are useful
-                        if(articles.size() > 1) {
+                        if (articles.size() > 1) {
 //                            System.out.println(pair.getAuthor() + " // " + articles);
                             out.collect(new AuthorArticlesList(pair.getAuthor(), new ArrayList<>(articles)));
                         }
                     }
                 });
 
+        return test1(articleAuthorPairs, authorArticlesList);
+//        return test2(articleAuthorPairs, authorArticlesList);
+
 //        articleAuthorPairs.print();
 //        System.out.println("---");
 //        authorArticlesList.print();
+    }
+
+    public static DataSet<RecommendationSet> test1(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) {
+        DataSet<RecommendationSet> tmp = articleAuthorPairs.join(authorArticlesList)
+                .where(1) // author id
+                .equalTo(0) // author id
+                .with(new JoinFunction<ArticleAuthorPair, AuthorArticlesList, CoEditMap>() {
+                    @Override
+                    public CoEditMap join(ArticleAuthorPair articleAuthorPair, AuthorArticlesList authorArticlesList) throws Exception {
+//                        WikiSimComparableResultList<Double> list = new WikiSimComparableResultList<>();
+                        Map<String, Integer> map = new HashMap<>();
+
+                        for (String article : authorArticlesList.getArticleList()) {
+                            if (article.equals(articleAuthorPair.getArticle())) // Do not recommend the article itself
+                                continue;
+
+                            // ignore article id
+//                            list.add(new WikiSimComparableResult<>(article, 1., 0));
+
+                            map.put(article, 1);
+                        }
+
+//                         return new RecommendationSet(articleAuthorPair.getArticle(), 0, list);
+                        return new CoEditMap(articleAuthorPair.getArticle(), map);
+                    }
+                })
+                .groupBy(0) // article
+                .reduce(new ReduceFunction<CoEditMap>() {
+                    @Override
+                    public CoEditMap reduce(CoEditMap a, CoEditMap b) throws Exception {
+//                        String article = a.getArticle();
+                        for (String coEdit : b.getMap().keySet()) {
+                            if (a.getMap().containsKey(coEdit)) {
+//                                Integer count = a.getMap().get(coEdit);
+//                                count += b.getMap().get(coEdit);
+                                a.getMap().put(coEdit, a.getMap().get(coEdit) + b.getMap().get(coEdit));
+                            } else {
+                                a.getMap().put(coEdit, b.getMap().get(coEdit));
+                            }
+                        }
+                        return a;
+                    }
+                })
+                .map(new MapFunction<CoEditMap, RecommendationSet>() {
+                    @Override
+                    public RecommendationSet map(CoEditMap coEdits) throws Exception {
+                        WikiSimComparableResultList<Double> results = new WikiSimComparableResultList<>();
+
+                        for (String coEdit : coEdits.getMap().keySet()) {
+                            double score = coEdits.getMap().get(coEdit);
+                            results.add(new WikiSimComparableResult<>(coEdit, score, 0));
+                        }
+
+                        int topK = 10;
+                        return new RecommendationSet(
+                                coEdits.getArticle(),
+                                0, // ignore ids
+                                new WikiSimComparableResultList(Ordering.natural().greatestOf(results, topK))
+                        );
+                    }
+                });
+        return tmp;
+    }
+
+
+    public static DataSet<RecommendationSet> test2(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) {
+        articleAuthorPairs.join(authorArticlesList)
+                .where(1) // author id
+                .equalTo(0) // author id
+                .with(new JoinFunction<ArticleAuthorPair, AuthorArticlesList, RecommendationSet>() {
+                    @Override
+                    public RecommendationSet join(ArticleAuthorPair articleAuthorPair, AuthorArticlesList authorArticlesList) throws Exception {
+                        WikiSimComparableResultList<Double> list = new WikiSimComparableResultList<>();
+
+                        for (String article : authorArticlesList.getArticleList()) {
+                            if (article.equals(articleAuthorPair.getArticle())) // Do not recommend the article itself
+                                continue;
+
+                            // ignore article id
+                            list.add(new WikiSimComparableResult<>(article, 1., 0));
+                        }
+
+                         return new RecommendationSet(articleAuthorPair.getArticle(), 0, list);
+                    }
+                });
+
+//
+//                .reduce(new ReduceFunction<RecommendationSet>() {
+//                    @Override
+//                    public RecommendationSet reduce(RecommendationSet a, RecommendationSet b) throws Exception {
+//                        String article = a.getSourceTitle();
+//                        Map<String, Integer> coEditedArticles = new HashMap<>();
+//
+//                        for(WikiSimComparableResult<Double> coEdit: a.getResults()) {
+//
+//                        }
+//
+//                        WikiSimComparableResultList<Double> results = a.getResults();
+//                        results.addAll(b.getResults());
+//
+//                        int topK = 10;
+//
+//                        return new RecommendationSet(
+//                                article,
+//                                0, // ignore ids
+//                                new WikiSimComparableResultList(Ordering.natural().greatestOf(results, topK))
+//                        );
+//                    }
+//                });
+//        return tmp;
 
         DataSet<CoEditList> coEdits = articleAuthorPairs.join(authorArticlesList)
                 .where(1) // author id
@@ -77,24 +193,11 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                     @Override
                     public CoEditList join(ArticleAuthorPair articleAuthorPair, AuthorArticlesList authorArticlesList) throws Exception {
 
-//                        System.out.println("join: " + articleAuthorPair.getArticle() + " >> " + authorArticlesList.getArticleList());
-
                         return new CoEditList(articleAuthorPair.getArticle(), authorArticlesList.getArticleList());
-//                        List<WikiSimComparableResult<Double>> list = new ArrayList<>();
-//
-//                        for(String article: authorArticlesList.getArticleList()) {
-                             // ignore article id
-//                            list.add(new WikiSimComparableResult<Double>(article, 1., 0));
-//                        }
-
-//                        list = Ordering.natural().greatestOf(list, 10);
-
-//                        return new CoEditList(articleAuthorPair.getArticle(), list);
-                        // return new RecommendationSet()...
                     }
                 });
 
-        // TODO rewrite as reduce
+//        // TODO rewrite as reduce
         DataSet<RecommendationSet> editRecommendations = coEdits
             .groupBy(0) // article
             .reduceGroup(new GroupReduceFunction<CoEditList, RecommendationSet>() {
@@ -151,6 +254,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 //        editRecommendations.print();
 
         return editRecommendations;
+//        return tmp;
     }
 
 }
