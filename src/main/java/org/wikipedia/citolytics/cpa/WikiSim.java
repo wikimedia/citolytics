@@ -47,6 +47,7 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
     public boolean resolveRedirects = false;
     public boolean relativeProximity = false;
     public boolean structureProximity = false;
+    public boolean backupRecommendations = false;
     private boolean median = true;
     private boolean wiki2006 = false;
     private boolean removeInfoBox = false;
@@ -106,6 +107,7 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
         resolveRedirects = params.has("resolve-redirects");
         relativeProximity = params.has("relative-proximity");
         structureProximity = params.has("structure-proximity");
+        backupRecommendations = params.has("backup-recommendations");
     }
 
     /**
@@ -126,7 +128,7 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
             config.setBoolean("removeInfoBox", removeInfoBox);
             config.setBoolean("relativeProximity", relativeProximity);
             config.setBoolean("structureProximity", structureProximity);
-
+            config.setBoolean("backupRecommendations", backupRecommendations);
         }
         return config;
     }

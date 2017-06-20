@@ -2,9 +2,10 @@ package org.wikipedia.citolytics.cirrussearch;
 
 import org.apache.flink.api.common.functions.FlatJoinFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple1;
-import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -30,26 +31,25 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
     @Override
     public void plan() throws Exception {
-        ParameterTool params = ParameterTool.fromArgs(args);
+        String wikiSimInputFilename = getParams().get("wikisim"); // not in use
 
-        String wikiSimInputFilename = params.get("wikisim"); // not in use
+        String wikiDumpInputFilename = getParams().get("wikidump");
+        String articleStatsFilename = getParams().get("article-stats");
+        String cpiExpr = getParams().get("cpi");
 
-        String wikiDumpInputFilename = params.get("wikidump");
-        String articleStatsFilename = params.get("article-stats");
-        String cpiExpr = params.get("cpi");
-
-        outputFilename = params.getRequired("output");
-        String redirectsFilename = params.get("redirects", null);
-        int topK = params.getInt("topk", 10);
-        int fieldScore = params.getInt("score", 5);
-        int fieldPageA = params.getInt("page-a", 1);
-        int fieldPageB = params.getInt("page-b", 2);
-        boolean disableScores = params.has("disable-scores");
-        boolean elasticBulkSyntax = params.has("enable-elastic");
-        boolean ignoreMissingIds = params.has("ignore-missing-ids");
-        boolean resolveRedirects = params.has("resolve-redirects");
-        boolean includeIds = params.has("include-ids");
-        boolean relativeProximity = params.has("relative-proximity");
+        outputFilename = getParams().getRequired("output");
+        String redirectsFilename = getParams().get("redirects", null);
+        int topK = getParams().getInt("topk", 10);
+        int fieldScore = getParams().getInt("score", 5);
+        int fieldPageA = getParams().getInt("page-a", 1);
+        int fieldPageB = getParams().getInt("page-b", 2);
+        boolean disableScores = getParams().has("disable-scores");
+        boolean elasticBulkSyntax = getParams().has("enable-elastic");
+        boolean ignoreMissingIds = getParams().has("ignore-missing-ids");
+        boolean resolveRedirects = getParams().has("resolve-redirects");
+        boolean includeIds = getParams().has("include-ids");
+        boolean relativeProximity = getParams().has("relative-proximity");
+        boolean backupRecommendations = getParams().has("backup-recommendations");
 
         setJobName("CirrusSearch PrepareOutput");
 
@@ -65,20 +65,30 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             wikiSimJob.removeMissingIds = !ignoreMissingIds; // Ensures that page ids exist
             wikiSimJob.resolveRedirects = resolveRedirects;
             wikiSimJob.relativeProximity = relativeProximity;
+            wikiSimJob.backupRecommendations = backupRecommendations;
             wikiSimJob.setEnvironment(env);
             wikiSimJob.plan();
 
-            recommendations = wikiSimJob.result
-                    .flatMap(new FlatMapFunction<RecommendationPair, Recommendation>() {
-                        private final int alphaKey = 0;
-                        @Override
-                        public void flatMap(RecommendationPair in, Collector<Recommendation> out) throws Exception {
+            Configuration config = new Configuration();
+            config.setBoolean("backupRecommendations", backupRecommendations);
 
-                            out.collect(new Recommendation(in.getPageA(), in.getPageB(), in.getCPI(alphaKey), in.getPageAId(), in.getPageBId()));
-                            out.collect(new Recommendation(in.getPageB(), in.getPageA(), in.getCPI(alphaKey), in.getPageBId(), in.getPageAId()));
+            recommendations = wikiSimJob.result
+                    .flatMap(new RichFlatMapFunction<RecommendationPair, Recommendation>() {
+                        private boolean backupRecommendations;
+
+                        @Override
+                        public void open(Configuration parameter) throws Exception {
+                            super.open(parameter);
+                            backupRecommendations = parameter.getBoolean("backupRecommendations", false);
                         }
-                    });
-        } else if(wikiSimInputFilename != null){
+
+                        @Override
+                        public void flatMap(RecommendationPair pair, Collector<Recommendation> out) throws Exception {
+                            WikiSimReader.collectRecommendationsFromPair(pair, out, backupRecommendations);
+                        }
+                    }).withParameters(config);
+
+        } else if(wikiSimInputFilename != null) {
             // Use existing result list;
             recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore);
         } else {
@@ -86,7 +96,8 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         }
 
         // Compute recommendation sets
-        DataSet<RecommendationSet> recommendationSets = WikiSimReader.buildRecommendationSets(env, recommendations, topK, cpiExpr, articleStatsFilename);
+        DataSet<RecommendationSet> recommendationSets = WikiSimReader.buildRecommendationSets(env, recommendations,
+                topK, cpiExpr, articleStatsFilename, backupRecommendations);
 
                 // Transform result list to JSON with page ids
         // TODO Check if there some pages lost (left or equi-join)

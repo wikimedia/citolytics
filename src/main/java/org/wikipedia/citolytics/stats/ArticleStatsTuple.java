@@ -40,6 +40,10 @@ public class ArticleStatsTuple extends Tuple6<String, Integer, Integer, Integer,
         setField(inLinks, IN_LINKS_KEY);
     }
 
+    public String getArticle() {
+        return getField(ARTICLE_NAME_KEY);
+    }
+
     public int getWords() {
         return getField(WORDS_KEY);
     }

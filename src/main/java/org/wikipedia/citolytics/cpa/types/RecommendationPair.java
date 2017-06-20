@@ -1,5 +1,6 @@
 package org.wikipedia.citolytics.cpa.types;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.flink.api.java.tuple.Tuple8;
 
 import java.util.ArrayList;
@@ -64,20 +65,34 @@ public class RecommendationPair extends Tuple8<
         init();
     }
 
-    public RecommendationPair(String pageA, String pageB, double distance, double[] alphas) {
-
+    public RecommendationPair(String pageA, String pageB, double distance, double[] cpi) {
+        // TODO Completely remove distance-field
         init(pageA, pageB, distance, 1);
         init();
 
-        // set CPI for all alpha values
-        for (double alpha : alphas) {
-            getCPI().add(computeCPI(distance, alpha));
-        }
+        setCPI(cpi);
     }
 
-    public double computeCPI(double distance, double alpha) {
-        return Math.pow(distance, -alpha);
-    }
+//    /**
+//     * Use constructor with CPI values instead.
+//     *
+//     * @param pageA
+//     * @param pageB
+//     * @param distance
+//     * @param alphas
+//     */
+//    @Deprecated
+//    public RecommendationPair(String pageA, String pageB, double distance, double[] alphas) {
+//
+//        init(pageA, pageB, distance, 1);
+//        init();
+//
+//        // set CPI for all alpha values
+//        for (double alpha : alphas) {
+//            getCPI().add(RecommendationPairExtractor.computeCPI(distance, alpha));
+//        }
+//    }
+
 
     public RecommendationPair(String pageA, String pageB, double distance, int count, double[] cpa) {
 
@@ -136,7 +151,10 @@ public class RecommendationPair extends Tuple8<
 
     public void setCPI(double[] cpi) {
         // DoubleListValue.valueOf(cpi)
-        setField(Arrays.asList(cpi), CPI_LIST_KEY);
+        this.f5 = new ArrayList<>();
+        this.f5.addAll(Arrays.asList(ArrayUtils.toObject(cpi)));
+
+//        setField(Arrays.asList(ArrayUtils.toObject(cpi)), CPI_LIST_KEY);
     }
 
     public void addCPI(List<Double> cpi) throws Exception {

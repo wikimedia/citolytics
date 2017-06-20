@@ -51,7 +51,7 @@ public class ArticleStatsTest extends Tester {
         ArticleStats job = new ArticleStats();
 
         job.silent()
-            .enableLocalEnvironment()
+                .enableLocalEnvironment()
                 .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --redirects " + input("ArticleStatsTest/redirects.csv")
@@ -64,13 +64,30 @@ public class ArticleStatsTest extends Tester {
         assertEquals("Invalid headline count", 0, job.output.get(0).getHeadlines());
         assertEquals("Invalid out link count", 24, job.output.get(0).getOutLinks());
         assertEquals("Invalid in link count", 24, job.output.get(0).getInLinks());
+    }
 
+    @Test
+    public void testSummaryWithInboundLinksWithoutRedirects() throws Exception {
         // Without redirects
+        ArticleStats job = new ArticleStats();
         job.start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --summary --in-links");
 
-        assertEquals("Invalid in link count (without redirects)", 22, job.output.get(0).getInLinks());
+//        assertJobOutputStringWithFixture();
+        assertEquals("Invalid in link count (without redirects)", 22, job.getOutput().get(0).getInLinks());
+    }
+
+
+    @Test
+    public void testInboundLinks() throws Exception {
+        ArticleStats job = new ArticleStats();
+        job.start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
+                + " --output local"
+                + " --in-links");
+
+        assertJobOutputStringWithResource(job, "ArticleStatsTest/inbound_links.expected", "Invalid inbounds links");
+//        System.out.println(job.getOutput());
     }
 
     @Test

@@ -4,6 +4,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSink;
 import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
@@ -17,6 +18,8 @@ import java.util.List;
 public abstract class WikiSimAbstractJob<T extends Tuple> {
     private int outputParallelism = -1;
     public String[] args;
+    private ParameterTool params;
+
     protected String jobName;
     public String outputFilename;
     public List<T> output = new ArrayList<>();
@@ -150,5 +153,12 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
             throw new Exception("No output available (output filename=" + outputFilename + ")");
         }
         return this.output;
+    }
+
+    public ParameterTool getParams() {
+        if(params == null) {
+            params = ParameterTool.fromArgs(args);
+        }
+        return params;
     }
 }

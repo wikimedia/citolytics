@@ -1,25 +1,53 @@
 package org.wikipedia.citolytics.tests.utils;
 
 
+import org.apache.commons.io.FileUtils;
 import org.junit.ComparisonFailure;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class Tester {
     protected WikiSimAbstractJob job;
+    protected String fixture;
 
     protected WikiSimAbstractJob setJob(WikiSimAbstractJob job) {
         this.job = job;
         this.job.enableLocalEnvironment().enableSingleOutputFile();
 
         return this.job;
+    }
+
+    protected String getJobOutputAsString(WikiSimAbstractJob job) throws Exception {
+
+        List<String> output = new ArrayList<>();
+        for(Object item: job.getOutput()) {
+            output.add(item.toString());
+        }
+        Collections.sort(output);
+
+        String actualOutput = String.join("\n", output);
+
+        return actualOutput;
+    }
+
+    protected void assertJobOutputStringWithResource(WikiSimAbstractJob job, String resourcePath, String message) throws Exception {
+        String actualOutput = getJobOutputAsString(job);
+        String expectedOutput = FileUtils.readFileToString(new File(getClass().getClassLoader().getResources(resourcePath).nextElement().getPath()));
+
+        assertEquals(message, expectedOutput, actualOutput);
+//        assertEquals(message, getFileContents(getExpectedOutputPath()), actualOutput);
+
+    }
+
+    protected void assertJobOutputStringWithFixture(WikiSimAbstractJob job, String message) throws Exception {
+        assertJobOutputStringWithResource(job, getExpectedOutputPath(), message);
     }
 
     protected void assertJobOutput(WikiSimAbstractJob job, ArrayList needles) throws Exception {
@@ -71,6 +99,16 @@ public class Tester {
         String out = s.hasNext() ? s.next() : "";
         s.close();
         return out;
+    }
+
+    protected String getInputPath() throws FileNotFoundException {
+        return resource(getClass().getSimpleName() + "/" + fixture + ".input");
+    }
+
+    protected String getExpectedOutputPath() throws FileNotFoundException {
+//        return resource(getClass().getSimpleName() + "/" + fixture + ".expected");
+        return getClass().getSimpleName() + "/" + fixture + ".expected";
+
     }
 
 }

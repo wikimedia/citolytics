@@ -7,7 +7,6 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
@@ -39,13 +38,11 @@ public class ArticleStats extends WikiSimAbstractJob<ArticleStatsTuple> {
     public void init() {
         jobName = "ArticleStats";
 
-        ParameterTool params = ParameterTool.fromArgs(args);
-
-        inputFilename = params.getRequired("wikidump");
-        outputFilename = params.getRequired("output");
-        redirectsFilename = params.get("redirects");
-        summary = params.has("summary");
-        inLinks = params.has("in-links");
+        inputFilename = getParams().getRequired("wikidump");
+        outputFilename = getParams().getRequired("output");
+        redirectsFilename = getParams().get("redirects");
+        summary = getParams().has("summary");
+        inLinks = getParams().has("in-links");
     }
 
     public void plan() throws Exception {

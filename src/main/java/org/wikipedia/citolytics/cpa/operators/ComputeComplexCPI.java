@@ -4,6 +4,7 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 
 /**
@@ -26,10 +27,12 @@ import org.wikipedia.citolytics.stats.ArticleStatsTuple;
 public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleStatsTuple, Recommendation> {
     private long articleCount = 0;
     private String cpiExpressionStr = "1";
+    private boolean backupRecommendations = false;
 //    private Expression cpiExpression;
 
-    public ComputeComplexCPI(long articleCount, String cpiExpressionStr) {
+    public ComputeComplexCPI(long articleCount, String cpiExpressionStr, boolean backupRecommendations) {
         this.articleCount = articleCount;
+        this.backupRecommendations = backupRecommendations;
 
         if (cpiExpressionStr != null && !cpiExpressionStr.isEmpty()) {
             this.cpiExpressionStr = cpiExpressionStr;
@@ -44,40 +47,22 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
     @Override
     public Recommendation join(Recommendation rec, ArticleStatsTuple stats) throws Exception {
         if(stats != null) {
-            double cpi;
-            Expression cpiExpression;
-            cpiExpression = new ExpressionBuilder(cpiExpressionStr)
-                    .variables("x", "y", "z")
-                    .build()
-                    .setVariable("z", articleCount)
-                    .setVariable("x", rec.getScore())
-                    .setVariable("y", stats.getInLinks());
-            cpi = cpiExpression.evaluate();
+            if(backupRecommendations && rec.getScore() < WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
+                // This is a backup recommendations
+                rec.setScore(rec.getScore() / stats.getInLinks());
+            } else {
+                // This is a normal recommendation
+                Expression cpiExpression;
+                cpiExpression = new ExpressionBuilder(cpiExpressionStr)
+                        .variables("x", "y", "z")
+                        .build()
+                        .setVariable("z", articleCount)
+                        .setVariable("x", rec.getScore())
+                        .setVariable("y", stats.getInLinks());
+                double cpi = cpiExpression.evaluate();
 
-//            if(cpiExpression == null) {
-//                cpi = 1;
-//            } else{
-//                Expression e = cpiExpression
-//                        .setVariable("x", rec.getScore())
-//                        .setVariable("y", stats.getInLinks());
-//
-//                cpi = e.evaluate();
-//            }
-
-
-//            try {
-
-//                ScriptEngineManager mgr = new ScriptEngineManager();
-//                ScriptEngine engine = mgr.getEngineByName("JavaScript");
-//                double cpi = (double) engine.eval(String.format(cpiExpressionStr, rec.getScore(), stats.getInLinks(), articleCount));
-//                double cpi = rec.getScore() * Math.log( articleCount / (stats.getInLinks() + 1) );
                 rec.setScore(cpi);
-
-//            } catch(ScriptException | IllegalFormatConversionException e) {
-//                throw new Exception("Cannot evaluate CPI script expression: " + cpiExpressionStr + "; Exception: " + e.getMessage());
-//            }
-//            System.out.println(">>> " + rec.getRecommendationTitle() + "\t count= " + articleCount + "\t  idf=" + idf + "\t new score=" + rec.getScore() + "\t old=" + oldScore);
-
+            }
         }
         return rec;
     }

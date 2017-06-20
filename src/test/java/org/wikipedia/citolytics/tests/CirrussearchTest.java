@@ -1,12 +1,14 @@
 package org.wikipedia.citolytics.tests;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cirrussearch.PrepareOutput;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.io.FileNotFoundException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test for all CirrusSearch-related jobs
@@ -28,6 +30,7 @@ public class CirrussearchTest extends Tester {
         articleStatsPath = resource("stats.in", true);
     }
 
+    @Ignore
     @Test
     public void testPrintOutput() throws Exception {
         PrepareOutput job = new PrepareOutput();
@@ -36,14 +39,18 @@ public class CirrussearchTest extends Tester {
                 .start("--wikidump " + wikiDumpPath + " --output print --topk 10");
     }
 
+    @Ignore
     @Test
     public void testElasticBulkOutputIgnoreIds() throws Exception {
+        fixture = "elastic_bulk_ignore_ids.xml";
+
         PrepareOutput job = new PrepareOutput();
 
         job.enableLocalEnvironment()
-                .start("--wikisim " + wikiSimPath
-                + " --wikidump " + wikiDumpPath
-                + " --enable-elastic --ignore-missing-ids --output print --topk 10");
+                .start("--wikidump " + getInputPath()
+                + " --enable-elastic --ignore-missing-ids --output local --topk 10");
+
+        assertJobOutputStringWithFixture(job, "Invalid output");
     }
 
     @Test
@@ -52,7 +59,9 @@ public class CirrussearchTest extends Tester {
 
         job.enableLocalEnvironment()
                 .start("--wikidump " + missingIdsPath
-                + " --enable-elastic --output print --topk 10");
+                + " --enable-elastic --output local --topk 10");
+
+        assertEquals("Invalid number of results", 3, job.getOutput().size());
     }
 
     @Test
@@ -60,7 +69,9 @@ public class CirrussearchTest extends Tester {
         PrepareOutput job = new PrepareOutput();
 
         job.enableLocalEnvironment()
-                .start("--wikisim " + wikiSimPath + " --disable-scores --output print --topk 10");
+                .start("--wikisim " + wikiSimPath + " --disable-scores --output local --topk 10");
+
+        assertEquals("Invalid number of results", 29, job.getOutput().size());
     }
 
     @Test
@@ -71,23 +82,36 @@ public class CirrussearchTest extends Tester {
                 .start("--wikisim " + wikiSimPath + " --output " + outputPath);
     }
 
-    @Test
-    public void testIdTitleMappingExtractor() throws Exception {
-        IdTitleMappingExtractor job = new IdTitleMappingExtractor();
-
-        job.enableLocalEnvironment()
-                .start("--input " + wikiDumpPath+ " --output print");
-    }
 
     @Test
     public void testCPI() throws Exception {
-        String cpiExpr = "%1$f*Math.log(%3$d/%2$d)";
+        fixture = "cpi_expression.xml";
+        String cpiExpr = "x*log(z/(y+1))"; // x*log(z/(y+1))
         PrepareOutput job = new PrepareOutput();
 
         job.enableLocalEnvironment()
-                .start("--wikidump " + wikiDumpPath
+                .start("--wikidump " + getInputPath()
                         + " --article-stats " + articleStatsPath
                         + " --cpi " + cpiExpr
-                        + " --output print --topk 3");
+                        + " --output local --ignore-missing-ids --topk 3");
+
+        assertJobOutputStringWithFixture(job, "Invalid output");
+    }
+
+    @Test
+    public void testElasticBulkOutputIgnoreIdsBackupRecs() throws Exception {
+        fixture = "backup_recommendations.xml";
+        PrepareOutput job = new PrepareOutput();
+
+        // --enable-elastic
+        // --backup-recommendations
+        job.enableLocalEnvironment()
+                .start("--wikidump " + getInputPath()
+                        + " --ignore-missing-ids --output local --topk 10"
+                        + " --backup-recommendations");
+        assertJobOutputStringWithFixture(job, "Invalid output");
+
+        //        assertEquals("Invalid response", FileUtils.readFileToString(new File(getExpectedOutputPath()), String.join("\n", job.getOutput())));
+
     }
 }

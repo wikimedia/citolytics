@@ -46,20 +46,36 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
 //            return;
         }
 
-
         try {
             String scoreString = cols[fieldScore];
-            Double score = Double.valueOf(scoreString);
 
-            // Collect full pair (A -> B and B -> A)
-            out.collect(new Recommendation(cols[fieldPageA], cols[fieldPageB], score, Integer.valueOf(cols[fieldPageIdA]), Integer.valueOf(cols[fieldPageIdB])));
-            out.collect(new Recommendation(cols[fieldPageB], cols[fieldPageA], score, Integer.valueOf(cols[fieldPageIdB]), Integer.valueOf(cols[fieldPageIdA])));
+            // Create recommendations pair from cols
+            RecommendationPair pair = new RecommendationPair(cols[fieldPageA], cols[fieldPageB]);
+            pair.setPageAId(Integer.valueOf(cols[fieldPageIdA]));
+            pair.setPageBId(Integer.valueOf(cols[fieldPageIdB]));
+            pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
 
+            collectRecommendationsFromPair(pair, out, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols) + "\n" + e.getMessage());
-
         }
+    }
+
+    /**
+     * From a single recommendation pair make two recommendations (A->B and B->A)
+     *
+     * @param pair Full recommendations pair (A, B in alphabetical order)
+     * @param out
+     */
+    public static void collectRecommendationsFromPair(RecommendationPair pair, Collector<Recommendation> out, boolean backupRecommendations) {
+        out.collect(new Recommendation(pair.getPageA(), pair.getPageB(), pair.getCPI(0), pair.getPageAId(), pair.getPageBId()));
+
+        // If pair is a backup recommendations, do not return full pair.
+        if(!backupRecommendations || pair.getCPI(0) > WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
+            out.collect(new Recommendation(pair.getPageB(), pair.getPageA(), pair.getCPI(0), pair.getPageBId(), pair.getPageAId()));
+        }
+
     }
 
 
@@ -82,7 +98,10 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
 
     public static DataSet<RecommendationSet> buildRecommendationSets(ExecutionEnvironment env,
                                                                      DataSet<Recommendation> recommendations,
-                                                                     int topK, String cpiExpr, String articleStatsFilename) throws Exception {
+                                                                     int topK, String cpiExpr, String articleStatsFilename,
+                                                                     boolean backupRecommendations) throws Exception {
+//        DataSet<ArticleStatsTuple> stats = ArticleStats.getArticleStatsFromFile(env, articleStatsFilename);
+
         // Compute complex CPI with expression
         if(cpiExpr != null && articleStatsFilename != null) {
             // TODO redirects?
@@ -96,12 +115,31 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
                     .leftOuterJoin(stats, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
                     .where(Recommendation.RECOMMENDATION_TITLE_KEY)
                     .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
-                    .with(new ComputeComplexCPI(count, cpiExpr));
+                    .with(new ComputeComplexCPI(count, cpiExpr, backupRecommendations));
         }
 
-        return recommendations
+        DataSet<RecommendationSet> recommendationSets = recommendations
                 .groupBy(Recommendation.SOURCE_TITLE_KEY) // Using HashPartition Sort on [0; ASC] TODO Maybe use reduce()
                 .reduceGroup(new RecommendationSetBuilder(topK));
 
+//        DataSet<RecommendationSet> incompleteSets = recommendationSets.filter(new RecommendationSetFilter(false, topK));
+//        DataSet<RecommendationSet> completeSets = recommendationSets.filter(new RecommendationSetFilter(true, topK));
+//
+//        DataSet<Tuple1<String>> articlesWithoutSets = recommendations
+//                .rightOuterJoin(stats, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
+//                .where(Recommendation.RECOMMENDATION_TITLE_KEY)
+//                .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
+//                .with(new FlatJoinFunction<Recommendation, ArticleStatsTuple, Tuple1<String>>() {
+//                    @Override
+//                    public void join(Recommendation recommendation, ArticleStatsTuple stats, Collector<Tuple1<String>> out) throws Exception {
+//                        if(recommendation == null && stats != null) {
+//                            out.collect(new Tuple1<>(stats.getArticle()));
+//                        }
+//                    }
+//                });
+
+        return recommendationSets;
     }
+
+
 }

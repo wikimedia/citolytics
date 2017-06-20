@@ -11,7 +11,6 @@ import org.wikipedia.citolytics.cpa.utils.ValidateOrderInOutput;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +20,7 @@ import java.util.Scanner;
 import static org.junit.Assert.assertEquals;
 
 public class WikiSimTest extends Tester {
-    private String fixture;
+
     private WikiSimAbstractJob job;
 
     @Before
@@ -79,13 +78,7 @@ public class WikiSimTest extends Tester {
         }
     }
 
-    private String getInputPath() throws FileNotFoundException {
-        return resource("WikiSimTest/" + fixture + ".input");
-    }
 
-    private String getExpectedOutputPath() {
-        return "WikiSimTest/" + fixture + ".expected";
-    }
 
 
     @Test

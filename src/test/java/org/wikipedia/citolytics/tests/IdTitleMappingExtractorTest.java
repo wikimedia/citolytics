@@ -12,23 +12,30 @@ import static org.junit.Assert.assertTrue;
 
 public class IdTitleMappingExtractorTest extends Tester {
 
+    @Test
+    public void testIdTitleMappingExtractor() throws Exception {
+        IdTitleMappingExtractor job = new IdTitleMappingExtractor();
+
+        job.enableLocalEnvironment()
+                .start("--input " + resource("wiki.xml", true)+ " --output print");
+    }
 
     @Test
     public void testExtractIdTitleMappingToFile() throws Exception {
         IdTitleMappingExtractor job = new IdTitleMappingExtractor();
-        job.enableSingleOutputFile().start("--input " + resource("IdTitleMappingExtractorTest/wiki.xml")
-                + " --output " + resource("IdTitleMappingExtractorTest/idtitle_mapping.out"));
+        job.enableSingleOutputFile().start("--input " + resource("wiki.xml", true)
+                + " --output " + resource("idtitle_mapping.out", true));
     }
 
     @Test
     public void testExtractAndReadIdTitleMapping() throws Exception {
         IdTitleMappingExtractor job = new IdTitleMappingExtractor();
-        job.start("--input " + resource("IdTitleMappingExtractorTest/wiki.xml")
+        job.start("--input " + resource("wiki.xml", true)
                 + " --output local");
 
         LocalEnvironment env = new LocalEnvironment();
         List<IdTitleMapping> expected = IdTitleMappingExtractor.getIdTitleMapping(env,
-                resource("IdTitleMappingExtractorTest/idtitle_mapping.in"), null).collect();
+                resource("idtitle_mapping.in", true), null).collect();
 
 //        System.out.println(job.output);
 //        System.out.println(expected);

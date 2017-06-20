@@ -90,7 +90,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
             wikiSimGroupedDataSet = WikiSimReader.buildRecommendationSets(env,
                     WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename,
-                    fieldPageA, fieldPageB, fieldScore), topK, cpiExpr, articleStatsFilename);
+                    fieldPageA, fieldPageB, fieldScore), topK, cpiExpr, articleStatsFilename, false);
 
         } else {
             // MLT
