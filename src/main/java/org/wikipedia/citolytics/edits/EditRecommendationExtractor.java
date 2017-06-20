@@ -4,6 +4,7 @@ import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.api.common.operators.base.JoinOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -69,8 +70,9 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                     }
                 });
 
-        return test1(articleAuthorPairs, authorArticlesList);
-//        return test2(articleAuthorPairs, authorArticlesList);
+        // Test1 seems slower
+//        return test1(articleAuthorPairs, authorArticlesList);
+        return test2(articleAuthorPairs, authorArticlesList);
 
 //        articleAuthorPairs.print();
 //        System.out.println("---");
@@ -78,7 +80,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
     }
 
     public static DataSet<RecommendationSet> test1(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) {
-        DataSet<RecommendationSet> tmp = articleAuthorPairs.join(authorArticlesList)
+        DataSet<RecommendationSet> tmp = articleAuthorPairs.join(authorArticlesList, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
                 .where(1) // author id
                 .equalTo(0) // author id
                 .with(new JoinFunction<ArticleAuthorPair, AuthorArticlesList, CoEditMap>() {
@@ -141,7 +143,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 
 
     public static DataSet<RecommendationSet> test2(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) {
-        articleAuthorPairs.join(authorArticlesList)
+        articleAuthorPairs.join(authorArticlesList, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
                 .where(1) // author id
                 .equalTo(0) // author id
                 .with(new JoinFunction<ArticleAuthorPair, AuthorArticlesList, RecommendationSet>() {
