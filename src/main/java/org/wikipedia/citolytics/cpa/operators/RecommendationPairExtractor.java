@@ -111,6 +111,11 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
             RecommendationPair pair = new RecommendationPair(doc.getTitle(), outLink.getKey(), distance, cpi);
             out.collect(pair);
             outLinks.add(outLink.getKey());
+
+            // Only collect minimum number of backup recommendations
+            if(outLinks.size() >= WikiSimConfiguration.BACKUP_RECOMMENDATION_COUNT) {
+                break;
+            }
         }
     }
 

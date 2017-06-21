@@ -52,14 +52,24 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
                 rec.setScore(rec.getScore() / stats.getInLinks());
             } else {
                 // This is a normal recommendation
+                double cpi = rec.getScore();
+
+                // If backup recommendations are enabled, subtract offset because we want to apply CPI-expression on original values
+                if(backupRecommendations)
+                    cpi -= WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
+
                 Expression cpiExpression;
                 cpiExpression = new ExpressionBuilder(cpiExpressionStr)
                         .variables("x", "y", "z")
                         .build()
                         .setVariable("z", articleCount)
-                        .setVariable("x", rec.getScore())
+                        .setVariable("x", cpi)
                         .setVariable("y", stats.getInLinks());
-                double cpi = cpiExpression.evaluate();
+                cpi = cpiExpression.evaluate();
+
+                // Add subtracted offset again
+                if(backupRecommendations)
+                    cpi += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
 
                 rec.setScore(cpi);
             }
