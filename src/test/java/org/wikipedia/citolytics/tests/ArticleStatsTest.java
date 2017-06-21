@@ -2,6 +2,7 @@ package org.wikipedia.citolytics.tests;
 
 import org.junit.Test;
 import org.wikipedia.citolytics.stats.ArticleStats;
+import org.wikipedia.citolytics.stats.CPISampler;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
 import org.wikipedia.processing.types.WikiDocument;
@@ -110,6 +111,15 @@ public class ArticleStatsTest extends Tester {
         // old invalid namespace check=4121.20
         assertEquals("AvgLinkDistance is wrong", 4120.99, doc.getAvgLinkDistance(), 0.01);
 
+    }
+
+    @Test
+    public void testCPISampler() throws Exception {
+
+        setJob(new CPISampler())
+                .start("--input " + resource("cpi_sampler.csv", true)+ " --output local -p 0.3");
+
+//        assertEquals("Invalid sample size", 11, job.getOutput().size());
     }
 
 }

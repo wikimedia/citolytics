@@ -24,6 +24,10 @@ public class Tester {
         return this.job;
     }
 
+    protected String getJobOutputAsString() throws Exception {
+        return getJobOutputAsString(job);
+    }
+
     protected String getJobOutputAsString(WikiSimAbstractJob job) throws Exception {
 
         List<String> output = new ArrayList<>();
