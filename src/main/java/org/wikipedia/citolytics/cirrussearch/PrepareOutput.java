@@ -17,6 +17,7 @@ import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
@@ -39,7 +40,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         outputFilename = getParams().getRequired("output");
         String redirectsFilename = getParams().get("redirects", null);
-        int topK = getParams().getInt("topk", 10);
+        int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
         int fieldScore = getParams().getInt("score", 5);
         int fieldPageA = getParams().getInt("page-a", 1);
         int fieldPageB = getParams().getInt("page-b", 2);

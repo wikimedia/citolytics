@@ -72,6 +72,19 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
         return this;
     }
 
+    /**
+     * Enables execution environment that is used for unit testing (local + silent).
+     *
+     * @return
+     */
+    public WikiSimAbstractJob enableTestEnvironment() {
+        enableLocalEnvironment();
+        enableSingleOutputFile();
+        silent();
+
+        return this;
+    }
+
     public WikiSimAbstractJob setEnvironment(ExecutionEnvironment env) {
         this.env = env;
         return this;

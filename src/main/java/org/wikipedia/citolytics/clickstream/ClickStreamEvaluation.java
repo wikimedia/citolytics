@@ -17,6 +17,7 @@ import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.operators.MLTInputMapper;
 
 import java.util.HashSet;
@@ -54,7 +55,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         wikiSimInputFilename = params.getRequired("wikisim");
         clickStreamInputFilename = params.getRequired("gold");
         outputFilename = params.getRequired("output");
-        topK = params.getInt("topk", 10);
+        topK = params.getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
 
         langLinksInputFilename = params.get("langlinks");
         lang = params.get("lang");
@@ -163,7 +164,8 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                     .andSum(ClickStreamResult.CLICKS_K1_KEY)
                     .andSum(ClickStreamResult.CLICKS_K2_KEY)
                     .andSum(ClickStreamResult.CLICKS_K3_KEY)
-                    .andSum(ClickStreamResult.RECOMMENDATIONS_COUNT_KEY);
+                    .andSum(ClickStreamResult.RECOMMENDATIONS_COUNT_KEY)
+                    .andSum(ClickStreamResult.OPTIMAL_CLICKS);
         }
     }
 

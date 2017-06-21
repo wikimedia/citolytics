@@ -8,12 +8,10 @@ import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResul
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Calculates CTR, total clicks, impressions for each article in result set.
@@ -21,7 +19,7 @@ import java.util.List;
 public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickStreamTuple, ClickStreamResult> {
     private final static boolean IGNORE_MISSING_CLICK_STREAM = false;
     private int[] k = new int[]{10, 5, 1};
-    private int topK = 10;
+    private int topK = WikiSimConfiguration.DEFAULT_TOP_K;
 
     public EvaluateClicks() {
     }
@@ -47,7 +45,7 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
         HashMap<String, Integer> clickStream;
         int impressions = 0;
 
-        if(!IGNORE_MISSING_CLICK_STREAM && !clickStreamIterator.hasNext()) {
+        if (!IGNORE_MISSING_CLICK_STREAM && !clickStreamIterator.hasNext()) {
             return;
         }
 
@@ -61,6 +59,7 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
         // Initialize output vars
         int[] clicksK = new int[]{0, 0, 0};
         int totalClicks = 0;
+        int optimalClicks = 0;
         ArrayList<ClickStreamRecommendationResult> results = new ArrayList<>();
 
         // Clicks on retrieved docs
@@ -78,9 +77,17 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
             rank++;
         }
 
-        // Count all out clicks
-        for (Integer c : clickStream.values())
+        // Count all out clicks and best possible top-k clicks (optimal result)
+        List<Integer> outClicks = new ArrayList<>(clickStream.values());
+        Collections.sort(outClicks);
+        rank = 1;
+        for (Integer c : outClicks) {
+            if(rank <= topK) {
+                optimalClicks += c;
+            }
             totalClicks += c;
+            rank++;
+        }
 
         out.collect(
             new ClickStreamResult(
@@ -91,7 +98,8 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
                     totalClicks,
                     clicksK[0],
                     clicksK[1],
-                    clicksK[2]
+                    clicksK[2],
+                    optimalClicks
             )
         );
     }

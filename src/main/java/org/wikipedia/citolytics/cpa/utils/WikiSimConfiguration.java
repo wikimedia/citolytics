@@ -7,4 +7,6 @@ public class WikiSimConfiguration {
 
     public static final int BACKUP_RECOMMENDATION_OFFSET = 1000;
     public static final int BACKUP_RECOMMENDATION_COUNT = 10;
+
+    public static final int DEFAULT_TOP_K = 10;
 }

@@ -25,6 +25,14 @@ results.
         --resolve-redirects \
         --output $OUTPUT_DIR/citolytics_$WIKI.json
     
+    # With backup recommendations (based on out-links)
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
+            --wikidump $WIKI_DUMP \
+            --enable-elastic \
+            --resolve-redirects \
+            --backup-recommendations \
+            --output $OUTPUT_DIR/citolytics_backup-recs_$WIKI.json
+    
     # Ignore missing id
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
         --wikidump $WIKI_DUMP \
@@ -32,6 +40,8 @@ results.
         --ignore-missing-ids \
         --resolve-redirects \
         --output $OUTPUT_DIR/wikisim_elastic_ignore_missing_ids.json
+        
+    
 
 ### With prepared data
 
