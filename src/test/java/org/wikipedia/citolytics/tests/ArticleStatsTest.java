@@ -15,8 +15,8 @@ public class ArticleStatsTest extends Tester {
 
         ArticleStats job = new ArticleStats();
 
-        job.silent()
-                .enableLocalEnvironment()
+        job
+                .enableTestEnvironment()
                 .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --in-links"
                         + " --output " + output("ArticleStatsTest/stats.out"));
@@ -28,8 +28,7 @@ public class ArticleStatsTest extends Tester {
 
         ArticleStats job = new ArticleStats();
 
-        job.silent()
-                .enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --summary");
@@ -50,8 +49,7 @@ public class ArticleStatsTest extends Tester {
 
         ArticleStats job = new ArticleStats();
 
-        job.silent()
-                .enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --redirects " + input("ArticleStatsTest/redirects.csv")
@@ -70,7 +68,7 @@ public class ArticleStatsTest extends Tester {
     public void testSummaryWithInboundLinksWithoutRedirects() throws Exception {
         // Without redirects
         ArticleStats job = new ArticleStats();
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
             .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                         + " --output local"
                         + " --summary --in-links");
@@ -83,7 +81,7 @@ public class ArticleStatsTest extends Tester {
     @Test
     public void testInboundLinks() throws Exception {
         ArticleStats job = new ArticleStats();
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
             .start("--wikidump " + input("ArticleStatsTest/completeTestWikiDump.xml")
                 + " --output local"
                 + " --in-links");

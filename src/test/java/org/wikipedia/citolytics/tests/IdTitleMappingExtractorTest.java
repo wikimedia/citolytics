@@ -16,21 +16,21 @@ public class IdTitleMappingExtractorTest extends Tester {
     public void testIdTitleMappingExtractor() throws Exception {
         IdTitleMappingExtractor job = new IdTitleMappingExtractor();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--input " + resource("wiki.xml", true)+ " --output print");
     }
 
     @Test
     public void testExtractIdTitleMappingToFile() throws Exception {
         IdTitleMappingExtractor job = new IdTitleMappingExtractor();
-        job.enableSingleOutputFile().start("--input " + resource("wiki.xml", true)
+        job.enableTestEnvironment().start("--input " + resource("wiki.xml", true)
                 + " --output " + resource("idtitle_mapping.out", true));
     }
 
     @Test
     public void testExtractAndReadIdTitleMapping() throws Exception {
         IdTitleMappingExtractor job = new IdTitleMappingExtractor();
-        job.start("--input " + resource("wiki.xml", true)
+        job.enableTestEnvironment().start("--input " + resource("wiki.xml", true)
                 + " --output local");
 
         LocalEnvironment env = new LocalEnvironment();

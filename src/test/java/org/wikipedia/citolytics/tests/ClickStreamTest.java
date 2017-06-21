@@ -62,8 +62,7 @@ public class ClickStreamTest extends Tester {
         ValidateClickStreamData job = new ValidateClickStreamData();
 
         job
-                .enableLocalEnvironment()
-                .silent()
+                .enableTestEnvironment()
                 .start(new String[]{
                         dataSetPath + "," + dataSetPath2,
                         "local"
@@ -76,18 +75,36 @@ public class ClickStreamTest extends Tester {
     public void testEvaluationSummary() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
+        job.enableTestEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --summary"
                 + " --output local");
 
-        System.out.println(job.output);
+//        System.out.println(job.output);
 
         assertEquals("Summary should have only a single result tuple", 1, job.output.size());
         assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
         assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
+        assertEquals("Optimal clicks invalid", 137, job.output.get(0).getOptimalClicks());
+    }
+
+    @Test
+    public void testEvaluationSummaryTopK() throws Exception {
+        ClickStreamEvaluation job = new ClickStreamEvaluation();
+
+        job.enableTestEnvironment().start("--wikisim " + wikiSimPath
+                + " --gold " + dataSetPath
+                + "," + dataSetPath2 // Multiple inputs
+                + " --summary --topk 1"
+                + " --output local");
+
+        assertEquals("Summary should have only a single result tuple", 1, job.output.size());
+        assertEquals("Recommendations count invalid", 5, job.output.get(0).getRecommendationsCount());
+        assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
+        assertEquals("Total clicks invalid", 137, job.output.get(0).getTotalClicks());
+        assertEquals("Optimal clicks invalid", 107, job.output.get(0).getOptimalClicks());
     }
 
 
@@ -95,7 +112,7 @@ public class ClickStreamTest extends Tester {
     public void testEvaluationSummaryWithTopRecommendations() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
+        job.enableTestEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --summary"
@@ -108,6 +125,8 @@ public class ClickStreamTest extends Tester {
         assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
         assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
+        assertEquals("Optimal clicks invalid", 137, job.output.get(0).getOptimalClicks());
+
     }
 
     @Test
@@ -117,11 +136,23 @@ public class ClickStreamTest extends Tester {
                 + "," + dataSetPath2 // Multiple inputs
                 + " --output local");
 
-//        for(ClickStreamResult r: job.output) {
-//            System.out.println(r);
-//        }
+//        System.out.println(getJobOutputAsString(job));
 
-        assertTrue("Needles not found", job.output.containsAll(getNeedles("")));
+        assertEquals("Invalid number of results returned", 5, job.getOutput().size());
+        assertTrue("Needles not found", job.getOutput().containsAll(getNeedles("")));
+    }
+
+    @Test
+    public void testClickStreamEvaluationTopK() throws Exception {
+        setJob(new ClickStreamEvaluation()).start("--wikisim " + wikiSimPath
+                + " --gold " + dataSetPath
+                + "," + dataSetPath2 // Multiple inputs
+                + " --topk 1 --output local");
+
+//        System.out.println(getJobOutputAsString(job));
+
+        assertEquals("Invalid number of results returned", 5, job.getOutput().size());
+        // TODO Fixture instead of fixture: assertTrue("Needles not found", job.getOutput().containsAll(getNeedles("")));
     }
 
     @Test
@@ -138,15 +169,13 @@ public class ClickStreamTest extends Tester {
 
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.enableLocalEnvironment().enableLocalEnvironment().silent().start("--wikisim " + wikiSimLangSimplePath
+        job.enableTestEnvironment().start("--wikisim " + wikiSimLangSimplePath
                 + " --gold " + dataSetPathSimpleLang
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
                 + " --output local");
 
-        for(ClickStreamResult r: job.output) {
-            System.out.println(r);
-        }
+//        System.out.println(getJobOutputAsString(job));
 
         assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
     }
@@ -155,14 +184,14 @@ public class ClickStreamTest extends Tester {
     public void testDifferentFormatsAndMultiLang() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.enableLocalEnvironment().start("--wikisim " + wikiSimLangSimplePath
+        job.enableTestEnvironment().start("--wikisim " + wikiSimLangSimplePath
                 + " --gold " + dataSetPathFormatTest
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
                 + " --id-title-mapping " + resource("ClickStreamTest/idtitle_mapping.in")
                 + " --output local");
 
-        System.out.println(job.output);
+//        System.out.println(job.output);
         assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
     }
 
@@ -171,7 +200,7 @@ public class ClickStreamTest extends Tester {
     public void testClickStreamWithCPI() throws Exception {
         ClickStreamEvaluation job = new ClickStreamEvaluation();
 
-        job.enableLocalEnvironment().start("--wikisim " + wikiSimPath
+        job.enableTestEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath + "," + dataSetPath2 // Multiple inputs
                 + " --cpi x*log(z/(y+1)) --article-stats " + articleStatsPath
                 + " --output print");
@@ -211,7 +240,8 @@ public class ClickStreamTest extends Tester {
                                 38,
                                 30,
                                 30,
-                                10
+                                10,
+                                38
                         )
                 })
         );

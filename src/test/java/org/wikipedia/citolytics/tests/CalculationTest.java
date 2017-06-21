@@ -48,37 +48,34 @@ public class CalculationTest extends Tester {
         String inputB = resource("completeTestClickStreamDataSet.tsv");
 
         RedirectExtractor job1 = new RedirectExtractor();
-        job1.enableSingleOutputFile()
-                .silent()
+        job1.enableTestEnvironment()
                 .start("--input " + inputA + " --output " + resource("completeTestRedirects.out"));
 
         WikiSim job2 = new WikiSim();
-        job2.enableSingleOutputFile()
-                .silent()
+        job2.enableTestEnvironment()
                 .start("--input " + inputA + " --output " + resource("completeTestWikiSim.out") + "" +
                         " --alpha 2 --redirects " + resource("completeTestRedirects.out"));
 
         SeeAlsoExtractor job3 = new SeeAlsoExtractor();
-        job3.enableSingleOutputFile()
-                .silent()
+        job3.enableTestEnvironment()
                 .start("--input " + inputA
                         + " --output " + resource("completeTestSeeAlso.out")
                         + " --redirects " + resource("completeTestRedirects.out"));
 
         SeeAlsoEvaluation job5 = new SeeAlsoEvaluation();
-        job5.silent()
+        job5.enableTestEnvironment()
                 .start("--wikisim " + resource("completeTestWikiSim.out")
                         + " --output local"
                         + " --gold " + resource("completeTestSeeAlso.out"));
 
         ClickStreamEvaluation job6 = new ClickStreamEvaluation();
-        job6.silent()
+        job6.enableTestEnvironment()
                 .start("--wikisim " + resource("completeTestWikiSim.out")
                         + " --gold " + inputB
                         + " --output local");
 
         // Test SeeAlso evaluation
-        System.out.println(job5.output);
+//        System.out.println(job5.output);
 
         for (SeeAlsoEvaluationResult r : job5.output) {
             if (r.getArticle().equals("SeeAlso Article 1")) {
@@ -147,8 +144,7 @@ public class CalculationTest extends Tester {
         // without infobox removal= 126253
         // with infobox removal= 118341
         // with old namespace check = 126253
-        job.enableLocalEnvironment()
-                .silent()
+        job.enableTestEnvironment()
                 .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (keep infobox)", 125751, job.output.size());
@@ -158,8 +154,7 @@ public class CalculationTest extends Tester {
     public void testResultsCountRemovedInfoBox() throws Exception {
         // with old namespace check = 118341
         WikiSim job = new WikiSim();
-        job.enableLocalEnvironment()
-                .silent()
+        job.enableTestEnvironment()
                 .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output local").split(" "));
 
         assertEquals("WikiSim result count is wrong (removed infobox)", 117855, job.output.size());
@@ -172,8 +167,7 @@ public class CalculationTest extends Tester {
 
         WikiSim job = new WikiSim();
         job
-                .enableLocalEnvironment()
-                .silent()
+                .enableTestEnvironment()
                 .start(("--input " + resource("wikisim_missingids.xml") + " --remove-missing-ids --output local").split(" "));
 
         assertEquals("Invalid output size", 3, job.output.size());
@@ -192,8 +186,7 @@ public class CalculationTest extends Tester {
 
         CheckOutputIntegrity job = new CheckOutputIntegrity();
 
-        job.enableLocalEnvironment()
-                .silent()
+        job.enableTestEnvironment()
                 .start(new String[]{
                 resource("wikisim_output.csv"),
                 resource("wikisim_output_b.csv"),

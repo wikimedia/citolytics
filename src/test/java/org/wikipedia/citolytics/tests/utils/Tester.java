@@ -19,7 +19,7 @@ public class Tester {
 
     protected WikiSimAbstractJob setJob(WikiSimAbstractJob job) {
         this.job = job;
-        this.job.enableLocalEnvironment().enableSingleOutputFile();
+        this.job.enableTestEnvironment();
 
         return this.job;
     }

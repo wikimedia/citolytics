@@ -1,6 +1,7 @@
 package org.wikipedia.citolytics.tests;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.edits.EditEvaluation;
 import org.wikipedia.citolytics.edits.EditRecommendationExtractor;
@@ -23,7 +24,7 @@ public class EditTest extends Tester {
 //        articleStatsPath = resource("stats.in", true);
 
         job = new EditRecommendationExtractor();
-        job.enableLocalEnvironment();
+        job.enableTestEnvironment();
     }
 
     @Test
@@ -35,11 +36,12 @@ public class EditTest extends Tester {
     @Test
     public void testSimpleEvaluation() throws Exception {
         EditEvaluation job = new EditEvaluation();
-        job.enableLocalEnvironment();
+        job.enableTestEnvironment();
 
 //        job.start();
     }
 
+    @Ignore
     @Test
     public void testRegex() {
         String revXml = "<revision>\n" +

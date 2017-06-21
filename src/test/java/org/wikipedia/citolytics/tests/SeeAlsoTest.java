@@ -42,7 +42,7 @@ public class SeeAlsoTest extends Tester {
     public void testExtractSeeAlsoNoRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
-        job.enableLocalEnvironment().start(("--input " + resource("wikiSeeAlso2.xml") + " --output local").split(" "));
+        job.enableTestEnvironment().start(("--input " + resource("wikiSeeAlso2.xml") + " --output local").split(" "));
 
         // Needles
         ArrayList<Tuple3<String, String, Integer>> needles = new ArrayList<>();
@@ -63,7 +63,7 @@ public class SeeAlsoTest extends Tester {
     public void ExtractSeeAlsoWithRedirects() throws Exception {
         SeeAlsoExtractor job = new SeeAlsoExtractor();
 
-        job.enableLocalEnvironment().start(("--input " + resource("wikiSeeAlso2.xml") + " --output local --redirects " + resource("ArticleStatsTest/redirects.csv")).split(" "));
+        job.enableTestEnvironment().start(("--input " + resource("wikiSeeAlso2.xml") + " --output local --redirects " + resource("ArticleStatsTest/redirects.csv")).split(" "));
 
 
         // Needles (random link order)

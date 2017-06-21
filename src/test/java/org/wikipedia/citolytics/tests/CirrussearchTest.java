@@ -35,7 +35,7 @@ public class CirrussearchTest extends Tester {
     public void testPrintOutput() throws Exception {
         PrepareOutput job = new PrepareOutput();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + wikiDumpPath + " --output print --topk 10");
     }
 
@@ -46,7 +46,7 @@ public class CirrussearchTest extends Tester {
 
         PrepareOutput job = new PrepareOutput();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + getInputPath()
                 + " --enable-elastic --ignore-missing-ids --output local --topk 10");
 
@@ -57,7 +57,7 @@ public class CirrussearchTest extends Tester {
     public void testElasticBulkOutput() throws Exception {
         PrepareOutput job = new PrepareOutput();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + missingIdsPath
                 + " --enable-elastic --output local --topk 10");
 
@@ -68,7 +68,7 @@ public class CirrussearchTest extends Tester {
     public void testPrepareOutputDisabledScores() throws Exception {
         PrepareOutput job = new PrepareOutput();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikisim " + wikiSimPath + " --disable-scores --output local --topk 10");
 
         assertEquals("Invalid number of results", 29, job.getOutput().size());
@@ -78,7 +78,7 @@ public class CirrussearchTest extends Tester {
     public void testPrepareOutputSave() throws Exception {
         PrepareOutput job = new PrepareOutput();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikisim " + wikiSimPath + " --output " + outputPath);
     }
 
@@ -89,7 +89,7 @@ public class CirrussearchTest extends Tester {
         String cpiExpr = "x*log(z/(y+1))"; // x*log(z/(y+1))
         PrepareOutput job = new PrepareOutput();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + getInputPath()
                         + " --article-stats " + articleStatsPath
                         + " --cpi " + cpiExpr
@@ -105,7 +105,7 @@ public class CirrussearchTest extends Tester {
 
         // --enable-elastic
         // --backup-recommendations
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--wikidump " + getInputPath()
                         + " --ignore-missing-ids --output local --topk 10"
                         + " --backup-recommendations");

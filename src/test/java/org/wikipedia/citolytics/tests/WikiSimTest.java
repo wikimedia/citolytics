@@ -27,7 +27,7 @@ public class WikiSimTest extends Tester {
     public void setUp() throws Exception {
         job = new WikiSim();
         job.silent();
-        job.enableLocalEnvironment();
+        job.enableTestEnvironment();
     }
 
     public void assertOutput(List<RecommendationPair> actual, String pathToExpected) throws Exception {

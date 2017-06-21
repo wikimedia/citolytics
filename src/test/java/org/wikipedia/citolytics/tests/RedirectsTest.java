@@ -27,7 +27,7 @@ public class RedirectsTest extends Tester {
         RedirectCount job = new RedirectCount();
 
         job
-                .enableLocalEnvironment()
+                .enableTestEnvironment()
                 .start("--output local"
                                 + " --redirects " + resource("redirects.in", true)
                                 + " --links " + resource("links.in", true));
@@ -39,7 +39,7 @@ public class RedirectsTest extends Tester {
     public void testRedirectExtractor() throws Exception {
         RedirectExtractor job = new RedirectExtractor();
 
-        job.enableLocalEnvironment()
+        job.enableTestEnvironment()
                 .start("--output local --input " + resource("wiki_dump.xml.in", true));
 
         assertEquals("Invalid redirect returned", new Tuple2<>("Games", "Game"), job.output.get(0));
@@ -52,7 +52,7 @@ public class RedirectsTest extends Tester {
 
         WikiSim job = new WikiSim();
 
-        job.enableLocalEnvironment().start(("--input " + input("wikiRedirectedLinks.xml")
+        job.enableTestEnvironment().start(("--input " + input("wikiRedirectedLinks.xml")
                 + " --output print"
                 + " --alpha 1.5,1.75 --redirects " + input("ArticleStatsTest/redirects.csv")).split(" "));
 
@@ -65,7 +65,7 @@ public class RedirectsTest extends Tester {
         String outputB = "wikisim_integrity_b.out";
         WikiSim job = new WikiSim();
 
-        job.enableLocalEnvironment();
+        job.enableTestEnvironment();
 
         job.start(("--input " + input("ArticleStatsTest/completeTestWikiDump.xml")
                 + " --output " + output(outputA)
@@ -78,7 +78,7 @@ public class RedirectsTest extends Tester {
 
         CheckOutputIntegrity test = new CheckOutputIntegrity();
 
-        test.enableLocalEnvironment().start(new String[]{
+        test.enableTestEnvironment().start(new String[]{
                 resource(outputA),
                 resource(outputB),
                 "local"

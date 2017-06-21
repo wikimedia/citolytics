@@ -144,7 +144,7 @@ public class EvaluationTest extends Tester {
         queue.add(new WikiSimComparableResult<>("A", 2.0,0));
         queue.add(testItemLow);
 
-        System.out.println("Simple Queue" + queue);
+//        System.out.println("Simple Queue" + queue);
 
         if (queue.contains(testItemLow)) {
             throw new Exception("testItemLow NOT should exist in queue: " + testItemLow);
@@ -177,8 +177,8 @@ public class EvaluationTest extends Tester {
         List<WikiSimComparableResult<Double>> sortedList = Ordering.natural().greatestOf(unsortedList, 4);
 
 
-        System.out.println("Unsorted: " + unsortedList);
-        System.out.println("Sorted: " + sortedList);
+//        System.out.println("Unsorted: " + unsortedList);
+//        System.out.println("Sorted: " + sortedList);
 
         if (sortedList.get(0) != testItemHigh) {
             throw new Exception("testItemHigh is not first item: " + testItemHigh);
@@ -233,16 +233,16 @@ public class EvaluationTest extends Tester {
         retrieved = Ordering.natural().greatestOf(retrieved, 10);
 
         // 8 retrieved
-        System.out.println("Retrieved = " + retrieved.size() + " : " + retrieved);
+//        System.out.println("Retrieved = " + retrieved.size() + " : " + retrieved);
 
         double hrr = EvaluationMeasures.getHarmonicReciprocalRank(EvaluateSeeAlso.getResultNamesAsList(retrieved), relevant);
         double map = EvaluationMeasures.getMeanAveragePrecision(EvaluateSeeAlso.getResultNamesAsList(retrieved), relevant);
         int[] matches = EvaluationMeasures.getMatchesCount(EvaluateSeeAlso.getResultNamesAsList(retrieved), relevant);
 
-        System.out.println("HRR = " + hrr);
-        System.out.println("MAP = " + map);
+//        System.out.println("HRR = " + hrr);
+//        System.out.println("MAP = " + map);
 
-        System.out.println("MatchesCount = " + Arrays.toString(matches));
+//        System.out.println("MatchesCount = " + Arrays.toString(matches));
 
         Assert.assertEquals("MatchesCount is wrong", 6, matches[0]);
         Assert.assertEquals("MatchesCount is wrong", 5, matches[1]);
@@ -309,34 +309,6 @@ public class EvaluationTest extends Tester {
 
         env.execute("CSV Input test");
     }
-
-    public void pojoTest() throws Exception {
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
-        class ListPojo {
-            public String title;
-            public List<String> results = new ArrayList<>();
-
-            public ListPojo(String title, String... results) {
-                this.title = title;
-
-                for (int i = 0; i < results.length; i++) {
-                    this.results.add(results[i]);
-                }
-            }
-        }
-
-        DataSet<ListPojo> res = env.fromElements(
-                new ListPojo("A", new String[]{"a", "aa"}),
-                new ListPojo("B", new String[]{"bbb", "bb"})
-
-        );
-
-        res.print();
-
-        env.execute("CSV Input test");
-    }
-
 
     @Test
     public void HashTest() throws Exception {
