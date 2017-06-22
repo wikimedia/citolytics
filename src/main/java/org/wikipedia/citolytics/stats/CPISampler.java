@@ -12,6 +12,11 @@ import org.wikipedia.citolytics.cpa.types.Recommendation;
  * Extracts a sample from all recommendations for analyzing CPI values.
  */
 public class CPISampler extends WikiSimAbstractJob<Tuple1<Double>> {
+
+    public static void main(String[] args) throws Exception {
+        new CPISampler().start(args);
+    }
+
     @Override
     public void plan() throws Exception {
         String wikiSimInputFilename = getParams().getRequired("input");
