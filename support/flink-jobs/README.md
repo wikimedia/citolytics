@@ -230,6 +230,15 @@ flink run -p 96 -c ArticleStatsWithInboundLinks \
     hdfs:///user/mschwarzer/v2/intermediate/redirects
 ```
 
+#### CPI Sampler (retrieves a random portion of CPI values)
+
+```
+$FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPISampler -p $PARALLELISM $JAR \
+    --input $OUTPUT_DIR/wikisim_raw
+    --output $OUTPUT_DIR/cpi_sample_0_1
+    --p 0.1
+```
+
 #### Get detailed link graph (debugging cpa rankings)
 
 [WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]
