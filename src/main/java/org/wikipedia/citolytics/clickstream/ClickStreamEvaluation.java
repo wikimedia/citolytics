@@ -2,6 +2,7 @@ package org.wikipedia.citolytics.clickstream;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -115,39 +116,51 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         // Top recommended articles (only #1 recommendations)
         // TODO limit out
         if(topRecommendationsFilename != null) {
-            DataSet<Tuple2<String, Integer>> topRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Integer>>() {
+            DataSet<Tuple2<String, Long>> topRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Long>>() {
                         @Override
-                        public void flatMap(ClickStreamResult r, Collector<Tuple2<String, Integer>> out) throws Exception {
+                        public void flatMap(ClickStreamResult r, Collector<Tuple2<String, Long>> out) throws Exception {
                             if (r.getRecommendationsCount() > 0) {
                                 out.collect(new Tuple2<>(r.getRecommendations().get(0).getRecommendedArticle(),
-                                        1));
+                                        1L));
                             }
                         }
                     })
                     .groupBy(0)
                     .sum(1)
-                    .max(1);
+                    .reduce(new ReduceFunction<Tuple2<String, Long>>() {
+                        @Override
+                        public Tuple2<String, Long> reduce(Tuple2<String, Long> a, Tuple2<String, Long> b) throws Exception {
+                            // Keep article name
+                            return a.f1 > b.f1 ? a : b;
+                        }
+                    });
 
             // Distinct recommendations
-            DataSet<Tuple2<String, Integer>> distinctRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Integer>>() {
+            DataSet<Tuple2<String, Long>> distinctRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Long>>() {
                 @Override
-                public void flatMap(ClickStreamResult clickStreamResult, Collector<Tuple2<String, Integer>> out) throws Exception {
+                public void flatMap(ClickStreamResult clickStreamResult, Collector<Tuple2<String, Long>> out) throws Exception {
                     for(ClickStreamRecommendationResult r: clickStreamResult.getRecommendations()) {
-                        out.collect(new Tuple2<>(r.getRecommendedArticle(), 1));
+                        out.collect(new Tuple2<>(r.getRecommendedArticle(), 1L));
                     }
 
                 }
             }).distinct(0)
                     .sum(1)
-                    .map(new MapFunction<Tuple2<String, Integer>, Tuple2<String, Integer>>() {
+                    .map(new MapFunction<Tuple2<String, Long>, Tuple2<String, Long>>() {
                         @Override
-                        public Tuple2<String, Integer> map(Tuple2<String, Integer> in) throws Exception {
+                        public Tuple2<String, Long> map(Tuple2<String, Long> in) throws Exception {
                             in.setField("Distinct recommendations", 0);
                             return in;
                         }
                     });
 
-            topRecommendations = topRecommendations.union(distinctRecommendations);
+            DataSet<Tuple2<String, Long>> count = env.fromElements(new Tuple2<String, Long>(
+                    "Article count", result.count())
+            );
+
+            topRecommendations = topRecommendations
+                    .union(distinctRecommendations)
+                    .union(count);
 
             topRecommendations
                     .write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE)

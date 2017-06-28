@@ -84,7 +84,9 @@ public class ClickStreamTest extends Tester {
 //        System.out.println(job.output);
 
         assertEquals("Summary should have only a single result tuple", 1, job.output.size());
-        assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
+//        assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
+        assertEquals("Recommendations count invalid", 9, job.output.get(0).getRecommendationsCount());
+
         assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
         assertEquals("Optimal clicks invalid", 137, job.output.get(0).getOptimalClicks());
@@ -104,7 +106,7 @@ public class ClickStreamTest extends Tester {
         assertEquals("Recommendations count invalid", 5, job.output.get(0).getRecommendationsCount());
         assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
         assertEquals("Total clicks invalid", 137, job.output.get(0).getTotalClicks());
-        assertEquals("Optimal clicks invalid", 107, job.output.get(0).getOptimalClicks());
+        assertEquals("Optimal clicks invalid", 119, job.output.get(0).getOptimalClicks());
     }
 
 
@@ -122,7 +124,9 @@ public class ClickStreamTest extends Tester {
 //        System.out.println(job.output);
 
         assertEquals("Summary should have only a single result tuple", 1, job.output.size());
-        assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
+//        assertEquals("Recommendations count invalid", 11, job.output.get(0).getRecommendationsCount());
+        assertEquals("Recommendations count invalid", 9, job.output.get(0).getRecommendationsCount());
+
         assertEquals("Impressions invalid", 129, job.output.get(0).getImpressions());
         assertEquals("Clicks invalid", 137, job.output.get(0).getTotalClicks());
         assertEquals("Optimal clicks invalid", 137, job.output.get(0).getOptimalClicks());

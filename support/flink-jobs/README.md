@@ -220,15 +220,6 @@ flink run -p 96 -c CheckOutputIntegrity \
         --in-links \
         --output $OUTPUT_DIR/stats
 
-With resolved redirects for inLinks:
-
-```
-flink run -p 96 -c ArticleStatsWithInboundLinks \
-    /home/mschwarzer/wikisim/cpa.jar \
-    hdfs:///datasets/enwiki-latest-pages-meta-current.xml \
-    hdfs:///user/mschwarzer/v2/results/stats2
-    hdfs:///user/mschwarzer/v2/intermediate/redirects
-```
 
 #### CPI Sampler (retrieves a random portion of CPI values)
 

@@ -80,6 +80,8 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
         // Count all out clicks and best possible top-k clicks (optimal result)
         List<Integer> outClicks = new ArrayList<>(clickStream.values());
         Collections.sort(outClicks);
+        Collections.reverse(outClicks);
+
         rank = 1;
         for (Integer c : outClicks) {
             if(rank <= topK) {
@@ -87,6 +89,10 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
             }
             totalClicks += c;
             rank++;
+        }
+
+        if(clicksK[0] > optimalClicks) {
+            throw new Exception("Recommendations clicks (" + clicksK[0] + ") are greater than theoretical optimal clicks (" + optimalClicks + ").");
         }
 
         out.collect(

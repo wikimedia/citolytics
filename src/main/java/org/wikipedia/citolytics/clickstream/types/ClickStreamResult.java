@@ -5,7 +5,7 @@ import org.apache.flink.api.java.tuple.Tuple9;
 import java.util.ArrayList;
 
 /**
- * article | retrieved documents | number of ret. documents | impressions | sum out clicks | k=10 clicks | k=5 clicks | k=1 clicks
+ * article | retrieved documents | number of ret. documents | impressions | sum out clicks | k=10 clicks | k=5 clicks | k=1 clicks | optimal clicks
  * <p/>
  * OLD:
  * article | retrieved documents | number of ret. documents | counter | k=10 rel clicks | k=10 clicks | k=5 rel clicks | k=5 clicks | k=1 rel clicks | k=1 clicks
