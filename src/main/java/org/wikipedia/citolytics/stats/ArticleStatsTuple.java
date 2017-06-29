@@ -8,7 +8,7 @@ import org.apache.flink.api.java.tuple.Tuple6;
  * Headlines
  * OutLinks
  * AvgLinkDistance
- * OutLinksPerWords
+ * InLinks
  */
 public class ArticleStatsTuple extends Tuple6<String, Integer, Integer, Integer, Double, Integer> {
     public final static int ARTICLE_NAME_KEY = 0;
