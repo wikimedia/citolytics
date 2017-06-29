@@ -83,14 +83,14 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
                         langLinksInputFilename, idTitleMappingFilename);
 
         // WikiSim
-        DataSet<RecommendationSet> wikiSimGroupedDataSet;
+        DataSet<RecommendationSet> recommendationSets;
 
         // CPA or MLT results?
         if (fieldScore >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
             // CPA
             jobName += " CPA Score=" + fieldScore + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
 
-            wikiSimGroupedDataSet = WikiSimReader.buildRecommendationSets(env,
+            recommendationSets = WikiSimReader.buildRecommendationSets(env,
                     WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename,
                     fieldPageA, fieldPageB, fieldScore), topK, cpiExpr, articleStatsFilename, false);
 
@@ -101,13 +101,13 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
             Configuration config = new Configuration();
             config.setInteger("topK", topK);
 
-            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
+            recommendationSets = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new MLTInputMapper())
                     .withParameters(config);
         }
 
         // Evaluation
-        result = wikiSimGroupedDataSet
+        result = recommendationSets
                 .coGroup(clickStreamDataSet)
                 .where(RecommendationSet.SOURCE_TITLE_KEY)
                 .equalTo(ClickStreamTuple.ARTICLE_NAME_KEY)

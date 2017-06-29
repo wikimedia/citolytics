@@ -9,7 +9,9 @@ import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class RecommendationSetBuilder implements GroupReduceFunction<Recommendation, RecommendationSet> {
     private int maxQueueSize = 20;
@@ -25,7 +27,8 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
     public void reduce(Iterable<Recommendation> in, Collector<RecommendationSet> out) throws Exception {
         Iterator<Recommendation> iterator = in.iterator();
 
-        Recommendation joinRecord = null;
+        Recommendation recommendation = null;
+        Map<String, WikiSimComparableResult> recommendations = new HashMap<>();
 
         // Default: MinQueue = Smallest elements a kept in queue
         // -> Change: MaxQueue = Keep greatest elements
@@ -40,11 +43,21 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
                 .create();
 
         while (iterator.hasNext()) {
-            joinRecord = iterator.next();
-            queue.add(new WikiSimComparableResult<>(joinRecord.getRecommendationTitle(), joinRecord.getScore(), joinRecord.getRecommendationId()));
+            recommendation = iterator.next();
+
+            if(recommendations.containsKey(recommendation.getRecommendationTitle())) {
+                throw new Exception("Duplicate recommendation: " + recommendation.getRecommendationTitle() + "; current list: " + recommendations);
+            } else {
+                recommendations.put(
+                        recommendation.getRecommendationTitle(),
+                        new WikiSimComparableResult<>(recommendation.getRecommendationTitle(), recommendation.getScore(), recommendation.getRecommendationId())
+                        );
+            }
+
+            queue.add(new WikiSimComparableResult<>(recommendation.getRecommendationTitle(), recommendation.getScore(), recommendation.getRecommendationId()));
         }
 
         //  WikiSimComparableResultList<Double>
-        out.collect(new RecommendationSet(joinRecord.getSourceTitle(), joinRecord.getSourceId(), new WikiSimComparableResultList<>(queue)));
+        out.collect(new RecommendationSet(recommendation.getSourceTitle(), recommendation.getSourceId(), new WikiSimComparableResultList<>(queue)));
     }
 }
