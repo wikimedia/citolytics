@@ -18,7 +18,6 @@ import java.util.*;
  */
 public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickStreamTuple, ClickStreamResult> {
     private final static boolean IGNORE_MISSING_CLICK_STREAM = false;
-    private int[] k = new int[]{10, 5, 1};
     private int topK = WikiSimConfiguration.DEFAULT_TOP_K;
 
     public EvaluateClicks() {
@@ -79,8 +78,8 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
 
         // Count all out clicks and best possible top-k clicks (optimal result)
         List<Integer> outClicks = new ArrayList<>(clickStream.values());
-        Collections.sort(outClicks);
-        Collections.reverse(outClicks);
+
+        Collections.sort(outClicks, Collections.reverseOrder());
 
         rank = 1;
         for (Integer c : outClicks) {
@@ -92,7 +91,11 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
         }
 
         if(clicksK[0] > optimalClicks) {
-            throw new Exception("Recommendations clicks (" + clicksK[0] + ") are greater than theoretical optimal clicks (" + optimalClicks + ").");
+            throw new Exception("Recommendations clicks (" + clicksK[0] + ") are greater than theoretical optimal clicks (" + optimalClicks + ").\n"
+                + "OutClicks: " + outClicks + ";\n"
+                + "retrievedDocuments: " + retrievedDocuments + ";\n"
+                + "clickStream: " + clickStream + ";\n"
+                + "top-k: " + topK);
         }
 
         out.collect(
@@ -112,6 +115,12 @@ public class EvaluateClicks implements CoGroupFunction<RecommendationSet, ClickS
 
     private int[] calculateTotalClicks(int[] clicksK, int rank, int clicks) {
         // loop k's
+        int[] k = new int[]{
+                Math.min(10, topK),
+                Math.min(5, topK),
+                Math.min(1, topK)
+        };
+
         for (int i = 0; i < k.length; i++) {
             if (rank <= k[i]) {
                 clicksK[i] += clicks;
