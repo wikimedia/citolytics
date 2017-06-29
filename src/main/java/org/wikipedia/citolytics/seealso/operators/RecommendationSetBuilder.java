@@ -13,14 +13,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Build from WikiSim recommendations the final top-k result sets (unsorted).
+ *
+ * Additionally, it checks for duplicates in results (may decrease performance).
+ */
 public class RecommendationSetBuilder implements GroupReduceFunction<Recommendation, RecommendationSet> {
-    private int maxQueueSize = 20;
+    private int topK = 20;
 
     public RecommendationSetBuilder() {
     }
 
-    public RecommendationSetBuilder(int maxQueueSize) {
-        this.maxQueueSize = maxQueueSize;
+    public RecommendationSetBuilder(int topK) {
+        this.topK = topK;
     }
 
     @Override
@@ -28,7 +33,35 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
         Iterator<Recommendation> iterator = in.iterator();
 
         Recommendation recommendation = null;
+
+        // Handle duplicate recommendations first (TODO How can this happen? Redirect resolver?)
         Map<String, WikiSimComparableResult> recommendations = new HashMap<>();
+        while (iterator.hasNext()) {
+            recommendation = iterator.next();
+
+            if (recommendations.containsKey(recommendation.getRecommendationTitle())) {
+                //throw new Exception("Duplicate recommendation: " + recommendation.getRecommendationTitle() + "; current list: " + recommendations);
+                if (recommendations.get(recommendation.getRecommendationTitle()).getId() != recommendation.getRecommendationId()) {
+                    throw new Exception("Invalid IDs for duplicate recommendations: A=" + recommendation + "; B = " + recommendations.get(recommendation.getRecommendationTitle()));
+                }
+
+                // Sum of both scores
+                Double score = recommendation.getScore() + (Double) recommendations.get(recommendation.getRecommendationTitle()).getSortField1();
+
+                recommendations.put(recommendation.getRecommendationTitle(),
+                        new WikiSimComparableResult<>(
+                                recommendation.getRecommendationTitle(),
+                                score,
+                                recommendation.getRecommendationId())
+                );
+            } else {
+                //
+                recommendations.put(
+                        recommendation.getRecommendationTitle(),
+                        new WikiSimComparableResult<>(recommendation.getRecommendationTitle(), recommendation.getScore(), recommendation.getRecommendationId())
+                );
+            }
+        }
 
         // Default: MinQueue = Smallest elements a kept in queue
         // -> Change: MaxQueue = Keep greatest elements
@@ -39,22 +72,11 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
                         return -1 * o1.compareTo(o2);
                     }
                 })
-                .maximumSize(maxQueueSize)
+                .maximumSize(topK)
                 .create();
 
-        while (iterator.hasNext()) {
-            recommendation = iterator.next();
-
-            if(recommendations.containsKey(recommendation.getRecommendationTitle())) {
-                throw new Exception("Duplicate recommendation: " + recommendation.getRecommendationTitle() + "; current list: " + recommendations);
-            } else {
-                recommendations.put(
-                        recommendation.getRecommendationTitle(),
-                        new WikiSimComparableResult<>(recommendation.getRecommendationTitle(), recommendation.getScore(), recommendation.getRecommendationId())
-                        );
-            }
-
-            queue.add(new WikiSimComparableResult<>(recommendation.getRecommendationTitle(), recommendation.getScore(), recommendation.getRecommendationId()));
+        for(WikiSimComparableResult<Double> result: recommendations.values()) {
+            queue.add(result);
         }
 
         //  WikiSimComparableResultList<Double>
