@@ -145,6 +145,20 @@ public class RecommendationPair extends Tuple8<
             setField(distSquared, DISTSQUARED_KEY);
     }
 
+    public void setCPI(String str) {
+
+        str = str.replace("[", "").replace("]", "");
+        String[] cpiStrs = str.split(",");
+
+        List<Double> cpis = new ArrayList<>();
+
+        for(int i=0; i < cpiStrs.length; i++) {
+            cpis.add(Double.valueOf(cpiStrs[i]));
+        }
+
+        setCPI(cpis);
+    }
+
     public void setCPI(List<Double> cpa) {
         setField(cpa, CPI_LIST_KEY);
     }

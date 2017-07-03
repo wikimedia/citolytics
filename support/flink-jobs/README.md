@@ -57,6 +57,16 @@ You run Flink jobs from this repository by using the following commands. Degree 
         --structure-proximity \
         --output $OUTPUT_DIR/wikisim_structure_raw
         
+(relative proximity)
+
+        $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cpa.WikiSim -p $PARALLELISM $JAR \
+            --input $WIKI_DUMP \
+            --resolve-redirects \
+            --alpha 1.0 \
+            --relative-proximity \
+            --output $OUTPUT_DIR/wikisim_1_0_relative_raw
+    
+        
         
 ### SeeAlsoEvaluation
 

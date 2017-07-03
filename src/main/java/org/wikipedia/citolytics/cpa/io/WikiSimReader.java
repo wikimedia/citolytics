@@ -53,7 +53,8 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
             RecommendationPair pair = new RecommendationPair(cols[fieldPageA], cols[fieldPageB]);
             pair.setPageAId(Integer.valueOf(cols[fieldPageIdA]));
             pair.setPageBId(Integer.valueOf(cols[fieldPageIdB]));
-            pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
+//            pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
+            pair.setCPI(scoreString);
 
             collectRecommendationsFromPair(pair, out, false);
         } catch (Exception e) {
