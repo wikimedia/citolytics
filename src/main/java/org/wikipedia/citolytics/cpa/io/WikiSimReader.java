@@ -41,13 +41,16 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
     public void flatMap(String s, Collector<Recommendation> out) throws Exception {
         String[] cols = delimiterPattern.split(s);
 
-        if (fieldScore >= cols.length || fieldPageA >= cols.length || fieldPageB >= cols.length) {
+        // fieldScore >= cols.length ||
+        if (fieldPageA >= cols.length || fieldPageB >= cols.length) {
             throw new Exception("invalid col length : " + cols.length + " (score=" + fieldScore + ", a=" + fieldPageA + ", b=" + fieldPageB + "// " + s);
 //            return;
         }
 
         try {
-            String scoreString = cols[fieldScore];
+            String scoreString = cols[RecommendationPair.CPI_LIST_KEY];
+//            String scoreString = cols[fieldScore];
+
 
             // Create recommendations pair from cols
             RecommendationPair pair = new RecommendationPair(cols[fieldPageA], cols[fieldPageB]);
@@ -56,7 +59,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
 //            pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
             pair.setCPI(scoreString);
 
-            collectRecommendationsFromPair(pair, out, false);
+            collectRecommendationsFromPair(pair, out, false, fieldScore);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols) + "\n" + e.getMessage());
@@ -69,12 +72,12 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
      * @param pair Full recommendations pair (A, B in alphabetical order)
      * @param out
      */
-    public static void collectRecommendationsFromPair(RecommendationPair pair, Collector<Recommendation> out, boolean backupRecommendations) {
-        out.collect(new Recommendation(pair.getPageA(), pair.getPageB(), pair.getCPI(0), pair.getPageAId(), pair.getPageBId()));
+    public static void collectRecommendationsFromPair(RecommendationPair pair, Collector<Recommendation> out, boolean backupRecommendations, int alphaKey) {
+        out.collect(new Recommendation(pair.getPageA(), pair.getPageB(), pair.getCPI(alphaKey), pair.getPageAId(), pair.getPageBId()));
 
         // If pair is a backup recommendations, do not return full pair.
         if(!backupRecommendations || pair.getCPI(0) > WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
-            out.collect(new Recommendation(pair.getPageB(), pair.getPageA(), pair.getCPI(0), pair.getPageBId(), pair.getPageAId()));
+            out.collect(new Recommendation(pair.getPageB(), pair.getPageA(), pair.getCPI(alphaKey), pair.getPageBId(), pair.getPageAId()));
         }
 
     }

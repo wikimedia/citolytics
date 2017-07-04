@@ -44,7 +44,7 @@ public class RecommendationPair extends Tuple8<
     public final static int PAGE_B_KEY = 2;
     public final static int PAGE_A_ID_KEY = 6;
     public final static int PAGE_B_ID_KEY = 7;
-    private final static int CPI_LIST_KEY = 5;
+    public final static int CPI_LIST_KEY = 5;
     private final static int MAX_KEY = 7; // disabled
     private final static int MIN_KEY = 6; // disabled
     private final static int DISTSQUARED_KEY = 5; // disabled

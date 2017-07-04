@@ -70,7 +70,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                     }
                 });
 
-        System.out.println("Join cardinality: articleAuthorPairs=" + String.valueOf(articleAuthorPairs.count()) + "; authorArticlesList=" + String.valueOf(authorArticlesList.count()));
+//        System.out.println("Join cardinality: articleAuthorPairs=" + String.valueOf(articleAuthorPairs.count()) + "; authorArticlesList=" + String.valueOf(authorArticlesList.count()));
 
         // Test1 seems slower
 //        return test1(articleAuthorPairs, authorArticlesList);
@@ -145,27 +145,8 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 
 
     public static DataSet<RecommendationSet> test2(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) throws Exception {
-//        articleAuthorPairs.join(authorArticlesList, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
-//                .where(1) // author id
-//                .equalTo(0) // author id
-//                .with(new JoinFunction<ArticleAuthorPair, AuthorArticlesList, RecommendationSet>() {
-//                    @Override
-//                    public RecommendationSet join(ArticleAuthorPair articleAuthorPair, AuthorArticlesList authorArticlesList) throws Exception {
-//                        WikiSimComparableResultList<Double> list = new WikiSimComparableResultList<>();
-//
-//                        for (String article : authorArticlesList.getArticleList()) {
-//                            if (article.equals(articleAuthorPair.getArticle())) // Do not recommend the article itself
-//                                continue;
-//
-//                            // ignore article id
-//                            list.add(new WikiSimComparableResult<>(article, 1., 0));
-//                        }
-//
-//                         return new RecommendationSet(articleAuthorPair.getArticle(), 0, list);
-//                    }
-//                });
 
-        DataSet<CoEditList> coEdits = articleAuthorPairs.join(authorArticlesList, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
+        DataSet<CoEditList> coEdits = articleAuthorPairs.join(authorArticlesList)
                 .where(1) // author id
                 .equalTo(0) // author id
                 .with(new JoinFunction<ArticleAuthorPair, AuthorArticlesList, CoEditList>() {

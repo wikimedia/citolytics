@@ -85,7 +85,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
                         @Override
                         public void flatMap(RecommendationPair pair, Collector<Recommendation> out) throws Exception {
-                            WikiSimReader.collectRecommendationsFromPair(pair, out, backupRecommendations);
+                            WikiSimReader.collectRecommendationsFromPair(pair, out, backupRecommendations, 0);
                         }
                     }).withParameters(config);
 
