@@ -32,6 +32,7 @@ public class DocumentProcessor implements Serializable {
     public static final String DEFAULT_SEE_ALSO_LANGUAGE = "en";
 
     private String seeAlsoTitle;
+    private Pattern seeAlsoPattern;
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
     private boolean enableInfoBoxRemoval = true;
 
@@ -135,7 +136,27 @@ public class DocumentProcessor implements Serializable {
     }
 
     public Pattern getSeeAlsoPattern() {
-        return Pattern.compile("(^|\\W)==" + getSeeAlsoTitle() + "==$", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+        if(seeAlsoPattern == null) {
+            String title = getSeeAlsoTitle();
+            String titlePattern = title;
+
+            // Multiple titles with comma separated
+            if (title.contains(",")) {
+                String[] titles = title.split(",");
+
+                titlePattern = "(";
+                for (int i = 0; i < titles.length; i++) {
+                    if (i > 0) {
+                        titlePattern += "|";
+                    }
+                    titlePattern += titles[i];
+                }
+                titlePattern += ")";
+            }
+
+            seeAlsoPattern = Pattern.compile("(^|\\W)==" + titlePattern + "==$", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+        }
+        return seeAlsoPattern;
     }
 
     /**
@@ -257,7 +278,7 @@ public class DocumentProcessor implements Serializable {
 
     public String getSeeAlsoTitleByLanguage(String lang) throws Exception {
         switch (lang) {
-            case "en": return "see also";
+            case "en": return "see also,related pages,related articles";
             case "de": return "siehe auch";
             default:
                 throw new Exception("Language is not supported.");

@@ -40,9 +40,11 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
             recommendation = iterator.next();
 
             if (recommendations.containsKey(recommendation.getRecommendationTitle())) {
+                int aId = recommendations.get(recommendation.getRecommendationTitle()).getId();
+                int bId = recommendation.getRecommendationId();
                 //throw new Exception("Duplicate recommendation: " + recommendation.getRecommendationTitle() + "; current list: " + recommendations);
-                if (recommendations.get(recommendation.getRecommendationTitle()).getId() != recommendation.getRecommendationId()) {
-                    throw new Exception("Invalid IDs for duplicate recommendations: A=" + recommendation + "; B = " + recommendations.get(recommendation.getRecommendationTitle()));
+                if (aId != bId) {
+                    throw new Exception("Invalid IDs for duplicate recommendations (" + aId + " != " + bId +"): A=" + recommendation + "; B = " + recommendations.get(recommendation.getRecommendationTitle()));
                 }
 
                 // Sum of both scores

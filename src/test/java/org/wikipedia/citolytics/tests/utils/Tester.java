@@ -1,6 +1,9 @@
 package org.wikipedia.citolytics.tests.utils;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.junit.ComparisonFailure;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
@@ -50,8 +53,33 @@ public class Tester {
 
     }
 
+    protected void assertJobOutputJSONWithResource(WikiSimAbstractJob job, String resourcePath, String message) throws Exception {
+        String[] actualOutput = getJobOutputAsString(job).split("\n");
+        String[] expectedOutput = FileUtils.readFileToString(new File(getClass().getClassLoader().getResources(resourcePath).nextElement().getPath())).split("\n");
+
+        assertEquals("Output length differs", expectedOutput.length, actualOutput.length);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+
+        for(int i=0; i < actualOutput.length; i++) {
+            JsonNode actualObj = mapper.readTree(actualOutput[i].substring(1, actualOutput[i].length() - 1));
+            JsonNode expectedObj = mapper.readTree(expectedOutput[i].substring(1, expectedOutput[i].length() - 1));
+
+            assertEquals(message, expectedObj, actualObj);
+        }
+
+//        assertEquals(message, expectedOutput, actualOutput);
+//        assertEquals(message, getFileContents(getExpectedOutputPath()), actualOutput);
+
+    }
+
     protected void assertJobOutputStringWithFixture(WikiSimAbstractJob job, String message) throws Exception {
         assertJobOutputStringWithResource(job, getExpectedOutputPath(), message);
+    }
+
+    protected void assertJobOutputJSONWithFixture(WikiSimAbstractJob job, String message) throws Exception {
+        assertJobOutputJSONWithResource(job, getExpectedOutputPath(), message);
     }
 
     protected void assertJobOutput(WikiSimAbstractJob job, ArrayList needles) throws Exception {

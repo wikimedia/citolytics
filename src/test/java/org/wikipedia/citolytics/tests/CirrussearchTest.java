@@ -96,6 +96,8 @@ public class CirrussearchTest extends Tester {
                         + " --output local --ignore-missing-ids --topk 3");
 
         assertJobOutputStringWithFixture(job, "Invalid output");
+//        assertJobOutputJSONWithFixture(job, "Invalid output");
+
     }
 
     @Test
@@ -109,6 +111,7 @@ public class CirrussearchTest extends Tester {
                 .start("--wikidump " + getInputPath()
                         + " --ignore-missing-ids --output local --topk 10"
                         + " --backup-recommendations");
+//        assertJobOutputJSONWithFixture(job, "Invalid output");
         assertJobOutputStringWithFixture(job, "Invalid output");
 
         //        assertEquals("Invalid response", FileUtils.readFileToString(new File(getExpectedOutputPath()), String.join("\n", job.getOutput())));

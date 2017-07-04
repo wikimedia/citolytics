@@ -149,7 +149,7 @@ Evaluate recommendations based on edit history dumps
 
     # Simple evaluation
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.edits.EditRecommendationExtractor -p $PARALLELISM $JAR \
-        --input $HDFS_PATH/user/mschwarzer/$WIKI/input/simplewiki-20170520-stub-meta-history.xml \
+        --input $HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170520-stub-meta-history.xml \
         --output $HDFS_PATH/user/mschwarzer/$WIKI/output/edit_recommendations
        
 #### MLT
