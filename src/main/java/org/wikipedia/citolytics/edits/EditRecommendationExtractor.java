@@ -42,7 +42,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
         result = extractRecommendations(env, inputFilename);
     }
 
-    public static DataSet<RecommendationSet> extractRecommendations(ExecutionEnvironment env, String inputFilename) {
+    public static DataSet<RecommendationSet> extractRecommendations(ExecutionEnvironment env, String inputFilename) throws Exception {
         // Read Wikipedia Edit History XML Dump and generate article-author pairs
         DataSet<ArticleAuthorPair> articleAuthorPairs = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
                 .flatMap(new EditInputMapper())
@@ -69,6 +69,8 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                         }
                     }
                 });
+
+        System.out.println("Join cardinality: articleAuthorPairs=" + String.valueOf(articleAuthorPairs.count()) + "; authorArticlesList=" + String.valueOf(authorArticlesList.count()));
 
         // Test1 seems slower
 //        return test1(articleAuthorPairs, authorArticlesList);
@@ -142,7 +144,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
     }
 
 
-    public static DataSet<RecommendationSet> test2(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) {
+    public static DataSet<RecommendationSet> test2(DataSet<ArticleAuthorPair> articleAuthorPairs, DataSet<AuthorArticlesList> authorArticlesList) throws Exception {
 //        articleAuthorPairs.join(authorArticlesList, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
 //                .where(1) // author id
 //                .equalTo(0) // author id
@@ -162,7 +164,6 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 //                         return new RecommendationSet(articleAuthorPair.getArticle(), 0, list);
 //                    }
 //                });
-
 
         DataSet<CoEditList> coEdits = articleAuthorPairs.join(authorArticlesList, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
                 .where(1) // author id
