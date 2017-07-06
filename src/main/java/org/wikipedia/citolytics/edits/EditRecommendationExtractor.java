@@ -48,6 +48,81 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                 .flatMap(new EditInputMapper())
                 .distinct();
 
+        DataSet<CoEditMap> coEdits = articleAuthorPairs
+                .groupBy(1) // author id
+                .reduceGroup(new GroupReduceFunction<ArticleAuthorPair, CoEditMap>() {
+                    @Override
+                    public void reduce(Iterable<ArticleAuthorPair> in, Collector<CoEditMap> out) throws Exception {
+                        Iterator<ArticleAuthorPair> iterator = in.iterator();
+                        HashSet<String> articles = new HashSet<>();
+                        ArticleAuthorPair pair = null;
+
+                        while (iterator.hasNext()) {
+                            pair = iterator.next();
+                            articles.add(pair.getArticle());
+                        }
+
+                        // Only author with at least two articles are useful
+                        if (articles.size() > 1) {
+//                            System.out.println(pair.getAuthor() + " // " + articles);
+                            for(String article: articles) {
+                                Map<String, Integer> coArticles = new HashMap<>();
+                                for(String coArticle: articles) {
+                                    if(!coArticle.equals(article))
+                                        coArticles.put(coArticle, 1);
+                                }
+
+                                out.collect(new CoEditMap(article, coArticles));
+                            }
+                        }
+                    }
+                })
+                .groupBy(0)
+                .reduce(new ReduceFunction<CoEditMap>() {
+                    @Override
+                    public CoEditMap reduce(CoEditMap a, CoEditMap b) throws Exception {
+                        Map<String, Integer> coEdits = a.f1;
+
+                        for(String article: b.f1.keySet()) {
+                            if(coEdits.containsKey(article)) {
+                                coEdits.put(article, a.f1.get(article) + b.f1.get(article));
+                            } else {
+                                coEdits.put(article, b.f1.get(article));
+                            }
+                        }
+
+                        return new CoEditMap(a.f0, coEdits);
+                    }
+                });
+
+
+
+        return coEdits.map(new MapFunction<CoEditMap, RecommendationSet>() {
+            @Override
+            public RecommendationSet map(CoEditMap coEdits) throws Exception {
+                WikiSimComparableResultList<Double> results = new WikiSimComparableResultList<>();
+
+                for (String coEdit : coEdits.getMap().keySet()) {
+                    double score = coEdits.getMap().get(coEdit);
+                    results.add(new WikiSimComparableResult<>(coEdit, score, 0));
+                }
+
+                int topK = 10;
+                return new RecommendationSet(
+                        coEdits.getArticle(),
+                        0, // ignore ids
+                        new WikiSimComparableResultList(Ordering.natural().greatestOf(results, topK))
+                );
+            }
+        });
+    }
+
+    public static DataSet<RecommendationSet> extractRecommendationsOld(ExecutionEnvironment env, String inputFilename) throws Exception {
+        // Read Wikipedia Edit History XML Dump and generate article-author pairs
+        DataSet<ArticleAuthorPair> articleAuthorPairs = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
+                .flatMap(new EditInputMapper())
+                .distinct();
+
         DataSet<AuthorArticlesList> authorArticlesList = articleAuthorPairs
                 .groupBy(1) // author id
                 .reduceGroup(new GroupReduceFunction<ArticleAuthorPair, AuthorArticlesList>() {
