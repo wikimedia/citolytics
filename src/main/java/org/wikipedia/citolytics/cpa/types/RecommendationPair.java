@@ -3,7 +3,6 @@ package org.wikipedia.citolytics.cpa.types;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.flink.api.java.tuple.Tuple8;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -31,7 +30,7 @@ public class RecommendationPair extends Tuple8<
 //        Long, // distSquared
 //        Long, // min
 //        Long, // max
-        List<Double>, // CPA
+        CSVList<Double>, // CPA
         Integer, // page id A
         Integer // page id B
         > {
@@ -120,7 +119,7 @@ public class RecommendationPair extends Tuple8<
         setMax(0);
         setMedian(.0);
 //        setField(new DoubleListValue(), CPI_LIST_KEY);
-        setField(new ArrayList<Double>(), CPI_LIST_KEY);
+        setField(new CSVList<Double>(), CPI_LIST_KEY);
 
     }
 
@@ -150,7 +149,7 @@ public class RecommendationPair extends Tuple8<
         str = str.replace("[", "").replace("]", "");
         String[] cpiStrs = str.split(",");
 
-        List<Double> cpis = new ArrayList<>();
+        List<Double> cpis = new CSVList<>();
 
         for(int i=0; i < cpiStrs.length; i++) {
             cpis.add(Double.valueOf(cpiStrs[i]));
@@ -165,7 +164,7 @@ public class RecommendationPair extends Tuple8<
 
     public void setCPI(double[] cpi) {
         // DoubleListValue.valueOf(cpi)
-        this.f5 = new ArrayList<>();
+        this.f5 = new CSVList<>();
         this.f5.addAll(Arrays.asList(ArrayUtils.toObject(cpi)));
 
 //        setField(Arrays.asList(ArrayUtils.toObject(cpi)), CPI_LIST_KEY);
@@ -176,7 +175,7 @@ public class RecommendationPair extends Tuple8<
     }
 
     public static List<Double> sum(List<Double> firstList, List<Double> secondList) throws Exception {
-        List<Double> result = new ArrayList<>();
+        List<Double> result = new CSVList<>();
 
         if (firstList == null || secondList == null) {
             throw new Exception("Cannot sum lists if one list NULL.");
@@ -328,7 +327,7 @@ public class RecommendationPair extends Tuple8<
 //        }
 //        res.setCPI(cpi);
 
-        List<Double> cpi = new ArrayList<>();
+        List<Double> cpi = new CSVList<>();
         for (int i = CPI_LIST_KEY; i < cols.length; i++) {
             cpi.add(Double.valueOf(cols[i]));
         }

@@ -2,9 +2,9 @@ package org.wikipedia.citolytics.cpa.operators;
 
 import org.apache.flink.api.common.functions.RichReduceFunction;
 import org.apache.flink.configuration.Configuration;
+import org.wikipedia.citolytics.cpa.types.CSVList;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SumCPI extends RichReduceFunction<RecommendationPair> {
@@ -25,7 +25,7 @@ public class SumCPI extends RichReduceFunction<RecommendationPair> {
 
     public List<Double> initCPI(long distance) {
 //        DoubleListValue cpi = new DoubleListValue();
-        List<Double> cpi = new ArrayList<>();
+        List<Double> cpi = new CSVList<>();
         for (double alpha : cpi_alpha) {
             cpi.add(Math.pow(distance, -alpha));
         }

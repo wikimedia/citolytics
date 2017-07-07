@@ -56,10 +56,10 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
             RecommendationPair pair = new RecommendationPair(cols[fieldPageA], cols[fieldPageB]);
             pair.setPageAId(Integer.valueOf(cols[fieldPageIdA]));
             pair.setPageBId(Integer.valueOf(cols[fieldPageIdB]));
-//            pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
-            pair.setCPI(scoreString);
+            pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
+//            pair.setCPI(scoreString);
 
-            collectRecommendationsFromPair(pair, out, false, fieldScore);
+            collectRecommendationsFromPair(pair, out, false, 0);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols) + "\n" + e.getMessage());
@@ -86,7 +86,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
     public static DataSet<Recommendation> readWikiSimOutput(ExecutionEnvironment env, String filename,
                                                             int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
 
-        Log.info("Reading WikiSim from " + filename);
+        Log.info("Reading WikiSim from " + filename + "; scoreField=" + fieldScore);
 
         Configuration config = new Configuration();
 

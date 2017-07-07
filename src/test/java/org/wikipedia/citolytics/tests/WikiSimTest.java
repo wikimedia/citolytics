@@ -119,6 +119,7 @@ public class WikiSimTest extends Tester {
         fixture = "alpha.xml";
 
         job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output local");
+//        job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output " + resource("test.out"));
 
         assertOutput(job.getOutput(), getExpectedOutputPath());
     }

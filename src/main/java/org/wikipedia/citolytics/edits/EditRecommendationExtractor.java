@@ -91,6 +91,11 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
                             }
                         }
 
+                        // Reduce size (top-k edits)
+                        if(coEdits.size() > 50) {
+                            coEdits = sortByValue(coEdits, 25);
+                        }
+
                         return new CoEditMap(a.f0, coEdits);
                     }
                 });
@@ -292,4 +297,23 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 //        return tmp;
     }
 
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map, int topK) {
+        List<Map.Entry<K, V>> list =
+                new LinkedList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+            @Override
+            public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+                return (o1.getValue()).compareTo(o2.getValue());
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+
+            if(result.size() >= topK)
+                break;
+        }
+        return result;
+    }
 }
