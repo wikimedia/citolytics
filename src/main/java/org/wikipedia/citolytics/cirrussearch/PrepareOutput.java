@@ -41,9 +41,9 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         outputFilename = getParams().getRequired("output");
         String redirectsFilename = getParams().get("redirects", null);
         int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
-        int fieldScore = getParams().getInt("score", 5);
-        int fieldPageA = getParams().getInt("page-a", 1);
-        int fieldPageB = getParams().getInt("page-b", 2);
+        int fieldScore = getParams().getInt("score", WikiSimConfiguration.DEFAULT_FIELD_SCORE);
+        int fieldPageA = getParams().getInt("page-a", WikiSimConfiguration.DEFAULT_FIELD_PAGE_A);
+        int fieldPageB = getParams().getInt("page-b", WikiSimConfiguration.DEFAULT_FIELD_PAGE_B);
         boolean disableScores = getParams().has("disable-scores");
         boolean elasticBulkSyntax = getParams().has("enable-elastic");
         boolean ignoreMissingIds = getParams().has("ignore-missing-ids");

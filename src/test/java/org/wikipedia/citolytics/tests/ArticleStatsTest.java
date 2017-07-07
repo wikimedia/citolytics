@@ -2,6 +2,7 @@ package org.wikipedia.citolytics.tests;
 
 import org.junit.Test;
 import org.wikipedia.citolytics.stats.ArticleStats;
+import org.wikipedia.citolytics.stats.CPIAnalysis;
 import org.wikipedia.citolytics.stats.CPISampler;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
@@ -120,6 +121,19 @@ public class ArticleStatsTest extends Tester {
                 .start("--input " + resource("cpi_sampler.csv", true)+ " --output local -p 0.3");
 
 //        assertEquals("Invalid sample size", 11, job.getOutput().size());
+    }
+
+    @Test
+    public void testCPIAnalysis() throws Exception {
+        setJob(new CPIAnalysis())
+                .start("--top-k 3 --articles \"simple_QQQ,simple_Foo\" --wikisim " + resource("cpi_wikisim_output_lang_simple.csv", true)
+                        + " --clickstreams " + resource("cpi_clickstream_lang_simple.tsv", true)
+                        + " --stats " + resource("cpi_stats_simple.csv", true)
+                        + " --lang simple --lang-links " + resource("cpi_lang_links_enwiki.sql", true)
+                        + " --id-title-mapping " + resource("cpi_idtitle_mapping.in", true)
+                        + " --score 0 --output local");
+
+        assertJobOutputStringWithResource(job, "ArticleStatsTest/cpi_analysis.expected", "Invalid results");
     }
 
 }

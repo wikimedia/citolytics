@@ -11,6 +11,8 @@ import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parent job class
@@ -101,7 +103,27 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
     }
 
     public void start(String args) throws Exception {
-        start(args.split(" "));
+        // From https://stackoverflow.com/questions/366202/regex-for-splitting-a-string-using-space-when-not-surrounded-by-single-or-double
+        List<String> argsList = new ArrayList<String>();
+        Pattern regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+        Matcher regexMatcher = regex.matcher(args);
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null) {
+                // Add double-quoted string without the quotes
+                argsList.add(regexMatcher.group(1));
+            } else if (regexMatcher.group(2) != null) {
+                // Add single-quoted string without the quotes
+                argsList.add(regexMatcher.group(2));
+            } else {
+                // Add unquoted word
+                argsList.add(regexMatcher.group());
+            }
+        }
+
+        String[] argsArr = new String[argsList.size()];
+        argsList.toArray(argsArr);
+
+        start(argsArr);
     }
 
     public void start(String[] args) throws Exception {
