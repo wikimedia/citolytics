@@ -12,5 +12,6 @@ public class WikiSimConfiguration {
     public static final int DEFAULT_FIELD_PAGE_A = 1;
     public static final int DEFAULT_FIELD_PAGE_B = 2;
     public static final int DEFAULT_FIELD_SCORE = 5;
+    public static final double DEFAULT_ALPHA = 0.85;
 
 }

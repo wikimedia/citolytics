@@ -14,6 +14,7 @@ import org.wikipedia.citolytics.cpa.operators.RecommendationPairExtractor;
 import org.wikipedia.citolytics.cpa.operators.SumCPI;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RedirectMapping;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.redirects.operators.ReplaceRedirectsWithOuterJoin;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
@@ -31,7 +32,7 @@ import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
  * --format [str]   Format of Wikipedia XML Dump (default: 2013; set to "2006" for older dumps)
  * --redirects [path]  Resolve redirects? Set path to redirects set (default: n)
  * --resolve-redirects
- * --remove-missing-ids
+ * --ignore-missing-ids
  * --keep-infobox
  * --relative-proximity
  */
@@ -40,13 +41,12 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
     private Configuration config;
     public String inputFilename;
     public String redirectsFilename;
-    public String alpha = "1.5";
-    public boolean removeMissingIds = false;
+    public String alpha = String.valueOf(WikiSimConfiguration.DEFAULT_ALPHA);
+    public boolean ignoreMissingIds = false;
     public boolean resolveRedirects = false;
     public boolean relativeProximity = false;
     public boolean structureProximity = false;
     public boolean backupRecommendations = false;
-    private boolean median = true;
     private boolean wiki2006 = false;
     private boolean removeInfoBox = false;
     private int reducerThreshold = 1;
@@ -87,12 +87,12 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
         outputFilename = params.getRequired("output");
         redirectsFilename = params.get("redirects");
 
-        alpha = params.get("alpha", "1.0");
+        alpha = params.get("alpha", String.valueOf(WikiSimConfiguration.DEFAULT_ALPHA));
         reducerThreshold = params.getInt("reducer-threshold", 1);
         combinerThreshold = params.getInt("combiner-threshold", 1);
         wiki2006 = params.get("format", "2013").equalsIgnoreCase("2006");
         removeInfoBox = !params.has("keep-infobox");
-        removeMissingIds = params.has("remove-missing-ids");
+        ignoreMissingIds = params.has("ignore-missing-ids");
         resolveRedirects = params.has("resolve-redirects");
         relativeProximity = params.has("relative-proximity");
         structureProximity = params.has("structure-proximity");
@@ -143,8 +143,8 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
             result = resolveRedirects(env, result, redirectsFilename);
         }
 
-        // Remove results without ids, i.e. do not exist as page
-        if (removeMissingIds) {
+        // Remove results without ids, i.e. do not exist as page (enabled by default)
+        if (!ignoreMissingIds) {
             jobName += " + id removal";
             result = MissingIdRemover.removeMissingIds(result, IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDump));
         }
@@ -196,7 +196,4 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
                 .reduce(new SumCPI())
                 .setCombineHint(ReduceOperatorBase.CombineHint.HASH);
     }
-
-
-
 }

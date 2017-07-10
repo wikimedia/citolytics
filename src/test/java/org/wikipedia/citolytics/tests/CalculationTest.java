@@ -6,13 +6,11 @@ import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.cpa.WikiSim;
 import org.wikipedia.citolytics.cpa.types.LinkPair;
-import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.CheckOutputIntegrity;
 import org.wikipedia.citolytics.redirects.RedirectExtractor;
 import org.wikipedia.citolytics.seealso.SeeAlsoEvaluation;
 import org.wikipedia.citolytics.seealso.SeeAlsoExtractor;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
-import org.wikipedia.citolytics.tests.utils.TestUtils;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
 import static org.junit.Assert.assertEquals;
@@ -216,21 +214,6 @@ public class CalculationTest extends Tester {
                 "local", "0.81,1.5,1.25", "0", "0", "2006"});
 
         assertEquals("Result count wrong", 87632, job.output.size());
-    }
-
-
-    @Ignore
-    @Test
-    public void IntermediateResultSize() throws Exception {
-        String str = "ABC";
-        RecommendationPair result = new RecommendationPair(new LinkPair("Page AAAAA", "Page BBBB"), 999);
-
-        result.setDistSquared(9999);
-        result.setCPI(new double[]{1.99, 10.99, 0.995, 1234.5678});
-
-        System.out.println("String = " + TestUtils.sizeof(str));
-        System.out.println("RecommendationPair = " + TestUtils.sizeof(result));
-
     }
 
     @Ignore
