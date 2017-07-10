@@ -127,11 +127,12 @@ public class ArticleStatsTest extends Tester {
     public void testCPIAnalysis() throws Exception {
         setJob(new CPIAnalysis())
                 .start("--top-k 3 --articles \"simple_QQQ,simple_Foo\" --wikisim " + resource("cpi_wikisim_output_lang_simple.csv", true)
-                        + " --clickstreams " + resource("cpi_clickstream_lang_simple.tsv", true)
+                        + " --clickstream " + resource("cpi_clickstream_lang_simple.tsv", true)
                         + " --stats " + resource("cpi_stats_simple.csv", true)
                         + " --lang simple --lang-links " + resource("cpi_lang_links_enwiki.sql", true)
                         + " --id-title-mapping " + resource("cpi_idtitle_mapping.in", true)
-                        + " --score 0 --output local");
+                        + " --score 0 --output local"
+                        + " --clickstream-output " + resource("cpi_clickstream.out", true));
 
         assertJobOutputStringWithResource(job, "ArticleStatsTest/cpi_analysis.expected", "Invalid results");
     }

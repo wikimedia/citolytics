@@ -240,6 +240,23 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPISampler -p $PARAL
     --p 0.1
 ```
 
+### CPI Analysis (extract data for analysing CPI values)
+
+```
+# articles: Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations,Daft Pink,Elizabeth II
+$FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPIAnalysis  -p $PARALLELISM $JAR \
+    --top-k 3 --articles "Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations,Daft Pink,Elizabeth II" 
+    --wikisim $OUTPUT_DIR/wikisim_raw \
+    --clickstream $CLICKSTREAMS_PATH \
+    --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+    --langlinks $ENWIKI_LANGLINKS \
+    --lang simple \
+    --stats $OUTPUT_DIR/stats \
+    --output $OUTPUT_DIR/cpi_analysis \
+    --clickstream-output $OUTPUT_DIR/cpi_analysis_cs
+    
+```
+
 #### Get detailed link graph (debugging cpa rankings)
 
 [WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]
