@@ -42,6 +42,11 @@ import java.util.*;
  * -
  */
 public class CPIAnalysis extends WikiSimAbstractJob<Tuple5<String, String, Double, Integer, Integer>> {
+
+    public static void main(String[] args) throws Exception {
+        new CPIAnalysis().start(args);
+    }
+
     @Override
     public void plan() throws Exception {
         enableSingleOutputFile();
