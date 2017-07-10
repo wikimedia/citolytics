@@ -245,7 +245,7 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPISampler -p $PARAL
 ```
 # articles: Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations,Daft Pink,Elizabeth II
 $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPIAnalysis  -p $PARALLELISM $JAR \
-    --top-k 3 --articles "Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations,Daft Pink,Elizabeth II" 
+    --top-k 3 --articles "Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations,Daft Pink,Elizabeth II" \
     --wikisim $OUTPUT_DIR/wikisim_raw \
     --clickstream $CLICKSTREAMS_PATH \
     --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
@@ -254,6 +254,24 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPIAnalysis  -p $PAR
     --stats $OUTPUT_DIR/stats \
     --output $OUTPUT_DIR/cpi_analysis \
     --clickstream-output $OUTPUT_DIR/cpi_analysis_cs
+    
+# hdfs dfs -getmerge $OUTPUT_DIR/cpi_analysis tmp/$WIKI_cpi_analysis
+# hdfs dfs -get $OUTPUT_DIR/cpi_analysis_cs tmp/$WIKI_cpi_analysis_cs
+
+$FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPIAnalysis  -p $PARALLELISM $JAR \
+    --top-k 3 --articles "Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations,Daft Pink,Elizabeth II" \
+    --wikisim $OUTPUT_DIR/wikisim_raw_relative \
+    --clickstream $CLICKSTREAMS_PATH \
+    --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+    --langlinks $ENWIKI_LANGLINKS \
+    --lang simple \
+    --stats $OUTPUT_DIR/stats \
+    --output $OUTPUT_DIR/cpi_analysis_rel \
+    --clickstream-output $OUTPUT_DIR/cpi_analysis_cs_rel
+
+# hdfs dfs -getmerge $OUTPUT_DIR/cpi_analysis_rel tmp/$WIKI_cpi_analysis_rel
+# hdfs dfs -get $OUTPUT_DIR/cpi_analysis_cs_rel tmp/$WIKI_cpi_analysis_cs_rel
+
     
 ```
 

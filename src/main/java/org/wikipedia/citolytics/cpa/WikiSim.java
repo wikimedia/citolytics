@@ -5,9 +5,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.configuration.ConfigConstants;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.GlobalConfiguration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
@@ -74,15 +72,6 @@ public class WikiSim extends WikiSimAbstractJob<RecommendationPair> {
 
     public void init() {
         jobName = "WikiSim";
-
-        // Bug fix (heartbeat bug)
-        // https://issues.apache.org/jira/browse/FLINK-2299
-
-        Configuration clusterConfig = new Configuration();
-        clusterConfig.setString(ConfigConstants.AKKA_TRANSPORT_HEARTBEAT_PAUSE, "600s");
-        GlobalConfiguration.includeConfiguration(clusterConfig);
-
-        // ---
 
         ParameterTool params = ParameterTool.fromArgs(args);
 
