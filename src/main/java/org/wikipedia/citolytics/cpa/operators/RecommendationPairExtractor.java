@@ -45,9 +45,18 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
         backupRecommendations = config.getBoolean("backupRecommendations", false);
 
         String[] arr = config.getString("alpha", "1.0").split(",");
+
+        if(arr.length == 0) {
+            throw new Exception("No alpha value specified.");
+        }
+
         alphas = new double[arr.length];
         for (int i = 0; i < arr.length; i++) {
-            alphas[i] = Double.parseDouble(arr[i]);
+            try {
+                alphas[i] = Double.parseDouble(arr[i]);
+            } catch(NumberFormatException e) {
+                throw new Exception("Could not read alpha value: " + arr[i]);
+            }
         }
     }
 
