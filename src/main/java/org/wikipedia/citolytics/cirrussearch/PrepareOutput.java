@@ -63,7 +63,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             wikiSimJob.alpha = "0.855"; // From JCDL paper: a1=0.81, a2=0.9 -> a_mean = 0.855
             wikiSimJob.inputFilename = wikiDumpInputFilename;
             wikiSimJob.redirectsFilename = redirectsFilename;
-            wikiSimJob.ignoreMissingIds = !ignoreMissingIds; // Ensures that page ids exist
+            wikiSimJob.ignoreMissingIds = ignoreMissingIds; // Ensures that page ids exist
             wikiSimJob.resolveRedirects = resolveRedirects;
             wikiSimJob.relativeProximity = relativeProximity;
             wikiSimJob.backupRecommendations = backupRecommendations;
