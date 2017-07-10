@@ -27,12 +27,9 @@ public class RecommendationPair extends Tuple8<
         String, // page title B
         Double, // distance
         Integer, // count
-//        Long, // distSquared
-//        Long, // min
-//        Long, // max
-        CSVList<Double>, // CPA
         Integer, // page id A
-        Integer // page id B
+        Integer, // page id B
+        CSVList<Double> // CPA (must be last element)
         > {
     private final boolean enableMinMax = false;
     private final boolean enableDistSquared = false;
@@ -41,12 +38,9 @@ public class RecommendationPair extends Tuple8<
     public final static int HASH_KEY = 0;
     public final static int PAGE_A_KEY = 1;
     public final static int PAGE_B_KEY = 2;
-    public final static int PAGE_A_ID_KEY = 6;
-    public final static int PAGE_B_ID_KEY = 7;
-    public final static int CPI_LIST_KEY = 5;
-    private final static int MAX_KEY = 7; // disabled
-    private final static int MIN_KEY = 6; // disabled
-    private final static int DISTSQUARED_KEY = 5; // disabled
+    public final static int PAGE_A_ID_KEY = 5;
+    public final static int PAGE_B_ID_KEY = 6;
+    public final static int CPI_LIST_KEY = 7;
     private final static int COUNT_KEY = 4;
     private final static int DISTANCE_KEY = 3;
 
@@ -114,11 +108,6 @@ public class RecommendationPair extends Tuple8<
         setPageAId(0);
         setPageBId(0);
         setCount(1);
-        setDistSquared(0);
-        setMin(0);
-        setMax(0);
-        setMedian(.0);
-//        setField(new DoubleListValue(), CPI_LIST_KEY);
         setField(new CSVList<Double>(), CPI_LIST_KEY);
 
     }
@@ -137,11 +126,6 @@ public class RecommendationPair extends Tuple8<
 
     public void addCount(int count) {
         setCount(getCount() + count);
-    }
-
-    public void setDistSquared(long distSquared) {
-        if (enableDistSquared)
-            setField(distSquared, DISTSQUARED_KEY);
     }
 
     public void setCPI(String str) {
@@ -164,8 +148,10 @@ public class RecommendationPair extends Tuple8<
 
     public void setCPI(double[] cpi) {
         // DoubleListValue.valueOf(cpi)
-        this.f5 = new CSVList<>();
-        this.f5.addAll(Arrays.asList(ArrayUtils.toObject(cpi)));
+        CSVList<Double> list = new CSVList<>();
+        list.addAll(Arrays.asList(ArrayUtils.toObject(cpi)));
+
+        this.setField(list, CPI_LIST_KEY);
 
 //        setField(Arrays.asList(ArrayUtils.toObject(cpi)), CPI_LIST_KEY);
     }
@@ -196,20 +182,6 @@ public class RecommendationPair extends Tuple8<
         }
 
         return result;
-    }
-
-    public void setMin(long min) {
-        if (enableMinMax)
-            setField(min, MIN_KEY);
-    }
-
-    public void setMax(long max) {
-        if (enableMinMax)
-            setField(max, MAX_KEY);
-    }
-
-    public void setMedian(double median) {
-//        setField(median, 8);
     }
 
     public long getHash() {
@@ -252,12 +224,6 @@ public class RecommendationPair extends Tuple8<
         return getField(COUNT_KEY);
     }
 
-    public long getDistSquared() {
-        if (enableDistSquared)
-            return getField(DISTSQUARED_KEY);
-        else
-            return 0;
-    }
 
     public List<Double> getCPI() {
         return getField(CPI_LIST_KEY);
@@ -265,20 +231,6 @@ public class RecommendationPair extends Tuple8<
 
     public double getCPI(int alphaKey) {
         return getCPI().get(alphaKey);
-    }
-
-    public long getMin() {
-        if (enableMinMax)
-            return getField(MIN_KEY);
-        else
-            return 0;
-    }
-
-    public long getMax() {
-        if (enableMinMax)
-            return getField(MAX_KEY);
-        else
-            return 0;
     }
 
     @Override
@@ -320,12 +272,6 @@ public class RecommendationPair extends Tuple8<
 
         res.setDistance(Double.valueOf(cols[DISTANCE_KEY]));
         res.setCount(Integer.valueOf(cols[COUNT_KEY]));
-
-//        DoubleListValue cpi = new DoubleListValue();
-//        for (int i = CPI_LIST_KEY; i < cols.length; i++) {
-//            cpi.add(new DoubleValue(Double.valueOf(cols[i])));
-//        }
-//        res.setCPI(cpi);
 
         List<Double> cpi = new CSVList<>();
         for (int i = CPI_LIST_KEY; i < cols.length; i++) {

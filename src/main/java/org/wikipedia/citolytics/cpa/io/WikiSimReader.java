@@ -20,9 +20,9 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
-    private int fieldScore = 9;
-    private int fieldPageA = 1;
-    private int fieldPageB = 2;
+    private int fieldScore = RecommendationPair.CPI_LIST_KEY;
+    private int fieldPageA = RecommendationPair.PAGE_A_KEY;
+    private int fieldPageB = RecommendationPair.PAGE_B_KEY;
     private int fieldPageIdA = RecommendationPair.PAGE_A_ID_KEY;
     private int fieldPageIdB = RecommendationPair.PAGE_B_ID_KEY;
 
@@ -32,9 +32,12 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
 
-        fieldScore = parameter.getInteger("fieldScore", 8);
-        fieldPageA = parameter.getInteger("fieldPageA", 1);
-        fieldPageB = parameter.getInteger("fieldPageB", 2);
+        fieldScore = parameter.getInteger("fieldScore", fieldScore);
+        fieldPageA = parameter.getInteger("fieldPageA", fieldPageA);
+        fieldPageB = parameter.getInteger("fieldPageB", fieldPageB);
+        fieldPageIdA = parameter.getInteger("fieldPageIdA", fieldPageIdA);
+        fieldPageIdB = parameter.getInteger("fieldPageIdB", fieldPageIdB);
+
     }
 
     @Override
@@ -48,8 +51,8 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
         }
 
         try {
-            String scoreString = cols[RecommendationPair.CPI_LIST_KEY];
-//            String scoreString = cols[fieldScore];
+//            String scoreString = cols[RecommendationPair.CPI_LIST_KEY];
+            String scoreString = cols[fieldScore];
 
 
             // Create recommendations pair from cols
