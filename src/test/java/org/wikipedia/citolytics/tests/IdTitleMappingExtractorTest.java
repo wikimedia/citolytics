@@ -1,6 +1,5 @@
 package org.wikipedia.citolytics.tests;
 
-import org.apache.flink.api.java.LocalEnvironment;
 import org.junit.Test;
 import org.wikipedia.citolytics.cirrussearch.IdTitleMappingExtractor;
 import org.wikipedia.citolytics.cpa.types.IdTitleMapping;
@@ -8,6 +7,7 @@ import org.wikipedia.citolytics.tests.utils.Tester;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class IdTitleMappingExtractorTest extends Tester {
@@ -17,7 +17,10 @@ public class IdTitleMappingExtractorTest extends Tester {
         IdTitleMappingExtractor job = new IdTitleMappingExtractor();
 
         job.enableTestEnvironment()
-                .start("--input " + resource("wiki.xml", true)+ " --output print");
+                .start("--input " + resource("wiki.xml", true)+ " --output local");
+
+        assertEquals("Invalid output size", 7, job.getOutput().size());
+
     }
 
     @Test
@@ -33,8 +36,7 @@ public class IdTitleMappingExtractorTest extends Tester {
         job.enableTestEnvironment().start("--input " + resource("wiki.xml", true)
                 + " --output local");
 
-        LocalEnvironment env = new LocalEnvironment();
-        List<IdTitleMapping> expected = IdTitleMappingExtractor.getIdTitleMapping(env,
+        List<IdTitleMapping> expected = IdTitleMappingExtractor.getIdTitleMapping(getSilentEnv(),
                 resource("idtitle_mapping.in", true), null).collect();
 
 //        System.out.println(job.output);
