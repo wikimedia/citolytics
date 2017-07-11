@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.LocalEnvironment;
 import org.junit.ComparisonFailure;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 
@@ -143,4 +145,10 @@ public class Tester {
 
     }
 
+    protected ExecutionEnvironment getSilentEnv() {
+        ExecutionEnvironment env = new LocalEnvironment();
+        env.getConfig().disableSysoutLogging();
+
+        return env;
+    }
 }

@@ -16,6 +16,7 @@ import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 
 import java.util.*;
@@ -63,12 +64,15 @@ public class CPIAnalysis extends WikiSimAbstractJob<Tuple5<String, String, Doubl
         int fieldScore = getParams().getInt("score", WikiSimConfiguration.DEFAULT_FIELD_SCORE);
         int fieldPageA = getParams().getInt("page-a", WikiSimConfiguration.DEFAULT_FIELD_PAGE_A);
         int fieldPageB = getParams().getInt("page-b", WikiSimConfiguration.DEFAULT_FIELD_PAGE_B);
+        int fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
+        int fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
+
         String lang = getParams().get("lang");
         String langLinksPath = getParams().get("lang-links");
         String idTitleMappingPath = getParams().get("id-title-mapping");
 
         // Read recommendations and filter by source articles
-        DataSet<Recommendation> recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimPath, fieldPageA, fieldPageB, fieldScore)
+        DataSet<Recommendation> recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimPath, fieldPageA, fieldPageB, fieldScore, fieldPageIdA, fieldPageIdB)
                 .filter(new ArticleFilter<>(articles, Recommendation.SOURCE_TITLE_KEY));
 
         // Stats do not need to be filtered

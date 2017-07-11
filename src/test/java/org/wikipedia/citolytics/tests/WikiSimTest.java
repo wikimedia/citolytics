@@ -85,7 +85,7 @@ public class WikiSimTest extends Tester {
     public void testSimple() throws Exception {
         fixture = "simple.xml";
 
-        job.start("--input " + getInputPath() + " --output local");
+        job.start("--input " + getInputPath() + " --output local --ignore-missing-ids");
 
         assertOutput(job.getOutput(), getExpectedOutputPath());
 
@@ -99,7 +99,7 @@ public class WikiSimTest extends Tester {
     @Test
     public void testRelativeProximity() throws Exception {
         fixture = "relative_proximity.xml";
-        job.start("--input " + getInputPath() + " --relative-proximity --output local");
+        job.start("--input " + getInputPath() + " --relative-proximity --output local --ignore-missing-ids");
 
         assertOutput(job.getOutput(), getExpectedOutputPath());
 
@@ -109,7 +109,7 @@ public class WikiSimTest extends Tester {
     @Test
     public void testStructureProximity() throws Exception {
         fixture = "structure_proximity";
-        job.start("--input " + getInputPath() + " --structure-proximity --output local");
+        job.start("--input " + getInputPath() + " --structure-proximity --output local --ignore-missing-ids");
 
         assertOutput(job.getOutput(), getExpectedOutputPath());
     }
@@ -118,9 +118,10 @@ public class WikiSimTest extends Tester {
     public void testAlpha() throws Exception {
         fixture = "alpha.xml";
 
-        job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output local");
+        job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output local --ignore-missing-ids");
 //        job.start("--input " + getInputPath() + " --alpha 0.5,0.9,2.0,-1.0 --output " + resource("test.out"));
 
+        System.out.println(job.getOutput());
         assertOutput(job.getOutput(), getExpectedOutputPath());
     }
 

@@ -143,7 +143,7 @@ public class CalculationTest extends Tester {
         // with infobox removal= 118341
         // with old namespace check = 126253
         job.enableTestEnvironment()
-                .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --keep-infobox --output local").split(" "));
+                .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --keep-infobox --output local --ignore-missing-ids").split(" "));
 
         assertEquals("WikiSim result count is wrong (keep infobox)", 125751, job.output.size());
     }
@@ -153,7 +153,7 @@ public class CalculationTest extends Tester {
         // with old namespace check = 118341
         WikiSim job = new WikiSim();
         job.enableTestEnvironment()
-                .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output local").split(" "));
+                .start(("--input " + resource("ArticleStatsTest/wikiSeeAlso.xml") + " --output local --ignore-missing-ids").split(" "));
 
         assertEquals("WikiSim result count is wrong (removed infobox)", 117855, job.output.size());
     }
@@ -166,7 +166,7 @@ public class CalculationTest extends Tester {
         WikiSim job = new WikiSim();
         job
                 .enableTestEnvironment()
-                .start(("--input " + resource("wikisim_missingids.xml") + " --remove-missing-ids --output local").split(" "));
+                .start(("--input " + resource("wikisim_missingids.xml") + " --output local").split(" "));
 
         assertEquals("Invalid output size", 3, job.output.size());
 

@@ -5,12 +5,13 @@ import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.operators.*;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 
@@ -45,26 +46,23 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
         new SeeAlsoEvaluation().start(args);
     }
 
-    public void plan() {
-        ParameterTool params = ParameterTool.fromArgs(args);
+    public void plan() throws Exception {
 
-        if (args.length < 3) {
-            System.err.println("Input/output parameters missing!");
-            System.err.println("USAGE: --wikisim <result-set> --output <output> --gold <seealso-set> [--topk <int>] [--links <links-set)>] [--score <field>] [--page-a <field>] [--page-b <field>] [--enable-mrr]");
-            System.exit(1);
-        }
         setJobName("SeeAlso Evaluation");
 
-        wikiSimInputFilename = params.getRequired("wikisim");
-        outputFilename = params.getRequired("output");
-        seeAlsoInputFilename = params.getRequired("gold");
-        linksInputFilename = params.get("links", "nofilter");
+        wikiSimInputFilename = getParams().getRequired("wikisim");
+        outputFilename = getParams().getRequired("output");
+        seeAlsoInputFilename = getParams().getRequired("gold");
+        linksInputFilename = getParams().get("links", "nofilter");
 
-        int scoreField = params.getInt("score", 5);
-        int fieldPageA = params.getInt("page-a", 1);
-        int fieldPageB = params.getInt("page-b", 2);
-        boolean enableMRR = params.has("enable-mrr");
-        int topK = params.getInt("topk", 10);
+        int scoreField = getParams().getInt("score", RecommendationPair.CPI_LIST_KEY);
+        int fieldPageA = getParams().getInt("page-a", RecommendationPair.PAGE_A_KEY);
+        int fieldPageB = getParams().getInt("page-b", RecommendationPair.PAGE_B_KEY);
+        int fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
+        int fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
+
+        boolean enableMRR = getParams().has("enable-mrr");
+        int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
 
         // See also
         DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
@@ -90,11 +88,11 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
 
             config.setInteger("fieldPageA", fieldPageA);
             config.setInteger("fieldPageB", fieldPageB);
+            config.setInteger("fieldPageIdA", fieldPageIdA);
+            config.setInteger("fieldPageIdB", fieldPageIdB);
             config.setInteger("fieldScore", scoreField);
 
-            DataSet<Recommendation> wikiSimDataSet = env.readTextFile(wikiSimInputFilename)
-                    .flatMap(new WikiSimReader())
-                    .withParameters(config);
+            DataSet<Recommendation> wikiSimDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, config);
 
             // LinkFilter
             if (!linksInputFilename.isEmpty() && !linksInputFilename.equals("nofilter")) {

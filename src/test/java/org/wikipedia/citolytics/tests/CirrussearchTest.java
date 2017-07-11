@@ -69,7 +69,7 @@ public class CirrussearchTest extends Tester {
         PrepareOutput job = new PrepareOutput();
 
         job.enableTestEnvironment()
-                .start("--wikisim " + wikiSimPath + " --disable-scores --output local --topk 10");
+                .start("--wikisim " + wikiSimPath + " --disable-scores --output local --topk 10 --page-id-a -1 --page-id-b -1");
 
         assertEquals("Invalid number of results", 29, job.getOutput().size());
     }
@@ -79,7 +79,7 @@ public class CirrussearchTest extends Tester {
         PrepareOutput job = new PrepareOutput();
 
         job.enableTestEnvironment()
-                .start("--wikisim " + wikiSimPath + " --output " + outputPath);
+                .start("--wikisim " + wikiSimPath + " --output " + outputPath + " --page-id-a -1 --page-id-b -1");
     }
 
 

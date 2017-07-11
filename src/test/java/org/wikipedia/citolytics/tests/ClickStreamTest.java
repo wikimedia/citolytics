@@ -79,7 +79,7 @@ public class ClickStreamTest extends Tester {
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --summary"
-                + " --output local");
+                + " --output local --page-id-a -1 --page-id-b -1");
 
 //        System.out.println(job.output);
 
@@ -100,7 +100,7 @@ public class ClickStreamTest extends Tester {
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
                 + " --summary --topk 1"
-                + " --output local");
+                + " --output local --page-id-a -1 --page-id-b -1");
 
         assertEquals("Summary should have only a single result tuple", 1, job.output.size());
         assertEquals("Recommendations count invalid", 5, job.output.get(0).getRecommendationsCount());
@@ -119,7 +119,7 @@ public class ClickStreamTest extends Tester {
                 + "," + dataSetPath2 // Multiple inputs
                 + " --summary"
                 + " --top-recommendations " + resource("top_recommendations.out", true)
-                + " --output local");
+                + " --output local --page-id-a -1 --page-id-b -1");
 
 //        System.out.println(job.output);
 
@@ -138,7 +138,7 @@ public class ClickStreamTest extends Tester {
         setJob(new ClickStreamEvaluation()).start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
-                + " --output local");
+                + " --output local --page-id-a -1 --page-id-b -1");
 
 //        System.out.println(getJobOutputAsString(job));
 
@@ -151,7 +151,7 @@ public class ClickStreamTest extends Tester {
         setJob(new ClickStreamEvaluation()).start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath
                 + "," + dataSetPath2 // Multiple inputs
-                + " --topk 1 --output local");
+                + " --topk 1 --output local --page-id-a -1 --page-id-b -1");
 
 //        System.out.println(getJobOutputAsString(job));
 
@@ -177,7 +177,7 @@ public class ClickStreamTest extends Tester {
                 + " --gold " + dataSetPathSimpleLang
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
-                + " --output local");
+                + " --output local --page-id-a -1 --page-id-b -1");
 
 //        System.out.println(getJobOutputAsString(job));
 
@@ -193,7 +193,7 @@ public class ClickStreamTest extends Tester {
                 + " --lang simple"
                 + " --langlinks " + langLinksPath
                 + " --id-title-mapping " + resource("ClickStreamTest/idtitle_mapping.in")
-                + " --output local");
+                + " --output local --page-id-a -1 --page-id-b -1");
 
 //        System.out.println(job.output);
         assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
@@ -207,7 +207,7 @@ public class ClickStreamTest extends Tester {
         job.enableTestEnvironment().start("--wikisim " + wikiSimPath
                 + " --gold " + dataSetPath + "," + dataSetPath2 // Multiple inputs
                 + " --cpi x*log(z/(y+1)) --article-stats " + articleStatsPath
-                + " --output print");
+                + " --output print --page-id-a -1 --page-id-b -1");
     }
 
     @Test
@@ -236,8 +236,8 @@ public class ClickStreamTest extends Tester {
                         new ClickStreamResult(
                                 langPrefix + "QQQ",
                                 new ArrayList<>(Arrays.asList(new ClickStreamRecommendationResult[]{
-                                        new ClickStreamRecommendationResult(langPrefix + "CPA link", 3.0761422E7, 10),
-                                        new ClickStreamRecommendationResult(langPrefix + "CPA nolink", 3.0761422E7, 20)
+                                        new ClickStreamRecommendationResult(langPrefix + "CPA link", 1314.0, 10),
+                                        new ClickStreamRecommendationResult(langPrefix + "CPA nolink", 1314.0, 20)
                                 })),
                                 2,
                                 0,

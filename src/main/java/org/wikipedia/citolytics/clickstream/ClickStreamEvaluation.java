@@ -17,6 +17,7 @@ import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
+import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.operators.MLTInputMapper;
@@ -39,6 +40,9 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
     private static int fieldScore;
     private static int fieldPageA;
     private static int fieldPageB;
+    int fieldPageIdA;
+    int fieldPageIdB;
+
 
     private int topK = 10;
     private boolean mltResults = false;
@@ -66,9 +70,11 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         idTitleMappingFilename = params.get("id-title-mapping");
         topRecommendationsFilename = params.get("top-recommendations");
 
-        fieldScore = params.getInt("score", 5);
-        fieldPageA = params.getInt("page-a", 1);
-        fieldPageB = params.getInt("page-b", 2);
+        fieldScore = params.getInt("score", RecommendationPair.CPI_LIST_KEY);
+        fieldPageA = params.getInt("page-a", RecommendationPair.PAGE_A_KEY);
+        fieldPageB = params.getInt("page-b", RecommendationPair.PAGE_B_KEY);
+        fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
+        fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
     }
 
     public void plan() throws Exception {
@@ -91,8 +97,9 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
             jobName += " CPA Score=" + fieldScore + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
 
             recommendationSets = WikiSimReader.buildRecommendationSets(env,
-                    WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename,
-                    fieldPageA, fieldPageB, fieldScore), topK, cpiExpr, articleStatsFilename, false);
+                    WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore,
+                            fieldPageIdA, fieldPageIdB),
+                    topK, cpiExpr, articleStatsFilename, false);
 
         } else {
             // MLT

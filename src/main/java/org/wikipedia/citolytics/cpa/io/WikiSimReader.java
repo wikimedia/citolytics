@@ -57,15 +57,22 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
 
             // Create recommendations pair from cols
             RecommendationPair pair = new RecommendationPair(cols[fieldPageA], cols[fieldPageB]);
-            pair.setPageAId(Integer.valueOf(cols[fieldPageIdA]));
-            pair.setPageBId(Integer.valueOf(cols[fieldPageIdB]));
+
+            // Ignore page ids
+            if(fieldPageIdA >= 0 && fieldPageIdB >= 0) {
+                pair.setPageAId(Integer.valueOf(cols[fieldPageIdA]));
+                pair.setPageBId(Integer.valueOf(cols[fieldPageIdB]));
+            }
+
+            // Use only single CPI value
             pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
 //            pair.setCPI(scoreString);
 
             collectRecommendationsFromPair(pair, out, false, 0);
         } catch (Exception e) {
+            System.err.println("Cannot read WikiSim output. Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols));
             e.printStackTrace();
-            throw new Exception("Score field = " + fieldScore + "; cols length = " + cols.length + "; Raw = " + s + "\nArray =" + Arrays.toString(cols) + "\n" + e.getMessage());
+            throw new Exception(e);
         }
     }
 
@@ -85,22 +92,28 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
 
     }
 
-
-    public static DataSet<Recommendation> readWikiSimOutput(ExecutionEnvironment env, String filename,
-                                                            int fieldPageA, int fieldPageB, int fieldScore) throws Exception {
-
-        Log.info("Reading WikiSim from " + filename + "; scoreField=" + fieldScore);
-
-        Configuration config = new Configuration();
-
-        config.setInteger("fieldPageA", fieldPageA);
-        config.setInteger("fieldPageB", fieldPageB);
-        config.setInteger("fieldScore", fieldScore);
+    public static DataSet<Recommendation> readWikiSimOutput(ExecutionEnvironment env, String filename, Configuration config) throws Exception {
+        Log.info("Reading WikiSim from " + filename);
 
         // Read recommendation from files
         return env.readTextFile(filename)
                 .flatMap(new WikiSimReader())
                 .withParameters(config);
+    }
+
+    public static DataSet<Recommendation> readWikiSimOutput(ExecutionEnvironment env, String filename,
+                                                            int fieldPageA, int fieldPageB, int fieldScore, int fieldPageIdA, int fieldPageIdB) throws Exception {
+        Configuration config = new Configuration();
+
+        config.setInteger("fieldPageA", fieldPageA);
+        config.setInteger("fieldPageIdA", fieldPageIdA);
+
+        config.setInteger("fieldPageB", fieldPageB);
+        config.setInteger("fieldPageIdB", fieldPageIdB);
+
+        config.setInteger("fieldScore", fieldScore);
+
+        return readWikiSimOutput(env, filename, config);
     }
 
     public static DataSet<RecommendationSet> buildRecommendationSets(ExecutionEnvironment env,

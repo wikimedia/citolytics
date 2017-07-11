@@ -118,7 +118,7 @@ public class ArticleStatsTest extends Tester {
     public void testCPISampler() throws Exception {
 
         setJob(new CPISampler())
-                .start("--input " + resource("cpi_sampler.csv", true)+ " --output local -p 0.3");
+                .start("--input " + resource("cpi_sampler.csv", true)+ " --output local -p 0.3 --page-id-a -1 --page-id-b -1");
 
 //        assertEquals("Invalid sample size", 11, job.getOutput().size());
     }

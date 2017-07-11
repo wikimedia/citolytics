@@ -1,7 +1,7 @@
 <page>
     <title>Article A</title>
     <ns>0</ns>
-    <id>358</id>
+    <id>1</id>
     <revision>
         <id>625906990</id>
         <parentid>625773078</parentid>
@@ -33,7 +33,7 @@
 <page>
 <title>Article B</title>
 <ns>0</ns>
-<id>358</id>
+<id>2</id>
 <revision>
     <id>625906990</id>
     <parentid>625773078</parentid>
@@ -64,7 +64,7 @@
 <page>
 <title>Article C</title>
 <ns>0</ns>
-<id>358</id>
+<id>3</id>
 <revision>
     <id>625906990</id>
     <parentid>625773078</parentid>
@@ -94,7 +94,7 @@
 <page>
 <title>Article D</title>
 <ns>0</ns>
-<id>358</id>
+<id>4</id>
 <revision>
     <id>625906990</id>
     <parentid>625773078</parentid>
@@ -124,7 +124,7 @@
 <page>
 <title>Article E</title>
 <ns>0</ns>
-<id>358</id>
+<id>5</id>
 <revision>
     <id>625906990</id>
     <parentid>625773078</parentid>
@@ -156,7 +156,7 @@
 <page>
 <title>SeeAlso Article 1</title>
 <ns>0</ns>
-<id>358</id>
+<id>6</id>
 <revision>
     <id>625906990</id>
     <parentid>625773078</parentid>
@@ -193,7 +193,7 @@
 <page>
 <title>SeeAlso Article 2</title>
 <ns>0</ns>
-<id>358</id>
+<id>7</id>
 <revision>
     <id>625906990</id>
     <parentid>625773078</parentid>
@@ -231,7 +231,7 @@
 <page>
 <title>Article a</title>
 <ns>0</ns>
-<id>11858</id>
+<id>8</id>
 <redirect title="Article A"/>
 <revision>
     <id>518833992</id>
@@ -253,7 +253,7 @@
 <page>
 <title>Article b</title>
 <ns>0</ns>
-<id>11858</id>
+<id>9</id>
 <redirect title="Article B"/>
 <revision>
     <id>518833992</id>

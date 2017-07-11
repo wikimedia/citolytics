@@ -44,6 +44,9 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         int fieldScore = getParams().getInt("score", WikiSimConfiguration.DEFAULT_FIELD_SCORE);
         int fieldPageA = getParams().getInt("page-a", WikiSimConfiguration.DEFAULT_FIELD_PAGE_A);
         int fieldPageB = getParams().getInt("page-b", WikiSimConfiguration.DEFAULT_FIELD_PAGE_B);
+        int fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
+        int fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
+
         boolean disableScores = getParams().has("disable-scores");
         boolean elasticBulkSyntax = getParams().has("enable-elastic");
         boolean ignoreMissingIds = getParams().has("ignore-missing-ids");
@@ -91,7 +94,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         } else if(wikiSimInputFilename != null) {
             // Use existing result list;
-            recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore);
+            recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore, fieldPageIdA, fieldPageIdB);
         } else {
             throw new Exception("Either --wikidump or --wikisim parameter must be provided.");
         }

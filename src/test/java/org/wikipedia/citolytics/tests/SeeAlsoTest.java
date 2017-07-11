@@ -221,7 +221,7 @@ public class SeeAlsoTest extends Tester {
         setJob(new SeeAlsoEvaluation())
                 .start("--wikisim " + resource("wikisim.in", true)
                         + " --gold " + resource("seealso_links.in", true)
-                        + " --output local");
+                        + " --output local --page-id-a -1 --page-id-b -1");
 
         assertEquals("Invalid output count", 7, job.output.size());
     }
@@ -233,7 +233,7 @@ public class SeeAlsoTest extends Tester {
                 .start("--wikisim " + resource("wikisim.in", true)
                         + " --gold " + resource("seealso_links.in", true)
                         + " --links " + resource("links.in", true)
-                        + " --output local");
+                        + " --output local --page-id-a -1 --page-id-b -1");
 
         assertEquals("Invalid output count", 7, job.output.size());
     }
