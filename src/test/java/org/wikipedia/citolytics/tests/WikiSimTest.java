@@ -79,15 +79,25 @@ public class WikiSimTest extends Tester {
     }
 
 
-
-
     @Test
     public void testSimple() throws Exception {
         fixture = "simple.xml";
 
+        job.start("--input " + getInputPath() + " --output local");
+
+        assertEquals("No results should be returned.", 0, job.getOutput().size());
+
+    }
+
+    @Test
+    public void testSimpleIgnoreMissingIds() throws Exception {
+        fixture = "simple.xml";
+
         job.start("--input " + getInputPath() + " --output local --ignore-missing-ids");
 
-        assertOutput(job.getOutput(), getExpectedOutputPath());
+        assertJobOutputStringWithFixture(job, "Invalid output");
+
+//        assertOutput(job.getOutput(), getExpectedOutputPath());
 
 //        job.enableSingleOutputFile()
 //                .silent()
@@ -129,9 +139,7 @@ public class WikiSimTest extends Tester {
     public void testSimpleWithRedirects() throws Exception {
         fixture = "simple_with_redirects.xml";
 
-
     }
-
 
     @Test
     public void testValidateWikiSimOutput() throws Exception {

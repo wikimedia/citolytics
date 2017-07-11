@@ -38,7 +38,6 @@ public class MissingIdRemover implements FlatJoinFunction<RecommendationPair, Id
      * @return Cleaned result set
      */
     public static DataSet<RecommendationPair> removeMissingIds(DataSet<RecommendationPair> wikiSimResults, DataSet<IdTitleMapping> idTitleMapping) throws Exception {
-        idTitleMapping.print();
 
         return wikiSimResults
                 // page A
