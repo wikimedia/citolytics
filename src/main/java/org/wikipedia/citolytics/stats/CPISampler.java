@@ -1,13 +1,12 @@
 package org.wikipedia.citolytics.stats;
 
-import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
+import org.wikipedia.citolytics.stats.utils.RandomSampler;
 
 /**
  * Extracts a sample from all recommendations for analyzing CPI values.
@@ -36,24 +35,15 @@ public class CPISampler extends WikiSimAbstractJob<Tuple1<Double>> {
                 .map(new MapFunction<Recommendation, Tuple1<Double>>() {
                     @Override
                     public Tuple1<Double> map(Recommendation recommendation) throws Exception {
-                        double decimals = 10000.0;
-                        return new Tuple1<>(Math.round(recommendation.getScore() * decimals) / decimals);
+                        return new Tuple1<>(roundToDecimals(recommendation.getScore(), 5));
                     }
                 });
-
-
     }
 
-    public class RandomSampler<T extends Tuple> implements FilterFunction<T> {
-        private double p = 0.1;
-
-        RandomSampler(double p) {
-            this.p = p;
-        }
-
-        @Override
-        public boolean filter(T t) throws Exception {
-            return Math.random() < p;
-        }
+    public static double roundToDecimals(double value, int decimals) {
+        double f = Math.pow(10, decimals);
+        return Math.round(value * f) / f;
     }
+
+
 }

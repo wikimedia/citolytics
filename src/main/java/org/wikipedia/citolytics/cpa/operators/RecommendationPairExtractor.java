@@ -26,12 +26,19 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
 
     private double[] alphas = new double[]{1.0};
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
-    private boolean relativeProximity = false;
+    public boolean relativeProximity = false;
     private boolean structureProximity = false;
     private boolean backupRecommendations = false;
     private Configuration config;
 
     public RecommendationPairExtractor() {
+    }
+
+    public void enableRelativeProximity() {
+        relativeProximity = true;
+        for (int i = 0; i < alphas.length; i++) {
+            alphas[i] = -1. * alphas[i];
+        }
     }
 
     @Override
@@ -140,7 +147,7 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
      * @param doc Processed and valid Wiki document
      * @param out Collector
      */
-    private void collectLinkPairs(WikiDocument doc, Collector<RecommendationPair> out) {
+    public void collectLinkPairs(WikiDocument doc, Collector<RecommendationPair> out) throws Exception {
 
         // Loop all link pairs
         for (Map.Entry<String, Integer> outLink1 : doc.getOutLinks()) {
@@ -176,7 +183,7 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
     /**
      * Compute CPI values for different alpha values
      *
-     * @param proximity
+     * @param proximity The actual proximity value
      * @return CPI values
      */
     private double[] computeCPISet(double proximity) {
@@ -218,9 +225,12 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
      */
     public void collectLinkPairsBasedOnStructure(WikiDocument doc, Collector<RecommendationPair> out) throws Exception {
 
-        if(alphas.length != 1 && alphas[0] != 1.0) {
+        if(alphas.length != 1 && Math.abs(alphas[0]) != 1.0) {
             throw new Exception("With using structure-based proximity the alpha values cannot be used");
         }
+
+        // Disable alphas (we use proximity^-alpha)
+        alphas[0] = -1;
 
         String text = doc.getCleanText();
 

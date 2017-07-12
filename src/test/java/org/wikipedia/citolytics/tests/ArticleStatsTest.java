@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.wikipedia.citolytics.stats.ArticleStats;
 import org.wikipedia.citolytics.stats.CPIAnalysis;
 import org.wikipedia.citolytics.stats.CPISampler;
+import org.wikipedia.citolytics.stats.LinkDistanceSampler;
 import org.wikipedia.citolytics.tests.utils.Tester;
 import org.wikipedia.processing.DocumentProcessor;
 import org.wikipedia.processing.types.WikiDocument;
@@ -137,4 +138,25 @@ public class ArticleStatsTest extends Tester {
         assertJobOutputStringWithResource(job, "ArticleStatsTest/cpi_analysis.expected", "Invalid results");
     }
 
+    @Test
+    public void testLinkDistanceSample() throws Exception {
+        setJob(new LinkDistanceSampler())
+                .start("--input " + resource("wikiSeeAlso.xml", true)
+                        + " --output " + resource("link_distance_sampler.out", true)
+                        + " --p 1.0"
+                );
+
+        assertTestResources("Invalid output for absolute proximity",
+                "link_distance_sampler.out.abs.expected",
+                "link_distance_sampler.out.abs");
+
+        assertTestResources("Invalid output for relative proximity",
+                "link_distance_sampler.out.rel.expected",
+                "link_distance_sampler.out.rel");
+
+        assertTestResources("Invalid output for structure proximity",
+                "link_distance_sampler.out.str.expected",
+                "link_distance_sampler.out.str");
+
+    }
 }

@@ -5,7 +5,7 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
-import org.wikipedia.citolytics.stats.ArticleStatsTuple;
+import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
 
 /**
  * Recomputes CPI value with script expression, e.g. to use idf.

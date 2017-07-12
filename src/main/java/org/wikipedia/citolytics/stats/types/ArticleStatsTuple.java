@@ -1,4 +1,4 @@
-package org.wikipedia.citolytics.stats;
+package org.wikipedia.citolytics.stats.types;
 
 import org.apache.flink.api.java.tuple.Tuple6;
 

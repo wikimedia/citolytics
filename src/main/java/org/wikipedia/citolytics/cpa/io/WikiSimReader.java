@@ -14,7 +14,7 @@ import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.operators.RecommendationSetBuilder;
 import org.wikipedia.citolytics.stats.ArticleStats;
-import org.wikipedia.citolytics.stats.ArticleStatsTuple;
+import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;

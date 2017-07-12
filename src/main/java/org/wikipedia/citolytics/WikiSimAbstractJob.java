@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  */
 public abstract class WikiSimAbstractJob<T extends Tuple> {
     private int outputParallelism = -1;
+    public boolean disableOutput = false;
     public String[] args;
     private ParameterTool params;
 
@@ -145,7 +146,8 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
     }
 
     private void execute() throws Exception {
-        writeOutput();
+        if(!disableOutput)
+            writeOutput();
     }
 
     /**

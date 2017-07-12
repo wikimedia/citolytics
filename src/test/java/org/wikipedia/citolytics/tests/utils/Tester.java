@@ -55,6 +55,11 @@ public class Tester {
 
     }
 
+    protected void assertTestResources(String message, String expectedPath, String actualPath) throws Exception {
+
+        assertEquals(message, getResourceContents(expectedPath, true),  getResourceContents(actualPath, true));
+    }
+
     protected void assertJobOutputJSONWithResource(WikiSimAbstractJob job, String resourcePath, String message) throws Exception {
         String[] actualOutput = getJobOutputAsString(job).split("\n");
         String[] expectedOutput = FileUtils.readFileToString(new File(getClass().getClassLoader().getResources(resourcePath).nextElement().getPath())).split("\n");
@@ -124,6 +129,20 @@ public class Tester {
         } catch (NoSuchElementException | IOException e) {
             throw new FileNotFoundException("Test resource not found: " + filename);
         }
+    }
+
+    public String getResourceContents(String filename, boolean testClassDirectory) throws FileNotFoundException {
+        if(testClassDirectory) {
+            filename = getClass().getSimpleName() + "/" + filename;
+        }
+
+        try {
+            filename = getClass().getClassLoader().getResources(filename).nextElement().getPath();
+            return FileUtils.readFileToString(new File(filename));
+        } catch (NoSuchElementException | IOException e) {
+            throw new FileNotFoundException("Test resource not found: " + filename);
+        }
+
     }
 
     public String getFileContents(String fname) {

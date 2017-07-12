@@ -14,6 +14,8 @@ import org.wikipedia.citolytics.cpa.types.RedirectMapping;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.linkgraph.LinksExtractor;
 import org.wikipedia.citolytics.redirects.single.WikiSimRedirects;
+import org.wikipedia.citolytics.stats.types.ArticleInLinksTuple;
+import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
 import org.wikipedia.processing.DocumentProcessor;
 import org.wikipedia.processing.types.WikiDocument;
 

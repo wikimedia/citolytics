@@ -1,11 +1,9 @@
 package org.wikipedia.citolytics.stats;
 
 import org.apache.flink.api.common.functions.CoGroupFunction;
-import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.core.fs.FileSystem;
@@ -18,6 +16,8 @@ import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
+import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
+import org.wikipedia.citolytics.stats.utils.ArticleFilter;
 
 import java.util.*;
 
@@ -162,18 +162,5 @@ public class CPIAnalysis extends WikiSimAbstractJob<Tuple5<String, String, Doubl
         }
     }
 
-    class ArticleFilter<T extends Tuple> implements FilterFunction<T> {
-        private Set<String> articles;
-        private int field;
 
-        ArticleFilter(Set<String> articles, int field) {
-            this.articles = articles;
-            this.field = field;
-        }
-
-        @Override
-        public boolean filter(T recommendation) throws Exception {
-            return articles.contains(recommendation.getField(field));
-        }
-    }
 }
