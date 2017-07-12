@@ -1,7 +1,7 @@
 package org.wikipedia.citolytics.stats;
 
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.java.tuple.Tuple1;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
@@ -11,7 +11,7 @@ import org.wikipedia.citolytics.stats.utils.RandomSampler;
 /**
  * Extracts a sample from all recommendations for analyzing CPI values.
  */
-public class CPISampler extends WikiSimAbstractJob<Tuple1<Double>> {
+public class CPISampler extends WikiSimAbstractJob<Tuple2<Double, Integer>> {
 
     public static void main(String[] args) throws Exception {
         new CPISampler().start(args);
@@ -32,12 +32,14 @@ public class CPISampler extends WikiSimAbstractJob<Tuple1<Double>> {
 
         result = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore, fieldPageIdA, fieldPageIdB)
                 .filter(new RandomSampler<Recommendation>(p))
-                .map(new MapFunction<Recommendation, Tuple1<Double>>() {
+                .map(new MapFunction<Recommendation, Tuple2<Double, Integer>>() {
                     @Override
-                    public Tuple1<Double> map(Recommendation recommendation) throws Exception {
-                        return new Tuple1<>(roundToDecimals(recommendation.getScore(), 5));
+                    public Tuple2<Double, Integer> map(Recommendation recommendation) throws Exception {
+                        return new Tuple2<>(roundToDecimals(recommendation.getScore(), 5), 1);
                     }
-                });
+                })
+                .groupBy(0)
+                .sum(1);
     }
 
     public static double roundToDecimals(double value, int decimals) {

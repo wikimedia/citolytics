@@ -275,6 +275,18 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPIAnalysis  -p $PAR
     
 ```
 
+### Link distance sampler 
+
+```
+$FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.LinkDistanceSampler  -p $PARALLELISM $JAR \
+    --input $WIKI_DUMP \
+    --p 0.1 \
+    --stats $OUTPUT_DIR/stats \
+    --output $OUTPUT_DIR/cpi_analysis_rel \
+    --output $OUTPUT_DIR/linkdistance
+```
+
+
 #### Get detailed link graph (debugging cpa rankings)
 
 [WIKI DATASET] [REDIRECTS] [LINKTUPLE CSV] [OUTPUT]
