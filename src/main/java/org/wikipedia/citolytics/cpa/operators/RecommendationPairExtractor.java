@@ -36,9 +36,10 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
 
     public void enableRelativeProximity() {
         relativeProximity = true;
-        for (int i = 0; i < alphas.length; i++) {
-            alphas[i] = -1. * alphas[i];
-        }
+    }
+
+    public void setAlphas(double[] alphas) {
+        this.alphas = alphas;
     }
 
     @Override

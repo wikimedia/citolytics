@@ -62,8 +62,11 @@ public class LinkDistanceSampler extends WikiSimAbstractJob<Tuple> {
                 if (doc == null) return;
 
                 // Absolute distance
+                RecommendationPairExtractor absExtractor = new RecommendationPairExtractor();
+                absExtractor.setAlphas(new double[]{-1.0});
+
                 List<RecommendationPair> absPairs = new ArrayList<>();
-                new RecommendationPairExtractor().collectLinkPairs(doc, new ListCollector<>(absPairs));
+                absExtractor.collectLinkPairs(doc, new ListCollector<>(absPairs));
 
                 for(RecommendationPair rec: absPairs) {
                     out.collect(new Tuple2<>(ABSOLUTE_DISTANCE, roundToDecimals(rec.getCPI(0), DECIMALS)));
@@ -72,6 +75,7 @@ public class LinkDistanceSampler extends WikiSimAbstractJob<Tuple> {
                 // Relative distance
                 RecommendationPairExtractor relExtractor = new RecommendationPairExtractor();
                 relExtractor.enableRelativeProximity();
+                relExtractor.setAlphas(new double[]{-1.0});
 
                 List<RecommendationPair> relPairs = new ArrayList<>();
                 relExtractor.collectLinkPairs(doc, new ListCollector<>(relPairs));
