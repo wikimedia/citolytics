@@ -2,15 +2,15 @@ package org.wikipedia.citolytics.seealso.types;
 
 import org.apache.flink.api.java.tuple.Tuple11;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
-public class SeeAlsoEvaluationResult extends Tuple11<String, ArrayList<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer> {
+public class SeeAlsoEvaluationResult extends Tuple11<String, Collection<String>, Integer, WikiSimComparableResultList<Double>, Integer, Double, Double, Double, Integer, Integer, Integer> {
     public SeeAlsoEvaluationResult() {
     }
 
     public SeeAlsoEvaluationResult(
             String article,
-            ArrayList<String> seeAlsoLinks,
+            Collection<String> seeAlsoLinks,
             int seeAlsoLinksCount,
             WikiSimComparableResultList<Double> retrievedDocs,
             int retrievedDocsCount,

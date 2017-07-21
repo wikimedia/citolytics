@@ -2,10 +2,10 @@ package org.wikipedia.citolytics.seealso.operators;
 
 import com.google.common.collect.Ordering;
 import org.apache.flink.api.common.functions.CoGroupFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
+import org.wikipedia.citolytics.seealso.types.SeeAlsoLinks;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 import org.wikipedia.citolytics.seealso.utils.EvaluationMeasures;
@@ -13,9 +13,10 @@ import org.wikipedia.citolytics.seealso.utils.EvaluationMeasures;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class EvaluateSeeAlso implements CoGroupFunction<
-        Tuple2<String, ArrayList<String>>,
+        SeeAlsoLinks,
         RecommendationSet,
         SeeAlsoEvaluationResult
         > {
@@ -33,13 +34,13 @@ public class EvaluateSeeAlso implements CoGroupFunction<
     }
 
     @Override
-    public void coGroup(Iterable<Tuple2<String, ArrayList<String>>> a, Iterable<RecommendationSet> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
-        Iterator<Tuple2<String, ArrayList<String>>> iteratorA = a.iterator();
+    public void coGroup(Iterable<SeeAlsoLinks> a, Iterable<RecommendationSet> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
+        Iterator<SeeAlsoLinks> iteratorA = a.iterator();
         Iterator<RecommendationSet> iteratorB = b.iterator();
 
         if (iteratorA.hasNext()) {
-            Tuple2<String, ArrayList<String>> recordA = iteratorA.next();
-            List<String> seeAlsoList = recordA.getField(1);
+            SeeAlsoLinks seeAlsoLinks = iteratorA.next();
+            Set<String> seeAlsoList = seeAlsoLinks.getLinks();
 
             List<WikiSimComparableResult<Double>> sortedList = new ArrayList<>();
 
@@ -56,22 +57,22 @@ public class EvaluateSeeAlso implements CoGroupFunction<
 
                 List<String> resultList = getResultNamesAsList(sortedList);
 
-                topKScore = EvaluationMeasures.getTopKScore(resultList, seeAlsoList);
-                hrr = EvaluationMeasures.getHarmonicReciprocalRank(resultList, seeAlsoList);
+                topKScore = EvaluationMeasures.getTopKScore(resultList, new ArrayList<>(seeAlsoList));
+                hrr = EvaluationMeasures.getHarmonicReciprocalRank(resultList, new ArrayList<>(seeAlsoList));
 
                 if (enableMRR) {
-                    performance = EvaluationMeasures.getMeanReciprocalRank(resultList, seeAlsoList);
+                    performance = EvaluationMeasures.getMeanReciprocalRank(resultList, new ArrayList<>(seeAlsoList));
                 } else {
                     performance = EvaluationMeasures.getMeanAveragePrecision(resultList, seeAlsoList);
                 }
 
-                matches = EvaluationMeasures.getMatchesCount(resultList, seeAlsoList);
+                matches = EvaluationMeasures.getMatchesCount(resultList, new ArrayList<>(seeAlsoList));
             }
 
             out.collect(new SeeAlsoEvaluationResult(
-                    (String) recordA.getField(0),
-                    (ArrayList<String>) recordA.getField(1),
-                    ((ArrayList<String>) recordA.getField(1)).size(),
+                    seeAlsoLinks.getArticle(),
+                    seeAlsoLinks.getLinks(),
+                    seeAlsoLinks.getLinks().size(),
                     new WikiSimComparableResultList<>(sortedList),
                     sortedList.size(),
                     hrr,

@@ -12,10 +12,13 @@ import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
-import org.wikipedia.citolytics.seealso.operators.*;
+import org.wikipedia.citolytics.seealso.operators.EvaluateSeeAlso;
+import org.wikipedia.citolytics.seealso.operators.MLTInputMapper;
+import org.wikipedia.citolytics.seealso.operators.RecommendationSetBuilder;
+import org.wikipedia.citolytics.seealso.operators.SeeAlsoInputMapper;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
+import org.wikipedia.citolytics.seealso.types.SeeAlsoLinks;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Pattern;
@@ -53,7 +56,6 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
         wikiSimInputFilename = getParams().getRequired("wikisim");
         outputFilename = getParams().getRequired("output");
         seeAlsoInputFilename = getParams().getRequired("gold");
-        linksInputFilename = getParams().get("links", "nofilter");
 
         int scoreField = getParams().getInt("score", RecommendationPair.CPI_LIST_KEY);
         int fieldPageA = getParams().getInt("page-a", RecommendationPair.PAGE_A_KEY);
@@ -65,13 +67,14 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
         int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
 
         // See also
-        DataSet<Tuple2<String, ArrayList<String>>> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
+        DataSet<SeeAlsoLinks> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
                 .map(new SeeAlsoInputMapper())
                 .groupBy(0)
-                .reduce(new ReduceFunction<Tuple2<String, ArrayList<String>>>() {
+                .reduce(new ReduceFunction<SeeAlsoLinks>() {
                     @Override
-                    public Tuple2<String, ArrayList<String>> reduce(Tuple2<String, ArrayList<String>> a, Tuple2<String, ArrayList<String>> b) throws Exception {
-                        a.f1.addAll(b.f1);
+                    public SeeAlsoLinks reduce(SeeAlsoLinks a, SeeAlsoLinks b) throws Exception {
+                        // Merge duplicates in "See also" links
+                        a.merge(b);
 
                         return a;
                     }
@@ -93,21 +96,6 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
             config.setInteger("fieldScore", scoreField);
 
             DataSet<Recommendation> wikiSimDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, config);
-
-            // LinkFilter
-            if (!linksInputFilename.isEmpty() && !linksInputFilename.equals("nofilter")) {
-                wikiSimDataSet = wikiSimDataSet
-                        .coGroup(getLinkDataSet(env, linksInputFilename))
-                        .where(0)
-                        .equalTo(0)
-                        .with(new LinkExistsFilter());
-
-                seeAlsoDataSet = seeAlsoDataSet
-                        .coGroup(getLinkDataSet(env, linksInputFilename))
-                        .where(0)
-                        .equalTo(0)
-                        .with(new SeeAlsoLinkExistsFilter());
-            }
 
             wikiSimGroupedDataSet = wikiSimDataSet
                     .groupBy(0)

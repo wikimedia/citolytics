@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
  *
  */
 public class DocumentProcessor implements Serializable {
-    private static final String INVALID_NAMESPACES_FILENAME = "invalid_namespaces.txt";
     public static final String INFOBOX_TAG = "{{Infobox";
 
     public static final int WIKI2006_ID_MATCH_GROUP = 2;

@@ -54,24 +54,25 @@ public class SeeAlsoExtractor extends WikiSimAbstractJob<Tuple3<String, String, 
         DataSource<String> wikiDump = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename);
 
         // Multi-language support
-        String langLinksPath = params.get("lang-links");
+        String langLinksPath = params.get("input-lang-links");
         String inputLang = params.get("input-lang");
+        String outputLang = params.get("output-lang");
 
         DocumentProcessor dp = new DocumentProcessor();
 
         if(inputLang != null) {
+            inputLang = inputLang.replace("wiki", "");
             dp.setSeeAlsoTitleByLanguage(inputLang);
         }
 
         // Extract "See also" links from Wikipedia dump
         DataSet<LinkPair> seeAlsolinkPairs = wikiDump.flatMap(new Extractor(dp));
 
-
         // Translate "See also" links if requested
-        if(inputLang != null && langLinksPath != null) {
+        if(outputLang != null && langLinksPath != null) {
             // Load intermediate data sets (output is enwiki)
             DataSet<IdTitleMapping> idTitleMappings = IdTitleMappingExtractor.extractIdTitleMapping(env, wikiDump);
-            DataSet<LangLinkTuple> langLinks = MultiLang.readLangLinksDataSet(env, langLinksPath, "en");
+            DataSet<LangLinkTuple> langLinks = MultiLang.readLangLinksDataSet(env, langLinksPath, outputLang);
 
             // Find page ids for source and target titles
             DataSet<LinkPairWithIds> linkPairsWithIds = seeAlsolinkPairs

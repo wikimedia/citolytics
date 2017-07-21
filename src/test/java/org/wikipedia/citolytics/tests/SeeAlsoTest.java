@@ -31,8 +31,11 @@ public class SeeAlsoTest extends Tester {
         setJob(new SeeAlsoExtractor())
                 .start("--input " + resource("wiki_dump_de.xml.in", true)
                         + " --input-lang de"
-                        + " --lang-links " + resource("lang_links.in", true)
+                        + " --output-lang en"
+                        + " --input-lang-links " + resource("lang_links.in", true)
                         + " --output local");
+
+//        System.out.println(getJobOutputAsString());
 
         assertEquals("Invalid see also article count extracted", 2, job.output.size());
     }

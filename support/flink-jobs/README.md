@@ -170,15 +170,17 @@ The following jobs perform pre-processing or analysis tasks.
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtractor  -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
-        --output $SEEALSO_PATH
+        --input-lang $WIKI \
+        --output $SEEALSO_PATH/for_$WIKI/from_$WIKI
         
 With multi-language translation (See [cirrusearch.md](cirrussearch.md) for lang-links extraction)
 
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.seealso.SeeAlsoExtractor  -p $PARALLELISM $JAR \
         --input $WIKI_DUMP \
-        --input-lang de \
-        --lang-links $LANGLINKS \
-        --output $SEEALSO_PATH.$WIKI
+        --input-lang $WIKI \
+        --input-lang-links $LANGLINKS \
+        --output-lang simple \
+        --output $SEEALSO_PATH/for_simplewiki/from_$WIKI
 
                         
 
@@ -237,7 +239,10 @@ flink run -p 96 -c CheckOutputIntegrity \
 $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPISampler -p $PARALLELISM $JAR \
     --input $OUTPUT_DIR/wikisim_raw \
     --output $OUTPUT_DIR/cpi_sample_0_1 \
+    --page-a-id -1 --page-b-id -1 \
     --p 0.1
+    
+# hdfs dfs -getmerge $OUTPUT_DIR/cpi_sample_0_1 tmp/$WIKI_cpi_sample_0_1
 ```
 
 ### CPI Analysis (extract data for analysing CPI values)
@@ -280,10 +285,9 @@ $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.CPIAnalysis  -p $PAR
 ```
 $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.stats.LinkDistanceSampler  -p $PARALLELISM $JAR \
     --input $WIKI_DUMP \
-    --p 0.1 \
+    --p 1.0 \
     --stats $OUTPUT_DIR/stats \
-    --output $OUTPUT_DIR/cpi_analysis_rel \
-    --output $OUTPUT_DIR/linkdistance
+    --output $OUTPUT_DIR/link_distance
 ```
 
 
