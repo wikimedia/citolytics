@@ -278,6 +278,7 @@ public class DocumentProcessor implements Serializable {
     public String getSeeAlsoTitleByLanguage(String lang) throws Exception {
         switch (lang) {
             case "en": return "see also,related pages,related articles";
+            case "simple": return getSeeAlsoTitleByLanguage("en");
             case "de": return "siehe auch";
             default:
                 throw new Exception("Language is not supported.");
