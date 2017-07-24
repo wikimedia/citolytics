@@ -4,6 +4,7 @@ import com.google.common.collect.Ordering;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
+import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoLinks;
 import org.wikipedia.citolytics.seealso.types.WikiSimComparableResult;
@@ -21,7 +22,7 @@ public class EvaluateSeeAlso implements CoGroupFunction<
         SeeAlsoEvaluationResult
         > {
 
-    private int topK = 10;
+    private int topK = WikiSimConfiguration.DEFAULT_TOP_K;
 
     public EvaluateSeeAlso(int topK) {
         this.topK = topK;

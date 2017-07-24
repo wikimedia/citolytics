@@ -2,6 +2,7 @@ package org.wikipedia.citolytics.seealso;
 
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
@@ -62,8 +63,7 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
         int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
 
         // See also
-        DataSet<SeeAlsoLinks> seeAlsoDataSet = env.readTextFile(seeAlsoInputFilename)
-                .map(new SeeAlsoInputMapper())
+        DataSet<SeeAlsoLinks> seeAlsoDataSet = readSeeAlsoDataSet(env, seeAlsoInputFilename)
                 .groupBy(0)
                 .reduce(new ReduceFunction<SeeAlsoLinks>() {
                     @Override
@@ -106,6 +106,31 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
         // Summarize results if requested
         if(summary) {
             summarize(SeeAlsoEvaluationResult.getSummaryFields());
+        }
+    }
+
+    /**
+     * Read multiple "See also" data sets (comma separated). Merge is required.
+     *
+     * @param env
+     * @param path
+     * @return
+     */
+    private static DataSet<SeeAlsoLinks> readSeeAlsoDataSet(ExecutionEnvironment env, String path) {
+        String[] paths = path.split(",");
+
+        if(paths.length == 1) {
+            return env.readTextFile(path).map(new SeeAlsoInputMapper());
+        } else {
+            DataSet<SeeAlsoLinks> dataSet = null;
+            for(String p: paths) {
+                if(dataSet == null) {
+                    dataSet = env.readTextFile(path).map(new SeeAlsoInputMapper());
+                } else {
+                    dataSet = dataSet.union(env.readTextFile(path).map(new SeeAlsoInputMapper()));
+                }
+            }
+            return dataSet;
         }
     }
 }
