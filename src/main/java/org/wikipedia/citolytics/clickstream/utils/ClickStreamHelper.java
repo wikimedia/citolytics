@@ -16,6 +16,7 @@ import org.wikipedia.citolytics.multilang.LangLinkTuple;
 import org.wikipedia.citolytics.multilang.MultiLang;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Using Wikipedia ClickStream data set as relevance judgements.
@@ -159,10 +160,22 @@ public class ClickStreamHelper {
                     @Override
                     public ClickStreamTuple reduce(ClickStreamTuple a, ClickStreamTuple b) throws Exception {
 
+                        // Merge out clicks
                         HashMap<String, Integer> outClicks = new HashMap<>();
                         outClicks.putAll(a.getOutClicks());
-                        outClicks.putAll(b.getOutClicks());
 
+                        for(Map.Entry<String, Integer> bb: b.getOutClicks().entrySet()) {
+                            if(outClicks.containsKey(bb.getKey())) {
+                                outClicks.put(bb.getKey(), bb.getValue() + outClicks.get(bb.getKey()));
+                            } else {
+                                outClicks.put(bb.getKey(), bb.getValue());
+                            }
+                        }
+
+                        // Leads to inconsistent results
+                        //outClicks.putAll(b.getOutClicks());
+
+                        // Out ids can be overwritten (check if valid?)
                         HashMap<String, Integer> outIds = new HashMap<>();
                         outIds.putAll(a.getOutIds());
                         outIds.putAll(b.getOutIds());
