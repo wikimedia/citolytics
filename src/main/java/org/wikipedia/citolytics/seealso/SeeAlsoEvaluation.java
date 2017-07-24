@@ -125,9 +125,9 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
             DataSet<SeeAlsoLinks> dataSet = null;
             for(String p: paths) {
                 if(dataSet == null) {
-                    dataSet = env.readTextFile(path).map(new SeeAlsoInputMapper());
+                    dataSet = env.readTextFile(p).map(new SeeAlsoInputMapper());
                 } else {
-                    dataSet = dataSet.union(env.readTextFile(path).map(new SeeAlsoInputMapper()));
+                    dataSet = dataSet.union(env.readTextFile(p).map(new SeeAlsoInputMapper()));
                 }
             }
             return dataSet;
