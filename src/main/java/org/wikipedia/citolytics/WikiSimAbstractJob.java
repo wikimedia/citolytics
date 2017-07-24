@@ -2,6 +2,7 @@ package org.wikipedia.citolytics;
 
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.operators.AggregateOperator;
 import org.apache.flink.api.java.operators.DataSink;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -197,5 +198,23 @@ public abstract class WikiSimAbstractJob<T extends Tuple> {
             params = ParameterTool.fromArgs(args);
         }
         return params;
+    }
+
+    protected void summarize(int[] fields) {
+        enableSingleOutputFile();
+
+        if(fields.length > 0) {
+            AggregateOperator<T> tmp = null;
+
+            for (int i = 0; i < fields.length; i++) {
+
+                if (i == 0)
+                    tmp = result.sum(fields[i]);
+                else
+                    tmp = tmp.andSum(fields[i]);
+            }
+
+            result = tmp;
+        }
     }
 }

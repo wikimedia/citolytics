@@ -77,16 +77,16 @@ public class CalculationTest extends Tester {
 
         for (SeeAlsoEvaluationResult r : job5.output) {
             if (r.getArticle().equals("SeeAlso Article 1")) {
-                assertEquals("Invalid getRetrievedDocsCount", 6, r.getRetrievedDocsCount());
-                assertEquals("Invalid getHRR", 1, r.getHRR(), 0e-10);
+                assertEquals("Invalid getRecommendationsCount", 6, r.getRecommendationsCount());
+                assertEquals("Invalid getMRR", 1, r.getMRR(), 0e-10);
                 assertEquals("Invalid getTopKScore", 0.5, r.getTopKScore(), 0e-10);
             }
 
             if (r.getArticle().equals("SeeAlso Article 2")) {
-                assertEquals("Invalid getRetrievedDocsCount", 6, r.getRetrievedDocsCount());
-                assertEquals("Invalid getHRR", 1, r.getHRR(), 0e-10);
+                assertEquals("Invalid getRecommendationsCount", 6, r.getRecommendationsCount());
+                assertEquals("Invalid getMRR", 1, r.getMRR(), 0e-10);
                 assertEquals("Invalid getTopKScore", 0.5, r.getTopKScore(), 0e-10);
-                assertEquals("Invalid getPerformanceMeasure", 0.45, r.getPerformanceMeasure(), 0e-10);
+                assertEquals("Invalid getMAP", 0.45, r.getMAP(), 0e-10);
                 assertEquals("Invalid getRelevantCount1", 2, r.getRelevantCount1());
             }
 

@@ -230,6 +230,17 @@ public class SeeAlsoTest extends Tester {
     }
 
     @Test
+    public void testSeeAlsoEvaluationSummary() throws Exception {
+        setJob(new SeeAlsoEvaluation())
+                .start("--wikisim " + resource("wikisim.in", true)
+                        + " --gold " + resource("seealso_links.in", true)
+                        + " --output local --page-id-a -1 --page-id-b -1 --summary");
+
+        System.out.println(getJobOutputAsString());
+//        assertEquals("Invalid output count", 7, job.output.size());
+    }
+
+    @Test
     public void testSeeAlsoEvaluationWithLinkFilter() throws Exception {
 
         setJob(new SeeAlsoEvaluation())
@@ -246,7 +257,7 @@ public class SeeAlsoTest extends Tester {
         setJob(new SeeAlsoEvaluation())
                 .start("--wikisim " + resource("mlt.in", true)
                         + " --gold " + resource("seealso_links.in", true)
-                        + " --score -1 --page-a -1 --page-b -1"
+                        + " --mlt"
                         + " --output local");
 
         assertEquals("Invalid output count", 7, job.output.size());

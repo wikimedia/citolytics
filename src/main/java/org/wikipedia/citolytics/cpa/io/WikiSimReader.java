@@ -5,6 +5,7 @@ import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.operators.base.JoinOperatorBase;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.operators.ComputeComplexCPI;
@@ -90,6 +91,23 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
             out.collect(new Recommendation(pair.getPageB(), pair.getPageA(), pair.getCPI(alphaKey), pair.getPageBId(), pair.getPageAId()));
         }
 
+    }
+
+    public static Configuration getConfigFromArgs(ParameterTool args) {
+
+        Configuration config = new Configuration();
+
+        config.setInteger("fieldPageA", args.getInt("page-a", RecommendationPair.PAGE_A_KEY));
+        config.setInteger("fieldPageIdA", args.getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY));
+
+        config.setInteger("fieldPageB", args.getInt("page-b", RecommendationPair.PAGE_B_KEY));
+        config.setInteger("fieldPageIdB", args.getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY));
+
+        config.setInteger("fieldScore", args.getInt("score", RecommendationPair.CPI_LIST_KEY));
+
+        config.setInteger("topK", args.getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K));
+
+        return config;
     }
 
     public static DataSet<Recommendation> readWikiSimOutput(ExecutionEnvironment env, String filename, Configuration config) throws Exception {

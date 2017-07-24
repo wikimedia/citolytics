@@ -1,6 +1,7 @@
 package org.wikipedia.citolytics.clickstream.types;
 
 import org.apache.flink.api.java.tuple.Tuple9;
+import org.wikipedia.citolytics.seealso.types.EvaluationResult;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  */
 public class ClickStreamResult extends
         //    Tuple10<String, ArrayList<Tuple4<String, Double, Integer, Double>>, Integer, Integer, Integer, Double, Integer, Double, Integer, Double>
-        Tuple9<String, ArrayList<ClickStreamRecommendationResult>, Integer, Integer, Integer, Integer, Integer, Integer, Integer> {
+        Tuple9<String, ArrayList<ClickStreamRecommendationResult>, Integer, Integer, Integer, Integer, Integer, Integer, Integer> implements EvaluationResult {
     public final static int ARTICLE_KEY = 0;
     public final static int RECOMMENDATIONS_LIST_KEY = 1;
     public final static int RECOMMENDATIONS_COUNT_KEY = 2;
@@ -47,6 +48,7 @@ public class ClickStreamResult extends
         return getField(RECOMMENDATIONS_LIST_KEY);
     }
 
+    @Override
     public int getRecommendationsCount() {
         return getField(RECOMMENDATIONS_COUNT_KEY);
     }
@@ -73,5 +75,26 @@ public class ClickStreamResult extends
 
     public int getOptimalClicks() {
         return getField(OPTIMAL_CLICKS);
+    }
+
+    @Override
+    public String getTopRecommendations() {
+        if(getRecommendations().size() > 0) {
+            return getRecommendations().get(0).getRecommendedArticle();
+        } else {
+            return null;
+        }
+    }
+
+    public static int[] getSummaryFields() {
+        return new int[]{
+                ClickStreamResult.IMPRESSIONS_KEY,
+                ClickStreamResult.CLICKS_KEY,
+                ClickStreamResult.CLICKS_K1_KEY,
+                ClickStreamResult.CLICKS_K2_KEY,
+                ClickStreamResult.CLICKS_K3_KEY,
+                ClickStreamResult.RECOMMENDATIONS_COUNT_KEY,
+                ClickStreamResult.OPTIMAL_CLICKS
+        };
     }
 }

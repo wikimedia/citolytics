@@ -4,8 +4,8 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
@@ -17,7 +17,6 @@ import org.wikipedia.citolytics.clickstream.types.ClickStreamTuple;
 import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
 import org.wikipedia.citolytics.cpa.io.WikiOutputFormat;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
-import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.operators.MLTInputMapper;
@@ -37,14 +36,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
     private static String lang = null;
     private static boolean summary = false;
     private static String cpiExpr;
-    private static int fieldScore;
-    private static int fieldPageA;
-    private static int fieldPageB;
-    int fieldPageIdA;
-    int fieldPageIdB;
 
-
-    private int topK = 10;
     private boolean mltResults = false;
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
@@ -55,30 +47,21 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
     public void init() {
 
-        ParameterTool params = ParameterTool.fromArgs(args);
+        wikiSimInputFilename = getParams().getRequired("wikisim");
+        clickStreamInputFilename = getParams().getRequired("gold");
+        outputFilename = getParams().getRequired("output");
 
-        wikiSimInputFilename = params.getRequired("wikisim");
-        clickStreamInputFilename = params.getRequired("gold");
-        outputFilename = params.getRequired("output");
-        topK = params.getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
+        langLinksInputFilename = getParams().get("langlinks");
+        lang = getParams().get("lang");
+        summary = getParams().has("summary");
+        cpiExpr = getParams().get("cpi");
+        articleStatsFilename = getParams().get("article-stats");
+        idTitleMappingFilename = getParams().get("id-title-mapping");
+        topRecommendationsFilename = getParams().get("top-recommendations");
 
-        langLinksInputFilename = params.get("langlinks");
-        lang = params.get("lang");
-        summary = params.has("summary");
-        cpiExpr = params.get("cpi");
-        articleStatsFilename = params.get("article-stats");
-        idTitleMappingFilename = params.get("id-title-mapping");
-        topRecommendationsFilename = params.get("top-recommendations");
-
-        fieldScore = params.getInt("score", RecommendationPair.CPI_LIST_KEY);
-        fieldPageA = params.getInt("page-a", RecommendationPair.PAGE_A_KEY);
-        fieldPageB = params.getInt("page-b", RecommendationPair.PAGE_B_KEY);
-        fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
-        fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
     }
 
     public void plan() throws Exception {
-
 
         // Name
         setJobName("ClickStreamEvaluation");
@@ -90,27 +73,25 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
         // WikiSim
         DataSet<RecommendationSet> recommendationSets;
+        Configuration config = WikiSimReader.getConfigFromArgs(getParams());
+
+        int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
 
         // CPA or MLT results?
-        if (fieldScore >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
-            // CPA
-            jobName += " CPA Score=" + fieldScore + "; Page=[" + fieldPageA + ";" + fieldPageB + "]";
-
-            recommendationSets = WikiSimReader.buildRecommendationSets(env,
-                    WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore,
-                            fieldPageIdA, fieldPageIdB),
-                    topK, cpiExpr, articleStatsFilename, false);
-
-        } else {
+        if (getParams().has("mlt")) {
             // MLT
             jobName += " MLT";
-
-            Configuration config = new Configuration();
-            config.setInteger("topK", topK);
 
             recommendationSets = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new MLTInputMapper())
                     .withParameters(config);
+        } else {
+            // CPA
+            jobName += " CPA";
+
+            recommendationSets = WikiSimReader.buildRecommendationSets(env,
+                    WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, config),
+                    topK, cpiExpr, articleStatsFilename, false);
         }
 
         // Evaluation
@@ -123,71 +104,63 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
         // Top recommended articles (only #1 recommendations)
         // TODO limit out
         if(topRecommendationsFilename != null) {
-            DataSet<Tuple2<String, Long>> topRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Long>>() {
-                        @Override
-                        public void flatMap(ClickStreamResult r, Collector<Tuple2<String, Long>> out) throws Exception {
-                            if (r.getRecommendationsCount() > 0) {
-                                out.collect(new Tuple2<>(r.getRecommendations().get(0).getRecommendedArticle(),
-                                        1L));
-                            }
-                        }
-                    })
-                    .groupBy(0)
-                    .sum(1)
-                    .reduce(new ReduceFunction<Tuple2<String, Long>>() {
-                        @Override
-                        public Tuple2<String, Long> reduce(Tuple2<String, Long> a, Tuple2<String, Long> b) throws Exception {
-                            // Keep article name
-                            return a.f1 > b.f1 ? a : b;
-                        }
-                    });
-
-            // Distinct recommendations
-            DataSet<Tuple2<String, Long>> distinctRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Long>>() {
-                @Override
-                public void flatMap(ClickStreamResult clickStreamResult, Collector<Tuple2<String, Long>> out) throws Exception {
-                    for(ClickStreamRecommendationResult r: clickStreamResult.getRecommendations()) {
-                        out.collect(new Tuple2<>(r.getRecommendedArticle(), 1L));
-                    }
-
-                }
-            }).distinct(0)
-                    .sum(1)
-                    .map(new MapFunction<Tuple2<String, Long>, Tuple2<String, Long>>() {
-                        @Override
-                        public Tuple2<String, Long> map(Tuple2<String, Long> in) throws Exception {
-                            in.setField("Distinct recommendations", 0);
-                            return in;
-                        }
-                    });
-
-            DataSet<Tuple2<String, Long>> count = env.fromElements(new Tuple2<String, Long>(
-                    "Article count", result.count())
-            );
-
-            topRecommendations = topRecommendations
-                    .union(distinctRecommendations)
-                    .union(count);
-
-            topRecommendations
-                    .write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE)
-                    .setParallelism(1);
+            saveTopRecommendations(env, result, topRecommendationsFilename);
         }
-
 
         // Summarize results if requested
         if(summary) {
-            enableSingleOutputFile();
-
-            result = result.sum(ClickStreamResult.IMPRESSIONS_KEY)
-                    .andSum(ClickStreamResult.CLICKS_KEY)
-                    .andSum(ClickStreamResult.CLICKS_K1_KEY)
-                    .andSum(ClickStreamResult.CLICKS_K2_KEY)
-                    .andSum(ClickStreamResult.CLICKS_K3_KEY)
-                    .andSum(ClickStreamResult.RECOMMENDATIONS_COUNT_KEY)
-                    .andSum(ClickStreamResult.OPTIMAL_CLICKS);
+            summarize(ClickStreamResult.getSummaryFields());
         }
     }
 
+    private static void saveTopRecommendations(ExecutionEnvironment env, DataSet<ClickStreamResult> result, String topRecommendationsFilename) throws Exception {
+        DataSet<Tuple2<String, Long>> topRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Long>>() {
+            @Override
+            public void flatMap(ClickStreamResult t, Collector<Tuple2<String, Long>> out) throws Exception {
+                if (t.getRecommendationsCount() > 0) {
+                    out.collect(new Tuple2<>(t.getTopRecommendations(), 1L));
+                }
+            }
+        })
+                .groupBy(0)
+                .sum(1)
+                .reduce(new ReduceFunction<Tuple2<String, Long>>() {
+                    @Override
+                    public Tuple2<String, Long> reduce(Tuple2<String, Long> a, Tuple2<String, Long> b) throws Exception {
+                        // Keep article name
+                        return a.f1 > b.f1 ? a : b;
+                    }
+                });
 
+        // Distinct recommendations
+        DataSet<Tuple2<String, Long>> distinctRecommendations = result.flatMap(new FlatMapFunction<ClickStreamResult, Tuple2<String, Long>>() {
+            @Override
+            public void flatMap(ClickStreamResult clickStreamResult, Collector<Tuple2<String, Long>> out) throws Exception {
+                for (ClickStreamRecommendationResult r : clickStreamResult.getRecommendations()) {
+                    out.collect(new Tuple2<>(r.getRecommendedArticle(), 1L));
+                }
+
+            }
+        }).distinct(0)
+                .sum(1)
+                .map(new MapFunction<Tuple2<String, Long>, Tuple2<String, Long>>() {
+                    @Override
+                    public Tuple2<String, Long> map(Tuple2<String, Long> in) throws Exception {
+                        in.setField("Distinct recommendations", 0);
+                        return in;
+                    }
+                });
+
+        DataSet<Tuple2<String, Long>> count = env.fromElements(new Tuple2<String, Long>(
+                "Article count", result.count())
+        );
+
+        topRecommendations = topRecommendations
+                .union(distinctRecommendations)
+                .union(count);
+
+        topRecommendations
+                .write(new WikiOutputFormat<>(topRecommendationsFilename), topRecommendationsFilename, FileSystem.WriteMode.OVERWRITE)
+                .setParallelism(1);
+    }
 }

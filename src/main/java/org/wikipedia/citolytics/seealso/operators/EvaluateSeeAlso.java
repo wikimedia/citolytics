@@ -22,16 +22,11 @@ public class EvaluateSeeAlso implements CoGroupFunction<
         > {
 
     private int topK = 10;
-    private boolean enableMRR = false; // If true, MRR is used instead of MAP
 
     public EvaluateSeeAlso(int topK) {
         this.topK = topK;
     }
 
-    public EvaluateSeeAlso(int topK, boolean enableMRR) {
-        this.topK = topK;
-        this.enableMRR = enableMRR;
-    }
 
     @Override
     public void coGroup(Iterable<SeeAlsoLinks> a, Iterable<RecommendationSet> b, Collector<SeeAlsoEvaluationResult> out) throws Exception {
@@ -45,8 +40,8 @@ public class EvaluateSeeAlso implements CoGroupFunction<
             List<WikiSimComparableResult<Double>> sortedList = new ArrayList<>();
 
             double topKScore = 0;
-            double hrr = 0;
-            double performance = 0;
+            double mrr = 0;
+            double map = 0;
 
             int[] matches = new int[]{0, 0, 0};
 
@@ -58,13 +53,8 @@ public class EvaluateSeeAlso implements CoGroupFunction<
                 List<String> resultList = getResultNamesAsList(sortedList);
 
                 topKScore = EvaluationMeasures.getTopKScore(resultList, new ArrayList<>(seeAlsoList));
-                hrr = EvaluationMeasures.getHarmonicReciprocalRank(resultList, new ArrayList<>(seeAlsoList));
-
-                if (enableMRR) {
-                    performance = EvaluationMeasures.getMeanReciprocalRank(resultList, new ArrayList<>(seeAlsoList));
-                } else {
-                    performance = EvaluationMeasures.getMeanAveragePrecision(resultList, seeAlsoList);
-                }
+                mrr = EvaluationMeasures.getMeanReciprocalRank(resultList, new ArrayList<>(seeAlsoList));;
+                map = EvaluationMeasures.getMeanAveragePrecision(resultList, seeAlsoList);
 
                 matches = EvaluationMeasures.getMatchesCount(resultList, new ArrayList<>(seeAlsoList));
             }
@@ -75,9 +65,9 @@ public class EvaluateSeeAlso implements CoGroupFunction<
                     seeAlsoLinks.getLinks().size(),
                     new WikiSimComparableResultList<>(sortedList),
                     sortedList.size(),
-                    hrr,
+                    mrr,
                     topKScore,
-                    performance,
+                    map,
                     matches[0],
                     matches[1],
                     matches[2]

@@ -1,27 +1,20 @@
 package org.wikipedia.citolytics.seealso;
 
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiSimReader;
-import org.wikipedia.citolytics.cpa.types.Recommendation;
-import org.wikipedia.citolytics.cpa.types.RecommendationPair;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.seealso.operators.EvaluateSeeAlso;
 import org.wikipedia.citolytics.seealso.operators.MLTInputMapper;
-import org.wikipedia.citolytics.seealso.operators.RecommendationSetBuilder;
 import org.wikipedia.citolytics.seealso.operators.SeeAlsoInputMapper;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoEvaluationResult;
 import org.wikipedia.citolytics.seealso.types.SeeAlsoLinks;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.regex.Pattern;
 
 /**
  * Flink job for running a "See also"-based evaluation on CPA or MLT result sets.
@@ -42,6 +35,10 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
     public static String seeAlsoInputFilename;
     public static String wikiSimInputFilename;
     public static String linksInputFilename;
+    public static String articleStatsFilename;
+
+    private static String cpiExpr;
+    private static boolean summary = false;
 
     public static DataSet<Tuple2<String, HashSet<String>>> links;
 
@@ -49,21 +46,19 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
         new SeeAlsoEvaluation().start(args);
     }
 
+    public void init() {
+        wikiSimInputFilename = getParams().getRequired("wikisim");
+        outputFilename = getParams().getRequired("output");
+        seeAlsoInputFilename = getParams().getRequired("gold");
+        cpiExpr = getParams().get("cpi");
+        articleStatsFilename = getParams().get("article-stats");
+        summary = getParams().has("summary");
+    }
+
     public void plan() throws Exception {
 
         setJobName("SeeAlso Evaluation");
 
-        wikiSimInputFilename = getParams().getRequired("wikisim");
-        outputFilename = getParams().getRequired("output");
-        seeAlsoInputFilename = getParams().getRequired("gold");
-
-        int scoreField = getParams().getInt("score", RecommendationPair.CPI_LIST_KEY);
-        int fieldPageA = getParams().getInt("page-a", RecommendationPair.PAGE_A_KEY);
-        int fieldPageB = getParams().getInt("page-b", RecommendationPair.PAGE_B_KEY);
-        int fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
-        int fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
-
-        boolean enableMRR = getParams().has("enable-mrr");
         int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
 
         // See also
@@ -81,76 +76,36 @@ public class SeeAlsoEvaluation extends WikiSimAbstractJob<SeeAlsoEvaluationResul
                 });
 
         // Read result set
-        DataSet<RecommendationSet> wikiSimGroupedDataSet;
+        DataSet<RecommendationSet> recommendationSets;
+        Configuration config = WikiSimReader.getConfigFromArgs(getParams());
 
         // CPA or MLT results?
-        if (scoreField >= 0 && fieldPageA >= 0 && fieldPageB >= 0) {
-            // CPA
-            jobName += " CPA score = " + scoreField + "; pages = " + fieldPageA + "; " + fieldPageB;
-            Configuration config = new Configuration();
-
-            config.setInteger("fieldPageA", fieldPageA);
-            config.setInteger("fieldPageB", fieldPageB);
-            config.setInteger("fieldPageIdA", fieldPageIdA);
-            config.setInteger("fieldPageIdB", fieldPageIdB);
-            config.setInteger("fieldScore", scoreField);
-
-            DataSet<Recommendation> wikiSimDataSet = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, config);
-
-            wikiSimGroupedDataSet = wikiSimDataSet
-                    .groupBy(0)
-                    .reduceGroup(new RecommendationSetBuilder(topK));
-
-
-        } else {
+        if (getParams().has("mlt")) {
             // MLT
             jobName += " MLT";
-            Configuration config = new Configuration();
-            config.setInteger("topK", topK);
-
-            wikiSimGroupedDataSet = env.readTextFile(wikiSimInputFilename)
+            recommendationSets = env.readTextFile(wikiSimInputFilename)
                     .flatMap(new MLTInputMapper())
                     .withParameters(config);
+
+        } else {
+            // CPA
+            jobName += " CPA";
+
+            recommendationSets = WikiSimReader.buildRecommendationSets(env,
+                    WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, config),
+                    topK, cpiExpr, articleStatsFilename, false);
         }
 
         // Evaluation
         result = seeAlsoDataSet
-                .coGroup(wikiSimGroupedDataSet)
+                .coGroup(recommendationSets)
                 .where(0)
                 .equalTo(0)
-                .with(new EvaluateSeeAlso(topK, enableMRR));
-    }
+                .with(new EvaluateSeeAlso(topK));
 
-
-    public static DataSet<Tuple2<String, HashSet<String>>> getLinkDataSet(ExecutionEnvironment env, String filename) {
-        if (links == null) {
-            links = env.readTextFile(filename)
-
-                    .map(new MapFunction<String, Tuple2<String, HashSet<String>>>() {
-                        Pattern delimiter = Pattern.compile(Pattern.quote("|"));
-
-                        @Override
-                        public Tuple2<String, HashSet<String>> map(String in) throws Exception {
-                            String[] cols = delimiter.split(in);
-                            return new Tuple2<>(
-                                    cols[0],
-                                    new HashSet<>(Arrays.asList(cols[1]))
-                            );
-                        }
-                    })
-                    .groupBy(0)
-                    .reduce(new ReduceFunction<Tuple2<String, HashSet<String>>>() {
-                        @Override
-                        public Tuple2<String, HashSet<String>> reduce(Tuple2<String, HashSet<String>> a, Tuple2<String, HashSet<String>> b) throws Exception {
-                            HashSet<String> set = (HashSet) a.getField(1);
-                            set.addAll((HashSet) b.getField(1));
-                            return new Tuple2<>(
-                                    (String) a.getField(0),
-                                    set);
-                        }
-                    });
+        // Summarize results if requested
+        if(summary) {
+            summarize(SeeAlsoEvaluationResult.getSummaryFields());
         }
-
-        return links;
     }
 }
