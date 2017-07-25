@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 
 
 public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickStreamTranslateTuple> {
+    public final static String DELIMITER = "\t";
+
     private final static int WITH_IDS_LENGTH = 6;
     private final static int WITH_IDS_TYPE_KEY = 5;
     private final static int WITH_IDS_REF_NAME_KEY = 3;
@@ -33,7 +35,7 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
         );
     }
 
-    private String getFilterType() {
+    public static String getFilterType() {
         return "link";
     }
 
@@ -73,7 +75,7 @@ public class ClickStreamDataSetReader implements FlatMapFunction<String, ClickSt
     @Override
     public void flatMap(String s, Collector<ClickStreamTranslateTuple> out) throws Exception {
 
-        String[] cols = s.split(Pattern.quote("\t"));
+        String[] cols = s.split(Pattern.quote(DELIMITER));
 
         // Use different key for different data set formats
         if (cols.length == WITH_IDS_LENGTH) {
