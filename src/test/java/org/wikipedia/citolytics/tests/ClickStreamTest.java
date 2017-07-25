@@ -196,7 +196,7 @@ public class ClickStreamTest extends Tester {
                 + " --output local");
 
 //        System.out.println(getJobOutputAsString(job));
-        assertEquals("Invalid number of results", 4, job.getOutput().size());
+        assertEquals("Invalid number of results", 3, job.getOutput().size());
 //        assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
     }
 
