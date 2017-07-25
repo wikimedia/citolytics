@@ -5,6 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.wikipedia.citolytics.clickstream.ClickStreamEvaluation;
 import org.wikipedia.citolytics.clickstream.ClickStreamStats;
+import org.wikipedia.citolytics.clickstream.ClickStreamTranslator;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamRecommendationResult;
 import org.wikipedia.citolytics.clickstream.types.ClickStreamResult;
 import org.wikipedia.citolytics.clickstream.utils.ValidateClickStreamData;
@@ -183,6 +184,23 @@ public class ClickStreamTest extends Tester {
 
         assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
     }
+
+    @Test
+    public void testClickStreamTranslator() throws Exception {
+
+        ClickStreamTranslator job = new ClickStreamTranslator();
+
+        job.enableTestEnvironment().start("--input " + dataSetPathSimpleLang
+                + " --lang simple"
+                + " --langlinks " + langLinksPath
+                + " --output local");
+
+//        System.out.println(getJobOutputAsString(job));
+        assertEquals("Invalid number of results", 4, job.getOutput().size());
+//        assertTrue("Needles not found", job.output.containsAll(getNeedles("simple_")));
+    }
+
+
 
     @Test
     public void testDifferentFormatsAndMultiLang() throws Exception {
