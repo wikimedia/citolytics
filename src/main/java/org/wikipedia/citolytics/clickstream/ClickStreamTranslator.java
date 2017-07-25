@@ -8,6 +8,11 @@ import org.wikipedia.citolytics.clickstream.utils.ClickStreamHelper;
  * Translates click stream data set. Helper job to write intermediate results instead of on-the-fly translation.
  */
 public class ClickStreamTranslator extends WikiSimAbstractJob<ClickStreamTuple> {
+
+    public static void main(String[] args) throws Exception {
+        new ClickStreamTranslator().start(args);
+    }
+
     @Override
     public void plan() throws Exception {
         setJobName("ClickStreamEvaluation");

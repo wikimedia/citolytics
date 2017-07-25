@@ -182,7 +182,15 @@ With multi-language translation (See [cirrusearch.md](cirrussearch.md) for lang-
         --output-lang simple \
         --output $SEEALSO_PATH/for_simplewiki/from_$WIKI
 
-                        
+### Translate clickstreams
+ 
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.clickstream.ClickStreamEvaluation -p $PARALLELISM $JAR \
+        --input $CLICKSTREAMS_PATH \
+        --output ${CLICKSTREAMS_PATH}_translated_$WIKI \
+        --id-title-mapping $ENWIKI_IDTITLE_MAPPING \
+        --langlinks $ENWIKI_LANGLINKS \
+        --lang $WIKI
+
 
 ### Redirects
 
