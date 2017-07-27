@@ -35,6 +35,9 @@ public class BackupRecommendationSetMerger implements JoinFunction<Recommendatio
 
             // Add original recommendations with offset
             for (WikiSimComparableResult<Double> item : originalRecs.getResults()) {
+                if(item.getSortField1() + WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET > Integer.MAX_VALUE) {
+                    throw new Exception("CPI too large. Original + Offset: " + item);
+                }
                 recommendations.add(new WikiSimComparableResult<>(
                         item.getName(),
                         item.getSortField1() + WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET,
@@ -47,6 +50,8 @@ public class BackupRecommendationSetMerger implements JoinFunction<Recommendatio
             Collections.reverse(backupRecs.getResults());
 
             for (WikiSimComparableResult<Double> item : backupRecs.getResults()) {
+                if(item.getSortField1() > Integer.MAX_VALUE)
+                    throw new Exception("CPI too large. Backup recommendation: " + item);
                 recommendations.add(item);
 
                 if (recommendations.size() >= topK) // Only until limit is reached
