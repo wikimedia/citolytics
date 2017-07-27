@@ -67,7 +67,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
             pair.setCPI(Arrays.asList(Double.valueOf(scoreString)));
 //            pair.setCPI(scoreString);
 
-            collectRecommendationsFromPair(pair, out, false, 0);
+            collectRecommendationsFromPair(pair, out, 0);
 
         } catch (Exception e) {
             throw new Exception("Cannot read WikiSim output. Score field = " + fieldScore + "; cols length = "
@@ -81,13 +81,9 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
      * @param pair Full recommendations pair (A, B in alphabetical order)
      * @param out Collector
      */
-    public static void collectRecommendationsFromPair(RecommendationPair pair, Collector<Recommendation> out, boolean backupRecommendations, int alphaKey) {
+    public static void collectRecommendationsFromPair(RecommendationPair pair, Collector<Recommendation> out, int alphaKey) {
         out.collect(new Recommendation(pair.getPageA(), pair.getPageB(), pair.getCPI(alphaKey), pair.getPageAId(), pair.getPageBId()));
-
-        // If pair is a backup recommendations, do not return full pair.
-        if(!backupRecommendations || pair.getCPI(0) > WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
-            out.collect(new Recommendation(pair.getPageB(), pair.getPageA(), pair.getCPI(alphaKey), pair.getPageBId(), pair.getPageAId()));
-        }
+        out.collect(new Recommendation(pair.getPageB(), pair.getPageA(), pair.getCPI(alphaKey), pair.getPageBId(), pair.getPageAId()));
 
     }
 
@@ -145,14 +141,12 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
      * @param topK Number of top recommendations included in set.
      * @param cpiExpr Complete complex CPI score (optional)
      * @param articleStatsFilename Path to article stats data set (if complex CPI enabled)
-     * @param backupRecommendations Enable for backup recommendations
      * @return Recommendation set with top-k recommendations
      * @throws Exception If complex CPI failed
      */
     public static DataSet<RecommendationSet> buildRecommendationSets(ExecutionEnvironment env,
                                                                      DataSet<Recommendation> recommendations,
-                                                                     int topK, String cpiExpr, String articleStatsFilename,
-                                                                     boolean backupRecommendations) throws Exception {
+                                                                     int topK, String cpiExpr, String articleStatsFilename) throws Exception {
 
         // Compute complex CPI with expression
         if(cpiExpr != null && articleStatsFilename != null) {
@@ -167,7 +161,7 @@ public class WikiSimReader extends RichFlatMapFunction<String, Recommendation> {
                     .leftOuterJoin(stats, JoinOperatorBase.JoinHint.BROADCAST_HASH_SECOND)
                     .where(Recommendation.RECOMMENDATION_TITLE_KEY)
                     .equalTo(ArticleStatsTuple.ARTICLE_NAME_KEY)
-                    .with(new ComputeComplexCPI(count, cpiExpr, backupRecommendations));
+                    .with(new ComputeComplexCPI(count, cpiExpr));
         }
 
         DataSet<RecommendationSet> recommendationSets = recommendations

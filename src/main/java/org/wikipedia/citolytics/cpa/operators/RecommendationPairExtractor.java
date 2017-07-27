@@ -6,11 +6,11 @@ import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.cpa.types.LinkPair;
 import org.wikipedia.citolytics.cpa.types.LinkPosition;
 import org.wikipedia.citolytics.cpa.types.RecommendationPair;
-import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.processing.DocumentProcessor;
 import org.wikipedia.processing.types.WikiDocument;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +28,6 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
     private boolean enableWiki2006 = false; // WikiDump of 2006 does not contain namespace tags
     public boolean relativeProximity = false;
     private boolean structureProximity = false;
-    private boolean backupRecommendations = false;
     private Configuration config;
 
     public RecommendationPairExtractor() {
@@ -50,7 +49,6 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
         enableWiki2006 = config.getBoolean("wiki2006", true);
         relativeProximity = config.getBoolean("relativeProximity", false);
         structureProximity = config.getBoolean("structureProximity", false);
-        backupRecommendations = config.getBoolean("backupRecommendations", false);
 
         String[] arr = config.getString("alpha", "1.0").split(",");
 
@@ -96,45 +94,8 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
             collectLinkPairs(doc, out);
         }
 
-        // Backup recommendations (from out-links)
-        if(backupRecommendations) {
-            collectOutLinks(doc, out);
-        }
     }
 
-    /**
-     * Collect recommendations based on outgoing links from article. Order by position of first occurrence.
-     * Use as source for backup recommendations.
-     *
-     * @param doc Fully processed WikiDocument
-     * @param out
-     */
-    private void collectOutLinks(WikiDocument doc, Collector<RecommendationPair> out) {
-        Set<String> outLinks = new HashSet<>();
-
-        for(Map.Entry<String, Integer> outLink: doc.getOutLinks()) {
-            // Only use first occurrence
-            if(outLinks.contains(outLink.getKey()))
-                continue;
-
-            // Use inverse link position: The closer to the top, the more relevant the link is.
-            // TODO Include multiple occurrences?
-            double distance = 1. / ((double) outLink.getValue());
-//                double distance = ((double) outLink.getValue()) / 1000.;
-
-            double[] cpi = new double[alphas.length];
-            Arrays.fill(cpi, distance);
-
-            RecommendationPair pair = new RecommendationPair(doc.getTitle(), outLink.getKey(), distance, cpi);
-            out.collect(pair);
-            outLinks.add(outLink.getKey());
-
-            // Only collect minimum number of backup recommendations
-            if(outLinks.size() >= WikiSimConfiguration.BACKUP_RECOMMENDATION_COUNT) {
-                break;
-            }
-        }
-    }
 
     /**
      * Collect link pairs with alpha-based proximity measure. Proximity is measured as words between links.
@@ -188,19 +149,10 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
      * @return CPI values
      */
     private double[] computeCPISet(double proximity) {
-        return computeCPISet(proximity, backupRecommendations);
-    }
-
-    private double[] computeCPISet(double proximity, boolean addBackupRecommendationOffset) {
         double[] cpi = new double[alphas.length];
 
         for (int i=0; i < alphas.length; i++) {
             cpi[i] = computeCPI(proximity, alphas[i]);
-
-            // Add offset to proximity (backup recommendations should be ranked below original recs.)
-//            if(addBackupRecommendationOffset) {
-//                cpi[i] += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
-//            }
         }
 
         return cpi;

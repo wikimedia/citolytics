@@ -91,7 +91,7 @@ public class ClickStreamEvaluation extends WikiSimAbstractJob<ClickStreamResult>
 
             recommendationSets = WikiSimReader.buildRecommendationSets(env,
                     WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, config),
-                    topK, cpiExpr, articleStatsFilename, false);
+                    topK, cpiExpr, articleStatsFilename);
         }
 
         // Evaluation

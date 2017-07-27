@@ -26,6 +26,9 @@ public class RecommendationSet extends Tuple3<String, WikiSimComparableResultLis
         f2 = sourceId;
     }
 
+    public void setResults(WikiSimComparableResultList<Double> results) {
+        setField(results, 1);
+    }
     public WikiSimComparableResultList<Double> getResults() {
         return f1;
     }

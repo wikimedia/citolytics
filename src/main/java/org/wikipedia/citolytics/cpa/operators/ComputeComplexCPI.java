@@ -5,7 +5,6 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.log4j.Logger;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
-import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
 
 /**
@@ -30,12 +29,10 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
 
     private long articleCount = 0;
     private String cpiExpressionStr = "1";
-    private boolean backupRecommendations = false;
 //    private Expression cpiExpression;
 
-    public ComputeComplexCPI(long articleCount, String cpiExpressionStr, boolean backupRecommendations) throws Exception {
+    public ComputeComplexCPI(long articleCount, String cpiExpressionStr) throws Exception {
         this.articleCount = articleCount;
-        this.backupRecommendations = backupRecommendations;
 
         if (articleCount < 1) // This should normally not happen
             throw new Exception("Article count needs to be >= 1");
@@ -56,33 +53,28 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
                 stats.setInLinks(1);
             }
 
-            if(backupRecommendations && rec.getScore() < WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
-                // This is a backup recommendations
-                rec.setScore(rec.getScore() / stats.getInLinks());
-            } else {
-                // This is a normal recommendation
-                double cpi = rec.getScore();
+            double cpi = rec.getScore();
 
-                // If backup recommendations are enabled, subtract offset because we want to apply CPI-expression on original values
+            // If backup recommendations are enabled, subtract offset because we want to apply CPI-expression on original values
 //                if(backupRecommendations)
 //                    cpi -= WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
 
-                // Initialize ExpressionBuilder in join method (non-serializable)
-                Expression cpiExpression;
-                cpiExpression = new ExpressionBuilder(cpiExpressionStr)
-                        .variables("x", "y", "z")
-                        .build()
-                        .setVariable("z", articleCount)
-                        .setVariable("x", cpi)
-                        .setVariable("y", stats.getInLinks());
-                cpi = cpiExpression.evaluate();
+            // Initialize ExpressionBuilder in join method (non-serializable)
+            Expression cpiExpression;
+            cpiExpression = new ExpressionBuilder(cpiExpressionStr)
+                    .variables("x", "y", "z")
+                    .build()
+                    .setVariable("z", articleCount)
+                    .setVariable("x", cpi)
+                    .setVariable("y", stats.getInLinks());
+            cpi = cpiExpression.evaluate();
 
-                // Add subtracted offset again
+            // Add subtracted offset again
 //                if(backupRecommendations)
 //                    cpi += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
 
-                rec.setScore(cpi);
-            }
+            rec.setScore(cpi);
+
         } else {
 //            throw new Exception("Recommendation does not have stats records: " + rec);
             LOG.warn("Recommendation does not have a stats record: " + rec);
