@@ -46,7 +46,7 @@ public class BackupRecommendationSetExtractor implements FlatMapFunction<String,
      *
      * @param doc Fully processed WikiDocument
      */
-    private WikiSimComparableResultList<Double> getBackupRecommendations(WikiDocument doc) {
+    private WikiSimComparableResultList<Double> getBackupRecommendations(WikiDocument doc) throws Exception {
         Set<String> outLinks = new HashSet<>();
 
         WikiSimComparableResultList<Double> recommendations = new WikiSimComparableResultList<>();
@@ -59,6 +59,9 @@ public class BackupRecommendationSetExtractor implements FlatMapFunction<String,
             // Use inverse link position: The closer to the top, the more relevant the link is.
             // TODO Include multiple occurrences?
             double distance = 1. / ((double) outLink.getValue());
+
+            if(distance > Integer.MAX_VALUE)
+                throw new Exception("CPI too large: " + distance);
 
             recommendations.add(new WikiSimComparableResult<>(outLink.getKey(), distance, -1));
 
