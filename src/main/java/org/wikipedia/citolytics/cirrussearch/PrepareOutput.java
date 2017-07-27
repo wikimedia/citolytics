@@ -23,6 +23,11 @@ import org.wikipedia.citolytics.seealso.types.WikiSimComparableResultList;
 
 /**
  * Preparing WikiSim output to be added to Elasticsearch, i.e. transform to ES bulk JSON.
+ *
+ * Example:
+ * { "update" : {"_id" : "1" } }
+ * { "doc" : {"citolytics" : [ { "title": "Foo", "score": 1.5 } ] } }
+ * ...
  */
 public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
@@ -54,6 +59,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         boolean includeIds = getParams().has("include-ids");
         boolean relativeProximity = getParams().has("relative-proximity");
         boolean backupRecommendations = getParams().has("backup-recommendations");
+        double alpha = getParams().getDouble("alpha", 0.855); // From JCDL paper: a1=0.81, a2=0.9 -> a_mean = 0.855
 
         setJobName("CirrusSearch PrepareOutput");
 
@@ -63,7 +69,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
             // Build new result list
             WikiSim wikiSimJob = new WikiSim();
-            wikiSimJob.alpha = "0.855"; // From JCDL paper: a1=0.81, a2=0.9 -> a_mean = 0.855
+            wikiSimJob.alpha = String.valueOf(alpha);
             wikiSimJob.inputFilename = wikiDumpInputFilename;
             wikiSimJob.redirectsFilename = redirectsFilename;
             wikiSimJob.ignoreMissingIds = ignoreMissingIds; // Ensures that page ids exist
@@ -103,15 +109,8 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         DataSet<RecommendationSet> recommendationSets = WikiSimReader.buildRecommendationSets(env, recommendations,
                 topK, cpiExpr, articleStatsFilename, backupRecommendations);
 
-                // Transform result list to JSON with page ids
-        // TODO Check if there some pages lost (left or equi-join)
-//        result = wikiSimData.leftOuterJoin(idTitleMapping)
-//                .where(0)
-//                .equalTo(1)
-//                .with(new JSONMapperWithIdCheck(disableScores, elasticBulkSyntax, ignoreMissingIds, includeIds));
-
+        // Transform result list to JSON
         result = recommendationSets.flatMap(new JSONMapper(disableScores, elasticBulkSyntax, ignoreMissingIds, includeIds));
-
     }
 
 
@@ -134,7 +133,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
             this.includeIds = includeIds;
         }
 
-        public void putResultArray(ObjectNode d, WikiSimComparableResultList<Double> results) {
+        public void putResultArray(ObjectNode d, WikiSimComparableResultList<Double> results) throws Exception {
             ArrayNode a = d.putArray("citolytics");
 
             for (WikiSimComparableResult<Double> result : results) {
@@ -145,8 +144,14 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
                 if (includeIds)
                     r.put("id", result.getId());
 
-                if (!disableScores)
+                if (!disableScores) {
+                    // Test for too large scores (avoid Infinity values)
+                    if(result.getSortField1() > Integer.MAX_VALUE)
+                        throw new Exception("Recommendation score > Integer.MAX_VALUE");
+
                     r.put("score", result.getSortField1());
+                }
+
             }
         }
 
@@ -154,12 +159,12 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
          * Returns default JSON output. More minimalistic but needs to be transformed (by PySpark script)
          * before can be send to ES.
          *
-         * @param pageId
-         * @param title
-         * @param results
+         * @param pageId Page Id of source article
+         * @param title Title of source article
+         * @param results Recommendations
          * @return
          */
-        protected String getDefaultOutput(int pageId, String title, WikiSimComparableResultList<Double> results) {
+        protected String getDefaultOutput(int pageId, String title, WikiSimComparableResultList<Double> results) throws Exception {
             ObjectMapper m = new ObjectMapper();
             ObjectNode n = m.createObjectNode();
 
@@ -183,7 +188,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
          * @param results
          * @return
          */
-        protected String getElasticBulkOutput(int pageId, WikiSimComparableResultList<Double> results) {
+        protected String getElasticBulkOutput(int pageId, WikiSimComparableResultList<Double> results) throws Exception {
 
             ObjectMapper m = new ObjectMapper();
             ObjectNode a = m.createObjectNode();
@@ -218,9 +223,9 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         /**
          * @param disableScores     Set to true if score should not be included in JSON output
-         * @param elasticBulkSyntax
-         * @param ignoreMissingIds
-         * @param includeIds
+         * @param elasticBulkSyntax Enable for ES bulk format
+         * @param ignoreMissingIds  If set to true, recommendations without ids are excluded
+         * @param includeIds        Enable if page id should be included in output
          */
         JSONMapperWithIdCheck(boolean disableScores, boolean elasticBulkSyntax, boolean ignoreMissingIds, boolean includeIds) {
             super(disableScores, elasticBulkSyntax, ignoreMissingIds, includeIds);

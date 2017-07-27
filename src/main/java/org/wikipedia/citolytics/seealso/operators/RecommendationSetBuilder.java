@@ -21,9 +21,6 @@ import java.util.Map;
 public class RecommendationSetBuilder implements GroupReduceFunction<Recommendation, RecommendationSet> {
     private int topK = 20;
 
-    public RecommendationSetBuilder() {
-    }
-
     public RecommendationSetBuilder(int topK) {
         this.topK = topK;
     }
@@ -57,7 +54,6 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
                                 recommendation.getRecommendationId())
                 );
             } else {
-                //
                 recommendations.put(
                         recommendation.getRecommendationTitle(),
                         new WikiSimComparableResult<>(recommendation.getRecommendationTitle(), recommendation.getScore(), recommendation.getRecommendationId())

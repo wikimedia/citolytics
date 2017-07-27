@@ -3,6 +3,7 @@ package org.wikipedia.citolytics.cpa.operators;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.flink.api.common.functions.JoinFunction;
+import org.apache.log4j.Logger;
 import org.wikipedia.citolytics.cpa.types.Recommendation;
 import org.wikipedia.citolytics.cpa.utils.WikiSimConfiguration;
 import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
@@ -25,28 +26,33 @@ import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
  *
  */
 public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleStatsTuple, Recommendation> {
+    private static Logger LOG = Logger.getLogger(ComputeComplexCPI.class);
+
     private long articleCount = 0;
     private String cpiExpressionStr = "1";
     private boolean backupRecommendations = false;
 //    private Expression cpiExpression;
 
-    public ComputeComplexCPI(long articleCount, String cpiExpressionStr, boolean backupRecommendations) {
+    public ComputeComplexCPI(long articleCount, String cpiExpressionStr, boolean backupRecommendations) throws Exception {
         this.articleCount = articleCount;
         this.backupRecommendations = backupRecommendations;
 
-        if (cpiExpressionStr != null && !cpiExpressionStr.isEmpty()) {
-            this.cpiExpressionStr = cpiExpressionStr;
+        if (articleCount < 1) // This should normally not happen
+            throw new Exception("Article count needs to be >= 1");
 
-//            cpiExpression = new ExpressionBuilder(cpiExpressionStr)
-//                    .variables("x", "y", "z")
-//                    .build()
-//                    .setVariable("z", articleCount);
+        if (cpiExpressionStr == null || cpiExpressionStr.isEmpty()) {
+            throw new Exception("CPI expression string is not set.");
+        } else {
+            this.cpiExpressionStr = cpiExpressionStr;
         }
     }
 
     @Override
     public Recommendation join(Recommendation rec, ArticleStatsTuple stats) throws Exception {
         if(stats != null) {
+            if(stats.getInLinks() < 1) // This should normally not happen
+                throw new Exception("Recommendation does not have any in-links");
+
             if(backupRecommendations && rec.getScore() < WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
                 // This is a backup recommendations
                 rec.setScore(rec.getScore() / stats.getInLinks());
@@ -58,6 +64,7 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
                 if(backupRecommendations)
                     cpi -= WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
 
+                // Initialize ExpressionBuilder in join method (non-serializable)
                 Expression cpiExpression;
                 cpiExpression = new ExpressionBuilder(cpiExpressionStr)
                         .variables("x", "y", "z")
@@ -73,6 +80,9 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
 
                 rec.setScore(cpi);
             }
+        } else {
+//            throw new Exception("Recommendation does not have stats records: " + rec);
+            LOG.warn("Recommendation does not have a stats record: " + rec);
         }
         return rec;
     }

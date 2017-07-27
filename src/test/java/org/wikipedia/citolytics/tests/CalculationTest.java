@@ -78,13 +78,13 @@ public class CalculationTest extends Tester {
         for (SeeAlsoEvaluationResult r : job5.output) {
             if (r.getArticle().equals("SeeAlso Article 1")) {
                 assertEquals("Invalid getRecommendationsCount", 6, r.getRecommendationsCount());
-                assertEquals("Invalid getMRR", 1, r.getMRR(), 0e-10);
+                assertEquals("Invalid getMRR", 0.5833333333333334, r.getMRR(), 0e-10);
                 assertEquals("Invalid getTopKScore", 0.5, r.getTopKScore(), 0e-10);
             }
 
             if (r.getArticle().equals("SeeAlso Article 2")) {
                 assertEquals("Invalid getRecommendationsCount", 6, r.getRecommendationsCount());
-                assertEquals("Invalid getMRR", 1, r.getMRR(), 0e-10);
+                assertEquals("Invalid getMRR", 0.35, r.getMRR(), 0e-10);
                 assertEquals("Invalid getTopKScore", 0.5, r.getTopKScore(), 0e-10);
                 assertEquals("Invalid getMAP", 0.45, r.getMAP(), 0e-10);
                 assertEquals("Invalid getRelevantCount1", 2, r.getRelevantCount1());
@@ -122,9 +122,9 @@ public class CalculationTest extends Tester {
             }
         }
 
-        if (found != 2) {
-            throw new Exception("ClickStream evaluation output is invalid.");
-        }
+        System.out.println(job6.output);
+
+        assertEquals("ClickStream evaluation output is invalid.", 2, found);
 
 //        System.out.println(job6.output);
 

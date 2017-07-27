@@ -11,7 +11,7 @@ The evaluation was performed on the English Wikipedia XML dump from [September 2
 ### Requirements
 
 - Maven (v3.0+)
-- Apache Flink (v1.1.0)
+- Apache Flink (v1.3.1)
 
 ### Contents
 
@@ -25,6 +25,7 @@ The evaluation was performed on the English Wikipedia XML dump from [September 2
     - Click Through Rate (default for click streams)
 - Link graph extraction for result pairs
 - Wikipedia article statistics generator
+- CirrusSearch output generator
 
 ### Evaluation
 
