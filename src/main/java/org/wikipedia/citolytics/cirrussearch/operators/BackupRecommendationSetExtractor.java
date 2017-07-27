@@ -58,10 +58,10 @@ public class BackupRecommendationSetExtractor implements FlatMapFunction<String,
 
             // Use inverse link position: The closer to the top, the more relevant the link is.
             // TODO Include multiple occurrences?
-            double distance = 1. / ((double) outLink.getValue());
+            double distance = 1. / ((double) outLink.getValue() + 1); // Ensure position is > 0
 
-            if(distance > Integer.MAX_VALUE)
-                throw new Exception("CPI too large: " + distance);
+//            if(distance > Integer.MAX_VALUE)
+//                throw new Exception("CPI too large: " + distance);
 
             recommendations.add(new WikiSimComparableResult<>(outLink.getKey(), distance, -1));
 

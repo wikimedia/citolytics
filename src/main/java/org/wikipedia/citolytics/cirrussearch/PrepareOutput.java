@@ -59,7 +59,10 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
 
         // Prepare results
         DataSet<Recommendation>  recommendations;
-        if(wikiDumpInputFilename != null) {
+        if(wikiSimInputFilename != null) {
+            // Use existing result list;
+            recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore, fieldPageIdA, fieldPageIdB);
+        } else if(wikiDumpInputFilename != null) {
 
             // Build new result list
             WikiSim wikiSimJob = new WikiSim();
@@ -80,9 +83,6 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
                         }
                     });
 
-        } else if(wikiSimInputFilename != null) {
-            // Use existing result list;
-            recommendations = WikiSimReader.readWikiSimOutput(env, wikiSimInputFilename, fieldPageA, fieldPageB, fieldScore, fieldPageIdA, fieldPageIdB);
         } else {
             throw new Exception("Either --wikidump or --wikisim parameter must be provided.");
         }
