@@ -50,8 +50,11 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
     @Override
     public Recommendation join(Recommendation rec, ArticleStatsTuple stats) throws Exception {
         if(stats != null) {
-            if(stats.getInLinks() < 1) // This should normally not happen
-                throw new Exception("Recommendation does not have any in-links");
+            if(stats.getInLinks() < 1) {
+                // This should normally not happen (if stats records do not have resolved redirects)
+                LOG.warn("Recommendation does not have any in-links: " + rec + "; stats: " + stats);
+                stats.setInLinks(1);
+            }
 
             if(backupRecommendations && rec.getScore() < WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET) {
                 // This is a backup recommendations
