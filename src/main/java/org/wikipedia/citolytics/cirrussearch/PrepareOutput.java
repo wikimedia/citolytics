@@ -46,9 +46,9 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
         outputFilename = getParams().getRequired("output");
         String redirectsFilename = getParams().get("redirects", null);
         int topK = getParams().getInt("topk", WikiSimConfiguration.DEFAULT_TOP_K);
-        int fieldScore = getParams().getInt("score", WikiSimConfiguration.DEFAULT_FIELD_SCORE);
-        int fieldPageA = getParams().getInt("page-a", WikiSimConfiguration.DEFAULT_FIELD_PAGE_A);
-        int fieldPageB = getParams().getInt("page-b", WikiSimConfiguration.DEFAULT_FIELD_PAGE_B);
+        int fieldScore = getParams().getInt("score", RecommendationPair.CPI_LIST_KEY);
+        int fieldPageA = getParams().getInt("page-a", RecommendationPair.PAGE_A_KEY);
+        int fieldPageB = getParams().getInt("page-b", RecommendationPair.PAGE_B_KEY);
         int fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
         int fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
 
@@ -147,7 +147,7 @@ public class PrepareOutput extends WikiSimAbstractJob<Tuple1<String>> {
                 if (!disableScores) {
                     // Test for too large scores (avoid Infinity values)
                     if(result.getSortField1() > Integer.MAX_VALUE)
-                        throw new Exception("Recommendation score > Integer.MAX_VALUE");
+                        throw new Exception("Recommendation score > Integer.MAX_VALUE: " + result.getSortField1());
 
                     r.put("score", result.getSortField1());
                 }

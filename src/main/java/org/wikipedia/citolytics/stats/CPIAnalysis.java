@@ -61,9 +61,9 @@ public class CPIAnalysis extends WikiSimAbstractJob<Tuple5<String, String, Doubl
         String clickStreamOutputPath = getParams().getRequired("clickstream-output");
 
         String statsPath = getParams().get("stats");
-        int fieldScore = getParams().getInt("score", WikiSimConfiguration.DEFAULT_FIELD_SCORE);
-        int fieldPageA = getParams().getInt("page-a", WikiSimConfiguration.DEFAULT_FIELD_PAGE_A);
-        int fieldPageB = getParams().getInt("page-b", WikiSimConfiguration.DEFAULT_FIELD_PAGE_B);
+        int fieldScore = getParams().getInt("score", RecommendationPair.CPI_LIST_KEY);
+        int fieldPageA = getParams().getInt("page-a", RecommendationPair.PAGE_A_KEY);
+        int fieldPageB = getParams().getInt("page-b", RecommendationPair.PAGE_B_KEY);
         int fieldPageIdA = getParams().getInt("page-id-a", RecommendationPair.PAGE_A_ID_KEY);
         int fieldPageIdB = getParams().getInt("page-id-b", RecommendationPair.PAGE_B_ID_KEY);
 
