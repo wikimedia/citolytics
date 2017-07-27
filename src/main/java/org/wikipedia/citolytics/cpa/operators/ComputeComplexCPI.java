@@ -64,8 +64,8 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
                 double cpi = rec.getScore();
 
                 // If backup recommendations are enabled, subtract offset because we want to apply CPI-expression on original values
-                if(backupRecommendations)
-                    cpi -= WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
+//                if(backupRecommendations)
+//                    cpi -= WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
 
                 // Initialize ExpressionBuilder in join method (non-serializable)
                 Expression cpiExpression;
@@ -78,8 +78,8 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
                 cpi = cpiExpression.evaluate();
 
                 // Add subtracted offset again
-                if(backupRecommendations)
-                    cpi += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
+//                if(backupRecommendations)
+//                    cpi += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
 
                 rec.setScore(cpi);
             }

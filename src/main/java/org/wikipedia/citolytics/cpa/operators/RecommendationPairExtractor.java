@@ -198,9 +198,9 @@ public class RecommendationPairExtractor extends RichFlatMapFunction<String, Rec
             cpi[i] = computeCPI(proximity, alphas[i]);
 
             // Add offset to proximity (backup recommendations should be ranked below original recs.)
-            if(addBackupRecommendationOffset) {
-                cpi[i] += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
-            }
+//            if(addBackupRecommendationOffset) {
+//                cpi[i] += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
+//            }
         }
 
         return cpi;
