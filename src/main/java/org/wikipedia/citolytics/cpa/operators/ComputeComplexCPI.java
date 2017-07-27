@@ -28,8 +28,7 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
     private static Logger LOG = Logger.getLogger(ComputeComplexCPI.class);
 
     private long articleCount = 0;
-    private String cpiExpressionStr = "1";
-//    private Expression cpiExpression;
+    private String cpiExpressionStr = "1"; // default: Co-Citation expression
 
     public ComputeComplexCPI(long articleCount, String cpiExpressionStr) throws Exception {
         this.articleCount = articleCount;
@@ -55,10 +54,6 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
 
             double cpi = rec.getScore();
 
-            // If backup recommendations are enabled, subtract offset because we want to apply CPI-expression on original values
-//                if(backupRecommendations)
-//                    cpi -= WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
-
             // Initialize ExpressionBuilder in join method (non-serializable)
             Expression cpiExpression;
             cpiExpression = new ExpressionBuilder(cpiExpressionStr)
@@ -69,9 +64,12 @@ public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleSt
                     .setVariable("y", stats.getInLinks());
             cpi = cpiExpression.evaluate();
 
-            // Add subtracted offset again
-//                if(backupRecommendations)
-//                    cpi += WikiSimConfiguration.BACKUP_RECOMMENDATION_OFFSET;
+            // Test for too large values
+            if(cpi > Integer.MAX_VALUE) {
+                throw new Exception("Too large CPI score: CPI > Interger.MAX_VALUE: " + cpi + " (before: "
+                        + rec.getScore() + "; expr=" + cpiExpressionStr + "; article count="
+                        + articleCount + "; in-links=" + stats.getInLinks());
+            }
 
             rec.setScore(cpi);
 
