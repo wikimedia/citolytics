@@ -143,14 +143,20 @@ Evaluate WikiSim output (CPA)
         --top-recommendations $OUTPUT_DIR/top \
         --output $OUTPUT_DIR/cs_cpi
         
-### EditEvaluation
+### EditRecommendationExtractor
      
-Evaluate recommendations based on edit history dumps
+Generate recommendations based on edit history dumps 
 
-    # Simple evaluation
+    # Recommendation for all articles
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.edits.EditRecommendationExtractor -p $PARALLELISM $JAR \
         --input $HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170520-stub-meta-history.xml \
         --output $HDFS_PATH/user/mschwarzer/$WIKI/output/edit_recommendations
+
+    # Recommendations for specific articles
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.edits.EditRecommendationExtractor -p $PARALLELISM $JAR \
+        --input $HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170520-stub-meta-history.xml \
+        --output $OUTPUT_DIR/edit_recommendations
+        --articles "Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations"
        
 #### MLT
 ```
