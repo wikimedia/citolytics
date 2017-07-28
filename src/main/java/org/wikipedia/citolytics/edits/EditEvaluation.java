@@ -29,7 +29,7 @@ public class EditEvaluation extends WikiSimAbstractJob<EditEvaluationResult> {
         String goldFilename = params.getRequired("gold");
         outputFilename = params.getRequired("output");
 
-        DataSet<RecommendationSet> goldStandard = EditRecommendationExtractor.extractRecommendations(env, goldFilename);
+        DataSet<RecommendationSet> goldStandard = EditRecommendationExtractor.extractRecommendations(env, goldFilename, null);
 
         // TODO
     }

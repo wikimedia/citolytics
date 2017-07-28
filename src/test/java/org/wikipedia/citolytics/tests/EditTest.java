@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.junit.Assert.assertEquals;
+
 public class EditTest extends Tester {
     EditRecommendationExtractor job;
     String historyDumpPath;
@@ -31,6 +33,14 @@ public class EditTest extends Tester {
     public void testExtractRecommendations() throws Exception {
 
         job.start("--input " + historyDumpPath + " --output print");
+    }
+
+    @Test
+    public void testExtractRecommendationsWithFilter() throws Exception {
+
+        job.start("--input " + historyDumpPath + " --articles Bewick --output local");
+
+        assertEquals("Invalid output", "(Bewick,[(Aanten,1.0,0), (Adam vun Bremen,1.0,0), (Amerika,1.0,0), (Anatolien,1.0,0), (Anion,1.0,0), (Ankara,1.0,0), (Asien,1.0,0), (Astronomie,1.0,0)],0)", getJobOutputAsString(job));
     }
 
     @Test

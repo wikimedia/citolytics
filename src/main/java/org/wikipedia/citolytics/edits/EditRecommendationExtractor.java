@@ -13,6 +13,7 @@ import org.apache.flink.util.Collector;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
 import org.wikipedia.citolytics.cpa.io.WikiDocumentDelimitedInputFormat;
 import org.wikipedia.citolytics.cpa.types.RecommendationSet;
+import org.wikipedia.citolytics.edits.operators.CoEditsReducer;
 import org.wikipedia.citolytics.edits.operators.EditInputMapper;
 import org.wikipedia.citolytics.edits.types.ArticleAuthorPair;
 import org.wikipedia.citolytics.edits.types.AuthorArticlesList;
@@ -38,11 +39,12 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 
         String inputFilename = params.getRequired("input");
         outputFilename = params.getRequired("output");
+        String articles = params.get("articles");
 
-        result = extractRecommendations(env, inputFilename);
+        result = extractRecommendations(env, inputFilename, articles != null ? Arrays.asList(articles.split(",")) : null);
     }
 
-    public static DataSet<RecommendationSet> extractRecommendations(ExecutionEnvironment env, String inputFilename) throws Exception {
+    public static DataSet<RecommendationSet> extractRecommendations(ExecutionEnvironment env, String inputFilename, Collection<String> articleFilter) throws Exception {
         // Read Wikipedia Edit History XML Dump and generate article-author pairs
         DataSet<ArticleAuthorPair> articleAuthorPairs = env.readFile(new WikiDocumentDelimitedInputFormat(), inputFilename)
                 .flatMap(new EditInputMapper())
@@ -50,33 +52,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
 
         DataSet<CoEditMap> coEdits = articleAuthorPairs
                 .groupBy(1) // author id
-                .reduceGroup(new GroupReduceFunction<ArticleAuthorPair, CoEditMap>() {
-                    @Override
-                    public void reduce(Iterable<ArticleAuthorPair> in, Collector<CoEditMap> out) throws Exception {
-                        Iterator<ArticleAuthorPair> iterator = in.iterator();
-                        HashSet<String> articles = new HashSet<>();
-                        ArticleAuthorPair pair = null;
-
-                        while (iterator.hasNext()) {
-                            pair = iterator.next();
-                            articles.add(pair.getArticle());
-                        }
-
-                        // Only author with at least two articles are useful
-                        if (articles.size() > 1) {
-//                            System.out.println(pair.getAuthor() + " // " + articles);
-                            for(String article: articles) {
-                                Map<String, Integer> coArticles = new HashMap<>();
-                                for(String coArticle: articles) {
-                                    if(!coArticle.equals(article))
-                                        coArticles.put(coArticle, 1);
-                                }
-
-                                out.collect(new CoEditMap(article, coArticles));
-                            }
-                        }
-                    }
-                })
+                .reduceGroup(new CoEditsReducer(articleFilter))
                 .groupBy(0)
                 .reduce(new ReduceFunction<CoEditMap>() {
                     @Override
@@ -121,6 +97,7 @@ public class EditRecommendationExtractor extends WikiSimAbstractJob<Recommendati
             }
         });
     }
+
 
     public static DataSet<RecommendationSet> extractRecommendationsOld(ExecutionEnvironment env, String inputFilename) throws Exception {
         // Read Wikipedia Edit History XML Dump and generate article-author pairs
