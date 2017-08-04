@@ -81,6 +81,13 @@ results.
         --article-stats $OUTPUT_DIR/stats \
         --output $OUTPUT_DIR/citolytics_$WIKI.cpi.json
 
+### Merge Cirrus Dump with Citolytics output
+
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.MergeESBulkDumps -p $PARALLELISM $JAR \
+        --cirrus $OUTPUT_DIR/cirrus.json \
+        --citolytics $OUTPUT_DIR/citolytics.json \
+        --output $OUTPUT_DIR/merged.json
+        
 ### Trigger ES import
 
     curl -s -XPOST 'http://localhost:9200/mediawiki_content_first/page/_bulk' -d @wikisim.json

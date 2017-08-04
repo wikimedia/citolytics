@@ -3,6 +3,7 @@ package org.wikipedia.citolytics.tests;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.wikipedia.citolytics.cirrussearch.MergeESBulkDumps;
 import org.wikipedia.citolytics.cirrussearch.PrepareOutput;
 import org.wikipedia.citolytics.tests.utils.Tester;
 
@@ -116,5 +117,15 @@ public class CirrussearchTest extends Tester {
 
         //        assertEquals("Invalid response", FileUtils.readFileToString(new File(getExpectedOutputPath()), String.join("\n", job.getOutput())));
 
+    }
+
+    @Test
+    public void testMerge() throws Exception {
+        setJob(new MergeESBulkDumps())
+                .start("--cirrus " + resource("merge_cirrus.json", true)
+                + " --citolytics " + resource("merge_citolytics.json", true)
+                + " --output local");
+
+        System.out.println(getJobOutputAsString());
     }
 }

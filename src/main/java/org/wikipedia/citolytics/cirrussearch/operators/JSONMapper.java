@@ -42,7 +42,7 @@ public class JSONMapper implements FlatMapFunction<RecommendationSet, Tuple1<Str
             r.put("title", result.getName());
 
             if (includeIds)
-                r.put("id", result.getId());
+                r.put("id", String.valueOf(result.getId()));
 
             if (!disableScores) {
                 // Test for too large scores (avoid Infinity values)
@@ -68,7 +68,7 @@ public class JSONMapper implements FlatMapFunction<RecommendationSet, Tuple1<Str
         ObjectMapper m = new ObjectMapper();
         ObjectNode n = m.createObjectNode();
 
-        n.put("id", pageId);
+        n.put("id", String.valueOf(pageId));
         n.put("title", title);
 //            n.put("namespace", 0);
         putResultArray(n, results);
@@ -93,7 +93,7 @@ public class JSONMapper implements FlatMapFunction<RecommendationSet, Tuple1<Str
         ObjectMapper m = new ObjectMapper();
         ObjectNode a = m.createObjectNode();
         ObjectNode u = a.putObject("update");
-        u.put("_id", pageId);
+        u.put("_id", String.valueOf(pageId));
 
         ObjectNode s = m.createObjectNode();
         ObjectNode d = s.putObject("doc");
