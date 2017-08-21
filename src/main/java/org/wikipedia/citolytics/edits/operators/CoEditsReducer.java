@@ -12,7 +12,7 @@ import java.util.*;
  * (With article filter)
  */
 public class CoEditsReducer implements GroupReduceFunction<ArticleAuthorPair, CoEditMap> {
-    private Collection<String> articleFilter = null;
+    private Collection<String> articleFilter;
 
     public CoEditsReducer(Collection<String> articleFilter) {
         this.articleFilter = articleFilter;
