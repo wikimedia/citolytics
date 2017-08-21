@@ -155,8 +155,14 @@ Generate recommendations based on edit history dumps
     # Recommendations for specific articles
     $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.edits.EditRecommendationExtractor -p $PARALLELISM $JAR \
         --input $HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170520-stub-meta-history.xml \
-        --output $OUTPUT_DIR/edit_recommendations
+        --output $OUTPUT_DIR/edit_recommendations_filtered \
         --articles "Force,New York City,Brad Pitt,Nachos,British Asian,Einstein field equations"
+
+    # dewiki
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.edits.EditRecommendationExtractor -p $PARALLELISM $JAR \
+        --input $HDFS_PATH/user/mschwarzer/$WIKI/input/$WIKI-20170520-stub-meta-history.xml \
+        --output $OUTPUT_DIR/edit_recommendations_filtered \
+        --articles "Kraft,New York City,Brad Pitt,Nachos,Albert Einstein"
        
 #### MLT
 ```

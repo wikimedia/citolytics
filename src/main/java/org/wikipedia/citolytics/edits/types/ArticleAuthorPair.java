@@ -7,16 +7,16 @@ public class ArticleAuthorPair extends Tuple2<String, Integer> {
         // Flink requires empty constructor
     }
 
-    public ArticleAuthorPair(String article, int author) {
+    public ArticleAuthorPair(String article, int authorId) {
         f0 = article;
-        f1 = author;
+        f1 = authorId;
     }
 
     public String getArticle() {
         return f0;
     }
 
-    public int getAuthor() {
+    public int getAuthorId() {
         return f1;
     }
 }

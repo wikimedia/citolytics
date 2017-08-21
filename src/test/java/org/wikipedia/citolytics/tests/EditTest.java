@@ -38,9 +38,12 @@ public class EditTest extends Tester {
     @Test
     public void testExtractRecommendationsWithFilter() throws Exception {
 
-        job.start("--input " + historyDumpPath + " --articles Bewick --output local");
+        job.start("--input " + historyDumpPath + " --articles \"Bülg (Physik)\" --output local");
+//        job.start("--input " + historyDumpPath + " --articles Bewick --output local");
 
-        assertEquals("Invalid output", "(Bewick,[(Aanten,1.0,0), (Adam vun Bremen,1.0,0), (Amerika,1.0,0), (Anatolien,1.0,0), (Anion,1.0,0), (Ankara,1.0,0), (Asien,1.0,0), (Astronomie,1.0,0)],0)", getJobOutputAsString(job));
+//        System.out.println(getJobOutputAsString(job));
+        assertEquals("Invalid output", "(Bülg (Physik),[(Chemisch Reaktschon,2.0,0), (Bewick,1.0,0), (Book,1.0,0), (Bull,1.0,0)],0)", getJobOutputAsString(job));
+//        assertEquals("Invalid output", "(Bewick,[(Aanten,1.0,0), (Adam vun Bremen,1.0,0), (Amerika,1.0,0), (Anatolien,1.0,0), (Anion,1.0,0), (Ankara,1.0,0), (Asien,1.0,0), (Astronomie,1.0,0)],0)", getJobOutputAsString(job));
     }
 
     @Test

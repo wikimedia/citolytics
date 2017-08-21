@@ -1,9 +1,7 @@
 package org.wikipedia.citolytics.edits;
 
-import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.wikipedia.citolytics.WikiSimAbstractJob;
-import org.wikipedia.citolytics.cpa.types.RecommendationSet;
 import org.wikipedia.citolytics.edits.types.EditEvaluationResult;
 
 /**
@@ -29,7 +27,8 @@ public class EditEvaluation extends WikiSimAbstractJob<EditEvaluationResult> {
         String goldFilename = params.getRequired("gold");
         outputFilename = params.getRequired("output");
 
-        DataSet<RecommendationSet> goldStandard = EditRecommendationExtractor.extractRecommendations(env, goldFilename, null);
+        throw new Exception("NOT IMPLEMENTED YET!");
+//        DataSet<RecommendationSet> goldStandard = EditRecommendationExtractor.extractRecommendations(env, goldFilename, null);
 
         // TODO
     }

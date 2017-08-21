@@ -33,6 +33,8 @@ public class EditInputMapper implements FlatMapFunction<String, ArticleAuthorPai
             return;
         }
 
+//        System.out.println("--" + title);
+
         Matcher revMatcher = revRegex.matcher(xml);
         while (revMatcher.find()) {
             Matcher contributorMatcher = contributorRegex.matcher(revMatcher.group(1));
