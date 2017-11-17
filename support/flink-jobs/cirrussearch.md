@@ -91,3 +91,23 @@ results.
 ### Trigger ES import
 
     curl -s -XPOST 'http://localhost:9200/mediawiki_content_first/page/_bulk' -d @wikisim.json
+
+### With Master thesis parameters
+
+ES output, backup recommendations, resolve redirects, CPI with ILF (Okapi BM25), alpha=0.9, absolute proximity.
+
+Okapi BM25: 
+- `log((|D|-n_a+0.5)/(n_a+0.5))`
+- `x*log((z-y+0.5)/(y+0.5))`
+- `x*log\(\(z-y+0.5\)\/\(y+0.5\)\)`
+
+
+    $FLINK_HOME/bin/flink run -c org.wikipedia.citolytics.cirrussearch.PrepareOutput -p $PARALLELISM $JAR \
+            --wikidump $WIKI_DUMP \
+            --enable-elastic \
+            --resolve-redirects \
+            --alpha 0.9 \
+            --cpi x*log\(\(z-y+0.5\)\/\(y+0.5\)\) \
+            --backup-recommendations \
+            --output $OUTPUT_DIR/citolytics_ua_eval_$WIKI.json
+            

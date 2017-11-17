@@ -22,6 +22,7 @@ import org.wikipedia.citolytics.stats.types.ArticleStatsTuple;
  *  - idf log: x*log(z/(y+1))         %1$f*Math.log(%3$d/%2$d)
  *  - idf inverse: %1$f/%2$d
  *  - original: %1$f
+ *  - Okapi BM25: x*log((z-y+0.5)/(y+0.5))
  *
  */
 public class ComputeComplexCPI implements JoinFunction<Recommendation, ArticleStatsTuple, Recommendation> {
