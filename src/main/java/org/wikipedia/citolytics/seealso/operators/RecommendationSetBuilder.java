@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class RecommendationSetBuilder implements GroupReduceFunction<Recommendation, RecommendationSet> {
     private int topK = 20;
+    private final static boolean ignoreIdMismatch = true;
 
     public RecommendationSetBuilder(int topK) {
         this.topK = topK;
@@ -40,9 +41,9 @@ public class RecommendationSetBuilder implements GroupReduceFunction<Recommendat
                 int aId = recommendations.get(recommendation.getRecommendationTitle()).getId();
                 int bId = recommendation.getRecommendationId();
                 //throw new Exception("Duplicate recommendation: " + recommendation.getRecommendationTitle() + "; current list: " + recommendations);
-                if (aId != bId) {
-                    throw new Exception("Invalid IDs for duplicate recommendations (" + aId + " != " + bId +"): A=" + recommendation + "; B = " + recommendations.get(recommendation.getRecommendationTitle()));
-                }
+//                if (!ignoreIdMismatch && aId != bId) {
+//                    throw new Exception("Invalid IDs for duplicate recommendations (" + aId + " != " + bId +"): A=" + recommendation + "; B = " + recommendations.get(recommendation.getRecommendationTitle()));
+//                }
 
                 // Sum of both scores
                 Double score = recommendation.getScore() + (Double) recommendations.get(recommendation.getRecommendationTitle()).getSortField1();
